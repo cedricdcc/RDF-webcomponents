@@ -302,9 +302,9 @@ export default function DemoPage() {
             <strong> lens-display</strong>.
           </p>
           <div className="flex flex-wrap gap-4 text-xs text-slate-600">
-            <a className="underline" href="/adapter">rdf-adapter docs</a>
-            <a className="underline" href="/lens">rdf-lens docs</a>
-            <a className="underline" href="/display">lens-display docs</a>
+            <Link className="underline" href="/adapter">rdf-adapter docs</Link>
+            <Link className="underline" href="/lens">rdf-lens docs</Link>
+            <Link className="underline" href="/display">lens-display docs</Link>
           </div>
         </header>
 

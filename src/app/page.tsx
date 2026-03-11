@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import ReactMarkdown from 'react-markdown';
 import Script from 'next/script';
+import Link from 'next/link';
 import { 
   Code, 
   Database, 
@@ -335,18 +336,18 @@ export default function RDFWebComponentsDemo() {
               RDF data using SHACL shapes and HTML templates.
             </p>
             <div className="mt-6">
-              <a
+              <Link
                 href="/demo"
                 className="inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 hover:bg-slate-100"
               >
                 Open Interactive Playground
-              </a>
+              </Link>
             </div>
           </div>
 
           {/* Component Cards */}
           <div className="grid md:grid-cols-3 gap-6">
-            <a href="/adapter" className="block group">
+            <Link href="/adapter" className="block group">
               <Card className="hover:shadow-lg transition-all duration-300 hover:border-blue-400 dark:hover:border-blue-600 cursor-pointer h-full">
                 <CardHeader>
                   <div className="h-12 w-12 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
@@ -370,9 +371,9 @@ export default function RDFWebComponentsDemo() {
                   </div>
                 </CardContent>
               </Card>
-            </a>
+            </Link>
 
-            <a href="/lens" className="block group">
+            <Link href="/lens" className="block group">
               <Card className="hover:shadow-lg transition-all duration-300 hover:border-green-400 dark:hover:border-green-600 cursor-pointer h-full">
                 <CardHeader>
                   <div className="h-12 w-12 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
@@ -395,9 +396,9 @@ export default function RDFWebComponentsDemo() {
                   </div>
                 </CardContent>
               </Card>
-            </a>
+            </Link>
 
-            <a href="/display" className="block group">
+            <Link href="/display" className="block group">
               <Card className="hover:shadow-lg transition-all duration-300 hover:border-purple-400 dark:hover:border-purple-600 cursor-pointer h-full">
                 <CardHeader>
                   <div className="h-12 w-12 rounded-lg bg-purple-100 dark:bg-purple-900 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
@@ -420,7 +421,7 @@ export default function RDFWebComponentsDemo() {
                   </div>
                 </CardContent>
               </Card>
-            </a>
+            </Link>
           </div>
         </section>
 
