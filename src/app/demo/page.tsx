@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import Script from "next/script";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { generateShaclFromRdf } from "@/lib/shacl-generator";
 
 type RuntimeConfig = {
   dataUrl: string;
@@ -130,6 +131,8 @@ export default function DemoPage() {
   const [shapeClass, setShapeClass] = useState("http://example.org/Person");
   const [multiple, setMultiple] = useState(true);
   const [shaclInput, setShaclInput] = useState(DEMO_SHAPES);
+  const [shaclGenerating, setShaclGenerating] = useState(false);
+  const [shaclGenerateError, setShaclGenerateError] = useState<string | null>(null);
 
   const [displayMode, setDisplayMode] = useState("grid");
   const [templateInput, setTemplateInput] = useState(DEMO_TEMPLATE);
@@ -190,9 +193,26 @@ export default function DemoPage() {
     setShapeClass("http://example.org/Person");
     setMultiple(true);
     setShaclInput(DEMO_SHAPES);
+    setShaclGenerateError(null);
     setDisplayMode("grid");
     setTemplateInput(DEMO_TEMPLATE);
   };
+
+  const generateShacl = useCallback(async () => {
+    setShaclGenerating(true);
+    setShaclGenerateError(null);
+    try {
+      const format = dataFormat === "jsonld" ? "application/ld+json" : "text/turtle";
+      const generated = await generateShaclFromRdf(rdfInput, format);
+      setShaclInput(generated);
+    } catch (err) {
+      setShaclGenerateError(
+        err instanceof Error ? err.message : "Failed to generate SHACL shapes."
+      );
+    } finally {
+      setShaclGenerating(false);
+    }
+  }, [rdfInput, dataFormat]);
 
   useEffect(() => {
     setMounted(true);
@@ -441,14 +461,32 @@ export default function DemoPage() {
               />
               multiple extraction mode
             </label>
-            <label className="block space-y-1 text-sm">
-              <span className="font-medium">SHACL file content</span>
+            <div className="space-y-1 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="font-medium">SHACL file content</span>
+                <button
+                  type="button"
+                  className="rounded-md border px-2 py-1 text-xs disabled:opacity-50"
+                  onClick={generateShacl}
+                  disabled={shaclGenerating || useRemoteData}
+                  title={
+                    useRemoteData
+                      ? "Switch to inline RDF to auto-generate SHACL"
+                      : "Analyze the RDF input and auto-generate SHACL shapes"
+                  }
+                >
+                  {shaclGenerating ? "Generating…" : "Auto-generate SHACL"}
+                </button>
+              </div>
               <textarea
                 className="h-72 w-full rounded-md border p-2 font-mono text-xs"
                 value={shaclInput}
                 onChange={(e) => setShaclInput(e.target.value)}
               />
-            </label>
+              {shaclGenerateError && (
+                <p className="text-xs text-red-600">{shaclGenerateError}</p>
+              )}
+            </div>
             <p className="text-xs text-slate-500">
               Docs quick tip: use <code>sh:name</code> for output property names and <code>sh:path</code> for predicates.
             </p>
