@@ -1,0 +1,36 @@
+<div class="demo-grid">
+  {{#each items}}
+  <article class="person-card">
+    <h3>{{name}}</h3>
+    {{#role}}<p><strong>Role:</strong> {{role}}</p>{{/role}}
+    {{#email}}<p><strong>Email:</strong> <a href="mailto:{{email}}">{{email}}</a></p>{{/email}}
+    {{#age}}<p><strong>Age:</strong> {{age}}</p>{{/age}}
+    {{#city}}<p><strong>City:</strong> {{city}}</p>{{/city}}
+  </article>
+  {{/each}}
+</div>
+
+<style>
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+
+  .person-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    background: #ffffff;
+  }
+
+  .person-card h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+  }
+
+  .person-card p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+  }
+</style>

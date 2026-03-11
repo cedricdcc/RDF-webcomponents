@@ -1,0 +1,23 @@
+@prefix ex: <http://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:Alice a ex:Person ;
+  ex:name "Alice Smith" ;
+  ex:email "alice@example.org" ;
+  ex:role "Data Engineer" ;
+  ex:age 31 ;
+  ex:city "Brussels" .
+
+ex:Bob a ex:Person ;
+  ex:name "Bob Johnson" ;
+  ex:email "bob@example.org" ;
+  ex:role "Knowledge Graph Architect" ;
+  ex:age 36 ;
+  ex:city "Ghent" .
+
+ex:Charlie a ex:Person ;
+  ex:name "Charlie Brown" ;
+  ex:role "Semantic Web Developer" ;
+  ex:age 28 ;
+  ex:city "Antwerp" .
