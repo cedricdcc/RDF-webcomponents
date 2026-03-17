@@ -1,0 +1,33 @@
+{
+  "debounceMs": 150,
+  "maxConcurrentPipelines": 4,
+  "allowRecursive": false,
+  "decorators": {
+    "enabled": true,
+    "icons": {
+      "loading": "⏳",
+      "ready": "✅",
+      "error": "⚠"
+    }
+  },
+  "rules": [
+    {
+      "id": "dataset-links",
+      "match": {
+        "css": "a[href*='people.ttl']",
+        "contentType": "text"
+      },
+      "adapter": {
+        "strategy": "file"
+      },
+      "lens": {
+        "shapeClass": "Person",
+        "shapes": "@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix ex: <http://example.org/> .\n\nex:PersonShape a sh:NodeShape ;\n  sh:targetClass ex:Person ;\n  sh:property [\n    sh:name \"name\" ;\n    sh:path ex:name ;\n  ] ."
+      },
+      "display": {
+        "templateInline": "<span class='inline-person'>{{name}}</span>",
+        "mode": "single"
+      }
+    }
+  ]
+}

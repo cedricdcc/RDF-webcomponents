@@ -1,0 +1,33 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix ex: <http://example.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:BookShape a sh:NodeShape ;
+  sh:targetClass ex:Book ;
+  sh:property [
+    sh:name "title" ;
+    sh:path ex:title ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "author" ;
+    sh:path ex:author ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "year" ;
+    sh:path ex:year ;
+    sh:datatype xsd:integer ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "isbn" ;
+    sh:path ex:isbn ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "genre" ;
+    sh:path ex:genre ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+  ] .

@@ -1,0 +1,86 @@
+<div class="org-list">
+  {{#each items}}
+  <article class="org-card">
+    <div class="org-header">
+      {{#shortName}}<span class="short-name">{{shortName}}</span>{{/shortName}}
+      <h3>{{name}}</h3>
+    </div>
+    <div class="org-meta">
+      {{#founded}}<span class="tag">🏛 Est. {{founded}}</span>{{/founded}}
+      {{#city}}<span class="tag">📍 {{city}}</span>{{/city}}
+      {{#focus}}<span class="tag focus">🎯 {{focus}}</span>{{/focus}}
+    </div>
+    {{#url}}<a class="org-link" href="{{url}}" target="_blank">Visit website →</a>{{/url}}
+  </article>
+  {{/each}}
+</div>
+
+<style>
+  .org-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .org-card {
+    border: 1px solid #a7f3d0;
+    border-radius: 0.75rem;
+    padding: 0.875rem;
+    background: linear-gradient(135deg, #ecfdf5 0%, #f8fafc 100%);
+  }
+
+  .org-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .short-name {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #065f46;
+    background: #d1fae5;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .org-card h3 {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #064e3b;
+  }
+
+  .org-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .tag {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.45rem;
+    border-radius: 9999px;
+    background: #d1fae5;
+    color: #065f46;
+    white-space: nowrap;
+  }
+
+  .focus {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .org-link {
+    font-size: 0.75rem;
+    color: #059669;
+    text-decoration: none;
+  }
+
+  .org-link:hover {
+    text-decoration: underline;
+  }
+</style>

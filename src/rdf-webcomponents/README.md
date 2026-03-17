@@ -315,6 +315,80 @@ The template engine supports:
 </article>
 ```
 
+---
+
+### `<link-orchestration>`
+
+Scans existing links in the DOM and mounts `<rdf-adapter>`, `<rdf-lens>`, and `<lens-display>` around matching anchors based on rule config.
+
+#### Scope behavior
+
+- If declared in `<head>`, scope is page-wide (`document`).
+- If declared in `<body>`, scope is only descendant elements under that `<link-orchestration>` instance.
+
+#### Config source precedence
+
+1. JavaScript property (`element.config = {...}`)
+2. Inline child JSON (`<script type="application/json">`)
+3. Remote config URL (`config-src="..."`)
+
+#### Rule matching and execution
+
+- First match wins.
+- CSS selector matching is primary; XPath is supported.
+- URL matching supports glob and regex patterns.
+- Content type is derived from link subtree (`text` or `image`) and can be overridden per rule.
+- Matching links are processed with mutation-aware rescans and debounce controls.
+
+#### Core attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `config-src` | string | - | URL to remote JSON rule config |
+| `debounce-ms` | number | `120` | Debounce interval for mutation-triggered scans |
+| `max-concurrent-pipelines` | number | `4` | Max concurrent link pipeline mounts |
+| `allow-recursive` | boolean | `false` | Allow processing links inside orchestrated descendants |
+
+#### Lifecycle events
+
+- `orchestrator-scan-start`
+- `orchestrator-scan-complete`
+- `orchestrator-link-loading`
+- `orchestrator-link-ready`
+- `orchestrator-link-error`
+- `orchestrator-link-rollback`
+
+#### Example
+
+```html
+<link-orchestration config-src="/demo/link-orchestrator.config.json"></link-orchestration>
+
+<!-- or inline -->
+<link-orchestration>
+  <script type="application/json">
+  {
+    "rules": [
+      {
+        "id": "person-links",
+        "match": {
+          "css": "a[href*='people.ttl']",
+          "contentType": "text"
+        },
+        "adapter": { "strategy": "file" },
+        "lens": {
+          "shapeClass": "Person",
+          "shapes": "@prefix sh: <http://www.w3.org/ns/shacl#> . ..."
+        },
+        "display": {
+          "templateInline": "<span>{{name}}</span>"
+        }
+      }
+    ]
+  }
+  </script>
+</link-orchestration>
+```
+
 ## 🏗 Architecture
 
 ### Data Flow

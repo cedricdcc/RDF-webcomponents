@@ -1,0 +1,27 @@
+{
+  "debounceMs": 150,
+  "maxConcurrentPipelines": 4,
+  "decorators": {
+    "enabled": true,
+    "icons": { "loading": "⏳", "ready": "📚", "error": "⚠" }
+  },
+  "rules": [
+    {
+      "id": "css-books",
+      "match": {
+        "css": "a[href$='.ttl'][data-type='book']",
+        "contentType": "text"
+      },
+      "adapter": { "strategy": "file", "cache": "none" },
+      "lens": {
+        "shapeFile": "/demo/book-shapes.ttl",
+        "shapeClass": "http://example.org/Book",
+        "multiple": true
+      },
+      "display": {
+        "template": "/demo/book-card.html",
+        "mode": "grid"
+      }
+    }
+  ]
+}

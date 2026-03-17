@@ -422,6 +422,55 @@ export default function RDFWebComponentsDemo() {
                 </CardContent>
               </Card>
             </Link>
+
+            <Link href="/orchestration" className="block group">
+              <Card className="hover:shadow-lg transition-all duration-300 hover:border-cyan-400 dark:hover:border-cyan-600 cursor-pointer h-full">
+                <CardHeader>
+                  <div className="h-12 w-12 rounded-lg bg-cyan-100 dark:bg-cyan-900 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Layers className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">link-orchestration</CardTitle>
+                    <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-cyan-500 transition-colors" />
+                  </div>
+                  <CardDescription>
+                    Detect links and mount rdf-adapter, rdf-lens, and lens-display by rule
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="outline" className="text-xs">CSS</Badge>
+                    <Badge variant="outline" className="text-xs">XPath</Badge>
+                    <Badge variant="outline" className="text-xs">URL Rules</Badge>
+                    <Badge variant="outline" className="text-xs">Lifecycle</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/playground" className="block group">
+              <Card className="hover:shadow-lg transition-all duration-300 hover:border-amber-400 dark:hover:border-amber-600 cursor-pointer h-full">
+                <CardHeader>
+                  <div className="h-12 w-12 rounded-lg bg-amber-100 dark:bg-amber-900 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Zap className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Orchestration Playground</CardTitle>
+                    <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-amber-500 transition-colors" />
+                  </div>
+                  <CardDescription>
+                    Interactive examples for every matching capability — css, xpath, urlPattern, urlRegex, parentCss, pathStartsWith
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="outline" className="text-xs">9 Examples</Badge>
+                    <Badge variant="outline" className="text-xs">Live iframes</Badge>
+                    <Badge variant="outline" className="text-xs">Config snippets</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </section>
 

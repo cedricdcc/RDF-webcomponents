@@ -1,0 +1,31 @@
+{
+  "debounceMs": 150,
+  "maxConcurrentPipelines": 4,
+  "decorators": {
+    "enabled": true,
+    "icons": { "loading": "⏳", "ready": "📦", "error": "⚠" }
+  },
+  "rules": [
+    {
+      "id": "decorator-inline-template",
+      "match": {
+        "css": "a[href*='people.ttl']",
+        "contentType": "text"
+      },
+      "adapter": { "strategy": "file", "cache": "none" },
+      "lens": {
+        "shapeFile": "/demo/shapes.ttl",
+        "shapeClass": "http://example.org/Person",
+        "multiple": true
+      },
+      "display": {
+        "templateInline": "<div style=\"display:flex;flex-wrap:wrap;gap:8px\">{{#each items}}<span style=\"display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:9999px;background:#e0f2fe;color:#0c4a6e;font-size:0.8rem;font-weight:500\">{{#role}}<span title=\"{{role}}\" style=\"width:8px;height:8px;border-radius:50%;background:#0ea5e9;display:inline-block\"></span>{{/role}}{{name}}{{#city}}<span style=\"opacity:.6;font-size:.7rem\">({{city}})</span>{{/city}}</span>{{/each}}</div>",
+        "mode": "single"
+      },
+      "decorators": {
+        "enabled": true,
+        "icons": { "loading": "🔄", "ready": "🏷", "error": "❌" }
+      }
+    }
+  ]
+}

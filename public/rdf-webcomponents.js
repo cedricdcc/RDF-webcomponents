@@ -22969,17 +22969,17 @@ var require_node = __commonJS({
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.cloneNode = exports.hasChildren = exports.isDocument = exports.isDirective = exports.isComment = exports.isText = exports.isCDATA = exports.isTag = exports.Element = exports.Document = exports.CDATA = exports.NodeWithChildren = exports.ProcessingInstruction = exports.Comment = exports.Text = exports.DataNode = exports.Node = void 0;
     var domelementtype_1 = require_lib();
-    var Node = (
+    var Node2 = (
       /** @class */
       (function() {
-        function Node2() {
+        function Node3() {
           this.parent = null;
           this.prev = null;
           this.next = null;
           this.startIndex = null;
           this.endIndex = null;
         }
-        Object.defineProperty(Node2.prototype, "parentNode", {
+        Object.defineProperty(Node3.prototype, "parentNode", {
           // Read-write aliases for properties
           /**
            * Same as {@link parent}.
@@ -22994,7 +22994,7 @@ var require_node = __commonJS({
           enumerable: false,
           configurable: true
         });
-        Object.defineProperty(Node2.prototype, "previousSibling", {
+        Object.defineProperty(Node3.prototype, "previousSibling", {
           /**
            * Same as {@link prev}.
            * [DOM spec](https://dom.spec.whatwg.org)-compatible alias.
@@ -23008,7 +23008,7 @@ var require_node = __commonJS({
           enumerable: false,
           configurable: true
         });
-        Object.defineProperty(Node2.prototype, "nextSibling", {
+        Object.defineProperty(Node3.prototype, "nextSibling", {
           /**
            * Same as {@link next}.
            * [DOM spec](https://dom.spec.whatwg.org)-compatible alias.
@@ -23022,16 +23022,16 @@ var require_node = __commonJS({
           enumerable: false,
           configurable: true
         });
-        Node2.prototype.cloneNode = function(recursive) {
+        Node3.prototype.cloneNode = function(recursive) {
           if (recursive === void 0) {
             recursive = false;
           }
           return cloneNode(this, recursive);
         };
-        return Node2;
+        return Node3;
       })()
     );
-    exports.Node = Node;
+    exports.Node = Node2;
     var DataNode = (
       /** @class */
       (function(_super) {
@@ -23056,7 +23056,7 @@ var require_node = __commonJS({
           configurable: true
         });
         return DataNode2;
-      })(Node)
+      })(Node2)
     );
     exports.DataNode = DataNode;
     var Text = (
@@ -23162,7 +23162,7 @@ var require_node = __commonJS({
           configurable: true
         });
         return NodeWithChildren2;
-      })(Node)
+      })(Node2)
     );
     exports.NodeWithChildren = NodeWithChildren;
     var CDATA = (
@@ -28266,6 +28266,646 @@ LensDisplay = __decorateClass([
   t3("lens-display")
 ], LensDisplay);
 
+// src/rdf-webcomponents/components/link-orchestration.ts
+var ORCHESTRATED_ATTR = "data-orchestrated";
+var ORCHESTRATOR_OWNER_ATTR = "data-orchestrator-owner";
+var ORCHESTRATOR_STATE_ATTR = "data-orchestrator-state";
+var ORCHESTRATED_INSTANCE_ATTR = "data-orchestrated-instance";
+var LinkOrchestration = class extends i4 {
+  constructor() {
+    super(...arguments);
+    this.debounceMs = 120;
+    this.maxConcurrentPipelines = 4;
+    this.allowRecursive = false;
+    this._observer = null;
+    this._scanTimer = null;
+    this._active = 0;
+    this._queue = [];
+    this._records = /* @__PURE__ */ new Map();
+    this._ownerId = `orchestrator-${Math.random().toString(36).slice(2, 10)}`;
+    this._resolvedConfig = { rules: [] };
+    this._configOverride = null;
+    this._isConnected = false;
+  }
+  static get observedAttributes() {
+    return ["config-src", "debounce-ms", "max-concurrent-pipelines", "allow-recursive"];
+  }
+  set config(value) {
+    this._configOverride = value;
+    if (this._isConnected) {
+      void this.loadConfig();
+    }
+  }
+  get config() {
+    return this._configOverride;
+  }
+  render() {
+    return b2`<slot></slot>`;
+  }
+  connectedCallback() {
+    super.connectedCallback();
+    this._isConnected = true;
+    void this.loadConfig();
+  }
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._isConnected = false;
+    this.disconnectObserver();
+    this.rollbackAll();
+  }
+  attributeChangedCallback(name, oldValue, newValue) {
+    super.attributeChangedCallback(name, oldValue, newValue);
+    if (oldValue === newValue) {
+      return;
+    }
+    if (name === "config-src") {
+      this.configSrc = newValue ?? void 0;
+    }
+    if (name === "debounce-ms") {
+      const parsed = Number(newValue);
+      this.debounceMs = Number.isFinite(parsed) ? parsed : 120;
+    }
+    if (name === "max-concurrent-pipelines") {
+      const parsed = Number(newValue);
+      this.maxConcurrentPipelines = Number.isFinite(parsed) && parsed > 0 ? parsed : 4;
+    }
+    if (name === "allow-recursive") {
+      this.allowRecursive = newValue !== null && newValue !== "false";
+    }
+    if (this._isConnected) {
+      void this.loadConfig();
+    }
+  }
+  async loadConfig() {
+    try {
+      const config = await this._resolveConfig();
+      this._resolvedConfig = config;
+      if (typeof config.debounceMs === "number") {
+        this.debounceMs = config.debounceMs;
+      }
+      if (typeof config.maxConcurrentPipelines === "number") {
+        this.maxConcurrentPipelines = Math.max(1, config.maxConcurrentPipelines);
+      }
+      if (typeof config.allowRecursive === "boolean") {
+        this.allowRecursive = config.allowRecursive;
+      }
+      this._startObserver();
+      await this.refresh();
+    } catch (error) {
+      this._emitEvent("orchestrator-link-error", {
+        message: error instanceof Error ? error.message : String(error),
+        phase: "config"
+      });
+    }
+  }
+  async refresh() {
+    this._emitEvent("orchestrator-scan-start", {
+      ownerId: this._ownerId,
+      scope: this._isGlobal() ? "document" : "descendants"
+    });
+    const candidates = this._collectCandidates();
+    const matched = this._matchCandidates(candidates);
+    for (const [link, record] of this._records.entries()) {
+      const expectedRule = this._findFirstMatchingRule(link);
+      if (!expectedRule || expectedRule.id !== record.ruleId) {
+        this._rollbackLink(link);
+      }
+    }
+    for (const item of matched) {
+      if (this._records.has(item.link)) {
+        continue;
+      }
+      this._enqueue(async () => this._processMatch(item.link, item.rule));
+    }
+    this._drainQueue();
+    this._emitEvent("orchestrator-scan-complete", {
+      ownerId: this._ownerId,
+      candidates: candidates.length,
+      matched: matched.length,
+      active: this._records.size
+    });
+  }
+  rollbackAll() {
+    const links = [...this._records.keys()];
+    for (const link of links) {
+      this._rollbackLink(link);
+    }
+  }
+  disconnectObserver() {
+    if (this._observer) {
+      this._observer.disconnect();
+      this._observer = null;
+    }
+    if (this._scanTimer !== null) {
+      window.clearTimeout(this._scanTimer);
+      this._scanTimer = null;
+    }
+  }
+  _startObserver() {
+    this.disconnectObserver();
+    const root = this._scopeRoot();
+    this._observer = new MutationObserver((mutations) => {
+      if (this._shouldIgnoreMutations(mutations)) {
+        return;
+      }
+      if (this._scanTimer !== null) {
+        window.clearTimeout(this._scanTimer);
+      }
+      this._scanTimer = window.setTimeout(() => {
+        void this.refresh();
+      }, this.debounceMs);
+    });
+    this._observer.observe(root, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ["href", "class", "src"]
+    });
+  }
+  async _resolveConfig() {
+    if (this._configOverride) {
+      return this._configOverride;
+    }
+    const inlineScript = this.querySelector('script[type="application/json"]');
+    if (inlineScript?.textContent?.trim()) {
+      return this._parseConfig(inlineScript.textContent);
+    }
+    if (this.configSrc) {
+      const response = await fetch(this.configSrc);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch config from ${this.configSrc}: ${response.status} ${response.statusText}`);
+      }
+      const content = await response.text();
+      return this._parseConfig(content);
+    }
+    return { rules: [] };
+  }
+  _parseConfig(raw) {
+    const parsed = JSON.parse(raw);
+    return {
+      debounceMs: parsed.debounceMs,
+      maxConcurrentPipelines: parsed.maxConcurrentPipelines,
+      allowRecursive: parsed.allowRecursive,
+      decorators: parsed.decorators,
+      rules: Array.isArray(parsed.rules) ? parsed.rules : []
+    };
+  }
+  _collectCandidates() {
+    const root = this._scopeRoot();
+    const links = Array.from(root.querySelectorAll("a[href]"));
+    return links.filter((link) => {
+      if (!this.allowRecursive && link.closest(`[${ORCHESTRATED_INSTANCE_ATTR}="true"]`)) {
+        return false;
+      }
+      if (this._isGlobal() && this._isOwnedByBodyOrchestrator(link)) {
+        return false;
+      }
+      const owner = link.getAttribute(ORCHESTRATOR_OWNER_ATTR);
+      if (owner && owner !== this._ownerId) {
+        return false;
+      }
+      return true;
+    });
+  }
+  _matchCandidates(candidates) {
+    const matches = [];
+    for (const link of candidates) {
+      const rule = this._findFirstMatchingRule(link);
+      if (rule) {
+        matches.push({ link, rule });
+      }
+    }
+    return matches;
+  }
+  _findFirstMatchingRule(link) {
+    for (const rule of this._resolvedConfig.rules) {
+      if (!rule || !rule.id || rule.enabled === false) {
+        continue;
+      }
+      if (this._matchesRule(link, rule)) {
+        return rule;
+      }
+    }
+    return null;
+  }
+  _shouldIgnoreMutations(mutations) {
+    if (mutations.length === 0) {
+      return true;
+    }
+    return mutations.every((mutation) => {
+      const targetNode = mutation.target;
+      const isInternalTarget = !!targetNode?.closest?.(`[${ORCHESTRATED_INSTANCE_ATTR}="true"]`);
+      const addedAllInternal = Array.from(mutation.addedNodes).every((node) => {
+        if (node.nodeType !== Node.ELEMENT_NODE) {
+          return true;
+        }
+        return !!node.closest?.(`[${ORCHESTRATED_INSTANCE_ATTR}="true"]`) || node.hasAttribute?.(ORCHESTRATED_INSTANCE_ATTR);
+      });
+      const removedAllInternal = Array.from(mutation.removedNodes).every((node) => {
+        if (node.nodeType !== Node.ELEMENT_NODE) {
+          return true;
+        }
+        const element = node;
+        return element.hasAttribute?.(ORCHESTRATED_INSTANCE_ATTR) || !!element.querySelector?.(`[${ORCHESTRATED_INSTANCE_ATTR}="true"]`);
+      });
+      return isInternalTarget && addedAllInternal && removedAllInternal;
+    });
+  }
+  _matchesRule(link, rule) {
+    const match2 = rule.match;
+    if (!match2 || match2.enabled === false) {
+      return false;
+    }
+    if (match2.css) {
+      try {
+        if (!link.matches(match2.css)) {
+          return false;
+        }
+      } catch {
+        return false;
+      }
+    }
+    if (match2.xpath && !this._matchesXPath(link, match2.xpath)) {
+      return false;
+    }
+    if (match2.parentCss) {
+      try {
+        if (!link.closest(match2.parentCss)) {
+          return false;
+        }
+      } catch {
+        return false;
+      }
+    }
+    if (match2.urlPattern && !this._globMatch(link.href, match2.urlPattern)) {
+      return false;
+    }
+    if (match2.urlRegex) {
+      let regex;
+      try {
+        regex = new RegExp(match2.urlRegex);
+      } catch {
+        return false;
+      }
+      if (!regex.test(link.href)) {
+        return false;
+      }
+    }
+    if (match2.hostEquals) {
+      const url = this._safeUrl(link.href);
+      if (!url || url.hostname !== match2.hostEquals) {
+        return false;
+      }
+    }
+    if (match2.pathStartsWith) {
+      const url = this._safeUrl(link.href);
+      if (!url || !url.pathname.startsWith(match2.pathStartsWith)) {
+        return false;
+      }
+    }
+    const contentType = rule.overrideContentType || this._detectContentType(link);
+    if (match2.contentType && contentType !== match2.contentType) {
+      return false;
+    }
+    return true;
+  }
+  _matchesXPath(link, xpath) {
+    try {
+      const root = this._scopeRoot();
+      const result = document.evaluate(
+        xpath,
+        root,
+        null,
+        XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+        null
+      );
+      for (let i6 = 0; i6 < result.snapshotLength; i6 += 1) {
+        const node = result.snapshotItem(i6);
+        if (node === link) {
+          return true;
+        }
+      }
+    } catch {
+      return false;
+    }
+    return false;
+  }
+  _safeUrl(value) {
+    try {
+      return new URL(value, document.baseURI);
+    } catch {
+      return null;
+    }
+  }
+  _globMatch(value, pattern) {
+    const escaped = pattern.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*");
+    const regex = new RegExp(`^${escaped}$`);
+    return regex.test(value);
+  }
+  _detectContentType(link) {
+    const hasMedia = !!link.querySelector("img, picture, video, svg, canvas");
+    return hasMedia ? "image" : "text";
+  }
+  _enqueue(task) {
+    this._queue.push(task);
+  }
+  _drainQueue() {
+    while (this._active < this.maxConcurrentPipelines && this._queue.length > 0) {
+      const task = this._queue.shift();
+      if (!task) {
+        break;
+      }
+      this._active += 1;
+      void task().finally(() => {
+        this._active -= 1;
+        this._drainQueue();
+      });
+    }
+  }
+  async _processMatch(link, rule) {
+    const decorators = this._resolveDecorators(rule);
+    const contentType = rule.overrideContentType || this._detectContentType(link);
+    this._emitEvent("orchestrator-link-loading", {
+      ownerId: this._ownerId,
+      href: link.href,
+      ruleId: rule.id,
+      contentType
+    });
+    const record = {
+      link,
+      ruleId: rule.id,
+      ownerId: this._ownerId,
+      pipelineHost: null,
+      displayElement: null,
+      adapterElement: null,
+      iconElement: null,
+      state: "loading"
+    };
+    this._records.set(link, record);
+    link.setAttribute(ORCHESTRATED_ATTR, "true");
+    link.setAttribute(ORCHESTRATOR_OWNER_ATTR, this._ownerId);
+    link.setAttribute(ORCHESTRATOR_STATE_ATTR, "loading");
+    if (decorators.enabled && contentType === "text") {
+      record.iconElement = this._setLifecycleIcon(link, decorators.icons?.loading ?? "\u23F3");
+    }
+    try {
+      const staged = await this._createStagedPipeline(link, rule);
+      this._commitPipeline(link, record, staged, decorators, contentType);
+      this._emitEvent("orchestrator-link-ready", {
+        ownerId: this._ownerId,
+        href: link.href,
+        ruleId: rule.id,
+        contentType
+      });
+    } catch (error) {
+      this._cleanupRecord(record);
+      link.removeAttribute(ORCHESTRATED_ATTR);
+      link.removeAttribute(ORCHESTRATOR_OWNER_ATTR);
+      link.removeAttribute(ORCHESTRATOR_STATE_ATTR);
+      this._emitEvent("orchestrator-link-error", {
+        ownerId: this._ownerId,
+        href: link.href,
+        ruleId: rule.id,
+        message: error instanceof Error ? error.message : String(error),
+        phase: "pipeline"
+      });
+      this._records.delete(link);
+    }
+  }
+  _resolveDecorators(rule) {
+    return {
+      ...this._resolvedConfig.decorators,
+      ...rule.decorators,
+      icons: {
+        ...this._resolvedConfig.decorators?.icons,
+        ...rule.decorators?.icons
+      }
+    };
+  }
+  _setLifecycleIcon(link, icon) {
+    const existing = link.querySelector(":scope > .orchestrator-icon");
+    if (existing) {
+      existing.textContent = icon;
+      return existing;
+    }
+    const iconElement = document.createElement("span");
+    iconElement.className = "orchestrator-icon";
+    iconElement.setAttribute("aria-hidden", "true");
+    iconElement.textContent = icon;
+    link.prepend(iconElement);
+    return iconElement;
+  }
+  async _createStagedPipeline(link, rule) {
+    const adapter = document.createElement("rdf-adapter");
+    adapter.setAttribute("url", link.href);
+    this._applyAdapterConfig(adapter, rule.adapter);
+    const lens = document.createElement("rdf-lens");
+    this._applyLensConfig(lens, rule.lens);
+    lens.appendChild(adapter);
+    const display = document.createElement("lens-display");
+    const inlineTemplateBlobUrl = this._applyDisplayConfig(display, rule.display);
+    display.appendChild(lens);
+    await this._awaitPipeline(display);
+    return {
+      display,
+      lens,
+      adapter,
+      inlineTemplateBlobUrl
+    };
+  }
+  _applyAdapterConfig(adapter, config) {
+    if (!config) {
+      return;
+    }
+    if (config.format) adapter.setAttribute("format", config.format);
+    if (config.strategy) adapter.setAttribute("strategy", config.strategy);
+    if (config.subject) adapter.setAttribute("subject", config.subject);
+    if (config.subjectQuery) adapter.setAttribute("subject-query", config.subjectQuery);
+    if (config.subjectClass) adapter.setAttribute("subject-class", config.subjectClass);
+    if (typeof config.depth === "number") adapter.setAttribute("depth", String(config.depth));
+    if (config.graph) adapter.setAttribute("graph", config.graph);
+    if (config.cache) adapter.setAttribute("cache", config.cache);
+    if (typeof config.cacheTtl === "number") adapter.setAttribute("cache-ttl", String(config.cacheTtl));
+    if (config.shared) adapter.setAttribute("shared", "");
+    if (config.headers) adapter.setAttribute("headers", JSON.stringify(config.headers));
+  }
+  _applyLensConfig(lens, config) {
+    if (!config) {
+      return;
+    }
+    if (config.shapeFile) lens.setAttribute("shape-file", config.shapeFile);
+    if (config.shapeClass) lens.setAttribute("shape-class", config.shapeClass);
+    if (config.shapes) lens.shapes = config.shapes;
+    if (config.validate) lens.setAttribute("validate", "");
+    if (config.strict) lens.setAttribute("strict", "");
+    if (config.multiple) lens.setAttribute("multiple", "");
+    if (config.subject) lens.setAttribute("subject", config.subject);
+  }
+  _applyDisplayConfig(display, config) {
+    if (!config) {
+      return void 0;
+    }
+    if (config.mode) display.setAttribute("mode", config.mode);
+    if (config.theme) display.setAttribute("theme", config.theme);
+    if (config.class) display.setAttribute("class", config.class);
+    if (config.templateInline && !config.template) {
+      const blob = new Blob([config.templateInline], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      display.setAttribute("template", url);
+      return url;
+    }
+    if (config.template) {
+      display.setAttribute("template", config.template);
+    }
+    return void 0;
+  }
+  _awaitPipeline(display) {
+    return new Promise((resolve, reject) => {
+      const stage = document.createElement("div");
+      stage.style.display = "none";
+      stage.appendChild(display);
+      document.body.appendChild(stage);
+      const done = () => {
+        display.removeEventListener("render-complete", onReady);
+        display.removeEventListener("render-error", onError);
+        display.removeEventListener("shape-error", onError);
+        display.removeEventListener("triplestore-error", onError);
+        stage.remove();
+      };
+      const onReady = () => {
+        done();
+        resolve();
+      };
+      const onError = (event) => {
+        done();
+        const detail = event.detail;
+        reject(new Error(detail?.message || "Pipeline failed"));
+      };
+      display.addEventListener("render-complete", onReady, { once: true });
+      display.addEventListener("render-error", onError, { once: true });
+      display.addEventListener("shape-error", onError, { once: true });
+      display.addEventListener("triplestore-error", onError, { once: true });
+    });
+  }
+  _commitPipeline(link, record, staged, decorators, contentType) {
+    const parent = link.parentNode;
+    if (!parent) {
+      throw new Error("Target link has no parent node");
+    }
+    const host = document.createElement("span");
+    host.className = "orchestrated-link-host";
+    host.setAttribute(ORCHESTRATED_INSTANCE_ATTR, "true");
+    host.setAttribute(ORCHESTRATOR_OWNER_ATTR, this._ownerId);
+    if (decorators.enabled && contentType === "text") {
+      const icon = document.createElement("span");
+      icon.className = "orchestrator-icon";
+      icon.setAttribute("aria-hidden", "true");
+      icon.textContent = decorators.icons?.ready ?? "\u2705";
+      host.appendChild(icon);
+      record.iconElement?.remove();
+      record.iconElement = icon;
+    } else if (record.iconElement) {
+      record.iconElement.remove();
+      record.iconElement = null;
+    }
+    const adapterElement = staged.adapter;
+    link.hidden = true;
+    link.setAttribute("aria-hidden", "true");
+    adapterElement.appendChild(link);
+    host.appendChild(staged.display);
+    parent.appendChild(host);
+    record.pipelineHost = host;
+    record.displayElement = staged.display;
+    record.adapterElement = adapterElement;
+    record.inlineTemplateBlobUrl = staged.inlineTemplateBlobUrl;
+    record.state = "ready";
+    link.setAttribute(ORCHESTRATOR_STATE_ATTR, "ready");
+  }
+  _rollbackLink(link) {
+    const record = this._records.get(link);
+    if (!record) {
+      return;
+    }
+    if (record.pipelineHost && record.pipelineHost.parentNode) {
+      const originalParent = record.pipelineHost.parentNode;
+      link.hidden = false;
+      link.removeAttribute("aria-hidden");
+      originalParent.insertBefore(link, record.pipelineHost);
+      record.pipelineHost.remove();
+    }
+    link.removeAttribute(ORCHESTRATED_ATTR);
+    link.removeAttribute(ORCHESTRATOR_OWNER_ATTR);
+    link.setAttribute(ORCHESTRATOR_STATE_ATTR, "rolled-back");
+    this._cleanupRecord(record);
+    this._records.delete(link);
+    this._emitEvent("orchestrator-link-rollback", {
+      ownerId: this._ownerId,
+      href: link.href,
+      ruleId: record.ruleId
+    });
+  }
+  _cleanupRecord(record) {
+    if (record.iconElement) {
+      record.iconElement.remove();
+      record.iconElement = null;
+    }
+    if (record.inlineTemplateBlobUrl) {
+      URL.revokeObjectURL(record.inlineTemplateBlobUrl);
+      record.inlineTemplateBlobUrl = void 0;
+    }
+    if (record.pipelineHost) {
+      record.pipelineHost.remove();
+      record.pipelineHost = null;
+    }
+  }
+  _scopeRoot() {
+    if (this._isGlobal()) {
+      return document;
+    }
+    return this;
+  }
+  _isGlobal() {
+    return this.parentElement?.tagName === "HEAD";
+  }
+  _isOwnedByBodyOrchestrator(link) {
+    const orchestrators = Array.from(document.querySelectorAll("body link-orchestration"));
+    for (const orchestrator of orchestrators) {
+      if (orchestrator !== this && orchestrator.contains(link)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  _emitEvent(eventName, detail) {
+    this.dispatchEvent(new CustomEvent(eventName, {
+      detail,
+      bubbles: true,
+      composed: true
+    }));
+  }
+};
+LinkOrchestration.styles = i`
+    :host {
+      display: contents;
+    }
+
+    .orchestrator-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0.35rem;
+      font-size: 0.875em;
+      line-height: 1;
+    }
+
+    .orchestrated-link-host {
+      display: contents;
+    }
+  `;
+LinkOrchestration = __decorateClass([
+  t3("link-orchestration")
+], LinkOrchestration);
+
 // src/rdf-webcomponents/core/cache/index.ts
 var LRUCache = class {
   constructor(options = {}) {
@@ -29312,7 +29952,8 @@ if (typeof window !== "undefined") {
   console.log("[RDF WebComponents] Components registered:", {
     "rdf-adapter": customElements.get("rdf-adapter") ? "\u2713" : "\u2717",
     "rdf-lens": customElements.get("rdf-lens") ? "\u2713" : "\u2717",
-    "lens-display": customElements.get("lens-display") ? "\u2713" : "\u2717"
+    "lens-display": customElements.get("lens-display") ? "\u2713" : "\u2717",
+    "link-orchestration": customElements.get("link-orchestration") ? "\u2713" : "\u2717"
   });
 }
 export {
@@ -29320,6 +29961,7 @@ export {
   IndexedDBCache,
   LRUCache,
   LensDisplay,
+  LinkOrchestration,
   LocalStorageCache,
   MessageType,
   RdfAdapter,

@@ -7,6 +7,7 @@
  * - `<rdf-adapter>` - Fetches and parses RDF data from various sources
  * - `<rdf-lens>` - Extracts structured data using SHACL shapes
  * - `<lens-display>` - Renders data using HTML templates
+ * - `<link-orchestration>` - Scans links and mounts RDF pipeline by rule
  * 
  * @example Basic Usage
  * ```html
@@ -48,6 +49,7 @@
 export { RdfAdapter } from './components/rdf-adapter';
 export { RdfLens } from './components/rdf-lens';
 export { LensDisplay } from './components/lens-display';
+export { LinkOrchestration } from './components/link-orchestration';
 
 // ============================================================================
 // Type Exports
@@ -91,5 +93,6 @@ if (typeof window !== 'undefined') {
     'rdf-adapter': customElements.get('rdf-adapter') ? '✓' : '✗',
     'rdf-lens': customElements.get('rdf-lens') ? '✓' : '✗',
     'lens-display': customElements.get('lens-display') ? '✓' : '✗',
+    'link-orchestration': customElements.get('link-orchestration') ? '✓' : '✗',
   });
 }

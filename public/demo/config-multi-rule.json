@@ -1,0 +1,61 @@
+{
+  "debounceMs": 150,
+  "maxConcurrentPipelines": 4,
+  "decorators": {
+    "enabled": true,
+    "icons": { "loading": "⏳", "ready": "✅", "error": "⚠" }
+  },
+  "rules": [
+    {
+      "id": "path-prefix-books",
+      "match": {
+        "pathStartsWith": "/demo/books",
+        "contentType": "text"
+      },
+      "adapter": { "strategy": "file", "cache": "none" },
+      "lens": {
+        "shapeFile": "/demo/book-shapes.ttl",
+        "shapeClass": "http://example.org/Book",
+        "multiple": true
+      },
+      "display": {
+        "template": "/demo/book-card.html",
+        "mode": "grid"
+      }
+    },
+    {
+      "id": "path-prefix-people",
+      "match": {
+        "pathStartsWith": "/demo/people",
+        "contentType": "text"
+      },
+      "adapter": { "strategy": "file", "cache": "none" },
+      "lens": {
+        "shapeFile": "/demo/shapes.ttl",
+        "shapeClass": "http://example.org/Person",
+        "multiple": true
+      },
+      "display": {
+        "template": "/demo/person-card.html",
+        "mode": "grid"
+      }
+    },
+    {
+      "id": "path-prefix-orgs",
+      "match": {
+        "pathStartsWith": "/demo/organisations",
+        "contentType": "text"
+      },
+      "adapter": { "strategy": "file", "cache": "none" },
+      "lens": {
+        "shapeFile": "/demo/org-shapes.ttl",
+        "shapeClass": "http://example.org/Organisation",
+        "multiple": true
+      },
+      "display": {
+        "template": "/demo/org-card.html",
+        "mode": "grid"
+      }
+    }
+  ]
+}

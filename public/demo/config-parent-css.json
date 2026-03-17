@@ -1,0 +1,27 @@
+{
+  "debounceMs": 150,
+  "maxConcurrentPipelines": 4,
+  "decorators": {
+    "enabled": true,
+    "icons": { "loading": "⏳", "ready": "🏢", "error": "⚠" }
+  },
+  "rules": [
+    {
+      "id": "parent-css-orgs",
+      "match": {
+        "parentCss": ".rdf-org-links",
+        "contentType": "text"
+      },
+      "adapter": { "strategy": "file", "cache": "none" },
+      "lens": {
+        "shapeFile": "/demo/org-shapes.ttl",
+        "shapeClass": "http://example.org/Organisation",
+        "multiple": true
+      },
+      "display": {
+        "template": "/demo/org-card.html",
+        "mode": "grid"
+      }
+    }
+  ]
+}

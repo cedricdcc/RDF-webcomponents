@@ -23,12 +23,20 @@ type LensDisplayProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLEleme
   mode?: string;
 };
 
+type LinkOrchestrationProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
+  "config-src"?: string;
+  "debounce-ms"?: number;
+  "max-concurrent-pipelines"?: number;
+  "allow-recursive"?: boolean;
+};
+
 declare global {
   namespace JSX {
     interface IntrinsicElements {
       "rdf-adapter": RdfAdapterProps;
       "rdf-lens": RdfLensProps;
       "lens-display": LensDisplayProps;
+      "link-orchestration": LinkOrchestrationProps;
     }
   }
 }
@@ -39,6 +47,7 @@ declare module "react" {
       "rdf-adapter": RdfAdapterProps;
       "rdf-lens": RdfLensProps;
       "lens-display": LensDisplayProps;
+      "link-orchestration": LinkOrchestrationProps;
     }
   }
 }

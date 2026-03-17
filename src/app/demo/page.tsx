@@ -305,6 +305,7 @@ export default function DemoPage() {
             <Link className="underline" href="/adapter">rdf-adapter docs</Link>
             <Link className="underline" href="/lens">rdf-lens docs</Link>
             <Link className="underline" href="/display">lens-display docs</Link>
+            <Link className="underline" href="/orchestration">link-orchestration docs</Link>
           </div>
         </header>
 

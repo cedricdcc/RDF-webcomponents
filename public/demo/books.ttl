@@ -1,0 +1,24 @@
+@prefix ex: <http://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:BookA a ex:Book ;
+  ex:title "Semantic Web for the Working Ontologist" ;
+  ex:author "Dean Allemang" ;
+  ex:year 2011 ;
+  ex:isbn "978-0123859655" ;
+  ex:genre "Computer Science" .
+
+ex:BookB a ex:Book ;
+  ex:title "Linked Data: Evolving the Web into a Global Data Space" ;
+  ex:author "Tom Heath" ;
+  ex:year 2011 ;
+  ex:isbn "978-1608454310" ;
+  ex:genre "Computer Science" .
+
+ex:BookC a ex:Book ;
+  ex:title "Learning SPARQL" ;
+  ex:author "Bob DuCharme" ;
+  ex:year 2013 ;
+  ex:isbn "978-1449371432" ;
+  ex:genre "Computer Science" .

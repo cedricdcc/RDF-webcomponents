@@ -1,0 +1,27 @@
+@prefix ex: <http://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:OrgW3C a ex:Organisation ;
+  ex:name "World Wide Web Consortium" ;
+  ex:shortName "W3C" ;
+  ex:founded 1994 ;
+  ex:url "https://www.w3.org" ;
+  ex:city "Cambridge" ;
+  ex:focus "Web Standards" .
+
+ex:OrgOGC a ex:Organisation ;
+  ex:name "Open Geospatial Consortium" ;
+  ex:shortName "OGC" ;
+  ex:founded 1994 ;
+  ex:url "https://www.ogc.org" ;
+  ex:city "Wayland" ;
+  ex:focus "Spatial Standards" .
+
+ex:OrgISO a ex:Organisation ;
+  ex:name "International Organization for Standardization" ;
+  ex:shortName "ISO" ;
+  ex:founded 1947 ;
+  ex:url "https://www.iso.org" ;
+  ex:city "Geneva" ;
+  ex:focus "International Standards" .
