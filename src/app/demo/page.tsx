@@ -187,7 +187,7 @@ export default function DemoPage() {
     }
 
     return `@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .\n\n[] a srdf:SourceRdfConfig ;\n  ${triples.join(
-      ' ;\\n  '
+      ' ;\n  '
     )} .`;
   };
 
