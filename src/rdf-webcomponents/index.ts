@@ -18,7 +18,10 @@
  * </head>
  * <body>
  *   <lens-display template="person-card.html">
- *     <rdf-lens shape-file="shapes.ttl" shape-class="Person">
+ *     <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+ * [] a lrdf:RdfLensConfig ;
+ *   lrdf:shapeFile "shapes.ttl" ;
+ *   lrdf:shapeClass "Person" .'>
  *       <source-rdf url="data.ttl"></source-rdf>
  *     </rdf-lens>
  *   </lens-display>
@@ -29,7 +32,11 @@
  * @example SPARQL Endpoint
  * ```html
  * <lens-display template="card.html">
- *   <rdf-lens shape-file="shapes.ttl" shape-class="Person" multiple>
+ *   <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+ * [] a lrdf:RdfLensConfig ;
+ *   lrdf:shapeFile "shapes.ttl" ;
+ *   lrdf:shapeClass "Person" ;
+ *   lrdf:multiple true .'>
  *     <source-rdf 
  *       url="https://dbpedia.org/sparql"
  *       config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .

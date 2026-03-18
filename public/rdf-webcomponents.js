@@ -27417,13 +27417,85 @@ SourceRdf = __decorateClass([
   t3("source-rdf")
 ], SourceRdf);
 
+// src/rdf-webcomponents/components/rdf-lens-config.ts
+var RDF_LENS_NS = "https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#";
+var RDF_TYPE2 = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+var RDF_LENS_CONFIG_TYPE = `${RDF_LENS_NS}RdfLensConfig`;
+var CONFIG_KEYS2 = /* @__PURE__ */ new Set([
+  "shapeFile",
+  "shapeClass",
+  "shapes",
+  "strict",
+  "multiple",
+  "subject"
+]);
+function parseBoolean2(value) {
+  return value === "true" || value === "1";
+}
+async function parseRdfLensConfigRdf(content, format, source) {
+  const parsedFormat = format ?? detectFormat(source, content);
+  const parsed = await parseRdf(content, parsedFormat, source);
+  if (parsed.errors.length > 0) {
+    throw new Error(`Config parse failed: ${parsed.errors[0].message}`);
+  }
+  const warnings = [];
+  const providedKeys = /* @__PURE__ */ new Set();
+  const config = {};
+  const configSubjects = new Set(
+    parsed.quads.filter((quad3) => quad3.predicate.value === RDF_TYPE2 && quad3.object.value === RDF_LENS_CONFIG_TYPE).map((quad3) => quad3.subject.value)
+  );
+  for (const quad3 of parsed.quads) {
+    if (configSubjects.size > 0 && !configSubjects.has(quad3.subject.value)) {
+      continue;
+    }
+    const predicate2 = quad3.predicate.value;
+    if (!predicate2.startsWith(RDF_LENS_NS)) {
+      continue;
+    }
+    const localName = predicate2.slice(RDF_LENS_NS.length);
+    if (!CONFIG_KEYS2.has(localName)) {
+      warnings.push(`Unknown rdf-lens property '${localName}' in config RDF`);
+      continue;
+    }
+    providedKeys.add(localName);
+    const value = quad3.object.value;
+    switch (localName) {
+      case "shapeFile":
+        config.shapeFile = value;
+        break;
+      case "shapeClass":
+        config.shapeClass = value;
+        break;
+      case "shapes":
+        config.shapes = value;
+        break;
+      case "strict":
+        config.strict = parseBoolean2(value);
+        break;
+      case "multiple":
+        config.multiple = parseBoolean2(value);
+        break;
+      case "subject":
+        config.subject = value;
+        break;
+      default:
+        break;
+    }
+  }
+  return { config, warnings, providedKeys };
+}
+function validateRdfLensConfig(config) {
+  if (!config.shapeFile?.trim() && !config.shapes?.trim()) {
+    throw new Error("rdf-lens config requires either shapeFile or shapes.");
+  }
+  return [];
+}
+
 // src/rdf-webcomponents/components/rdf-lens.ts
 var RdfLens = class extends i4 {
   constructor() {
     super(...arguments);
-    this.validate = false;
-    this.strict = false;
-    this.multiple = false;
+    this.config = "";
     // ===========================================================================
     // Internal State
     // ===========================================================================
@@ -27433,6 +27505,7 @@ var RdfLens = class extends i4 {
     this._loading = false;
     this._error = null;
     this._shapesLoaded = false;
+    this._resolvedConfig = {};
     this._onTriplestoreReady = (event) => {
       const source = event.composedPath?.()[0] ?? event.target;
       console.log(
@@ -27483,13 +27556,7 @@ var RdfLens = class extends i4 {
   // ===========================================================================
   async firstUpdated(changedProperties) {
     super.firstUpdated(changedProperties);
-    if (this.shapeFile) {
-      await this._loadShapes();
-    } else if (this.shapes) {
-      await this._parseInlineShapes();
-    } else {
-      await this._parseInlineScriptShapes();
-    }
+    await this._refreshConfiguration();
   }
   connectedCallback() {
     super.connectedCallback();
@@ -27497,19 +27564,8 @@ var RdfLens = class extends i4 {
   }
   updated(changedProperties) {
     super.updated(changedProperties);
-    if (changedProperties.has("shapeFile") && this.shapeFile) {
-      this._loadShapes();
-    }
-    if (changedProperties.has("shapes") && this.shapes) {
-      this._parseInlineShapes();
-    }
-    if (!this.shapeFile && !this.shapes && !this._shapesLoaded) {
-      this._parseInlineScriptShapes();
-    }
-    if (changedProperties.has("shapeClass") || changedProperties.has("multiple") || changedProperties.has("subject")) {
-      if (this._quads.length > 0 && this._shapesLoaded) {
-        this._extractData();
-      }
+    if (changedProperties.has("config")) {
+      void this._refreshConfiguration();
     }
   }
   disconnectedCallback() {
@@ -27544,18 +27600,17 @@ var RdfLens = class extends i4 {
   // ===========================================================================
   // Private Methods
   // ===========================================================================
-  async _loadShapes() {
-    if (!this.shapeFile) return;
+  async _loadShapes(shapeFile) {
     this._loading = true;
     this._error = null;
     this._emitEvent("shape-loading", { phase: "fetch" });
     try {
-      const response = await fetch(this.shapeFile);
+      const response = await fetch(shapeFile);
       if (!response.ok) {
         throw new Error(`Failed to fetch shapes: ${response.status} ${response.statusText}`);
       }
       const content = await response.text();
-      await this._parseShapesContent(content, this.shapeFile);
+      await this._parseShapesContent(content, shapeFile);
     } catch (error) {
       this._loading = false;
       this._error = error instanceof Error ? error.message : String(error);
@@ -27568,11 +27623,10 @@ var RdfLens = class extends i4 {
       this.requestUpdate();
     }
   }
-  async _parseInlineShapes() {
-    if (!this.shapes) return;
+  async _parseInlineShapes(shapes) {
     this._loading = true;
     try {
-      await this._parseShapesContent(this.shapes, "inline");
+      await this._parseShapesContent(shapes, "inline");
     } catch (error) {
       this._loading = false;
       this._error = error instanceof Error ? error.message : String(error);
@@ -27584,25 +27638,56 @@ var RdfLens = class extends i4 {
       this.requestUpdate();
     }
   }
-  async _parseInlineScriptShapes() {
-    const script = this.querySelector('script[type="text/turtle"]');
-    const content = script?.textContent?.trim();
-    if (!content) {
-      return;
-    }
-    this._loading = true;
+  async _refreshConfiguration() {
     try {
-      await this._parseShapesContent(content, "inline-script");
+      const resolvedConfig = await this._resolveConfig();
+      const warnings = [...resolvedConfig.warnings, ...validateRdfLensConfig(resolvedConfig.config)];
+      for (const warning of warnings) {
+        console.warn(`[rdf-lens] ${warning}`);
+      }
+      this._resolvedConfig = resolvedConfig.config;
+      this._shapeQuads = [];
+      this._shapesLoaded = false;
+      if (this._resolvedConfig.shapeFile) {
+        await this._loadShapes(this._resolvedConfig.shapeFile);
+      } else if (this._resolvedConfig.shapes) {
+        await this._parseInlineShapes(this._resolvedConfig.shapes);
+      }
     } catch (error) {
       this._loading = false;
       this._error = error instanceof Error ? error.message : String(error);
       this._emitEvent("shape-error", {
         message: this._error,
-        phase: "shape",
+        phase: "config",
         error: error instanceof Error ? error : void 0
       });
       this.requestUpdate();
     }
+  }
+  async _resolveConfig() {
+    if (this.config && this.config.trim()) {
+      return parseRdfLensConfigRdf(this.config, void 0, "inline-config-attribute");
+    }
+    const inline = this._readInlineConfigScript();
+    if (inline) {
+      return parseRdfLensConfigRdf(inline.content, inline.format, "inline-config-script");
+    }
+    throw new Error("rdf-lens requires a config RDF payload.");
+  }
+  _readInlineConfigScript() {
+    const script = this.querySelector('script[data-rdf-lens-config="true"][type]');
+    if (!script || !script.textContent?.trim()) {
+      return null;
+    }
+    const type = script.getAttribute("type")?.toLowerCase() ?? "";
+    const content = script.textContent;
+    if (type.includes("ld+json")) return { content, format: "json-ld" };
+    if (type.includes("rdf+xml")) return { content, format: "rdf-xml" };
+    if (type.includes("n-triples")) return { content, format: "n-triples" };
+    if (type.includes("n-quads")) return { content, format: "n-quads" };
+    if (type.includes("turtle") || type.includes("ttl")) return { content, format: "turtle" };
+    if (type.includes("html")) return { content, format: "rdfa" };
+    return { content };
   }
   async _parseShapesContent(content, baseUrl) {
     const { Parser, DataFactory: DataFactory5 } = await Promise.resolve().then(() => (init_src(), src_exports));
@@ -27706,10 +27791,10 @@ var RdfLens = class extends i4 {
     console.log("[rdf-lens] extractShapes result \u2014 available lenses:", Object.keys(shapes.lenses));
     console.log("[rdf-lens] dataQuads count:", dataQuads.length, "| shapeQuads count:", shapeQuads.length);
     let subjects2 = [];
-    const targetType = this.shapeClass;
+    const targetType = this._resolvedConfig.shapeClass;
     console.log("[rdf-lens] target shapeClass:", targetType);
-    if (this.subject) {
-      subjects2 = [this.subject];
+    if (this._resolvedConfig.subject) {
+      subjects2 = [this._resolvedConfig.subject];
     } else if (targetType) {
       const typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
       subjects2 = dataQuads.filter((q) => q.predicate.value === typePredicate && q.object.value === targetType).map((q) => q.subject.value);
@@ -27733,8 +27818,8 @@ var RdfLens = class extends i4 {
       throw new Error(`No lens found for class: ${lensKey}. Available: ${availableKeys.join(", ")}`);
     }
     const results = [];
-    const subjectsToProcess = this.multiple ? subjects2 : subjects2.slice(0, 1);
-    console.log(`[rdf-lens] executing lens for ${subjectsToProcess.length} subject(s) (multiple=${this.multiple})`);
+    const subjectsToProcess = this._resolvedConfig.multiple ? subjects2 : subjects2.slice(0, 1);
+    console.log(`[rdf-lens] executing lens for ${subjectsToProcess.length} subject(s) (multiple=${this._resolvedConfig.multiple})`);
     for (const subjectUri of subjectsToProcess) {
       try {
         const result = lens.execute({
@@ -27744,7 +27829,7 @@ var RdfLens = class extends i4 {
         console.log(`[rdf-lens] extracted subject ${subjectUri}:`, result);
         results.push(result);
       } catch (error) {
-        if (this.strict) {
+        if (this._resolvedConfig.strict) {
           throw error;
         }
         console.warn(`[rdf-lens] failed to extract ${subjectUri}:`, error);
@@ -27752,7 +27837,7 @@ var RdfLens = class extends i4 {
     }
     console.log(`[rdf-lens] extraction complete: ${results.length} results, emitting shape-processed`);
     return {
-      data: this.multiple ? results : results[0],
+      data: this._resolvedConfig.multiple ? results : results[0],
       count: results.length,
       shapeClass: lensKey
     };
@@ -27816,26 +27901,8 @@ RdfLens.styles = i`
     }
   `;
 __decorateClass([
-  n4({ type: String, attribute: "shape-file" })
-], RdfLens.prototype, "shapeFile", 2);
-__decorateClass([
-  n4({ type: String, attribute: "shape-class" })
-], RdfLens.prototype, "shapeClass", 2);
-__decorateClass([
-  n4({ type: String })
-], RdfLens.prototype, "shapes", 2);
-__decorateClass([
-  n4({ type: Boolean, reflect: true })
-], RdfLens.prototype, "validate", 2);
-__decorateClass([
-  n4({ type: Boolean, reflect: true })
-], RdfLens.prototype, "strict", 2);
-__decorateClass([
-  n4({ type: Boolean, reflect: true })
-], RdfLens.prototype, "multiple", 2);
-__decorateClass([
   n4({ type: String, reflect: true })
-], RdfLens.prototype, "subject", 2);
+], RdfLens.prototype, "config", 2);
 RdfLens = __decorateClass([
   t3("rdf-lens")
 ], RdfLens);
@@ -28964,13 +29031,28 @@ var LinkOrchestration = class extends i4 {
     if (!config) {
       return;
     }
-    if (config.shapeFile) lens.setAttribute("shape-file", config.shapeFile);
-    if (config.shapeClass) lens.setAttribute("shape-class", config.shapeClass);
-    if (config.shapes) lens.shapes = config.shapes;
-    if (config.validate) lens.setAttribute("validate", "");
-    if (config.strict) lens.setAttribute("strict", "");
-    if (config.multiple) lens.setAttribute("multiple", "");
-    if (config.subject) lens.setAttribute("subject", config.subject);
+    const rdfConfig = this._buildLensConfigRdf(config);
+    if (rdfConfig) {
+      lens.setAttribute("config", rdfConfig);
+    }
+  }
+  _buildLensConfigRdf(config) {
+    const triples = [];
+    if (config.shapeFile) triples.push(`lrdf:shapeFile ${this._iriOrString(config.shapeFile)}`);
+    if (config.shapeClass) triples.push(`lrdf:shapeClass ${this._iriOrString(config.shapeClass)}`);
+    if (config.shapes) triples.push(`lrdf:shapes ${this._ttlString(config.shapes)}`);
+    if (typeof config.strict === "boolean") triples.push(`lrdf:strict ${config.strict}`);
+    if (typeof config.multiple === "boolean") triples.push(`lrdf:multiple ${config.multiple}`);
+    if (config.subject) triples.push(`lrdf:subject ${this._iriOrString(config.subject)}`);
+    if (triples.length === 0) {
+      return "";
+    }
+    return [
+      "@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .",
+      "",
+      `[] a lrdf:RdfLensConfig ;
+  ${triples.join(" ;\n  ")} .`
+    ].join("\n");
   }
   _applyDisplayConfig(display, config) {
     if (!config) {

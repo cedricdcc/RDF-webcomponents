@@ -2304,20 +2304,20 @@ var init_N3Lexer = __esm({
 });
 
 // node_modules/n3/src/N3DataFactory.js
-function termFromId(id, factory, nested) {
-  factory = factory || DataFactory;
+function termFromId(id, factory2, nested) {
+  factory2 = factory2 || DataFactory;
   if (!id)
-    return factory.defaultGraph();
+    return factory2.defaultGraph();
   switch (id[0]) {
     case "?":
-      return factory.variable(id.substr(1));
+      return factory2.variable(id.substr(1));
     case "_":
-      return factory.blankNode(id.substr(2));
+      return factory2.blankNode(id.substr(2));
     case '"':
-      if (factory === DataFactory)
+      if (factory2 === DataFactory)
         return new Literal(id);
       if (id[id.length - 1] === '"')
-        return factory.literal(id.substr(1, id.length - 2));
+        return factory2.literal(id.substr(1, id.length - 2));
       const endPos = id.lastIndexOf('"', id.length - 1);
       let languageOrDatatype;
       if (id[endPos + 1] === "@") {
@@ -2330,9 +2330,9 @@ function termFromId(id, factory, nested) {
           };
         }
       } else {
-        languageOrDatatype = factory.namedNode(id.substr(endPos + 3));
+        languageOrDatatype = factory2.namedNode(id.substr(endPos + 3));
       }
-      return factory.literal(
+      return factory2.literal(
         id.substr(1, endPos - 1),
         languageOrDatatype
       );
@@ -2341,14 +2341,14 @@ function termFromId(id, factory, nested) {
       break;
     default:
       if (!nested || !Array.isArray(id)) {
-        return factory.namedNode(id);
+        return factory2.namedNode(id);
       }
   }
-  return factory.quad(
-    termFromId(id[0], factory, true),
-    termFromId(id[1], factory, true),
-    termFromId(id[2], factory, true),
-    id[3] && termFromId(id[3], factory, true)
+  return factory2.quad(
+    termFromId(id[0], factory2, true),
+    termFromId(id[1], factory2, true),
+    termFromId(id[2], factory2, true),
+    id[3] && termFromId(id[3], factory2, true)
   );
 }
 function termToId(term, nested) {
@@ -2637,22 +2637,22 @@ var init_N3DataFactory = __esm({
 // node_modules/n3/src/N3Parser.js
 function noop() {
 }
-function initDataFactory(parser, factory) {
-  parser._factory = factory;
-  parser.DEFAULTGRAPH = factory.defaultGraph();
-  parser.RDF_FIRST = factory.namedNode(IRIs_default.rdf.first);
-  parser.RDF_REST = factory.namedNode(IRIs_default.rdf.rest);
-  parser.RDF_NIL = factory.namedNode(IRIs_default.rdf.nil);
-  parser.RDF_REIFIES = factory.namedNode(IRIs_default.rdf.reifies);
-  parser.N3_FORALL = factory.namedNode(IRIs_default.r.forAll);
-  parser.N3_FORSOME = factory.namedNode(IRIs_default.r.forSome);
+function initDataFactory(parser, factory2) {
+  parser._factory = factory2;
+  parser.DEFAULTGRAPH = factory2.defaultGraph();
+  parser.RDF_FIRST = factory2.namedNode(IRIs_default.rdf.first);
+  parser.RDF_REST = factory2.namedNode(IRIs_default.rdf.rest);
+  parser.RDF_NIL = factory2.namedNode(IRIs_default.rdf.nil);
+  parser.RDF_REIFIES = factory2.namedNode(IRIs_default.rdf.reifies);
+  parser.N3_FORALL = factory2.namedNode(IRIs_default.r.forAll);
+  parser.N3_FORSOME = factory2.namedNode(IRIs_default.r.forSome);
   parser.ABBREVIATIONS = {
-    "a": factory.namedNode(IRIs_default.rdf.type),
-    "=": factory.namedNode(IRIs_default.owl.sameAs),
-    ">": factory.namedNode(IRIs_default.log.implies),
-    "<": factory.namedNode(IRIs_default.log.isImpliedBy)
+    "a": factory2.namedNode(IRIs_default.rdf.type),
+    "=": factory2.namedNode(IRIs_default.owl.sameAs),
+    ">": factory2.namedNode(IRIs_default.log.implies),
+    "<": factory2.namedNode(IRIs_default.log.isImpliedBy)
   };
-  parser.QUANTIFIERS_GRAPH = factory.namedNode("urn:n3:quantifiers");
+  parser.QUANTIFIERS_GRAPH = factory2.namedNode("urn:n3:quantifiers");
 }
 var blankNodePrefix, N3Parser;
 var init_N3Parser = __esm({
@@ -3765,19 +3765,19 @@ function isDefaultGraph(term) {
 function inDefaultGraph(quad3) {
   return isDefaultGraph(quad3.graph);
 }
-function prefix(iri, factory) {
-  return prefixes({ "": iri.value || iri }, factory)("");
+function prefix(iri, factory2) {
+  return prefixes({ "": iri.value || iri }, factory2)("");
 }
-function prefixes(defaultPrefixes, factory) {
+function prefixes(defaultPrefixes, factory2) {
   const prefixes2 = /* @__PURE__ */ Object.create(null);
   for (const prefix2 in defaultPrefixes)
     processPrefix(prefix2, defaultPrefixes[prefix2]);
-  factory = factory || N3DataFactory_default;
+  factory2 = factory2 || N3DataFactory_default;
   function processPrefix(prefix2, iri) {
     if (typeof iri === "string") {
       const cache = /* @__PURE__ */ Object.create(null);
       prefixes2[prefix2] = (local) => {
-        return cache[local] || (cache[local] = factory.namedNode(iri + local));
+        return cache[local] || (cache[local] = factory2.namedNode(iri + local));
       };
     } else if (!(prefix2 in prefixes2)) {
       throw new Error(`Unknown prefix: ${prefix2}`);
@@ -11868,6 +11868,12545 @@ var init_src = __esm({
   }
 });
 
+// node_modules/relative-to-absolute-iri/lib/Resolve.js
+var require_Resolve = __commonJS({
+  "node_modules/relative-to-absolute-iri/lib/Resolve.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.removeDotSegmentsOfPath = exports.removeDotSegments = exports.resolve = void 0;
+    function resolve(relativeIRI, baseIRI) {
+      baseIRI = baseIRI || "";
+      const baseFragmentPos = baseIRI.indexOf("#");
+      if (baseFragmentPos > 0) {
+        baseIRI = baseIRI.substr(0, baseFragmentPos);
+      }
+      if (!relativeIRI.length) {
+        if (baseIRI.indexOf(":") < 0) {
+          throw new Error(`Found invalid baseIRI '${baseIRI}' for value '${relativeIRI}'`);
+        }
+        return baseIRI;
+      }
+      if (relativeIRI.startsWith("?")) {
+        const baseQueryPos = baseIRI.indexOf("?");
+        if (baseQueryPos > 0) {
+          baseIRI = baseIRI.substr(0, baseQueryPos);
+        }
+        return baseIRI + relativeIRI;
+      }
+      if (relativeIRI.startsWith("#")) {
+        return baseIRI + relativeIRI;
+      }
+      if (!baseIRI.length) {
+        const relativeColonPos = relativeIRI.indexOf(":");
+        if (relativeColonPos < 0) {
+          throw new Error(`Found invalid relative IRI '${relativeIRI}' for a missing baseIRI`);
+        }
+        return removeDotSegmentsOfPath(relativeIRI, relativeColonPos);
+      }
+      const valueColonPos = relativeIRI.indexOf(":");
+      if (valueColonPos >= 0) {
+        const valueSlashPos = relativeIRI.indexOf("/");
+        if (valueSlashPos < 0 || valueColonPos < valueSlashPos) {
+          return removeDotSegmentsOfPath(relativeIRI, valueColonPos);
+        }
+      }
+      const baseColonPos = baseIRI.indexOf(":");
+      if (baseColonPos < 0) {
+        throw new Error(`Found invalid baseIRI '${baseIRI}' for value '${relativeIRI}'`);
+      }
+      const baseIRIScheme = baseIRI.substr(0, baseColonPos + 1);
+      if (relativeIRI.indexOf("//") === 0) {
+        return baseIRIScheme + removeDotSegmentsOfPath(relativeIRI, valueColonPos);
+      }
+      let baseSlashAfterColonPos;
+      if (baseIRI.indexOf("//", baseColonPos) === baseColonPos + 1) {
+        baseSlashAfterColonPos = baseIRI.indexOf("/", baseColonPos + 3);
+        if (baseSlashAfterColonPos < 0) {
+          if (baseIRI.length > baseColonPos + 3) {
+            return baseIRI + "/" + removeDotSegmentsOfPath(relativeIRI, valueColonPos);
+          } else {
+            return baseIRIScheme + removeDotSegmentsOfPath(relativeIRI, valueColonPos);
+          }
+        }
+      } else {
+        baseSlashAfterColonPos = baseIRI.indexOf("/", baseColonPos + 1);
+        if (baseSlashAfterColonPos < 0) {
+          return baseIRIScheme + removeDotSegmentsOfPath(relativeIRI, valueColonPos);
+        }
+      }
+      if (relativeIRI.indexOf("/") === 0) {
+        return baseIRI.substr(0, baseSlashAfterColonPos) + removeDotSegments(relativeIRI);
+      }
+      let baseIRIPath = baseIRI.substr(baseSlashAfterColonPos);
+      const baseIRILastSlashPos = baseIRIPath.lastIndexOf("/");
+      if (baseIRILastSlashPos >= 0 && baseIRILastSlashPos < baseIRIPath.length - 1) {
+        baseIRIPath = baseIRIPath.substr(0, baseIRILastSlashPos + 1);
+        if (relativeIRI[0] === "." && relativeIRI[1] !== "." && relativeIRI[1] !== "/" && relativeIRI[2]) {
+          relativeIRI = relativeIRI.substr(1);
+        }
+      }
+      relativeIRI = baseIRIPath + relativeIRI;
+      relativeIRI = removeDotSegments(relativeIRI);
+      return baseIRI.substr(0, baseSlashAfterColonPos) + relativeIRI;
+    }
+    exports.resolve = resolve;
+    function removeDotSegments(path) {
+      const segmentBuffers = [];
+      let i5 = 0;
+      while (i5 < path.length) {
+        switch (path[i5]) {
+          case "/":
+            if (path[i5 + 1] === ".") {
+              if (path[i5 + 2] === ".") {
+                if (!isCharacterAllowedAfterRelativePathSegment(path[i5 + 3])) {
+                  segmentBuffers.push([]);
+                  i5++;
+                  break;
+                }
+                segmentBuffers.pop();
+                if (!path[i5 + 3]) {
+                  segmentBuffers.push([]);
+                }
+                i5 += 3;
+              } else {
+                if (!isCharacterAllowedAfterRelativePathSegment(path[i5 + 2])) {
+                  segmentBuffers.push([]);
+                  i5++;
+                  break;
+                }
+                if (!path[i5 + 2]) {
+                  segmentBuffers.push([]);
+                }
+                i5 += 2;
+              }
+            } else {
+              segmentBuffers.push([]);
+              i5++;
+            }
+            break;
+          case "#":
+          case "?":
+            if (!segmentBuffers.length) {
+              segmentBuffers.push([]);
+            }
+            segmentBuffers[segmentBuffers.length - 1].push(path.substr(i5));
+            i5 = path.length;
+            break;
+          default:
+            if (!segmentBuffers.length) {
+              segmentBuffers.push([]);
+            }
+            segmentBuffers[segmentBuffers.length - 1].push(path[i5]);
+            i5++;
+            break;
+        }
+      }
+      return "/" + segmentBuffers.map((buffer) => buffer.join("")).join("/");
+    }
+    exports.removeDotSegments = removeDotSegments;
+    function removeDotSegmentsOfPath(iri, colonPosition) {
+      let searchOffset = colonPosition + 1;
+      if (colonPosition >= 0) {
+        if (iri[colonPosition + 1] === "/" && iri[colonPosition + 2] === "/") {
+          searchOffset = colonPosition + 3;
+        }
+      } else {
+        if (iri[0] === "/" && iri[1] === "/") {
+          searchOffset = 2;
+        }
+      }
+      const pathSeparator = iri.indexOf("/", searchOffset);
+      if (pathSeparator < 0) {
+        return iri;
+      }
+      const base = iri.substr(0, pathSeparator);
+      const path = iri.substr(pathSeparator);
+      return base + removeDotSegments(path);
+    }
+    exports.removeDotSegmentsOfPath = removeDotSegmentsOfPath;
+    function isCharacterAllowedAfterRelativePathSegment(character) {
+      return !character || character === "#" || character === "?" || character === "/";
+    }
+  }
+});
+
+// node_modules/relative-to-absolute-iri/index.js
+var require_relative_to_absolute_iri = __commonJS({
+  "node_modules/relative-to-absolute-iri/index.js"(exports) {
+    "use strict";
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      var desc = Object.getOwnPropertyDescriptor(m2, k2);
+      if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m2[k2];
+        } };
+      }
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      o6[k22] = m2[k2];
+    }));
+    var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
+      for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    __exportStar(require_Resolve(), exports);
+  }
+});
+
+// node_modules/xmlchars/xml/1.0/ed5.js
+var require_ed5 = __commonJS({
+  "node_modules/xmlchars/xml/1.0/ed5.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.CHAR = "	\n\r -\uD7FF\uE000-\uFFFD\u{10000}-\u{10FFFF}";
+    exports.S = " 	\r\n";
+    exports.NAME_START_CHAR = ":A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{EFFFF}";
+    exports.NAME_CHAR = "-" + exports.NAME_START_CHAR + ".0-9\xB7\u0300-\u036F\u203F-\u2040";
+    exports.CHAR_RE = new RegExp("^[" + exports.CHAR + "]$", "u");
+    exports.S_RE = new RegExp("^[" + exports.S + "]+$", "u");
+    exports.NAME_START_CHAR_RE = new RegExp("^[" + exports.NAME_START_CHAR + "]$", "u");
+    exports.NAME_CHAR_RE = new RegExp("^[" + exports.NAME_CHAR + "]$", "u");
+    exports.NAME_RE = new RegExp("^[" + exports.NAME_START_CHAR + "][" + exports.NAME_CHAR + "]*$", "u");
+    exports.NMTOKEN_RE = new RegExp("^[" + exports.NAME_CHAR + "]+$", "u");
+    var TAB = 9;
+    var NL = 10;
+    var CR = 13;
+    var SPACE = 32;
+    exports.S_LIST = [SPACE, NL, CR, TAB];
+    function isChar(c4) {
+      return c4 >= SPACE && c4 <= 55295 || c4 === NL || c4 === CR || c4 === TAB || c4 >= 57344 && c4 <= 65533 || c4 >= 65536 && c4 <= 1114111;
+    }
+    exports.isChar = isChar;
+    function isS(c4) {
+      return c4 === SPACE || c4 === NL || c4 === CR || c4 === TAB;
+    }
+    exports.isS = isS;
+    function isNameStartChar(c4) {
+      return c4 >= 65 && c4 <= 90 || c4 >= 97 && c4 <= 122 || c4 === 58 || c4 === 95 || c4 === 8204 || c4 === 8205 || c4 >= 192 && c4 <= 214 || c4 >= 216 && c4 <= 246 || c4 >= 248 && c4 <= 767 || c4 >= 880 && c4 <= 893 || c4 >= 895 && c4 <= 8191 || c4 >= 8304 && c4 <= 8591 || c4 >= 11264 && c4 <= 12271 || c4 >= 12289 && c4 <= 55295 || c4 >= 63744 && c4 <= 64975 || c4 >= 65008 && c4 <= 65533 || c4 >= 65536 && c4 <= 983039;
+    }
+    exports.isNameStartChar = isNameStartChar;
+    function isNameChar(c4) {
+      return isNameStartChar(c4) || c4 >= 48 && c4 <= 57 || c4 === 45 || c4 === 46 || c4 === 183 || c4 >= 768 && c4 <= 879 || c4 >= 8255 && c4 <= 8256;
+    }
+    exports.isNameChar = isNameChar;
+  }
+});
+
+// node_modules/xmlchars/xml/1.1/ed2.js
+var require_ed2 = __commonJS({
+  "node_modules/xmlchars/xml/1.1/ed2.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.CHAR = "-\uD7FF\uE000-\uFFFD\u{10000}-\u{10FFFF}";
+    exports.RESTRICTED_CHAR = "-\b\v\f-\x7F-\x84\x86-\x9F";
+    exports.S = " 	\r\n";
+    exports.NAME_START_CHAR = ":A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{EFFFF}";
+    exports.NAME_CHAR = "-" + exports.NAME_START_CHAR + ".0-9\xB7\u0300-\u036F\u203F-\u2040";
+    exports.CHAR_RE = new RegExp("^[" + exports.CHAR + "]$", "u");
+    exports.RESTRICTED_CHAR_RE = new RegExp("^[" + exports.RESTRICTED_CHAR + "]$", "u");
+    exports.S_RE = new RegExp("^[" + exports.S + "]+$", "u");
+    exports.NAME_START_CHAR_RE = new RegExp("^[" + exports.NAME_START_CHAR + "]$", "u");
+    exports.NAME_CHAR_RE = new RegExp("^[" + exports.NAME_CHAR + "]$", "u");
+    exports.NAME_RE = new RegExp("^[" + exports.NAME_START_CHAR + "][" + exports.NAME_CHAR + "]*$", "u");
+    exports.NMTOKEN_RE = new RegExp("^[" + exports.NAME_CHAR + "]+$", "u");
+    var TAB = 9;
+    var NL = 10;
+    var CR = 13;
+    var SPACE = 32;
+    exports.S_LIST = [SPACE, NL, CR, TAB];
+    function isChar(c4) {
+      return c4 >= 1 && c4 <= 55295 || c4 >= 57344 && c4 <= 65533 || c4 >= 65536 && c4 <= 1114111;
+    }
+    exports.isChar = isChar;
+    function isRestrictedChar(c4) {
+      return c4 >= 1 && c4 <= 8 || c4 === 11 || c4 === 12 || c4 >= 14 && c4 <= 31 || c4 >= 127 && c4 <= 132 || c4 >= 134 && c4 <= 159;
+    }
+    exports.isRestrictedChar = isRestrictedChar;
+    function isCharAndNotRestricted(c4) {
+      return c4 === 9 || c4 === 10 || c4 === 13 || c4 > 31 && c4 < 127 || c4 === 133 || c4 > 159 && c4 <= 55295 || c4 >= 57344 && c4 <= 65533 || c4 >= 65536 && c4 <= 1114111;
+    }
+    exports.isCharAndNotRestricted = isCharAndNotRestricted;
+    function isS(c4) {
+      return c4 === SPACE || c4 === NL || c4 === CR || c4 === TAB;
+    }
+    exports.isS = isS;
+    function isNameStartChar(c4) {
+      return c4 >= 65 && c4 <= 90 || c4 >= 97 && c4 <= 122 || c4 === 58 || c4 === 95 || c4 === 8204 || c4 === 8205 || c4 >= 192 && c4 <= 214 || c4 >= 216 && c4 <= 246 || c4 >= 248 && c4 <= 767 || c4 >= 880 && c4 <= 893 || c4 >= 895 && c4 <= 8191 || c4 >= 8304 && c4 <= 8591 || c4 >= 11264 && c4 <= 12271 || c4 >= 12289 && c4 <= 55295 || c4 >= 63744 && c4 <= 64975 || c4 >= 65008 && c4 <= 65533 || c4 >= 65536 && c4 <= 983039;
+    }
+    exports.isNameStartChar = isNameStartChar;
+    function isNameChar(c4) {
+      return isNameStartChar(c4) || c4 >= 48 && c4 <= 57 || c4 === 45 || c4 === 46 || c4 === 183 || c4 >= 768 && c4 <= 879 || c4 >= 8255 && c4 <= 8256;
+    }
+    exports.isNameChar = isNameChar;
+  }
+});
+
+// node_modules/xmlchars/xmlns/1.0/ed3.js
+var require_ed3 = __commonJS({
+  "node_modules/xmlchars/xmlns/1.0/ed3.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.NC_NAME_START_CHAR = "A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{EFFFF}";
+    exports.NC_NAME_CHAR = "-" + exports.NC_NAME_START_CHAR + ".0-9\xB7\u0300-\u036F\u203F-\u2040";
+    exports.NC_NAME_START_CHAR_RE = new RegExp("^[" + exports.NC_NAME_START_CHAR + "]$", "u");
+    exports.NC_NAME_CHAR_RE = new RegExp("^[" + exports.NC_NAME_CHAR + "]$", "u");
+    exports.NC_NAME_RE = new RegExp("^[" + exports.NC_NAME_START_CHAR + "][" + exports.NC_NAME_CHAR + "]*$", "u");
+    function isNCNameStartChar(c4) {
+      return c4 >= 65 && c4 <= 90 || c4 === 95 || c4 >= 97 && c4 <= 122 || c4 >= 192 && c4 <= 214 || c4 >= 216 && c4 <= 246 || c4 >= 248 && c4 <= 767 || c4 >= 880 && c4 <= 893 || c4 >= 895 && c4 <= 8191 || c4 >= 8204 && c4 <= 8205 || c4 >= 8304 && c4 <= 8591 || c4 >= 11264 && c4 <= 12271 || c4 >= 12289 && c4 <= 55295 || c4 >= 63744 && c4 <= 64975 || c4 >= 65008 && c4 <= 65533 || c4 >= 65536 && c4 <= 983039;
+    }
+    exports.isNCNameStartChar = isNCNameStartChar;
+    function isNCNameChar(c4) {
+      return isNCNameStartChar(c4) || (c4 === 45 || c4 === 46 || c4 >= 48 && c4 <= 57 || c4 === 183 || c4 >= 768 && c4 <= 879 || c4 >= 8255 && c4 <= 8256);
+    }
+    exports.isNCNameChar = isNCNameChar;
+  }
+});
+
+// node_modules/@rubensworks/saxes/saxes.js
+var require_saxes = __commonJS({
+  "node_modules/@rubensworks/saxes/saxes.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.SaxesParser = exports.EVENTS = void 0;
+    var ed5 = require_ed5();
+    var ed2 = require_ed2();
+    var NSed3 = require_ed3();
+    var isS = ed5.isS;
+    var isChar10 = ed5.isChar;
+    var isNameStartChar = ed5.isNameStartChar;
+    var isNameChar = ed5.isNameChar;
+    var S_LIST = ed5.S_LIST;
+    var NAME_RE = ed5.NAME_RE;
+    var isChar11 = ed2.isChar;
+    var isNCNameStartChar = NSed3.isNCNameStartChar;
+    var isNCNameChar = NSed3.isNCNameChar;
+    var NC_NAME_RE = NSed3.NC_NAME_RE;
+    var XML_NAMESPACE = "http://www.w3.org/XML/1998/namespace";
+    var XMLNS_NAMESPACE = "http://www.w3.org/2000/xmlns/";
+    var rootNS = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+      __proto__: null,
+      xml: XML_NAMESPACE,
+      xmlns: XMLNS_NAMESPACE
+    };
+    var XML_ENTITIES = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+      __proto__: null,
+      amp: "&",
+      gt: ">",
+      lt: "<",
+      quot: '"',
+      apos: "'"
+    };
+    var EOC = -1;
+    var NL_LIKE = -2;
+    var S_BEGIN = 0;
+    var S_BEGIN_WHITESPACE = 1;
+    var S_DOCTYPE = 2;
+    var S_DOCTYPE_QUOTE = 3;
+    var S_DTD = 4;
+    var S_DTD_QUOTED = 5;
+    var S_DTD_OPEN_WAKA = 6;
+    var S_DTD_OPEN_WAKA_BANG = 7;
+    var S_DTD_COMMENT = 8;
+    var S_DTD_COMMENT_ENDING = 9;
+    var S_DTD_COMMENT_ENDED = 10;
+    var S_DTD_PI = 11;
+    var S_DTD_PI_ENDING = 12;
+    var S_TEXT = 13;
+    var S_ENTITY = 14;
+    var S_OPEN_WAKA = 15;
+    var S_OPEN_WAKA_BANG = 16;
+    var S_COMMENT = 17;
+    var S_COMMENT_ENDING = 18;
+    var S_COMMENT_ENDED = 19;
+    var S_CDATA = 20;
+    var S_CDATA_ENDING = 21;
+    var S_CDATA_ENDING_2 = 22;
+    var S_PI_FIRST_CHAR = 23;
+    var S_PI_REST = 24;
+    var S_PI_BODY = 25;
+    var S_PI_ENDING = 26;
+    var S_XML_DECL_NAME_START = 27;
+    var S_XML_DECL_NAME = 28;
+    var S_XML_DECL_EQ = 29;
+    var S_XML_DECL_VALUE_START = 30;
+    var S_XML_DECL_VALUE = 31;
+    var S_XML_DECL_SEPARATOR = 32;
+    var S_XML_DECL_ENDING = 33;
+    var S_OPEN_TAG = 34;
+    var S_OPEN_TAG_SLASH = 35;
+    var S_ATTRIB = 36;
+    var S_ATTRIB_NAME = 37;
+    var S_ATTRIB_NAME_SAW_WHITE = 38;
+    var S_ATTRIB_VALUE = 39;
+    var S_ATTRIB_VALUE_QUOTED = 40;
+    var S_ATTRIB_VALUE_CLOSED = 41;
+    var S_ATTRIB_VALUE_UNQUOTED = 42;
+    var S_CLOSE_TAG = 43;
+    var S_CLOSE_TAG_SAW_WHITE = 44;
+    var TAB = 9;
+    var NL = 10;
+    var CR = 13;
+    var SPACE = 32;
+    var BANG = 33;
+    var DQUOTE = 34;
+    var AMP = 38;
+    var SQUOTE = 39;
+    var MINUS = 45;
+    var FORWARD_SLASH = 47;
+    var SEMICOLON = 59;
+    var LESS = 60;
+    var EQUAL = 61;
+    var GREATER = 62;
+    var QUESTION = 63;
+    var OPEN_BRACKET = 91;
+    var CLOSE_BRACKET = 93;
+    var NEL = 133;
+    var LS = 8232;
+    var isQuote = (c4) => c4 === DQUOTE || c4 === SQUOTE;
+    var QUOTES = [DQUOTE, SQUOTE];
+    var DOCTYPE_TERMINATOR = [...QUOTES, OPEN_BRACKET, GREATER];
+    var DTD_TERMINATOR = [...QUOTES, LESS, CLOSE_BRACKET];
+    var XML_DECL_NAME_TERMINATOR = [EQUAL, QUESTION, ...S_LIST];
+    var ATTRIB_VALUE_UNQUOTED_TERMINATOR = [...S_LIST, GREATER, AMP, LESS];
+    function nsPairCheck(parser, prefix2, uri) {
+      switch (prefix2) {
+        case "xml":
+          if (uri !== XML_NAMESPACE) {
+            parser.fail(`xml prefix must be bound to ${XML_NAMESPACE}.`);
+          }
+          break;
+        case "xmlns":
+          if (uri !== XMLNS_NAMESPACE) {
+            parser.fail(`xmlns prefix must be bound to ${XMLNS_NAMESPACE}.`);
+          }
+          break;
+        default:
+      }
+      switch (uri) {
+        case XMLNS_NAMESPACE:
+          parser.fail(prefix2 === "" ? `the default namespace may not be set to ${uri}.` : `may not assign a prefix (even "xmlns") to the URI ${XMLNS_NAMESPACE}.`);
+          break;
+        case XML_NAMESPACE:
+          switch (prefix2) {
+            case "xml":
+              break;
+            case "":
+              parser.fail(`the default namespace may not be set to ${uri}.`);
+              break;
+            default:
+              parser.fail("may not assign the xml namespace to another prefix.");
+          }
+          break;
+        default:
+      }
+    }
+    function nsMappingCheck(parser, mapping) {
+      for (const local of Object.keys(mapping)) {
+        nsPairCheck(parser, local, mapping[local]);
+      }
+    }
+    var isNCName = (name) => NC_NAME_RE.test(name);
+    var isName = (name) => NAME_RE.test(name);
+    var FORBIDDEN_START = 0;
+    var FORBIDDEN_BRACKET = 1;
+    var FORBIDDEN_BRACKET_BRACKET = 2;
+    exports.EVENTS = [
+      "xmldecl",
+      "text",
+      "processinginstruction",
+      "doctype",
+      "comment",
+      "opentagstart",
+      "attribute",
+      "opentag",
+      "closetag",
+      "cdata",
+      "error",
+      "end",
+      "ready"
+    ];
+    var EVENT_NAME_TO_HANDLER_NAME = {
+      xmldecl: "xmldeclHandler",
+      text: "textHandler",
+      processinginstruction: "piHandler",
+      doctype: "doctypeHandler",
+      comment: "commentHandler",
+      opentagstart: "openTagStartHandler",
+      attribute: "attributeHandler",
+      opentag: "openTagHandler",
+      closetag: "closeTagHandler",
+      cdata: "cdataHandler",
+      error: "errorHandler",
+      end: "endHandler",
+      ready: "readyHandler"
+    };
+    var SaxesParser = class {
+      /**
+       * Indicates whether or not the parser is closed. If ``true``, wait for
+       * the ``ready`` event to write again.
+       */
+      get closed() {
+        return this._closed;
+      }
+      /**
+       * @param opt The parser options.
+       */
+      constructor(opt) {
+        this.opt = opt !== null && opt !== void 0 ? opt : {};
+        this.fragmentOpt = !!this.opt.fragment;
+        const xmlnsOpt = this.xmlnsOpt = !!this.opt.xmlns;
+        this.trackPosition = this.opt.position !== false;
+        this.fileName = this.opt.fileName;
+        if (xmlnsOpt) {
+          this.nameStartCheck = isNCNameStartChar;
+          this.nameCheck = isNCNameChar;
+          this.isName = isNCName;
+          this.processAttribs = this.processAttribsNS;
+          this.pushAttrib = this.pushAttribNS;
+          this.ns = Object.assign({ __proto__: null }, rootNS);
+          const additional = this.opt.additionalNamespaces;
+          if (additional != null) {
+            nsMappingCheck(this, additional);
+            Object.assign(this.ns, additional);
+          }
+        } else {
+          this.nameStartCheck = isNameStartChar;
+          this.nameCheck = isNameChar;
+          this.isName = isName;
+          this.processAttribs = this.processAttribsPlain;
+          this.pushAttrib = this.pushAttribPlain;
+        }
+        this.stateTable = [
+          /* eslint-disable @typescript-eslint/unbound-method */
+          this.sBegin,
+          this.sBeginWhitespace,
+          this.sDoctype,
+          this.sDoctypeQuote,
+          this.sDTD,
+          this.sDTDQuoted,
+          this.sDTDOpenWaka,
+          this.sDTDOpenWakaBang,
+          this.sDTDComment,
+          this.sDTDCommentEnding,
+          this.sDTDCommentEnded,
+          this.sDTDPI,
+          this.sDTDPIEnding,
+          this.sText,
+          this.sEntity,
+          this.sOpenWaka,
+          this.sOpenWakaBang,
+          this.sComment,
+          this.sCommentEnding,
+          this.sCommentEnded,
+          this.sCData,
+          this.sCDataEnding,
+          this.sCDataEnding2,
+          this.sPIFirstChar,
+          this.sPIRest,
+          this.sPIBody,
+          this.sPIEnding,
+          this.sXMLDeclNameStart,
+          this.sXMLDeclName,
+          this.sXMLDeclEq,
+          this.sXMLDeclValueStart,
+          this.sXMLDeclValue,
+          this.sXMLDeclSeparator,
+          this.sXMLDeclEnding,
+          this.sOpenTag,
+          this.sOpenTagSlash,
+          this.sAttrib,
+          this.sAttribName,
+          this.sAttribNameSawWhite,
+          this.sAttribValue,
+          this.sAttribValueQuoted,
+          this.sAttribValueClosed,
+          this.sAttribValueUnquoted,
+          this.sCloseTag,
+          this.sCloseTagSawWhite
+          /* eslint-enable @typescript-eslint/unbound-method */
+        ];
+        this._init();
+      }
+      _init() {
+        var _a;
+        this.openWakaBang = "";
+        this.text = "";
+        this.name = "";
+        this.piTarget = "";
+        this.entity = "";
+        this.q = null;
+        this.tags = [];
+        this.tag = null;
+        this.topNS = null;
+        this.chunk = "";
+        this.chunkPosition = 0;
+        this.i = 0;
+        this.prevI = 0;
+        this.carriedFromPrevious = void 0;
+        this.forbiddenState = FORBIDDEN_START;
+        this.attribList = [];
+        const { fragmentOpt } = this;
+        this.state = fragmentOpt ? S_TEXT : S_BEGIN;
+        this.reportedTextBeforeRoot = this.reportedTextAfterRoot = this.closedRoot = this.sawRoot = fragmentOpt;
+        this.xmlDeclPossible = !fragmentOpt;
+        this.xmlDeclExpects = ["version"];
+        this.entityReturnState = void 0;
+        let { defaultXMLVersion } = this.opt;
+        if (defaultXMLVersion === void 0) {
+          if (this.opt.forceXMLVersion === true) {
+            throw new Error("forceXMLVersion set but defaultXMLVersion is not set");
+          }
+          defaultXMLVersion = "1.0";
+        }
+        this.setXMLVersion(defaultXMLVersion);
+        this.positionAtNewLine = 0;
+        this.doctype = false;
+        this._closed = false;
+        this.xmlDecl = {
+          version: void 0,
+          encoding: void 0,
+          standalone: void 0
+        };
+        this.line = 1;
+        this.column = 0;
+        this.ENTITIES = Object.create(XML_ENTITIES);
+        (_a = this.readyHandler) === null || _a === void 0 ? void 0 : _a.call(this);
+      }
+      /**
+       * The stream position the parser is currently looking at. This field is
+       * zero-based.
+       *
+       * This field is not based on counting Unicode characters but is to be
+       * interpreted as a plain index into a JavaScript string.
+       */
+      get position() {
+        return this.chunkPosition + this.i;
+      }
+      /**
+       * The column number of the next character to be read by the parser.  *
+       * This field is zero-based. (The first column in a line is 0.)
+       *
+       * This field reports the index at which the next character would be in the
+       * line if the line were represented as a JavaScript string.  Note that this
+       * *can* be different to a count based on the number of *Unicode characters*
+       * due to how JavaScript handles astral plane characters.
+       *
+       * See [[column]] for a number that corresponds to a count of Unicode
+       * characters.
+       */
+      get columnIndex() {
+        return this.position - this.positionAtNewLine;
+      }
+      /**
+       * Set an event listener on an event. The parser supports one handler per
+       * event type. If you try to set an event handler over an existing handler,
+       * the old handler is silently overwritten.
+       *
+       * @param name The event to listen to.
+       *
+       * @param handler The handler to set.
+       */
+      on(name, handler) {
+        this[EVENT_NAME_TO_HANDLER_NAME[name]] = handler;
+      }
+      /**
+       * Unset an event handler.
+       *
+       * @parma name The event to stop listening to.
+       */
+      off(name) {
+        this[EVENT_NAME_TO_HANDLER_NAME[name]] = void 0;
+      }
+      /**
+       * Make an error object. The error object will have a message that contains
+       * the ``fileName`` option passed at the creation of the parser. If position
+       * tracking was turned on, it will also have line and column number
+       * information.
+       *
+       * @param message The message describing the error to report.
+       *
+       * @returns An error object with a properly formatted message.
+       */
+      makeError(message) {
+        var _a;
+        let msg = (_a = this.fileName) !== null && _a !== void 0 ? _a : "";
+        if (this.trackPosition) {
+          if (msg.length > 0) {
+            msg += ":";
+          }
+          msg += `${this.line}:${this.column}`;
+        }
+        if (msg.length > 0) {
+          msg += ": ";
+        }
+        return new Error(msg + message);
+      }
+      /**
+       * Report a parsing error. This method is made public so that client code may
+       * check for issues that are outside the scope of this project and can report
+       * errors.
+       *
+       * @param message The error to report.
+       *
+       * @returns this
+       */
+      fail(message) {
+        const err = this.makeError(message);
+        const handler = this.errorHandler;
+        if (handler === void 0) {
+          throw err;
+        } else {
+          handler(err);
+        }
+        return this;
+      }
+      /**
+       * Write a XML data to the parser.
+       *
+       * @param chunk The XML data to write.
+       *
+       * @returns this
+       */
+      // We do need object for the type here. Yes, it often causes problems
+      // but not in this case.
+      write(chunk) {
+        if (this.closed) {
+          return this.fail("cannot write after close; assign an onready handler.");
+        }
+        let end = false;
+        if (chunk === null) {
+          end = true;
+          chunk = "";
+        } else if (typeof chunk === "object") {
+          chunk = chunk.toString();
+        }
+        if (this.carriedFromPrevious !== void 0) {
+          chunk = `${this.carriedFromPrevious}${chunk}`;
+          this.carriedFromPrevious = void 0;
+        }
+        let limit = chunk.length;
+        const lastCode = chunk.charCodeAt(limit - 1);
+        if (!end && // A trailing CR or surrogate must be carried over to the next
+        // chunk.
+        (lastCode === CR || lastCode >= 55296 && lastCode <= 56319)) {
+          this.carriedFromPrevious = chunk[limit - 1];
+          limit--;
+          chunk = chunk.slice(0, limit);
+        }
+        const { stateTable } = this;
+        this.chunk = chunk;
+        this.i = 0;
+        while (this.i < limit) {
+          stateTable[this.state].call(this);
+        }
+        this.chunkPosition += limit;
+        return end ? this.end() : this;
+      }
+      /**
+       * Close the current stream. Perform final well-formedness checks and reset
+       * the parser tstate.
+       *
+       * @returns this
+       */
+      close() {
+        return this.write(null);
+      }
+      /**
+       * Get a single code point out of the current chunk. This updates the current
+       * position if we do position tracking.
+       *
+       * This is the algorithm to use for XML 1.0.
+       *
+       * @returns The character read.
+       */
+      getCode10() {
+        const { chunk, i: i5 } = this;
+        this.prevI = i5;
+        this.i = i5 + 1;
+        if (i5 >= chunk.length) {
+          return EOC;
+        }
+        const code = chunk.charCodeAt(i5);
+        this.column++;
+        if (code < 55296) {
+          if (code >= SPACE || code === TAB) {
+            return code;
+          }
+          switch (code) {
+            case NL:
+              this.line++;
+              this.column = 0;
+              this.positionAtNewLine = this.position;
+              return NL;
+            case CR:
+              if (chunk.charCodeAt(i5 + 1) === NL) {
+                this.i = i5 + 2;
+              }
+              this.line++;
+              this.column = 0;
+              this.positionAtNewLine = this.position;
+              return NL_LIKE;
+            default:
+              this.fail("disallowed character.");
+              return code;
+          }
+        }
+        if (code > 56319) {
+          if (!(code >= 57344 && code <= 65533)) {
+            this.fail("disallowed character.");
+          }
+          return code;
+        }
+        const final = 65536 + (code - 55296) * 1024 + (chunk.charCodeAt(i5 + 1) - 56320);
+        this.i = i5 + 2;
+        if (final > 1114111) {
+          this.fail("disallowed character.");
+        }
+        return final;
+      }
+      /**
+       * Get a single code point out of the current chunk. This updates the current
+       * position if we do position tracking.
+       *
+       * This is the algorithm to use for XML 1.1.
+       *
+       * @returns {number} The character read.
+       */
+      getCode11() {
+        const { chunk, i: i5 } = this;
+        this.prevI = i5;
+        this.i = i5 + 1;
+        if (i5 >= chunk.length) {
+          return EOC;
+        }
+        const code = chunk.charCodeAt(i5);
+        this.column++;
+        if (code < 55296) {
+          if (code > 31 && code < 127 || code > 159 && code !== LS || code === TAB) {
+            return code;
+          }
+          switch (code) {
+            case NL:
+              this.line++;
+              this.column = 0;
+              this.positionAtNewLine = this.position;
+              return NL;
+            case CR: {
+              const next = chunk.charCodeAt(i5 + 1);
+              if (next === NL || next === NEL) {
+                this.i = i5 + 2;
+              }
+            }
+            /* yes, fall through */
+            case NEL:
+            // 0x85
+            case LS:
+              this.line++;
+              this.column = 0;
+              this.positionAtNewLine = this.position;
+              return NL_LIKE;
+            default:
+              this.fail("disallowed character.");
+              return code;
+          }
+        }
+        if (code > 56319) {
+          if (!(code >= 57344 && code <= 65533)) {
+            this.fail("disallowed character.");
+          }
+          return code;
+        }
+        const final = 65536 + (code - 55296) * 1024 + (chunk.charCodeAt(i5 + 1) - 56320);
+        this.i = i5 + 2;
+        if (final > 1114111) {
+          this.fail("disallowed character.");
+        }
+        return final;
+      }
+      /**
+       * Like ``getCode`` but with the return value normalized so that ``NL`` is
+       * returned for ``NL_LIKE``.
+       */
+      getCodeNorm() {
+        const c4 = this.getCode();
+        return c4 === NL_LIKE ? NL : c4;
+      }
+      unget() {
+        this.i = this.prevI;
+        this.column--;
+      }
+      /**
+       * Capture characters into a buffer until encountering one of a set of
+       * characters.
+       *
+       * @param chars An array of codepoints. Encountering a character in the array
+       * ends the capture. (``chars`` may safely contain ``NL``.)
+       *
+       * @return The character code that made the capture end, or ``EOC`` if we hit
+       * the end of the chunk. The return value cannot be NL_LIKE: NL is returned
+       * instead.
+       */
+      captureTo(chars) {
+        let { i: start } = this;
+        const { chunk } = this;
+        while (true) {
+          const c4 = this.getCode();
+          const isNLLike = c4 === NL_LIKE;
+          const final = isNLLike ? NL : c4;
+          if (final === EOC || chars.includes(final)) {
+            this.text += chunk.slice(start, this.prevI);
+            return final;
+          }
+          if (isNLLike) {
+            this.text += `${chunk.slice(start, this.prevI)}
+`;
+            start = this.i;
+          }
+        }
+      }
+      /**
+       * Capture characters into a buffer until encountering a character.
+       *
+       * @param char The codepoint that ends the capture. **NOTE ``char`` MAY NOT
+       * CONTAIN ``NL``.** Passing ``NL`` will result in buggy behavior.
+       *
+       * @return ``true`` if we ran into the character. Otherwise, we ran into the
+       * end of the current chunk.
+       */
+      captureToChar(char) {
+        let { i: start } = this;
+        const { chunk } = this;
+        while (true) {
+          let c4 = this.getCode();
+          switch (c4) {
+            case NL_LIKE:
+              this.text += `${chunk.slice(start, this.prevI)}
+`;
+              start = this.i;
+              c4 = NL;
+              break;
+            case EOC:
+              this.text += chunk.slice(start);
+              return false;
+            default:
+          }
+          if (c4 === char) {
+            this.text += chunk.slice(start, this.prevI);
+            return true;
+          }
+        }
+      }
+      /**
+       * Capture characters that satisfy ``isNameChar`` into the ``name`` field of
+       * this parser.
+       *
+       * @return The character code that made the test fail, or ``EOC`` if we hit
+       * the end of the chunk. The return value cannot be NL_LIKE: NL is returned
+       * instead.
+       */
+      captureNameChars() {
+        const { chunk, i: start } = this;
+        while (true) {
+          const c4 = this.getCode();
+          if (c4 === EOC) {
+            this.name += chunk.slice(start);
+            return EOC;
+          }
+          if (!isNameChar(c4)) {
+            this.name += chunk.slice(start, this.prevI);
+            return c4 === NL_LIKE ? NL : c4;
+          }
+        }
+      }
+      /**
+       * Skip white spaces.
+       *
+       * @return The character that ended the skip, or ``EOC`` if we hit
+       * the end of the chunk. The return value cannot be NL_LIKE: NL is returned
+       * instead.
+       */
+      skipSpaces() {
+        while (true) {
+          const c4 = this.getCodeNorm();
+          if (c4 === EOC || !isS(c4)) {
+            return c4;
+          }
+        }
+      }
+      setXMLVersion(version) {
+        this.currentXMLVersion = version;
+        if (version === "1.0") {
+          this.isChar = isChar10;
+          this.getCode = this.getCode10;
+        } else {
+          this.isChar = isChar11;
+          this.getCode = this.getCode11;
+        }
+      }
+      // STATE ENGINE METHODS
+      // This needs to be a state separate from S_BEGIN_WHITESPACE because we want
+      // to be sure never to come back to this state later.
+      sBegin() {
+        if (this.chunk.charCodeAt(0) === 65279) {
+          this.i++;
+          this.column++;
+        }
+        this.state = S_BEGIN_WHITESPACE;
+      }
+      sBeginWhitespace() {
+        const iBefore = this.i;
+        const c4 = this.skipSpaces();
+        if (this.prevI !== iBefore) {
+          this.xmlDeclPossible = false;
+        }
+        switch (c4) {
+          case LESS:
+            this.state = S_OPEN_WAKA;
+            if (this.text.length !== 0) {
+              throw new Error("no-empty text at start");
+            }
+            break;
+          case EOC:
+            break;
+          default:
+            this.unget();
+            this.state = S_TEXT;
+            this.xmlDeclPossible = false;
+        }
+      }
+      sDoctype() {
+        var _a;
+        const c4 = this.captureTo(DOCTYPE_TERMINATOR);
+        switch (c4) {
+          case GREATER: {
+            (_a = this.doctypeHandler) === null || _a === void 0 ? void 0 : _a.call(this, this.text);
+            this.text = "";
+            this.state = S_TEXT;
+            this.doctype = true;
+            break;
+          }
+          case EOC:
+            break;
+          default:
+            this.text += String.fromCodePoint(c4);
+            if (c4 === OPEN_BRACKET) {
+              this.state = S_DTD;
+            } else if (isQuote(c4)) {
+              this.state = S_DOCTYPE_QUOTE;
+              this.q = c4;
+            }
+        }
+      }
+      sDoctypeQuote() {
+        const q = this.q;
+        if (this.captureToChar(q)) {
+          this.text += String.fromCodePoint(q);
+          this.q = null;
+          this.state = S_DOCTYPE;
+        }
+      }
+      sDTD() {
+        const c4 = this.captureTo(DTD_TERMINATOR);
+        if (c4 === EOC) {
+          return;
+        }
+        this.text += String.fromCodePoint(c4);
+        if (c4 === CLOSE_BRACKET) {
+          this.state = S_DOCTYPE;
+        } else if (c4 === LESS) {
+          this.state = S_DTD_OPEN_WAKA;
+        } else if (isQuote(c4)) {
+          this.state = S_DTD_QUOTED;
+          this.q = c4;
+        }
+      }
+      sDTDQuoted() {
+        const q = this.q;
+        if (this.captureToChar(q)) {
+          this.text += String.fromCodePoint(q);
+          this.state = S_DTD;
+          this.q = null;
+        }
+      }
+      sDTDOpenWaka() {
+        const c4 = this.getCodeNorm();
+        this.text += String.fromCodePoint(c4);
+        switch (c4) {
+          case BANG:
+            this.state = S_DTD_OPEN_WAKA_BANG;
+            this.openWakaBang = "";
+            break;
+          case QUESTION:
+            this.state = S_DTD_PI;
+            break;
+          default:
+            this.state = S_DTD;
+        }
+      }
+      sDTDOpenWakaBang() {
+        const char = String.fromCodePoint(this.getCodeNorm());
+        const owb = this.openWakaBang += char;
+        this.text += char;
+        if (owb !== "-") {
+          this.state = owb === "--" ? S_DTD_COMMENT : S_DTD;
+          this.openWakaBang = "";
+        }
+      }
+      sDTDComment() {
+        if (this.captureToChar(MINUS)) {
+          this.text += "-";
+          this.state = S_DTD_COMMENT_ENDING;
+        }
+      }
+      sDTDCommentEnding() {
+        const c4 = this.getCodeNorm();
+        this.text += String.fromCodePoint(c4);
+        this.state = c4 === MINUS ? S_DTD_COMMENT_ENDED : S_DTD_COMMENT;
+      }
+      sDTDCommentEnded() {
+        const c4 = this.getCodeNorm();
+        this.text += String.fromCodePoint(c4);
+        if (c4 === GREATER) {
+          this.state = S_DTD;
+        } else {
+          this.fail("malformed comment.");
+          this.state = S_DTD_COMMENT;
+        }
+      }
+      sDTDPI() {
+        if (this.captureToChar(QUESTION)) {
+          this.text += "?";
+          this.state = S_DTD_PI_ENDING;
+        }
+      }
+      sDTDPIEnding() {
+        const c4 = this.getCodeNorm();
+        this.text += String.fromCodePoint(c4);
+        if (c4 === GREATER) {
+          this.state = S_DTD;
+        }
+      }
+      sText() {
+        if (this.tags.length !== 0) {
+          this.handleTextInRoot();
+        } else {
+          this.handleTextOutsideRoot();
+        }
+      }
+      sEntity() {
+        let { i: start } = this;
+        const { chunk } = this;
+        loop:
+          while (true) {
+            switch (this.getCode()) {
+              case NL_LIKE:
+                this.entity += `${chunk.slice(start, this.prevI)}
+`;
+                start = this.i;
+                break;
+              case SEMICOLON: {
+                const { entityReturnState } = this;
+                const entity = this.entity + chunk.slice(start, this.prevI);
+                this.state = entityReturnState;
+                let parsed;
+                if (entity === "") {
+                  this.fail("empty entity name.");
+                  parsed = "&;";
+                } else {
+                  parsed = this.parseEntity(entity);
+                  this.entity = "";
+                }
+                if (entityReturnState !== S_TEXT || this.textHandler !== void 0) {
+                  this.text += parsed;
+                }
+                break loop;
+              }
+              case EOC:
+                this.entity += chunk.slice(start);
+                break loop;
+              default:
+            }
+          }
+      }
+      sOpenWaka() {
+        const c4 = this.getCode();
+        if (isNameStartChar(c4)) {
+          this.state = S_OPEN_TAG;
+          this.unget();
+          this.xmlDeclPossible = false;
+        } else {
+          switch (c4) {
+            case FORWARD_SLASH:
+              this.state = S_CLOSE_TAG;
+              this.xmlDeclPossible = false;
+              break;
+            case BANG:
+              this.state = S_OPEN_WAKA_BANG;
+              this.openWakaBang = "";
+              this.xmlDeclPossible = false;
+              break;
+            case QUESTION:
+              this.state = S_PI_FIRST_CHAR;
+              break;
+            default:
+              this.fail("disallowed character in tag name");
+              this.state = S_TEXT;
+              this.xmlDeclPossible = false;
+          }
+        }
+      }
+      sOpenWakaBang() {
+        this.openWakaBang += String.fromCodePoint(this.getCodeNorm());
+        switch (this.openWakaBang) {
+          case "[CDATA[":
+            if (!this.sawRoot && !this.reportedTextBeforeRoot) {
+              this.fail("text data outside of root node.");
+              this.reportedTextBeforeRoot = true;
+            }
+            if (this.closedRoot && !this.reportedTextAfterRoot) {
+              this.fail("text data outside of root node.");
+              this.reportedTextAfterRoot = true;
+            }
+            this.state = S_CDATA;
+            this.openWakaBang = "";
+            break;
+          case "--":
+            this.state = S_COMMENT;
+            this.openWakaBang = "";
+            break;
+          case "DOCTYPE":
+            this.state = S_DOCTYPE;
+            if (this.doctype || this.sawRoot) {
+              this.fail("inappropriately located doctype declaration.");
+            }
+            this.openWakaBang = "";
+            break;
+          default:
+            if (this.openWakaBang.length >= 7) {
+              this.fail("incorrect syntax.");
+            }
+        }
+      }
+      sComment() {
+        if (this.captureToChar(MINUS)) {
+          this.state = S_COMMENT_ENDING;
+        }
+      }
+      sCommentEnding() {
+        var _a;
+        const c4 = this.getCodeNorm();
+        if (c4 === MINUS) {
+          this.state = S_COMMENT_ENDED;
+          (_a = this.commentHandler) === null || _a === void 0 ? void 0 : _a.call(this, this.text);
+          this.text = "";
+        } else {
+          this.text += `-${String.fromCodePoint(c4)}`;
+          this.state = S_COMMENT;
+        }
+      }
+      sCommentEnded() {
+        const c4 = this.getCodeNorm();
+        if (c4 !== GREATER) {
+          this.fail("malformed comment.");
+          this.text += `--${String.fromCodePoint(c4)}`;
+          this.state = S_COMMENT;
+        } else {
+          this.state = S_TEXT;
+        }
+      }
+      sCData() {
+        if (this.captureToChar(CLOSE_BRACKET)) {
+          this.state = S_CDATA_ENDING;
+        }
+      }
+      sCDataEnding() {
+        const c4 = this.getCodeNorm();
+        if (c4 === CLOSE_BRACKET) {
+          this.state = S_CDATA_ENDING_2;
+        } else {
+          this.text += `]${String.fromCodePoint(c4)}`;
+          this.state = S_CDATA;
+        }
+      }
+      sCDataEnding2() {
+        var _a;
+        const c4 = this.getCodeNorm();
+        switch (c4) {
+          case GREATER: {
+            (_a = this.cdataHandler) === null || _a === void 0 ? void 0 : _a.call(this, this.text);
+            this.text = "";
+            this.state = S_TEXT;
+            break;
+          }
+          case CLOSE_BRACKET:
+            this.text += "]";
+            break;
+          default:
+            this.text += `]]${String.fromCodePoint(c4)}`;
+            this.state = S_CDATA;
+        }
+      }
+      // We need this separate state to check the first character fo the pi target
+      // with this.nameStartCheck which allows less characters than this.nameCheck.
+      sPIFirstChar() {
+        const c4 = this.getCodeNorm();
+        if (this.nameStartCheck(c4)) {
+          this.piTarget += String.fromCodePoint(c4);
+          this.state = S_PI_REST;
+        } else if (c4 === QUESTION || isS(c4)) {
+          this.fail("processing instruction without a target.");
+          this.state = c4 === QUESTION ? S_PI_ENDING : S_PI_BODY;
+        } else {
+          this.fail("disallowed character in processing instruction name.");
+          this.piTarget += String.fromCodePoint(c4);
+          this.state = S_PI_REST;
+        }
+      }
+      sPIRest() {
+        const { chunk, i: start } = this;
+        while (true) {
+          const c4 = this.getCodeNorm();
+          if (c4 === EOC) {
+            this.piTarget += chunk.slice(start);
+            return;
+          }
+          if (!this.nameCheck(c4)) {
+            this.piTarget += chunk.slice(start, this.prevI);
+            const isQuestion = c4 === QUESTION;
+            if (isQuestion || isS(c4)) {
+              if (this.piTarget === "xml") {
+                if (!this.xmlDeclPossible) {
+                  this.fail("an XML declaration must be at the start of the document.");
+                }
+                this.state = isQuestion ? S_XML_DECL_ENDING : S_XML_DECL_NAME_START;
+              } else {
+                this.state = isQuestion ? S_PI_ENDING : S_PI_BODY;
+              }
+            } else {
+              this.fail("disallowed character in processing instruction name.");
+              this.piTarget += String.fromCodePoint(c4);
+            }
+            break;
+          }
+        }
+      }
+      sPIBody() {
+        if (this.text.length === 0) {
+          const c4 = this.getCodeNorm();
+          if (c4 === QUESTION) {
+            this.state = S_PI_ENDING;
+          } else if (!isS(c4)) {
+            this.text = String.fromCodePoint(c4);
+          }
+        } else if (this.captureToChar(QUESTION)) {
+          this.state = S_PI_ENDING;
+        }
+      }
+      sPIEnding() {
+        var _a;
+        const c4 = this.getCodeNorm();
+        if (c4 === GREATER) {
+          const { piTarget } = this;
+          if (piTarget.toLowerCase() === "xml") {
+            this.fail("the XML declaration must appear at the start of the document.");
+          }
+          (_a = this.piHandler) === null || _a === void 0 ? void 0 : _a.call(this, {
+            target: piTarget,
+            body: this.text
+          });
+          this.piTarget = this.text = "";
+          this.state = S_TEXT;
+        } else if (c4 === QUESTION) {
+          this.text += "?";
+        } else {
+          this.text += `?${String.fromCodePoint(c4)}`;
+          this.state = S_PI_BODY;
+        }
+        this.xmlDeclPossible = false;
+      }
+      sXMLDeclNameStart() {
+        const c4 = this.skipSpaces();
+        if (c4 === QUESTION) {
+          this.state = S_XML_DECL_ENDING;
+          return;
+        }
+        if (c4 !== EOC) {
+          this.state = S_XML_DECL_NAME;
+          this.name = String.fromCodePoint(c4);
+        }
+      }
+      sXMLDeclName() {
+        const c4 = this.captureTo(XML_DECL_NAME_TERMINATOR);
+        if (c4 === QUESTION) {
+          this.state = S_XML_DECL_ENDING;
+          this.name += this.text;
+          this.text = "";
+          this.fail("XML declaration is incomplete.");
+          return;
+        }
+        if (!(isS(c4) || c4 === EQUAL)) {
+          return;
+        }
+        this.name += this.text;
+        this.text = "";
+        if (!this.xmlDeclExpects.includes(this.name)) {
+          switch (this.name.length) {
+            case 0:
+              this.fail("did not expect any more name/value pairs.");
+              break;
+            case 1:
+              this.fail(`expected the name ${this.xmlDeclExpects[0]}.`);
+              break;
+            default:
+              this.fail(`expected one of ${this.xmlDeclExpects.join(", ")}`);
+          }
+        }
+        this.state = c4 === EQUAL ? S_XML_DECL_VALUE_START : S_XML_DECL_EQ;
+      }
+      sXMLDeclEq() {
+        const c4 = this.getCodeNorm();
+        if (c4 === QUESTION) {
+          this.state = S_XML_DECL_ENDING;
+          this.fail("XML declaration is incomplete.");
+          return;
+        }
+        if (isS(c4)) {
+          return;
+        }
+        if (c4 !== EQUAL) {
+          this.fail("value required.");
+        }
+        this.state = S_XML_DECL_VALUE_START;
+      }
+      sXMLDeclValueStart() {
+        const c4 = this.getCodeNorm();
+        if (c4 === QUESTION) {
+          this.state = S_XML_DECL_ENDING;
+          this.fail("XML declaration is incomplete.");
+          return;
+        }
+        if (isS(c4)) {
+          return;
+        }
+        if (!isQuote(c4)) {
+          this.fail("value must be quoted.");
+          this.q = SPACE;
+        } else {
+          this.q = c4;
+        }
+        this.state = S_XML_DECL_VALUE;
+      }
+      sXMLDeclValue() {
+        const c4 = this.captureTo([this.q, QUESTION]);
+        if (c4 === QUESTION) {
+          this.state = S_XML_DECL_ENDING;
+          this.text = "";
+          this.fail("XML declaration is incomplete.");
+          return;
+        }
+        if (c4 === EOC) {
+          return;
+        }
+        const value = this.text;
+        this.text = "";
+        switch (this.name) {
+          case "version": {
+            this.xmlDeclExpects = ["encoding", "standalone"];
+            const version = value;
+            this.xmlDecl.version = version;
+            if (!/^1\.[0-9]+$/.test(version)) {
+              this.fail("version number must match /^1\\.[0-9]+$/.");
+            } else if (!this.opt.forceXMLVersion) {
+              this.setXMLVersion(version);
+            }
+            break;
+          }
+          case "encoding":
+            if (!/^[A-Za-z][A-Za-z0-9._-]*$/.test(value)) {
+              this.fail("encoding value must match /^[A-Za-z0-9][A-Za-z0-9._-]*$/.");
+            }
+            this.xmlDeclExpects = ["standalone"];
+            this.xmlDecl.encoding = value;
+            break;
+          case "standalone":
+            if (value !== "yes" && value !== "no") {
+              this.fail('standalone value must match "yes" or "no".');
+            }
+            this.xmlDeclExpects = [];
+            this.xmlDecl.standalone = value;
+            break;
+          default:
+        }
+        this.name = "";
+        this.state = S_XML_DECL_SEPARATOR;
+      }
+      sXMLDeclSeparator() {
+        const c4 = this.getCodeNorm();
+        if (c4 === QUESTION) {
+          this.state = S_XML_DECL_ENDING;
+          return;
+        }
+        if (!isS(c4)) {
+          this.fail("whitespace required.");
+          this.unget();
+        }
+        this.state = S_XML_DECL_NAME_START;
+      }
+      sXMLDeclEnding() {
+        var _a;
+        const c4 = this.getCodeNorm();
+        if (c4 === GREATER) {
+          if (this.piTarget !== "xml") {
+            this.fail("processing instructions are not allowed before root.");
+          } else if (this.name !== "version" && this.xmlDeclExpects.includes("version")) {
+            this.fail("XML declaration must contain a version.");
+          }
+          (_a = this.xmldeclHandler) === null || _a === void 0 ? void 0 : _a.call(this, this.xmlDecl);
+          this.name = "";
+          this.piTarget = this.text = "";
+          this.state = S_TEXT;
+        } else {
+          this.fail("The character ? is disallowed anywhere in XML declarations.");
+        }
+        this.xmlDeclPossible = false;
+      }
+      sOpenTag() {
+        var _a;
+        const c4 = this.captureNameChars();
+        if (c4 === EOC) {
+          return;
+        }
+        const tag = this.tag = {
+          name: this.name,
+          attributes: /* @__PURE__ */ Object.create(null)
+        };
+        this.name = "";
+        if (this.xmlnsOpt) {
+          this.topNS = tag.ns = /* @__PURE__ */ Object.create(null);
+        }
+        (_a = this.openTagStartHandler) === null || _a === void 0 ? void 0 : _a.call(this, tag);
+        this.sawRoot = true;
+        if (!this.fragmentOpt && this.closedRoot) {
+          this.fail("documents may contain only one root.");
+        }
+        switch (c4) {
+          case GREATER:
+            this.openTag();
+            break;
+          case FORWARD_SLASH:
+            this.state = S_OPEN_TAG_SLASH;
+            break;
+          default:
+            if (!isS(c4)) {
+              this.fail("disallowed character in tag name.");
+            }
+            this.state = S_ATTRIB;
+        }
+      }
+      sOpenTagSlash() {
+        if (this.getCode() === GREATER) {
+          this.openSelfClosingTag();
+        } else {
+          this.fail("forward-slash in opening tag not followed by >.");
+          this.state = S_ATTRIB;
+        }
+      }
+      sAttrib() {
+        const c4 = this.skipSpaces();
+        if (c4 === EOC) {
+          return;
+        }
+        if (isNameStartChar(c4)) {
+          this.unget();
+          this.state = S_ATTRIB_NAME;
+        } else if (c4 === GREATER) {
+          this.openTag();
+        } else if (c4 === FORWARD_SLASH) {
+          this.state = S_OPEN_TAG_SLASH;
+        } else {
+          this.fail("disallowed character in attribute name.");
+        }
+      }
+      sAttribName() {
+        const c4 = this.captureNameChars();
+        if (c4 === EQUAL) {
+          this.state = S_ATTRIB_VALUE;
+        } else if (isS(c4)) {
+          this.state = S_ATTRIB_NAME_SAW_WHITE;
+        } else if (c4 === GREATER) {
+          this.fail("attribute without value.");
+          this.pushAttrib(this.name, this.name);
+          this.name = this.text = "";
+          this.openTag();
+        } else if (c4 !== EOC) {
+          this.fail("disallowed character in attribute name.");
+        }
+      }
+      sAttribNameSawWhite() {
+        const c4 = this.skipSpaces();
+        switch (c4) {
+          case EOC:
+            return;
+          case EQUAL:
+            this.state = S_ATTRIB_VALUE;
+            break;
+          default:
+            this.fail("attribute without value.");
+            this.text = "";
+            this.name = "";
+            if (c4 === GREATER) {
+              this.openTag();
+            } else if (isNameStartChar(c4)) {
+              this.unget();
+              this.state = S_ATTRIB_NAME;
+            } else {
+              this.fail("disallowed character in attribute name.");
+              this.state = S_ATTRIB;
+            }
+        }
+      }
+      sAttribValue() {
+        const c4 = this.getCodeNorm();
+        if (isQuote(c4)) {
+          this.q = c4;
+          this.state = S_ATTRIB_VALUE_QUOTED;
+        } else if (!isS(c4)) {
+          this.fail("unquoted attribute value.");
+          this.state = S_ATTRIB_VALUE_UNQUOTED;
+          this.unget();
+        }
+      }
+      sAttribValueQuoted() {
+        const { q, chunk } = this;
+        let { i: start } = this;
+        while (true) {
+          switch (this.getCode()) {
+            case q:
+              this.pushAttrib(this.name, this.text + chunk.slice(start, this.prevI));
+              this.name = this.text = "";
+              this.q = null;
+              this.state = S_ATTRIB_VALUE_CLOSED;
+              return;
+            case AMP:
+              this.text += chunk.slice(start, this.prevI);
+              this.state = S_ENTITY;
+              this.entityReturnState = S_ATTRIB_VALUE_QUOTED;
+              return;
+            case NL:
+            case NL_LIKE:
+            case TAB:
+              this.text += `${chunk.slice(start, this.prevI)} `;
+              start = this.i;
+              break;
+            case LESS:
+              this.text += chunk.slice(start, this.prevI);
+              this.fail("disallowed character.");
+              return;
+            case EOC:
+              this.text += chunk.slice(start);
+              return;
+            default:
+          }
+        }
+      }
+      sAttribValueClosed() {
+        const c4 = this.getCodeNorm();
+        if (isS(c4)) {
+          this.state = S_ATTRIB;
+        } else if (c4 === GREATER) {
+          this.openTag();
+        } else if (c4 === FORWARD_SLASH) {
+          this.state = S_OPEN_TAG_SLASH;
+        } else if (isNameStartChar(c4)) {
+          this.fail("no whitespace between attributes.");
+          this.unget();
+          this.state = S_ATTRIB_NAME;
+        } else {
+          this.fail("disallowed character in attribute name.");
+        }
+      }
+      sAttribValueUnquoted() {
+        const c4 = this.captureTo(ATTRIB_VALUE_UNQUOTED_TERMINATOR);
+        switch (c4) {
+          case AMP:
+            this.state = S_ENTITY;
+            this.entityReturnState = S_ATTRIB_VALUE_UNQUOTED;
+            break;
+          case LESS:
+            this.fail("disallowed character.");
+            break;
+          case EOC:
+            break;
+          default:
+            if (this.text.includes("]]>")) {
+              this.fail('the string "]]>" is disallowed in char data.');
+            }
+            this.pushAttrib(this.name, this.text);
+            this.name = this.text = "";
+            if (c4 === GREATER) {
+              this.openTag();
+            } else {
+              this.state = S_ATTRIB;
+            }
+        }
+      }
+      sCloseTag() {
+        const c4 = this.captureNameChars();
+        if (c4 === GREATER) {
+          this.closeTag();
+        } else if (isS(c4)) {
+          this.state = S_CLOSE_TAG_SAW_WHITE;
+        } else if (c4 !== EOC) {
+          this.fail("disallowed character in closing tag.");
+        }
+      }
+      sCloseTagSawWhite() {
+        switch (this.skipSpaces()) {
+          case GREATER:
+            this.closeTag();
+            break;
+          case EOC:
+            break;
+          default:
+            this.fail("disallowed character in closing tag.");
+        }
+      }
+      // END OF STATE ENGINE METHODS
+      handleTextInRoot() {
+        let { i: start, forbiddenState } = this;
+        const { chunk, textHandler: handler } = this;
+        scanLoop:
+          while (true) {
+            switch (this.getCode()) {
+              case LESS: {
+                this.state = S_OPEN_WAKA;
+                if (handler !== void 0) {
+                  const { text } = this;
+                  const slice = chunk.slice(start, this.prevI);
+                  if (text.length !== 0) {
+                    handler(text + slice);
+                    this.text = "";
+                  } else if (slice.length !== 0) {
+                    handler(slice);
+                  }
+                }
+                forbiddenState = FORBIDDEN_START;
+                break scanLoop;
+              }
+              case AMP:
+                this.state = S_ENTITY;
+                this.entityReturnState = S_TEXT;
+                if (handler !== void 0) {
+                  this.text += chunk.slice(start, this.prevI);
+                }
+                forbiddenState = FORBIDDEN_START;
+                break scanLoop;
+              case CLOSE_BRACKET:
+                switch (forbiddenState) {
+                  case FORBIDDEN_START:
+                    forbiddenState = FORBIDDEN_BRACKET;
+                    break;
+                  case FORBIDDEN_BRACKET:
+                    forbiddenState = FORBIDDEN_BRACKET_BRACKET;
+                    break;
+                  case FORBIDDEN_BRACKET_BRACKET:
+                    break;
+                  default:
+                    throw new Error("impossible state");
+                }
+                break;
+              case GREATER:
+                if (forbiddenState === FORBIDDEN_BRACKET_BRACKET) {
+                  this.fail('the string "]]>" is disallowed in char data.');
+                }
+                forbiddenState = FORBIDDEN_START;
+                break;
+              case NL_LIKE:
+                if (handler !== void 0) {
+                  this.text += `${chunk.slice(start, this.prevI)}
+`;
+                }
+                start = this.i;
+                forbiddenState = FORBIDDEN_START;
+                break;
+              case EOC:
+                if (handler !== void 0) {
+                  this.text += chunk.slice(start);
+                }
+                break scanLoop;
+              default:
+                forbiddenState = FORBIDDEN_START;
+            }
+          }
+        this.forbiddenState = forbiddenState;
+      }
+      handleTextOutsideRoot() {
+        let { i: start } = this;
+        const { chunk, textHandler: handler } = this;
+        let nonSpace = false;
+        outRootLoop:
+          while (true) {
+            const code = this.getCode();
+            switch (code) {
+              case LESS: {
+                this.state = S_OPEN_WAKA;
+                if (handler !== void 0) {
+                  const { text } = this;
+                  const slice = chunk.slice(start, this.prevI);
+                  if (text.length !== 0) {
+                    handler(text + slice);
+                    this.text = "";
+                  } else if (slice.length !== 0) {
+                    handler(slice);
+                  }
+                }
+                break outRootLoop;
+              }
+              case AMP:
+                this.state = S_ENTITY;
+                this.entityReturnState = S_TEXT;
+                if (handler !== void 0) {
+                  this.text += chunk.slice(start, this.prevI);
+                }
+                nonSpace = true;
+                break outRootLoop;
+              case NL_LIKE:
+                if (handler !== void 0) {
+                  this.text += `${chunk.slice(start, this.prevI)}
+`;
+                }
+                start = this.i;
+                break;
+              case EOC:
+                if (handler !== void 0) {
+                  this.text += chunk.slice(start);
+                }
+                break outRootLoop;
+              default:
+                if (!isS(code)) {
+                  nonSpace = true;
+                }
+            }
+          }
+        if (!nonSpace) {
+          return;
+        }
+        if (!this.sawRoot && !this.reportedTextBeforeRoot) {
+          this.fail("text data outside of root node.");
+          this.reportedTextBeforeRoot = true;
+        }
+        if (this.closedRoot && !this.reportedTextAfterRoot) {
+          this.fail("text data outside of root node.");
+          this.reportedTextAfterRoot = true;
+        }
+      }
+      pushAttribNS(name, value) {
+        var _a;
+        const { prefix: prefix2, local } = this.qname(name);
+        const attr = { name, prefix: prefix2, local, value };
+        this.attribList.push(attr);
+        (_a = this.attributeHandler) === null || _a === void 0 ? void 0 : _a.call(this, attr);
+        if (prefix2 === "xmlns") {
+          const trimmed = value.trim();
+          if (this.currentXMLVersion === "1.0" && trimmed === "") {
+            this.fail("invalid attempt to undefine prefix in XML 1.0");
+          }
+          this.topNS[local] = trimmed;
+          nsPairCheck(this, local, trimmed);
+        } else if (name === "xmlns") {
+          const trimmed = value.trim();
+          this.topNS[""] = trimmed;
+          nsPairCheck(this, "", trimmed);
+        }
+      }
+      pushAttribPlain(name, value) {
+        var _a;
+        const attr = { name, value };
+        this.attribList.push(attr);
+        (_a = this.attributeHandler) === null || _a === void 0 ? void 0 : _a.call(this, attr);
+      }
+      /**
+       * End parsing. This performs final well-formedness checks and resets the
+       * parser to a clean state.
+       *
+       * @returns this
+       */
+      end() {
+        var _a, _b;
+        if (!this.sawRoot) {
+          this.fail("document must contain a root element.");
+        }
+        const { tags } = this;
+        while (tags.length > 0) {
+          const tag = tags.pop();
+          this.fail(`unclosed tag: ${tag.name}`);
+        }
+        if (this.state !== S_BEGIN && this.state !== S_TEXT) {
+          this.fail("unexpected end.");
+        }
+        const { text } = this;
+        if (text.length !== 0) {
+          (_a = this.textHandler) === null || _a === void 0 ? void 0 : _a.call(this, text);
+          this.text = "";
+        }
+        this._closed = true;
+        (_b = this.endHandler) === null || _b === void 0 ? void 0 : _b.call(this);
+        this._init();
+        return this;
+      }
+      /**
+       * Resolve a namespace prefix.
+       *
+       * @param prefix The prefix to resolve.
+       *
+       * @returns The namespace URI or ``undefined`` if the prefix is not defined.
+       */
+      resolve(prefix2) {
+        var _a, _b;
+        let uri = this.topNS[prefix2];
+        if (uri !== void 0) {
+          return uri;
+        }
+        const { tags } = this;
+        for (let index = tags.length - 1; index >= 0; index--) {
+          uri = tags[index].ns[prefix2];
+          if (uri !== void 0) {
+            return uri;
+          }
+        }
+        uri = this.ns[prefix2];
+        if (uri !== void 0) {
+          return uri;
+        }
+        return (_b = (_a = this.opt).resolvePrefix) === null || _b === void 0 ? void 0 : _b.call(_a, prefix2);
+      }
+      /**
+       * Parse a qname into its prefix and local name parts.
+       *
+       * @param name The name to parse
+       *
+       * @returns
+       */
+      qname(name) {
+        const colon = name.indexOf(":");
+        if (colon === -1) {
+          return { prefix: "", local: name };
+        }
+        const local = name.slice(colon + 1);
+        const prefix2 = name.slice(0, colon);
+        if (prefix2 === "" || local === "" || local.includes(":")) {
+          this.fail(`malformed name: ${name}.`);
+        }
+        return { prefix: prefix2, local };
+      }
+      processAttribsNS() {
+        var _a;
+        const { attribList } = this;
+        const tag = this.tag;
+        {
+          const { prefix: prefix2, local } = this.qname(tag.name);
+          tag.prefix = prefix2;
+          tag.local = local;
+          const uri = tag.uri = (_a = this.resolve(prefix2)) !== null && _a !== void 0 ? _a : "";
+          if (prefix2 !== "") {
+            if (prefix2 === "xmlns") {
+              this.fail('tags may not have "xmlns" as prefix.');
+            }
+            if (uri === "") {
+              this.fail(`unbound namespace prefix: ${JSON.stringify(prefix2)}.`);
+              tag.uri = prefix2;
+            }
+          }
+        }
+        if (attribList.length === 0) {
+          return;
+        }
+        const { attributes } = tag;
+        const seen = /* @__PURE__ */ new Set();
+        for (const attr of attribList) {
+          const { name, prefix: prefix2, local } = attr;
+          let uri;
+          let eqname;
+          if (prefix2 === "") {
+            uri = name === "xmlns" ? XMLNS_NAMESPACE : "";
+            eqname = name;
+          } else {
+            uri = this.resolve(prefix2);
+            if (uri === void 0) {
+              this.fail(`unbound namespace prefix: ${JSON.stringify(prefix2)}.`);
+              uri = prefix2;
+            }
+            eqname = `{${uri}}${local}`;
+          }
+          if (seen.has(eqname)) {
+            this.fail(`duplicate attribute: ${eqname}.`);
+          }
+          seen.add(eqname);
+          attr.uri = uri;
+          attributes[name] = attr;
+        }
+        this.attribList = [];
+      }
+      processAttribsPlain() {
+        const { attribList } = this;
+        const attributes = this.tag.attributes;
+        for (const { name, value } of attribList) {
+          if (attributes[name] !== void 0) {
+            this.fail(`duplicate attribute: ${name}.`);
+          }
+          attributes[name] = value;
+        }
+        this.attribList = [];
+      }
+      /**
+       * Handle a complete open tag. This parser code calls this once it has seen
+       * the whole tag. This method checks for well-formeness and then emits
+       * ``onopentag``.
+       */
+      openTag() {
+        var _a;
+        this.processAttribs();
+        const { tags } = this;
+        const tag = this.tag;
+        tag.isSelfClosing = false;
+        (_a = this.openTagHandler) === null || _a === void 0 ? void 0 : _a.call(this, tag);
+        tags.push(tag);
+        this.state = S_TEXT;
+        this.name = "";
+      }
+      /**
+       * Handle a complete self-closing tag. This parser code calls this once it has
+       * seen the whole tag. This method checks for well-formeness and then emits
+       * ``onopentag`` and ``onclosetag``.
+       */
+      openSelfClosingTag() {
+        var _a, _b, _c;
+        this.processAttribs();
+        const { tags } = this;
+        const tag = this.tag;
+        tag.isSelfClosing = true;
+        (_a = this.openTagHandler) === null || _a === void 0 ? void 0 : _a.call(this, tag);
+        (_b = this.closeTagHandler) === null || _b === void 0 ? void 0 : _b.call(this, tag);
+        const top = this.tag = (_c = tags[tags.length - 1]) !== null && _c !== void 0 ? _c : null;
+        if (top === null) {
+          this.closedRoot = true;
+        }
+        this.state = S_TEXT;
+        this.name = "";
+      }
+      /**
+       * Handle a complete close tag. This parser code calls this once it has seen
+       * the whole tag. This method checks for well-formeness and then emits
+       * ``onclosetag``.
+       */
+      closeTag() {
+        const { tags, name } = this;
+        this.state = S_TEXT;
+        this.name = "";
+        if (name === "") {
+          this.fail("weird empty close tag.");
+          this.text += "</>";
+          return;
+        }
+        const handler = this.closeTagHandler;
+        let l3 = tags.length;
+        while (l3-- > 0) {
+          const tag = this.tag = tags.pop();
+          this.topNS = tag.ns;
+          handler === null || handler === void 0 ? void 0 : handler(tag);
+          if (tag.name === name) {
+            break;
+          }
+          this.fail("unexpected close tag.");
+        }
+        if (l3 === 0) {
+          this.closedRoot = true;
+        } else if (l3 < 0) {
+          this.fail(`unmatched closing tag: ${name}.`);
+          this.text += `</${name}>`;
+        }
+      }
+      /**
+       * Resolves an entity. Makes any necessary well-formedness checks.
+       *
+       * @param entity The entity to resolve.
+       *
+       * @returns The parsed entity.
+       */
+      parseEntity(entity) {
+        if (entity[0] !== "#") {
+          const defined = this.ENTITIES[entity];
+          if (defined !== void 0) {
+            return defined;
+          }
+          this.fail(this.isName(entity) ? "undefined entity." : "disallowed character in entity name.");
+          return `&${entity};`;
+        }
+        let num = NaN;
+        if (entity[1] === "x" && /^#x[0-9a-f]+$/i.test(entity)) {
+          num = parseInt(entity.slice(2), 16);
+        } else if (/^#[0-9]+$/.test(entity)) {
+          num = parseInt(entity.slice(1), 10);
+        }
+        if (!this.isChar(num)) {
+          this.fail("malformed character entity.");
+          return `&${entity};`;
+        }
+        return String.fromCodePoint(num);
+      }
+    };
+    exports.SaxesParser = SaxesParser;
+  }
+});
+
+// node_modules/rdfxml-streaming-parser/lib/ParseError.js
+var require_ParseError = __commonJS({
+  "node_modules/rdfxml-streaming-parser/lib/ParseError.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ParseError = void 0;
+    var ParseError = class extends Error {
+      constructor(parser, message) {
+        const saxParser = parser.saxParser;
+        super(parser.trackPosition ? `Line ${saxParser.line} column ${saxParser.column + 1}: ${message}` : message);
+      }
+    };
+    exports.ParseError = ParseError;
+  }
+});
+
+// node_modules/rdf-data-factory/lib/BlankNode.js
+var require_BlankNode = __commonJS({
+  "node_modules/rdf-data-factory/lib/BlankNode.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.BlankNode = void 0;
+    var BlankNode2 = class {
+      constructor(value) {
+        this.termType = "BlankNode";
+        this.value = value;
+      }
+      equals(other) {
+        return !!other && other.termType === "BlankNode" && other.value === this.value;
+      }
+    };
+    exports.BlankNode = BlankNode2;
+  }
+});
+
+// node_modules/rdf-data-factory/lib/DefaultGraph.js
+var require_DefaultGraph = __commonJS({
+  "node_modules/rdf-data-factory/lib/DefaultGraph.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.DefaultGraph = void 0;
+    var DefaultGraph2 = class {
+      constructor() {
+        this.termType = "DefaultGraph";
+        this.value = "";
+      }
+      equals(other) {
+        return !!other && other.termType === "DefaultGraph";
+      }
+    };
+    exports.DefaultGraph = DefaultGraph2;
+    DefaultGraph2.INSTANCE = new DefaultGraph2();
+  }
+});
+
+// node_modules/rdf-data-factory/lib/NamedNode.js
+var require_NamedNode = __commonJS({
+  "node_modules/rdf-data-factory/lib/NamedNode.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.NamedNode = void 0;
+    var NamedNode3 = class {
+      constructor(value) {
+        this.termType = "NamedNode";
+        this.value = value;
+      }
+      equals(other) {
+        return !!other && other.termType === "NamedNode" && other.value === this.value;
+      }
+    };
+    exports.NamedNode = NamedNode3;
+  }
+});
+
+// node_modules/rdf-data-factory/lib/Literal.js
+var require_Literal = __commonJS({
+  "node_modules/rdf-data-factory/lib/Literal.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Literal = void 0;
+    var NamedNode_1 = require_NamedNode();
+    var Literal2 = class _Literal {
+      constructor(value, languageOrDatatype) {
+        this.termType = "Literal";
+        this.value = value;
+        if (typeof languageOrDatatype === "string") {
+          this.language = languageOrDatatype;
+          this.datatype = _Literal.RDF_LANGUAGE_STRING;
+          this.direction = "";
+        } else if (languageOrDatatype) {
+          if ("termType" in languageOrDatatype) {
+            this.language = "";
+            this.datatype = languageOrDatatype;
+            this.direction = "";
+          } else {
+            this.language = languageOrDatatype.language;
+            this.datatype = languageOrDatatype.direction ? _Literal.RDF_DIRECTIONAL_LANGUAGE_STRING : _Literal.RDF_LANGUAGE_STRING;
+            this.direction = languageOrDatatype.direction || "";
+          }
+        } else {
+          this.language = "";
+          this.datatype = _Literal.XSD_STRING;
+          this.direction = "";
+        }
+      }
+      equals(other) {
+        return !!other && other.termType === "Literal" && other.value === this.value && other.language === this.language && (other.direction === this.direction || !other.direction && this.direction === "") && this.datatype.equals(other.datatype);
+      }
+    };
+    exports.Literal = Literal2;
+    Literal2.RDF_LANGUAGE_STRING = new NamedNode_1.NamedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#langString");
+    Literal2.RDF_DIRECTIONAL_LANGUAGE_STRING = new NamedNode_1.NamedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#dirLangString");
+    Literal2.XSD_STRING = new NamedNode_1.NamedNode("http://www.w3.org/2001/XMLSchema#string");
+  }
+});
+
+// node_modules/rdf-data-factory/lib/Quad.js
+var require_Quad = __commonJS({
+  "node_modules/rdf-data-factory/lib/Quad.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Quad = void 0;
+    var Quad2 = class {
+      constructor(subject2, predicate2, object2, graph) {
+        this.termType = "Quad";
+        this.value = "";
+        this.subject = subject2;
+        this.predicate = predicate2;
+        this.object = object2;
+        this.graph = graph;
+      }
+      equals(other) {
+        return !!other && (other.termType === "Quad" || !other.termType) && this.subject.equals(other.subject) && this.predicate.equals(other.predicate) && this.object.equals(other.object) && this.graph.equals(other.graph);
+      }
+    };
+    exports.Quad = Quad2;
+  }
+});
+
+// node_modules/rdf-data-factory/lib/Variable.js
+var require_Variable = __commonJS({
+  "node_modules/rdf-data-factory/lib/Variable.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Variable = void 0;
+    var Variable2 = class {
+      constructor(value) {
+        this.termType = "Variable";
+        this.value = value;
+      }
+      equals(other) {
+        return !!other && other.termType === "Variable" && other.value === this.value;
+      }
+    };
+    exports.Variable = Variable2;
+  }
+});
+
+// node_modules/rdf-data-factory/lib/DataFactory.js
+var require_DataFactory = __commonJS({
+  "node_modules/rdf-data-factory/lib/DataFactory.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.DataFactory = void 0;
+    var BlankNode_1 = require_BlankNode();
+    var DefaultGraph_1 = require_DefaultGraph();
+    var Literal_1 = require_Literal();
+    var NamedNode_1 = require_NamedNode();
+    var Quad_1 = require_Quad();
+    var Variable_1 = require_Variable();
+    var dataFactoryCounter = 0;
+    var DataFactory4 = class {
+      constructor(options) {
+        this.blankNodeCounter = 0;
+        options = options || {};
+        this.blankNodePrefix = options.blankNodePrefix || `df_${dataFactoryCounter++}_`;
+      }
+      /**
+       * @param value The IRI for the named node.
+       * @return A new instance of NamedNode.
+       * @see NamedNode
+       */
+      namedNode(value) {
+        return new NamedNode_1.NamedNode(value);
+      }
+      /**
+       * @param value The optional blank node identifier.
+       * @return A new instance of BlankNode.
+       *         If the `value` parameter is undefined a new identifier
+       *         for the blank node is generated for each call.
+       * @see BlankNode
+       */
+      blankNode(value) {
+        return new BlankNode_1.BlankNode(value || `${this.blankNodePrefix}${this.blankNodeCounter++}`);
+      }
+      /**
+       * @param value              The literal value.
+       * @param languageOrDatatype The optional language, datatype, or directional language.
+       *                           If `languageOrDatatype` is a NamedNode,
+       *                           then it is used for the value of `NamedNode.datatype`.
+       *                           If `languageOrDatatype` is a NamedNode, it is used for the value
+       *                           of `NamedNode.language`.
+       *                           Otherwise, it is used as a directional language,
+       *                           from which the language is set to `languageOrDatatype.language`
+       *                           and the direction to `languageOrDatatype.direction`.
+       * @return A new instance of Literal.
+       * @see Literal
+       */
+      literal(value, languageOrDatatype) {
+        return new Literal_1.Literal(value, languageOrDatatype);
+      }
+      /**
+       * This method is optional.
+       * @param value The variable name
+       * @return A new instance of Variable.
+       * @see Variable
+       */
+      variable(value) {
+        return new Variable_1.Variable(value);
+      }
+      /**
+       * @return An instance of DefaultGraph.
+       */
+      defaultGraph() {
+        return DefaultGraph_1.DefaultGraph.INSTANCE;
+      }
+      /**
+       * @param subject   The quad subject term.
+       * @param predicate The quad predicate term.
+       * @param object    The quad object term.
+       * @param graph     The quad graph term.
+       * @return A new instance of Quad.
+       * @see Quad
+       */
+      quad(subject2, predicate2, object2, graph) {
+        return new Quad_1.Quad(subject2, predicate2, object2, graph || this.defaultGraph());
+      }
+      /**
+       * Create a deep copy of the given term using this data factory.
+       * @param original An RDF term.
+       * @return A deep copy of the given term.
+       */
+      fromTerm(original) {
+        switch (original.termType) {
+          case "NamedNode":
+            return this.namedNode(original.value);
+          case "BlankNode":
+            return this.blankNode(original.value);
+          case "Literal":
+            if (original.language) {
+              return this.literal(original.value, original.language);
+            }
+            if (!original.datatype.equals(Literal_1.Literal.XSD_STRING)) {
+              return this.literal(original.value, this.fromTerm(original.datatype));
+            }
+            return this.literal(original.value);
+          case "Variable":
+            return this.variable(original.value);
+          case "DefaultGraph":
+            return this.defaultGraph();
+          case "Quad":
+            return this.quad(this.fromTerm(original.subject), this.fromTerm(original.predicate), this.fromTerm(original.object), this.fromTerm(original.graph));
+        }
+      }
+      /**
+       * Create a deep copy of the given quad using this data factory.
+       * @param original An RDF quad.
+       * @return A deep copy of the given quad.
+       */
+      fromQuad(original) {
+        return this.fromTerm(original);
+      }
+      /**
+       * Reset the internal blank node counter.
+       */
+      resetBlankNodeCounter() {
+        this.blankNodeCounter = 0;
+      }
+    };
+    exports.DataFactory = DataFactory4;
+  }
+});
+
+// node_modules/rdf-data-factory/index.js
+var require_rdf_data_factory = __commonJS({
+  "node_modules/rdf-data-factory/index.js"(exports) {
+    "use strict";
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      var desc = Object.getOwnPropertyDescriptor(m2, k2);
+      if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m2[k2];
+        } };
+      }
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      o6[k22] = m2[k2];
+    }));
+    var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
+      for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    __exportStar(require_BlankNode(), exports);
+    __exportStar(require_DataFactory(), exports);
+    __exportStar(require_DefaultGraph(), exports);
+    __exportStar(require_Literal(), exports);
+    __exportStar(require_NamedNode(), exports);
+    __exportStar(require_Quad(), exports);
+    __exportStar(require_Variable(), exports);
+  }
+});
+
+// node_modules/validate-iri/lib/Validate.js
+var require_Validate = __commonJS({
+  "node_modules/validate-iri/lib/Validate.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.validateIri = exports.IriValidationStrategy = void 0;
+    function buildAbsoluteIriRfc3987Regex() {
+      const sub_delims_raw = `!$&'()*+,;=`;
+      const sub_delims = `[${sub_delims_raw}]`;
+      const pct_encoded = `%[a-fA-F0-9]{2}`;
+      const dec_octet = "([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])";
+      const ipv4address = `${dec_octet}\\.${dec_octet}\\.${dec_octet}\\.${dec_octet}`;
+      const h16 = `[a-fA-F0-9]{1,4}`;
+      const ls32 = `(${h16}:${h16}|${ipv4address})`;
+      const ipv6address = `((${h16}:){6}${ls32}|::(${h16}:){5}${ls32}|(${h16})?::(${h16}:){4}${ls32}|((${h16}:){0,1}${h16})?::(${h16}:){3}${ls32}|((${h16}:){0,2}${h16})?::(${h16}:){2}${ls32}|((${h16}:){0,3}${h16})?::${h16}:${ls32}|((${h16}:){0,4}${h16})?::${ls32}|((${h16}:){0,5}${h16})?::${h16}|((${h16}:){0,6}${h16})?::)`;
+      const ipvfuture = `v[a-fA-F0-9]+\\.(${sub_delims}|${sub_delims}|":)+`;
+      const ip_literal = `\\[(${ipv6address}|${ipvfuture})\\]`;
+      const port = `[0-9]*`;
+      const scheme = `[a-zA-Z][a-zA-Z0-9+\\-.]*`;
+      const iprivate_raw = `\uE000-\uF8FF\u{F0000}-\u{FFFFD}\u{100000}-\u{10FFFD}`;
+      const iprivate = `[${iprivate_raw}]`;
+      const ucschar_raw = `\xA0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF\u{10000}-\u{1FFFD}\u{20000}-\u{2FFFD}\u{30000}-\u{3FFFD}\u{40000}-\u{4FFFD}\u{50000}-\u{5FFFD}\u{60000}-\u{6FFFD}\u{70000}-\u{7FFFD}\u{80000}-\u{8FFFD}\u{90000}-\u{9FFFD}\u{A0000}-\u{AFFFD}\u{B0000}-\u{BFFFD}\u{C0000}-\u{CFFFD}\u{D0000}-\u{DFFFD}\u{E1000}-\u{EFFFD}`;
+      const iunreserved_raw = `a-zA-Z0-9\\-._~${ucschar_raw}`;
+      const iunreserved = `[${iunreserved_raw}]`;
+      const ipchar = `(${iunreserved}|${pct_encoded}|${sub_delims}|[:@])*`;
+      const ifragment = `(${ipchar}|[\\/?])*`;
+      const iquery = `(${ipchar}|${iprivate}|[\\/?])*`;
+      const isegment_nz = `(${ipchar})+`;
+      const isegment = `(${ipchar})*`;
+      const ipath_empty = "";
+      const ipath_rootless = `${isegment_nz}(\\/${isegment})*`;
+      const ipath_absolute = `\\/(${isegment_nz}(\\/${isegment})*)?`;
+      const ipath_abempty = `(\\/${isegment})*`;
+      const ireg_name = `(${iunreserved}|${pct_encoded}|${sub_delims})*`;
+      const ihost = `(${ip_literal}|${ipv4address}|${ireg_name})`;
+      const iuserinfo = `(${iunreserved}|${pct_encoded}|${sub_delims}|:)*`;
+      const iauthority = `(${iuserinfo}@)?${ihost}(:${port})?`;
+      const ihier_part = `(\\/\\/${iauthority}${ipath_abempty}|${ipath_absolute}|${ipath_rootless}|${ipath_empty})`;
+      const iri = `^${scheme}:${ihier_part}(\\?${iquery})?(#${ifragment})?$`;
+      return new RegExp(iri, "u");
+    }
+    var STRICT_IRI_REGEX = buildAbsoluteIriRfc3987Regex();
+    var PRAGMATIC_IRI_REGEX = /^[A-Za-z][\d+-.A-Za-z]*:[^\u0000-\u0020"<>\\^`{|}]*$/u;
+    var IriValidationStrategy;
+    (function(IriValidationStrategy2) {
+      IriValidationStrategy2["Strict"] = "strict";
+      IriValidationStrategy2["Pragmatic"] = "pragmatic";
+      IriValidationStrategy2["None"] = "none";
+    })(IriValidationStrategy = exports.IriValidationStrategy || (exports.IriValidationStrategy = {}));
+    function validateIri(iri, strategy = IriValidationStrategy.Strict) {
+      switch (strategy) {
+        case IriValidationStrategy.Strict:
+          return STRICT_IRI_REGEX.test(iri) ? void 0 : new Error(`Invalid IRI according to RFC 3987: '${iri}'`);
+        case IriValidationStrategy.Pragmatic:
+          return PRAGMATIC_IRI_REGEX.test(iri) ? void 0 : new Error(`Invalid IRI according to RDF Turtle: '${iri}'`);
+        case IriValidationStrategy.None:
+          return void 0;
+        default:
+          return new Error(`Not supported validation strategy "${strategy}"`);
+      }
+    }
+    exports.validateIri = validateIri;
+  }
+});
+
+// node_modules/validate-iri/index.js
+var require_validate_iri = __commonJS({
+  "node_modules/validate-iri/index.js"(exports) {
+    "use strict";
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      var desc = Object.getOwnPropertyDescriptor(m2, k2);
+      if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m2[k2];
+        } };
+      }
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      o6[k22] = m2[k2];
+    }));
+    var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
+      for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    __exportStar(require_Validate(), exports);
+  }
+});
+
+// node_modules/rdfxml-streaming-parser/lib/RdfXmlParser.js
+var require_RdfXmlParser = __commonJS({
+  "node_modules/rdfxml-streaming-parser/lib/RdfXmlParser.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ParseType = exports.RdfXmlParser = void 0;
+    var relative_to_absolute_iri_1 = require_relative_to_absolute_iri();
+    var saxes_1 = require_saxes();
+    var readable_stream_1 = require_browser3();
+    var ParseError_1 = require_ParseError();
+    var rdf_data_factory_1 = require_rdf_data_factory();
+    var validate_iri_1 = require_validate_iri();
+    var RdfXmlParser2 = class _RdfXmlParser extends readable_stream_1.Transform {
+      constructor(args) {
+        super({ readableObjectMode: true });
+        this.activeTagStack = [];
+        this.nodeIds = {};
+        if (args) {
+          Object.assign(this, args);
+          this.options = args;
+        }
+        if (!this.dataFactory) {
+          this.dataFactory = new rdf_data_factory_1.DataFactory();
+        }
+        if (!this.baseIRI) {
+          this.baseIRI = "";
+        }
+        if (!this.defaultGraph) {
+          this.defaultGraph = this.dataFactory.defaultGraph();
+        }
+        if (this.validateUri !== false) {
+          this.validateUri = true;
+        }
+        if (!this.iriValidationStrategy) {
+          this.iriValidationStrategy = this.validateUri ? validate_iri_1.IriValidationStrategy.Pragmatic : validate_iri_1.IriValidationStrategy.None;
+        }
+        this.parseUnsupportedVersions = !!(args === null || args === void 0 ? void 0 : args.parseUnsupportedVersions);
+        this.version = args === null || args === void 0 ? void 0 : args.version;
+        this.saxParser = new saxes_1.SaxesParser({ xmlns: true, position: this.trackPosition });
+        this.attachSaxListeners();
+      }
+      /**
+       * Parses the given text stream into a quad stream.
+       * @param {NodeJS.EventEmitter} stream A text stream.
+       * @return {RDF.Stream} A quad stream.
+       */
+      import(stream) {
+        const output = new readable_stream_1.PassThrough({ readableObjectMode: true });
+        stream.on("error", (error) => parsed.emit("error", error));
+        stream.on("data", (data) => output.push(data));
+        stream.on("end", () => output.push(null));
+        const parsed = output.pipe(new _RdfXmlParser(this.options));
+        return parsed;
+      }
+      _transform(chunk, encoding, callback) {
+        if (this.version) {
+          const version = this.version;
+          this.version = void 0;
+          if (!this.isValidVersion(version)) {
+            return callback(this.newParseError(`Detected unsupported version as media type parameter: ${version}`));
+          }
+        }
+        try {
+          this.saxParser.write(chunk);
+        } catch (e5) {
+          return callback(e5);
+        }
+        callback();
+      }
+      /**
+       * Create a new parse error instance.
+       * @param {string} message An error message.
+       * @return {Error} An error instance.
+       */
+      newParseError(message) {
+        return new ParseError_1.ParseError(this, message);
+      }
+      /**
+       * Convert the given value to a IRI by taking into account the baseIRI.
+       *
+       * This will follow the RDF/XML spec for converting values with baseIRIs to a IRI.
+       *
+       * @param {string} value The value to convert to an IRI.
+       * @param {IActiveTag} activeTag The active tag.
+       * @return {NamedNode} an IRI.
+       */
+      valueToUri(value, activeTag) {
+        return this.uriToNamedNode((0, relative_to_absolute_iri_1.resolve)(value, activeTag.baseIRI));
+      }
+      /**
+       * Convert the given value URI string to a named node.
+       *
+       * This throw an error if the URI is invalid.
+       *
+       * @param {string} uri A URI string.
+       * @return {NamedNode} a named node.
+       */
+      uriToNamedNode(uri) {
+        const uriValidationResult = (0, validate_iri_1.validateIri)(uri, this.iriValidationStrategy);
+        if (uriValidationResult instanceof Error) {
+          throw this.newParseError(uriValidationResult.message);
+        }
+        return this.dataFactory.namedNode(uri);
+      }
+      /**
+       * Validate the given value as an NCName: https://www.w3.org/TR/xml-names/#NT-NCName
+       * If it is invalid, an error will thrown emitted.
+       * @param {string} value A value.
+       */
+      validateNcname(value) {
+        if (!_RdfXmlParser.NCNAME_MATCHER.test(value)) {
+          throw this.newParseError(`Not a valid NCName: ${value}`);
+        }
+      }
+      /**
+       * Create a new literal term.
+       * @param value The literal value.
+       * @param activeTag The active tag.
+       */
+      createLiteral(value, activeTag) {
+        return this.dataFactory.literal(value, activeTag.datatype ? activeTag.datatype : activeTag.language ? { language: activeTag.language, direction: activeTag.rdfVersion ? activeTag.direction : void 0 } : void 0);
+      }
+      /**
+       * If the given version is valid for this parser to handle.
+       * @param version A version string.
+       */
+      isValidVersion(version) {
+        return this.parseUnsupportedVersions || _RdfXmlParser.SUPPORTED_VERSIONS.includes(version);
+      }
+      attachSaxListeners() {
+        this.saxParser.on("error", (error) => this.emit("error", error));
+        this.saxParser.on("opentag", this.onTag.bind(this));
+        this.saxParser.on("text", this.onText.bind(this));
+        this.saxParser.on("cdata", this.onText.bind(this));
+        this.saxParser.on("closetag", this.onCloseTag.bind(this));
+        this.saxParser.on("doctype", this.onDoctype.bind(this));
+      }
+      /**
+       * Handle the given tag.
+       * @param {SaxesTagNS} tag A SAX tag.
+       */
+      onTag(tag) {
+        const parentTag = this.activeTagStack.length ? this.activeTagStack[this.activeTagStack.length - 1] : null;
+        let currentParseType = ParseType.RESOURCE;
+        if (parentTag) {
+          parentTag.hadChildren = true;
+          currentParseType = parentTag.childrenParseType;
+        }
+        if (parentTag && parentTag.childrenStringTags) {
+          const tagName = tag.name;
+          let attributes = "";
+          for (const { key, value } of parentTag.namespaces || []) {
+            attributes += ` ${key}="${value}"`;
+          }
+          for (const attributeKey in tag.attributes) {
+            attributes += ` ${attributeKey}="${tag.attributes[attributeKey].value}"`;
+          }
+          const tagContents = `${tagName}${attributes}`;
+          const tagString = `<${tagContents}>`;
+          parentTag.childrenStringTags.push(tagString);
+          const stringActiveTag = { childrenStringTags: parentTag.childrenStringTags };
+          stringActiveTag.childrenStringEmitClosingTag = `</${tagName}>`;
+          this.activeTagStack.push(stringActiveTag);
+          return;
+        }
+        const activeTag = {};
+        if (parentTag) {
+          activeTag.language = parentTag.language;
+          activeTag.direction = parentTag.direction;
+          activeTag.baseIRI = parentTag.baseIRI;
+          activeTag.childrenTripleTerms = parentTag.childrenTripleTerms;
+          activeTag.rdfVersion = parentTag.rdfVersion;
+        } else {
+          activeTag.baseIRI = this.baseIRI;
+        }
+        this.activeTagStack.push(activeTag);
+        if (currentParseType === ParseType.RESOURCE) {
+          this.onTagResource(tag, activeTag, parentTag, !parentTag);
+        } else {
+          this.onTagProperty(tag, activeTag, parentTag);
+        }
+        for (const attributeKey in tag.attributes) {
+          const attribute = tag.attributes[attributeKey];
+          if (attribute.prefix === "xmlns") {
+            if (!activeTag.namespaces) {
+              activeTag.namespaces = [];
+            }
+            activeTag.namespaces.push({ key: `${attribute.prefix}:${attribute.local}`, value: attribute.value });
+          }
+        }
+        if (parentTag && parentTag.namespaces) {
+          activeTag.namespaces = [...activeTag.namespaces || [], ...parentTag.namespaces];
+        }
+      }
+      /**
+       * Handle the given node element in resource-mode.
+       * @param {SaxesTagNS} tag A SAX tag.
+       * @param {IActiveTag} activeTag The currently active tag.
+       * @param {IActiveTag} parentTag The parent tag or null.
+       * @param {boolean} rootTag If we are currently processing the root tag.
+       */
+      onTagResource(tag, activeTag, parentTag, rootTag) {
+        activeTag.childrenParseType = ParseType.PROPERTY;
+        let typedNode = true;
+        if (tag.uri === _RdfXmlParser.RDF) {
+          if (!rootTag && _RdfXmlParser.FORBIDDEN_NODE_ELEMENTS.indexOf(tag.local) >= 0) {
+            throw this.newParseError(`Illegal node element name: ${tag.local}`);
+          }
+          switch (tag.local) {
+            case "RDF":
+              activeTag.childrenParseType = ParseType.RESOURCE;
+            case "Description":
+              typedNode = false;
+          }
+        }
+        const predicates = [];
+        const objects = [];
+        let activeSubjectValue = null;
+        let claimSubjectNodeId = false;
+        let subjectValueBlank = false;
+        let explicitType = null;
+        for (const attributeKey in tag.attributes) {
+          const attribute = tag.attributes[attributeKey];
+          if (attribute.uri === _RdfXmlParser.RDF && attribute.local === "version") {
+            this.setVersion(activeTag, attribute.value);
+            continue;
+          } else if (parentTag && attribute.uri === _RdfXmlParser.RDF) {
+            switch (attribute.local) {
+              case "about":
+                if (activeSubjectValue) {
+                  throw this.newParseError(`Only one of rdf:about, rdf:nodeID and rdf:ID can be present, while ${attribute.value} and ${activeSubjectValue} where found.`);
+                }
+                activeSubjectValue = attribute.value;
+                continue;
+              case "ID":
+                if (activeSubjectValue) {
+                  throw this.newParseError(`Only one of rdf:about, rdf:nodeID and rdf:ID can be present, while ${attribute.value} and ${activeSubjectValue} where found.`);
+                }
+                this.validateNcname(attribute.value);
+                activeSubjectValue = "#" + attribute.value;
+                claimSubjectNodeId = true;
+                continue;
+              case "nodeID":
+                if (activeSubjectValue) {
+                  throw this.newParseError(`Only one of rdf:about, rdf:nodeID and rdf:ID can be present, while ${attribute.value} and ${activeSubjectValue} where found.`);
+                }
+                this.validateNcname(attribute.value);
+                activeSubjectValue = attribute.value;
+                subjectValueBlank = true;
+                continue;
+              case "bagID":
+                throw this.newParseError(`rdf:bagID is not supported.`);
+              case "type":
+                explicitType = attribute.value;
+                continue;
+              case "aboutEach":
+                throw this.newParseError(`rdf:aboutEach is not supported.`);
+              case "aboutEachPrefix":
+                throw this.newParseError(`rdf:aboutEachPrefix is not supported.`);
+              case "li":
+                throw this.newParseError(`rdf:li on node elements are not supported.`);
+            }
+          } else if (attribute.uri === _RdfXmlParser.XML) {
+            if (attribute.local === "lang") {
+              activeTag.language = attribute.value === "" ? null : attribute.value.toLowerCase();
+              continue;
+            } else if (attribute.local === "base") {
+              activeTag.baseIRI = (0, relative_to_absolute_iri_1.resolve)(attribute.value, activeTag.baseIRI);
+              continue;
+            }
+          } else if (attribute.uri === _RdfXmlParser.ITS && attribute.local === "dir") {
+            this.setDirection(activeTag, attribute.value);
+            continue;
+          }
+          if (attribute.prefix !== "xml" && attribute.prefix !== "xmlns" && (attribute.prefix !== "" || attribute.local !== "xmlns") && attribute.uri) {
+            predicates.push(this.uriToNamedNode(attribute.uri + attribute.local));
+            objects.push(attribute.value);
+          }
+        }
+        if (activeSubjectValue !== null) {
+          activeTag.subject = subjectValueBlank ? this.dataFactory.blankNode(activeSubjectValue) : this.valueToUri(activeSubjectValue, activeTag);
+          if (claimSubjectNodeId) {
+            this.claimNodeId(activeTag.subject);
+          }
+        }
+        if (!activeTag.subject) {
+          activeTag.subject = this.dataFactory.blankNode();
+        }
+        if (typedNode) {
+          const type = this.uriToNamedNode(tag.uri + tag.local);
+          this.emitTriple(activeTag.subject, this.dataFactory.namedNode(_RdfXmlParser.RDF + "type"), type, parentTag ? parentTag.reifiedStatementId : null, activeTag.childrenTripleTerms, activeTag.reifier);
+        }
+        if (parentTag) {
+          if (parentTag.predicate) {
+            if (parentTag.childrenCollectionSubject) {
+              const linkTerm = this.dataFactory.blankNode();
+              const restTerm = this.dataFactory.namedNode(_RdfXmlParser.RDF + "rest");
+              const isRestTerm = parentTag.childrenCollectionPredicate.equals(restTerm);
+              this.emitTriple(parentTag.childrenCollectionSubject, parentTag.childrenCollectionPredicate, linkTerm, isRestTerm ? null : parentTag.reifiedStatementId, parentTag.childrenTripleTerms, isRestTerm ? null : parentTag.reifier);
+              this.emitTriple(linkTerm, this.dataFactory.namedNode(_RdfXmlParser.RDF + "first"), activeTag.subject, null, activeTag.childrenTripleTerms);
+              parentTag.childrenCollectionSubject = linkTerm;
+              parentTag.childrenCollectionPredicate = restTerm;
+            } else {
+              if (!parentTag.childrenTagsToTripleTerms) {
+                this.emitTriple(parentTag.subject, parentTag.predicate, activeTag.subject, parentTag.reifiedStatementId, parentTag.childrenTripleTerms, parentTag.reifier);
+                parentTag.predicateEmitted = true;
+              }
+              for (let i5 = 0; i5 < parentTag.predicateSubPredicates.length; i5++) {
+                this.emitTriple(activeTag.subject, parentTag.predicateSubPredicates[i5], parentTag.predicateSubObjects[i5], null, parentTag.childrenTripleTerms, parentTag.reifier);
+              }
+              parentTag.predicateSubPredicates = [];
+              parentTag.predicateSubObjects = [];
+            }
+          }
+          for (let i5 = 0; i5 < predicates.length; i5++) {
+            const object2 = this.createLiteral(objects[i5], activeTag);
+            this.emitTriple(activeTag.subject, predicates[i5], object2, parentTag.reifiedStatementId, parentTag.childrenTripleTerms, parentTag.reifier);
+          }
+          if (explicitType) {
+            this.emitTriple(activeTag.subject, this.dataFactory.namedNode(_RdfXmlParser.RDF + "type"), this.uriToNamedNode(explicitType), null, activeTag.childrenTripleTerms, activeTag.reifier);
+          }
+        }
+      }
+      /**
+       * Handle the given property element in property-mode.
+       * @param {SaxesTagNS} tag A SAX tag.
+       * @param {IActiveTag} activeTag The currently active tag.
+       * @param {IActiveTag} parentTag The parent tag or null.
+       */
+      onTagProperty(tag, activeTag, parentTag) {
+        activeTag.childrenParseType = ParseType.RESOURCE;
+        activeTag.subject = parentTag.subject;
+        if (tag.uri === _RdfXmlParser.RDF && tag.local === "li") {
+          if (!parentTag.listItemCounter) {
+            parentTag.listItemCounter = 1;
+          }
+          activeTag.predicate = this.uriToNamedNode(tag.uri + "_" + parentTag.listItemCounter++);
+        } else {
+          activeTag.predicate = this.uriToNamedNode(tag.uri + tag.local);
+        }
+        if (tag.uri === _RdfXmlParser.RDF && _RdfXmlParser.FORBIDDEN_PROPERTY_ELEMENTS.indexOf(tag.local) >= 0) {
+          throw this.newParseError(`Illegal property element name: ${tag.local}`);
+        }
+        activeTag.predicateSubPredicates = [];
+        activeTag.predicateSubObjects = [];
+        let parseType = false;
+        let attributedProperty = false;
+        let activeSubSubjectValue = null;
+        let subSubjectValueBlank = true;
+        const predicates = [];
+        const objects = [];
+        for (const propertyAttributeKey in tag.attributes) {
+          const propertyAttribute = tag.attributes[propertyAttributeKey];
+          if (propertyAttribute.uri === _RdfXmlParser.RDF && propertyAttribute.local === "version") {
+            this.setVersion(activeTag, propertyAttribute.value);
+            continue;
+          } else if (propertyAttribute.uri === _RdfXmlParser.RDF) {
+            switch (propertyAttribute.local) {
+              case "resource":
+                if (activeSubSubjectValue) {
+                  throw this.newParseError(`Found both rdf:resource (${propertyAttribute.value}) and rdf:nodeID (${activeSubSubjectValue}).`);
+                }
+                if (parseType) {
+                  throw this.newParseError(`rdf:parseType is not allowed on property elements with rdf:resource (${propertyAttribute.value})`);
+                }
+                activeTag.hadChildren = true;
+                activeSubSubjectValue = propertyAttribute.value;
+                subSubjectValueBlank = false;
+                continue;
+              case "datatype":
+                if (attributedProperty) {
+                  throw this.newParseError(`Found both non-rdf:* property attributes and rdf:datatype (${propertyAttribute.value}).`);
+                }
+                if (parseType) {
+                  throw this.newParseError(`rdf:parseType is not allowed on property elements with rdf:datatype (${propertyAttribute.value})`);
+                }
+                activeTag.datatype = this.valueToUri(propertyAttribute.value, activeTag);
+                continue;
+              case "nodeID":
+                if (attributedProperty) {
+                  throw this.newParseError(`Found both non-rdf:* property attributes and rdf:nodeID (${propertyAttribute.value}).`);
+                }
+                if (activeTag.hadChildren) {
+                  throw this.newParseError(`Found both rdf:resource and rdf:nodeID (${propertyAttribute.value}).`);
+                }
+                if (parseType) {
+                  throw this.newParseError(`rdf:parseType is not allowed on property elements with rdf:nodeID (${propertyAttribute.value})`);
+                }
+                this.validateNcname(propertyAttribute.value);
+                activeTag.hadChildren = true;
+                activeSubSubjectValue = propertyAttribute.value;
+                subSubjectValueBlank = true;
+                continue;
+              case "bagID":
+                throw this.newParseError(`rdf:bagID is not supported.`);
+              case "parseType":
+                if (attributedProperty) {
+                  throw this.newParseError(`rdf:parseType is not allowed when non-rdf:* property attributes are present`);
+                }
+                if (activeTag.datatype) {
+                  throw this.newParseError(`rdf:parseType is not allowed on property elements with rdf:datatype (${activeTag.datatype.value})`);
+                }
+                if (activeSubSubjectValue) {
+                  throw this.newParseError(`rdf:parseType is not allowed on property elements with rdf:nodeID or rdf:resource (${activeSubSubjectValue})`);
+                }
+                if (propertyAttribute.value === "Resource") {
+                  parseType = true;
+                  activeTag.childrenParseType = ParseType.PROPERTY;
+                  const nestedBNode = this.dataFactory.blankNode();
+                  this.emitTriple(activeTag.subject, activeTag.predicate, nestedBNode, activeTag.reifiedStatementId, activeTag.childrenTripleTerms, activeTag.reifier);
+                  activeTag.subject = nestedBNode;
+                  activeTag.predicate = null;
+                } else if (propertyAttribute.value === "Collection") {
+                  parseType = true;
+                  activeTag.hadChildren = true;
+                  activeTag.childrenCollectionSubject = activeTag.subject;
+                  activeTag.childrenCollectionPredicate = activeTag.predicate;
+                  subSubjectValueBlank = false;
+                } else if (propertyAttribute.value === "Literal") {
+                  parseType = true;
+                  activeTag.childrenTagsToString = true;
+                  activeTag.childrenStringTags = [];
+                } else if (propertyAttribute.value === "Triple") {
+                  parseType = true;
+                  activeTag.childrenTagsToTripleTerms = true;
+                  activeTag.childrenTripleTerms = [];
+                }
+                continue;
+              case "ID":
+                this.validateNcname(propertyAttribute.value);
+                activeTag.reifiedStatementId = this.valueToUri("#" + propertyAttribute.value, activeTag);
+                this.claimNodeId(activeTag.reifiedStatementId);
+                continue;
+              case "annotation":
+                activeTag.reifier = this.dataFactory.namedNode(propertyAttribute.value);
+                continue;
+              case "annotationNodeID":
+                activeTag.reifier = this.dataFactory.blankNode(propertyAttribute.value);
+                continue;
+            }
+          } else if (propertyAttribute.uri === _RdfXmlParser.XML && propertyAttribute.local === "lang") {
+            activeTag.language = propertyAttribute.value === "" ? null : propertyAttribute.value.toLowerCase();
+            continue;
+          } else if (propertyAttribute.uri === _RdfXmlParser.ITS && propertyAttribute.local === "dir") {
+            this.setDirection(activeTag, propertyAttribute.value);
+            continue;
+          } else if (propertyAttribute.uri === _RdfXmlParser.ITS && propertyAttribute.local === "version") {
+            continue;
+          }
+          if (propertyAttribute.prefix !== "xml" && propertyAttribute.prefix !== "xmlns" && (propertyAttribute.prefix !== "" || propertyAttribute.local !== "xmlns") && propertyAttribute.uri) {
+            if (parseType || activeTag.datatype) {
+              throw this.newParseError(`Found illegal rdf:* properties on property element with attribute: ${propertyAttribute.value}`);
+            }
+            activeTag.hadChildren = true;
+            attributedProperty = true;
+            predicates.push(this.uriToNamedNode(propertyAttribute.uri + propertyAttribute.local));
+            objects.push(this.createLiteral(propertyAttribute.value, activeTag));
+          }
+        }
+        if (activeSubSubjectValue !== null) {
+          const subjectParent = activeTag.subject;
+          activeTag.subject = subSubjectValueBlank ? this.dataFactory.blankNode(activeSubSubjectValue) : this.valueToUri(activeSubSubjectValue, activeTag);
+          this.emitTriple(subjectParent, activeTag.predicate, activeTag.subject, activeTag.reifiedStatementId, activeTag.childrenTripleTerms, activeTag.reifier);
+          for (let i5 = 0; i5 < predicates.length; i5++) {
+            this.emitTriple(activeTag.subject, predicates[i5], objects[i5], null, activeTag.childrenTripleTerms, activeTag.reifier);
+          }
+          activeTag.predicateEmitted = true;
+        } else if (subSubjectValueBlank) {
+          activeTag.predicateSubPredicates = predicates;
+          activeTag.predicateSubObjects = objects;
+          activeTag.predicateEmitted = false;
+        }
+      }
+      /**
+       * Emit the given triple to the stream.
+       * @param {Term} subject A subject term.
+       * @param {Term} predicate A predicate term.
+       * @param {Term} object An object term.
+       * @param {Term} statementId An optional resource that identifies the triple.
+       *                           If truthy, then the given triple will also be emitted reified.
+       * @param childrenTripleTerms An optional array to push quads into instead of emitting them.
+       * @param reifier The reifier to emit this triple under.
+       */
+      emitTriple(subject2, predicate2, object2, statementId, childrenTripleTerms, reifier) {
+        const quad3 = this.dataFactory.quad(subject2, predicate2, object2, this.defaultGraph);
+        if (childrenTripleTerms) {
+          childrenTripleTerms.push(quad3);
+        } else {
+          this.push(quad3);
+        }
+        if (reifier) {
+          this.push(this.dataFactory.quad(reifier, this.dataFactory.namedNode(_RdfXmlParser.RDF + "reifies"), quad3));
+        }
+        if (statementId) {
+          this.push(this.dataFactory.quad(statementId, this.dataFactory.namedNode(_RdfXmlParser.RDF + "type"), this.dataFactory.namedNode(_RdfXmlParser.RDF + "Statement"), this.defaultGraph));
+          this.push(this.dataFactory.quad(statementId, this.dataFactory.namedNode(_RdfXmlParser.RDF + "subject"), subject2, this.defaultGraph));
+          this.push(this.dataFactory.quad(statementId, this.dataFactory.namedNode(_RdfXmlParser.RDF + "predicate"), predicate2, this.defaultGraph));
+          this.push(this.dataFactory.quad(statementId, this.dataFactory.namedNode(_RdfXmlParser.RDF + "object"), object2, this.defaultGraph));
+        }
+      }
+      /**
+       * Register the given term as a node ID.
+       * If one was already registered, this will emit an error.
+       *
+       * This is used to check duplicate occurrences of rdf:ID in scope of the baseIRI.
+       * @param {Term} term An RDF term.
+       */
+      claimNodeId(term) {
+        if (!this.allowDuplicateRdfIds) {
+          if (this.nodeIds[term.value]) {
+            throw this.newParseError(`Found multiple occurrences of rdf:ID='${term.value}'.`);
+          }
+          this.nodeIds[term.value] = true;
+        }
+      }
+      /**
+       * Handle the given text string.
+       * @param {string} text A parsed text string.
+       */
+      onText(text) {
+        const activeTag = this.activeTagStack.length ? this.activeTagStack[this.activeTagStack.length - 1] : null;
+        if (activeTag) {
+          if (activeTag.childrenStringTags) {
+            activeTag.childrenStringTags.push(text);
+          } else if (activeTag.predicate) {
+            activeTag.text = text;
+          }
+        }
+      }
+      /**
+       * Handle the closing of the last tag.
+       */
+      onCloseTag() {
+        const poppedTag = this.activeTagStack.pop();
+        const parentTag = this.activeTagStack.length ? this.activeTagStack[this.activeTagStack.length - 1] : null;
+        if (poppedTag.childrenStringEmitClosingTag) {
+          poppedTag.childrenStringTags.push(poppedTag.childrenStringEmitClosingTag);
+        }
+        if (poppedTag.childrenTagsToString) {
+          poppedTag.datatype = this.dataFactory.namedNode(_RdfXmlParser.RDF + "XMLLiteral");
+          poppedTag.text = poppedTag.childrenStringTags.join("");
+          poppedTag.hadChildren = false;
+        }
+        if (poppedTag.childrenTagsToTripleTerms && poppedTag.predicate && poppedTag.rdfVersion) {
+          if (poppedTag.childrenTripleTerms.length !== 1) {
+            throw this.newParseError(`Expected exactly one triple term in rdf:parseType="Triple" but got ${poppedTag.childrenTripleTerms.length}`);
+          }
+          for (const tripleTerm of poppedTag.childrenTripleTerms) {
+            this.emitTriple(poppedTag.subject, poppedTag.predicate, tripleTerm, null, parentTag.childrenTripleTerms, parentTag.reifier);
+          }
+          poppedTag.predicateEmitted = true;
+        }
+        if (poppedTag.childrenCollectionSubject) {
+          this.emitTriple(poppedTag.childrenCollectionSubject, poppedTag.childrenCollectionPredicate, this.dataFactory.namedNode(_RdfXmlParser.RDF + "nil"), null, poppedTag.childrenTripleTerms);
+        } else if (poppedTag.predicate) {
+          if (!poppedTag.hadChildren && poppedTag.childrenParseType !== ParseType.PROPERTY) {
+            this.emitTriple(poppedTag.subject, poppedTag.predicate, this.createLiteral(poppedTag.text || "", poppedTag), poppedTag.reifiedStatementId, poppedTag.childrenTripleTerms, poppedTag.reifier);
+          } else if (!poppedTag.predicateEmitted) {
+            const subject2 = this.dataFactory.blankNode();
+            this.emitTriple(poppedTag.subject, poppedTag.predicate, subject2, poppedTag.reifiedStatementId, poppedTag.childrenTripleTerms, poppedTag.reifier);
+            for (let i5 = 0; i5 < poppedTag.predicateSubPredicates.length; i5++) {
+              this.emitTriple(subject2, poppedTag.predicateSubPredicates[i5], poppedTag.predicateSubObjects[i5], null, poppedTag.childrenTripleTerms);
+            }
+          }
+        }
+      }
+      /**
+       * Fetch local DOCTYPE ENTITY's and make the parser recognise them.
+       * @param {string} doctype The read doctype.
+       */
+      onDoctype(doctype) {
+        doctype.replace(/<!ENTITY\s+([^\s]+)\s+["']([^"']+)["']\s*>/g, (match2, prefix2, uri) => {
+          this.saxParser.ENTITIES[prefix2] = uri;
+          return "";
+        });
+      }
+      setDirection(activeTag, value) {
+        if (value) {
+          if (value !== "ltr" && value !== "rtl") {
+            throw this.newParseError(`Base directions must either be 'ltr' or 'rtl', while '${value}' was found.`);
+          }
+          activeTag.direction = value;
+        } else {
+          delete activeTag.direction;
+        }
+      }
+      setVersion(activeTag, version) {
+        activeTag.rdfVersion = version;
+        this.emit("version", version);
+        if (!this.isValidVersion(version)) {
+          throw this.newParseError(`Detected unsupported version: ${version}`);
+        }
+      }
+    };
+    exports.RdfXmlParser = RdfXmlParser2;
+    RdfXmlParser2.MIME_TYPE = "application/rdf+xml";
+    RdfXmlParser2.RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    RdfXmlParser2.XML = "http://www.w3.org/XML/1998/namespace";
+    RdfXmlParser2.ITS = "http://www.w3.org/2005/11/its";
+    RdfXmlParser2.FORBIDDEN_NODE_ELEMENTS = [
+      "RDF",
+      "ID",
+      "about",
+      "bagID",
+      "parseType",
+      "resource",
+      "nodeID",
+      "li",
+      "aboutEach",
+      "aboutEachPrefix"
+    ];
+    RdfXmlParser2.FORBIDDEN_PROPERTY_ELEMENTS = [
+      "Description",
+      "RDF",
+      "ID",
+      "about",
+      "bagID",
+      "parseType",
+      "resource",
+      "nodeID",
+      "aboutEach",
+      "aboutEachPrefix"
+    ];
+    RdfXmlParser2.NCNAME_MATCHER = /^([A-Za-z\xC0-\xD6\xD8-\xF6\u{F8}-\u{2FF}\u{370}-\u{37D}\u{37F}-\u{1FFF}\u{200C}-\u{200D}\u{2070}-\u{218F}\u{2C00}-\u{2FEF}\u{3001}-\u{D7FF}\u{F900}-\u{FDCF}\u{FDF0}-\u{FFFD}\u{10000}-\u{EFFFF}_])([A-Za-z\xC0-\xD6\xD8-\xF6\u{F8}-\u{2FF}\u{370}-\u{37D}\u{37F}-\u{1FFF}\u{200C}-\u{200D}\u{2070}-\u{218F}\u{2C00}-\u{2FEF}\u{3001}-\u{D7FF}\u{F900}-\u{FDCF}\u{FDF0}-\u{FFFD}\u{10000}-\u{EFFFF}_\-.0-9#xB7\u{0300}-\u{036F}\u{203F}-\u{2040}])*$/u;
+    RdfXmlParser2.SUPPORTED_VERSIONS = [
+      "1.2",
+      "1.2-basic",
+      "1.1"
+    ];
+    var ParseType;
+    (function(ParseType2) {
+      ParseType2[ParseType2["RESOURCE"] = 0] = "RESOURCE";
+      ParseType2[ParseType2["PROPERTY"] = 1] = "PROPERTY";
+    })(ParseType || (exports.ParseType = ParseType = {}));
+  }
+});
+
+// node_modules/rdfxml-streaming-parser/index.js
+var require_rdfxml_streaming_parser = __commonJS({
+  "node_modules/rdfxml-streaming-parser/index.js"(exports) {
+    "use strict";
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      var desc = Object.getOwnPropertyDescriptor(m2, k2);
+      if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m2[k2];
+        } };
+      }
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      o6[k22] = m2[k2];
+    }));
+    var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
+      for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    __exportStar(require_RdfXmlParser(), exports);
+  }
+});
+
+// node_modules/@bergos/jsonparse/jsonparse.js
+var require_jsonparse = __commonJS({
+  "node_modules/@bergos/jsonparse/jsonparse.js"(exports, module) {
+    "use strict";
+    var { Buffer: Buffer3 } = require_buffer();
+    var C2 = {};
+    var LEFT_BRACE = C2.LEFT_BRACE = 1;
+    var RIGHT_BRACE = C2.RIGHT_BRACE = 2;
+    var LEFT_BRACKET = C2.LEFT_BRACKET = 3;
+    var RIGHT_BRACKET = C2.RIGHT_BRACKET = 4;
+    var COLON = C2.COLON = 5;
+    var COMMA = C2.COMMA = 6;
+    var TRUE = C2.TRUE = 7;
+    var FALSE = C2.FALSE = 8;
+    var NULL = C2.NULL = 9;
+    var STRING = C2.STRING = 10;
+    var NUMBER = C2.NUMBER = 11;
+    var START = C2.START = 17;
+    var STOP = C2.STOP = 18;
+    var TRUE1 = C2.TRUE1 = 33;
+    var TRUE2 = C2.TRUE2 = 34;
+    var TRUE3 = C2.TRUE3 = 35;
+    var FALSE1 = C2.FALSE1 = 49;
+    var FALSE2 = C2.FALSE2 = 50;
+    var FALSE3 = C2.FALSE3 = 51;
+    var FALSE4 = C2.FALSE4 = 52;
+    var NULL1 = C2.NULL1 = 65;
+    var NULL2 = C2.NULL2 = 66;
+    var NULL3 = C2.NULL3 = 67;
+    var NUMBER1 = C2.NUMBER1 = 81;
+    var NUMBER3 = C2.NUMBER3 = 83;
+    var STRING1 = C2.STRING1 = 97;
+    var STRING2 = C2.STRING2 = 98;
+    var STRING3 = C2.STRING3 = 99;
+    var STRING4 = C2.STRING4 = 100;
+    var STRING5 = C2.STRING5 = 101;
+    var STRING6 = C2.STRING6 = 102;
+    var VALUE = C2.VALUE = 113;
+    var KEY = C2.KEY = 114;
+    var OBJECT = C2.OBJECT = 129;
+    var ARRAY = C2.ARRAY = 130;
+    var BACK_SLASH = "\\".charCodeAt(0);
+    var FORWARD_SLASH = "/".charCodeAt(0);
+    var BACKSPACE = "\b".charCodeAt(0);
+    var FORM_FEED = "\f".charCodeAt(0);
+    var NEWLINE = "\n".charCodeAt(0);
+    var CARRIAGE_RETURN = "\r".charCodeAt(0);
+    var TAB = "	".charCodeAt(0);
+    var STRING_BUFFER_SIZE = 64 * 1024;
+    function alloc(size) {
+      return Buffer3.alloc ? Buffer3.alloc(size) : new Buffer3(size);
+    }
+    function Parser() {
+      this.tState = START;
+      this.value = void 0;
+      this.string = void 0;
+      this.stringBuffer = alloc(STRING_BUFFER_SIZE);
+      this.stringBufferOffset = 0;
+      this.unicode = void 0;
+      this.highSurrogate = void 0;
+      this.key = void 0;
+      this.mode = void 0;
+      this.stack = [];
+      this.state = VALUE;
+      this.bytes_remaining = 0;
+      this.bytes_in_sequence = 0;
+      this.temp_buffs = { "2": alloc(2), "3": alloc(3), "4": alloc(4) };
+      this.offset = -1;
+    }
+    Parser.toknam = function(code) {
+      var keys = Object.keys(C2);
+      for (var i5 = 0, l3 = keys.length; i5 < l3; i5++) {
+        var key = keys[i5];
+        if (C2[key] === code) {
+          return key;
+        }
+      }
+      return code && "0x" + code.toString(16);
+    };
+    var proto = Parser.prototype;
+    proto.onError = function(err) {
+      throw err;
+    };
+    proto.charError = function(buffer, i5) {
+      this.tState = STOP;
+      this.onError(new Error("Unexpected " + JSON.stringify(String.fromCharCode(buffer[i5])) + " at position " + i5 + " in state " + Parser.toknam(this.tState)));
+    };
+    proto.appendStringChar = function(char) {
+      if (this.stringBufferOffset >= STRING_BUFFER_SIZE) {
+        this.string += this.stringBuffer.toString("utf8");
+        this.stringBufferOffset = 0;
+      }
+      this.stringBuffer[this.stringBufferOffset++] = char;
+    };
+    proto.appendStringBuf = function(buf, start, end) {
+      var size = buf.length;
+      if (typeof start === "number") {
+        if (typeof end === "number") {
+          if (end < 0) {
+            size = buf.length - start + end;
+          } else {
+            size = end - start;
+          }
+        } else {
+          size = buf.length - start;
+        }
+      }
+      if (size < 0) {
+        size = 0;
+      }
+      if (this.stringBufferOffset + size > STRING_BUFFER_SIZE) {
+        this.string += this.stringBuffer.toString("utf8", 0, this.stringBufferOffset);
+        this.stringBufferOffset = 0;
+      }
+      buf.copy(this.stringBuffer, this.stringBufferOffset, start, end);
+      this.stringBufferOffset += size;
+    };
+    proto.write = function(buffer) {
+      if (typeof buffer === "string") buffer = new Buffer3(buffer);
+      var n5;
+      for (var i5 = 0, l3 = buffer.length; i5 < l3; i5++) {
+        if (this.tState === START) {
+          n5 = buffer[i5];
+          this.offset++;
+          if (n5 === 123) {
+            this.onToken(LEFT_BRACE, "{");
+          } else if (n5 === 125) {
+            this.onToken(RIGHT_BRACE, "}");
+          } else if (n5 === 91) {
+            this.onToken(LEFT_BRACKET, "[");
+          } else if (n5 === 93) {
+            this.onToken(RIGHT_BRACKET, "]");
+          } else if (n5 === 58) {
+            this.onToken(COLON, ":");
+          } else if (n5 === 44) {
+            this.onToken(COMMA, ",");
+          } else if (n5 === 116) {
+            this.tState = TRUE1;
+          } else if (n5 === 102) {
+            this.tState = FALSE1;
+          } else if (n5 === 110) {
+            this.tState = NULL1;
+          } else if (n5 === 34) {
+            this.string = "";
+            this.stringBufferOffset = 0;
+            this.tState = STRING1;
+          } else if (n5 === 45) {
+            this.string = "-";
+            this.tState = NUMBER1;
+          } else {
+            if (n5 >= 48 && n5 < 64) {
+              this.string = String.fromCharCode(n5);
+              this.tState = NUMBER3;
+            } else if (n5 === 32 || n5 === 9 || n5 === 10 || n5 === 13) {
+            } else {
+              return this.charError(buffer, i5);
+            }
+          }
+        } else if (this.tState === STRING1) {
+          n5 = buffer[i5];
+          if (this.bytes_remaining > 0) {
+            for (var j = 0; j < this.bytes_remaining; j++) {
+              this.temp_buffs[this.bytes_in_sequence][this.bytes_in_sequence - this.bytes_remaining + j] = buffer[j];
+            }
+            this.appendStringBuf(this.temp_buffs[this.bytes_in_sequence]);
+            this.bytes_in_sequence = this.bytes_remaining = 0;
+            i5 = i5 + j - 1;
+          } else if (this.bytes_remaining === 0 && n5 >= 128) {
+            if (n5 <= 193 || n5 > 244) {
+              return this.onError(new Error("Invalid UTF-8 character at position " + i5 + " in state " + Parser.toknam(this.tState)));
+            }
+            if (n5 >= 194 && n5 <= 223) this.bytes_in_sequence = 2;
+            if (n5 >= 224 && n5 <= 239) this.bytes_in_sequence = 3;
+            if (n5 >= 240 && n5 <= 244) this.bytes_in_sequence = 4;
+            if (this.bytes_in_sequence + i5 > buffer.length) {
+              for (var k2 = 0; k2 <= buffer.length - 1 - i5; k2++) {
+                this.temp_buffs[this.bytes_in_sequence][k2] = buffer[i5 + k2];
+              }
+              this.bytes_remaining = i5 + this.bytes_in_sequence - buffer.length;
+              i5 = buffer.length - 1;
+            } else {
+              this.appendStringBuf(buffer, i5, i5 + this.bytes_in_sequence);
+              i5 = i5 + this.bytes_in_sequence - 1;
+            }
+          } else if (n5 === 34) {
+            this.tState = START;
+            this.string += this.stringBuffer.toString("utf8", 0, this.stringBufferOffset);
+            this.stringBufferOffset = 0;
+            this.onToken(STRING, this.string);
+            this.offset += Buffer3.byteLength(this.string, "utf8") + 1;
+            this.string = void 0;
+          } else if (n5 === 92) {
+            this.tState = STRING2;
+          } else if (n5 >= 32) {
+            this.appendStringChar(n5);
+          } else {
+            return this.charError(buffer, i5);
+          }
+        } else if (this.tState === STRING2) {
+          n5 = buffer[i5];
+          if (n5 === 34) {
+            this.appendStringChar(n5);
+            this.tState = STRING1;
+          } else if (n5 === 92) {
+            this.appendStringChar(BACK_SLASH);
+            this.tState = STRING1;
+          } else if (n5 === 47) {
+            this.appendStringChar(FORWARD_SLASH);
+            this.tState = STRING1;
+          } else if (n5 === 98) {
+            this.appendStringChar(BACKSPACE);
+            this.tState = STRING1;
+          } else if (n5 === 102) {
+            this.appendStringChar(FORM_FEED);
+            this.tState = STRING1;
+          } else if (n5 === 110) {
+            this.appendStringChar(NEWLINE);
+            this.tState = STRING1;
+          } else if (n5 === 114) {
+            this.appendStringChar(CARRIAGE_RETURN);
+            this.tState = STRING1;
+          } else if (n5 === 116) {
+            this.appendStringChar(TAB);
+            this.tState = STRING1;
+          } else if (n5 === 117) {
+            this.unicode = "";
+            this.tState = STRING3;
+          } else {
+            return this.charError(buffer, i5);
+          }
+        } else if (this.tState === STRING3 || this.tState === STRING4 || this.tState === STRING5 || this.tState === STRING6) {
+          n5 = buffer[i5];
+          if (n5 >= 48 && n5 < 64 || n5 > 64 && n5 <= 70 || n5 > 96 && n5 <= 102) {
+            this.unicode += String.fromCharCode(n5);
+            if (this.tState++ === STRING6) {
+              var intVal = parseInt(this.unicode, 16);
+              this.unicode = void 0;
+              if (this.highSurrogate !== void 0 && intVal >= 56320 && intVal < 57343 + 1) {
+                this.appendStringBuf(new Buffer3(String.fromCharCode(this.highSurrogate, intVal)));
+                this.highSurrogate = void 0;
+              } else if (this.highSurrogate === void 0 && intVal >= 55296 && intVal < 56319 + 1) {
+                this.highSurrogate = intVal;
+              } else {
+                if (this.highSurrogate !== void 0) {
+                  this.appendStringBuf(new Buffer3(String.fromCharCode(this.highSurrogate)));
+                  this.highSurrogate = void 0;
+                }
+                this.appendStringBuf(new Buffer3(String.fromCharCode(intVal)));
+              }
+              this.tState = STRING1;
+            }
+          } else {
+            return this.charError(buffer, i5);
+          }
+        } else if (this.tState === NUMBER1 || this.tState === NUMBER3) {
+          n5 = buffer[i5];
+          switch (n5) {
+            case 48:
+            // 0
+            case 49:
+            // 1
+            case 50:
+            // 2
+            case 51:
+            // 3
+            case 52:
+            // 4
+            case 53:
+            // 5
+            case 54:
+            // 6
+            case 55:
+            // 7
+            case 56:
+            // 8
+            case 57:
+            // 9
+            case 46:
+            // .
+            case 101:
+            // e
+            case 69:
+            // E
+            case 43:
+            // +
+            case 45:
+              this.string += String.fromCharCode(n5);
+              this.tState = NUMBER3;
+              break;
+            default:
+              this.tState = START;
+              var error = this.numberReviver(this.string, buffer, i5);
+              if (error) {
+                return error;
+              }
+              this.offset += this.string.length - 1;
+              this.string = void 0;
+              i5--;
+              break;
+          }
+        } else if (this.tState === TRUE1) {
+          if (buffer[i5] === 114) {
+            this.tState = TRUE2;
+          } else {
+            return this.charError(buffer, i5);
+          }
+        } else if (this.tState === TRUE2) {
+          if (buffer[i5] === 117) {
+            this.tState = TRUE3;
+          } else {
+            return this.charError(buffer, i5);
+          }
+        } else if (this.tState === TRUE3) {
+          if (buffer[i5] === 101) {
+            this.tState = START;
+            this.onToken(TRUE, true);
+            this.offset += 3;
+          } else {
+            return this.charError(buffer, i5);
+          }
+        } else if (this.tState === FALSE1) {
+          if (buffer[i5] === 97) {
+            this.tState = FALSE2;
+          } else {
+            return this.charError(buffer, i5);
+          }
+        } else if (this.tState === FALSE2) {
+          if (buffer[i5] === 108) {
+            this.tState = FALSE3;
+          } else {
+            return this.charError(buffer, i5);
+          }
+        } else if (this.tState === FALSE3) {
+          if (buffer[i5] === 115) {
+            this.tState = FALSE4;
+          } else {
+            return this.charError(buffer, i5);
+          }
+        } else if (this.tState === FALSE4) {
+          if (buffer[i5] === 101) {
+            this.tState = START;
+            this.onToken(FALSE, false);
+            this.offset += 4;
+          } else {
+            return this.charError(buffer, i5);
+          }
+        } else if (this.tState === NULL1) {
+          if (buffer[i5] === 117) {
+            this.tState = NULL2;
+          } else {
+            return this.charError(buffer, i5);
+          }
+        } else if (this.tState === NULL2) {
+          if (buffer[i5] === 108) {
+            this.tState = NULL3;
+          } else {
+            return this.charError(buffer, i5);
+          }
+        } else if (this.tState === NULL3) {
+          if (buffer[i5] === 108) {
+            this.tState = START;
+            this.onToken(NULL, null);
+            this.offset += 3;
+          } else {
+            return this.charError(buffer, i5);
+          }
+        }
+      }
+    };
+    proto.onToken = function(token, value) {
+    };
+    proto.parseError = function(token, value) {
+      this.tState = STOP;
+      this.onError(new Error("Unexpected " + Parser.toknam(token) + (value ? "(" + JSON.stringify(value) + ")" : "") + " in state " + Parser.toknam(this.state)));
+    };
+    proto.push = function() {
+      this.stack.push({ value: this.value, key: this.key, mode: this.mode });
+    };
+    proto.pop = function() {
+      var value = this.value;
+      var parent = this.stack.pop();
+      this.value = parent.value;
+      this.key = parent.key;
+      this.mode = parent.mode;
+      this.emit(value);
+      if (!this.mode) {
+        this.state = VALUE;
+      }
+    };
+    proto.emit = function(value) {
+      if (this.mode) {
+        this.state = COMMA;
+      }
+      this.onValue(value);
+    };
+    proto.onValue = function(value) {
+    };
+    proto.onToken = function(token, value) {
+      if (this.state === VALUE) {
+        if (token === STRING || token === NUMBER || token === TRUE || token === FALSE || token === NULL) {
+          if (this.value) {
+            this.value[this.key] = value;
+          }
+          this.emit(value);
+        } else if (token === LEFT_BRACE) {
+          this.push();
+          if (this.value) {
+            this.value = this.value[this.key] = {};
+          } else {
+            this.value = {};
+          }
+          this.key = void 0;
+          this.state = KEY;
+          this.mode = OBJECT;
+        } else if (token === LEFT_BRACKET) {
+          this.push();
+          if (this.value) {
+            this.value = this.value[this.key] = [];
+          } else {
+            this.value = [];
+          }
+          this.key = 0;
+          this.mode = ARRAY;
+          this.state = VALUE;
+        } else if (token === RIGHT_BRACE) {
+          if (this.mode === OBJECT) {
+            this.pop();
+          } else {
+            return this.parseError(token, value);
+          }
+        } else if (token === RIGHT_BRACKET) {
+          if (this.mode === ARRAY) {
+            this.pop();
+          } else {
+            return this.parseError(token, value);
+          }
+        } else {
+          return this.parseError(token, value);
+        }
+      } else if (this.state === KEY) {
+        if (token === STRING) {
+          this.key = value;
+          this.state = COLON;
+        } else if (token === RIGHT_BRACE) {
+          this.pop();
+        } else {
+          return this.parseError(token, value);
+        }
+      } else if (this.state === COLON) {
+        if (token === COLON) {
+          this.state = VALUE;
+        } else {
+          return this.parseError(token, value);
+        }
+      } else if (this.state === COMMA) {
+        if (token === COMMA) {
+          if (this.mode === ARRAY) {
+            this.key++;
+            this.state = VALUE;
+          } else if (this.mode === OBJECT) {
+            this.state = KEY;
+          }
+        } else if (token === RIGHT_BRACKET && this.mode === ARRAY || token === RIGHT_BRACE && this.mode === OBJECT) {
+          this.pop();
+        } else {
+          return this.parseError(token, value);
+        }
+      } else {
+        return this.parseError(token, value);
+      }
+    };
+    proto.numberReviver = function(text, buffer, i5) {
+      var result = Number(text);
+      if (isNaN(result)) {
+        return this.charError(buffer, i5);
+      }
+      if (text.match(/[0-9]+/) == text && result.toString() != text) {
+        this.onToken(STRING, text);
+      } else {
+        this.onToken(NUMBER, result);
+      }
+    };
+    Parser.C = C2;
+    module.exports = Parser;
+  }
+});
+
+// node_modules/jsonld-context-parser/lib/ErrorCoded.js
+var require_ErrorCoded = __commonJS({
+  "node_modules/jsonld-context-parser/lib/ErrorCoded.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ERROR_CODES = exports.ErrorCoded = void 0;
+    var ErrorCoded = class extends Error {
+      /* istanbul ignore next */
+      constructor(message, code) {
+        super(message);
+        this.code = code;
+      }
+    };
+    exports.ErrorCoded = ErrorCoded;
+    var ERROR_CODES;
+    (function(ERROR_CODES2) {
+      ERROR_CODES2["COLLIDING_KEYWORDS"] = "colliding keywords";
+      ERROR_CODES2["CONFLICTING_INDEXES"] = "conflicting indexes";
+      ERROR_CODES2["CYCLIC_IRI_MAPPING"] = "cyclic IRI mapping";
+      ERROR_CODES2["INVALID_ID_VALUE"] = "invalid @id value";
+      ERROR_CODES2["INVALID_INDEX_VALUE"] = "invalid @index value";
+      ERROR_CODES2["INVALID_NEST_VALUE"] = "invalid @nest value";
+      ERROR_CODES2["INVALID_PREFIX_VALUE"] = "invalid @prefix value";
+      ERROR_CODES2["INVALID_PROPAGATE_VALUE"] = "invalid @propagate value";
+      ERROR_CODES2["INVALID_REVERSE_VALUE"] = "invalid @reverse value";
+      ERROR_CODES2["INVALID_IMPORT_VALUE"] = "invalid @import value";
+      ERROR_CODES2["INVALID_VERSION_VALUE"] = "invalid @version value";
+      ERROR_CODES2["INVALID_BASE_IRI"] = "invalid base IRI";
+      ERROR_CODES2["INVALID_CONTAINER_MAPPING"] = "invalid container mapping";
+      ERROR_CODES2["INVALID_CONTEXT_ENTRY"] = "invalid context entry";
+      ERROR_CODES2["INVALID_CONTEXT_NULLIFICATION"] = "invalid context nullification";
+      ERROR_CODES2["INVALID_DEFAULT_LANGUAGE"] = "invalid default language";
+      ERROR_CODES2["INVALID_INCLUDED_VALUE"] = "invalid @included value";
+      ERROR_CODES2["INVALID_IRI_MAPPING"] = "invalid IRI mapping";
+      ERROR_CODES2["INVALID_JSON_LITERAL"] = "invalid JSON literal";
+      ERROR_CODES2["INVALID_KEYWORD_ALIAS"] = "invalid keyword alias";
+      ERROR_CODES2["INVALID_LANGUAGE_MAP_VALUE"] = "invalid language map value";
+      ERROR_CODES2["INVALID_LANGUAGE_MAPPING"] = "invalid language mapping";
+      ERROR_CODES2["INVALID_LANGUAGE_TAGGED_STRING"] = "invalid language-tagged string";
+      ERROR_CODES2["INVALID_LANGUAGE_TAGGED_VALUE"] = "invalid language-tagged value";
+      ERROR_CODES2["INVALID_LOCAL_CONTEXT"] = "invalid local context";
+      ERROR_CODES2["INVALID_REMOTE_CONTEXT"] = "invalid remote context";
+      ERROR_CODES2["INVALID_REVERSE_PROPERTY"] = "invalid reverse property";
+      ERROR_CODES2["INVALID_REVERSE_PROPERTY_MAP"] = "invalid reverse property map";
+      ERROR_CODES2["INVALID_REVERSE_PROPERTY_VALUE"] = "invalid reverse property value";
+      ERROR_CODES2["INVALID_SCOPED_CONTEXT"] = "invalid scoped context";
+      ERROR_CODES2["INVALID_SCRIPT_ELEMENT"] = "invalid script element";
+      ERROR_CODES2["INVALID_SET_OR_LIST_OBJECT"] = "invalid set or list object";
+      ERROR_CODES2["INVALID_TERM_DEFINITION"] = "invalid term definition";
+      ERROR_CODES2["INVALID_TYPE_MAPPING"] = "invalid type mapping";
+      ERROR_CODES2["INVALID_TYPE_VALUE"] = "invalid type value";
+      ERROR_CODES2["INVALID_TYPED_VALUE"] = "invalid typed value";
+      ERROR_CODES2["INVALID_VALUE_OBJECT"] = "invalid value object";
+      ERROR_CODES2["INVALID_VALUE_OBJECT_VALUE"] = "invalid value object value";
+      ERROR_CODES2["INVALID_VOCAB_MAPPING"] = "invalid vocab mapping";
+      ERROR_CODES2["IRI_CONFUSED_WITH_PREFIX"] = "IRI confused with prefix";
+      ERROR_CODES2["KEYWORD_REDEFINITION"] = "keyword redefinition";
+      ERROR_CODES2["LOADING_DOCUMENT_FAILED"] = "loading document failed";
+      ERROR_CODES2["LOADING_REMOTE_CONTEXT_FAILED"] = "loading remote context failed";
+      ERROR_CODES2["MULTIPLE_CONTEXT_LINK_HEADERS"] = "multiple context link headers";
+      ERROR_CODES2["PROCESSING_MODE_CONFLICT"] = "processing mode conflict";
+      ERROR_CODES2["PROTECTED_TERM_REDEFINITION"] = "protected term redefinition";
+      ERROR_CODES2["CONTEXT_OVERFLOW"] = "context overflow";
+      ERROR_CODES2["INVALID_BASE_DIRECTION"] = "invalid base direction";
+      ERROR_CODES2["RECURSIVE_CONTEXT_INCLUSION"] = "recursive context inclusion";
+      ERROR_CODES2["INVALID_STREAMING_KEY_ORDER"] = "invalid streaming key order";
+      ERROR_CODES2["INVALID_EMBEDDED_NODE"] = "invalid embedded node";
+      ERROR_CODES2["INVALID_ANNOTATION"] = "invalid annotation";
+    })(ERROR_CODES = exports.ERROR_CODES || (exports.ERROR_CODES = {}));
+  }
+});
+
+// node_modules/http-link-header/lib/link.js
+var require_link = __commonJS({
+  "node_modules/http-link-header/lib/link.js"(exports, module) {
+    "use strict";
+    var COMPATIBLE_ENCODING_PATTERN = /^utf-?8|ascii|utf-?16-?le|ucs-?2|base-?64|latin-?1$/i;
+    var WS_TRIM_PATTERN = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
+    var WS_CHAR_PATTERN = /\s|\uFEFF|\xA0/;
+    var WS_FOLD_PATTERN = /\r?\n[\x20\x09]+/g;
+    var DELIMITER_PATTERN = /[;,"]/;
+    var WS_DELIMITER_PATTERN = /[;,"]|\s/;
+    var TOKEN_PATTERN = /^[!#$%&'*+\-\.^_`|~\da-zA-Z]+$/;
+    var STATE = {
+      IDLE: 1 << 0,
+      URI: 1 << 1,
+      ATTR: 1 << 2
+    };
+    function trim(value) {
+      return value.replace(WS_TRIM_PATTERN, "");
+    }
+    function hasWhitespace(value) {
+      return WS_CHAR_PATTERN.test(value);
+    }
+    function skipWhitespace(value, offset) {
+      while (hasWhitespace(value[offset])) {
+        offset++;
+      }
+      return offset;
+    }
+    function needsQuotes(value) {
+      return WS_DELIMITER_PATTERN.test(value) || !TOKEN_PATTERN.test(value);
+    }
+    function shallowCompareObjects(object1, object2) {
+      return Object.keys(object1).length === Object.keys(object2).length && Object.keys(object1).every(
+        (key) => key in object2 && object1[key] === object2[key]
+      );
+    }
+    var Link = class _Link {
+      /**
+       * Link
+       * @constructor
+       * @param {String} [value]
+       * @returns {Link}
+       */
+      constructor(value) {
+        this.refs = [];
+        if (value) {
+          this.parse(value);
+        }
+      }
+      /**
+       * Get refs with given relation type
+       * @param {String} value
+       * @returns {Array<Object>}
+       */
+      rel(value) {
+        var links = [];
+        var type = value.toLowerCase();
+        for (var i5 = 0; i5 < this.refs.length; i5++) {
+          if (typeof this.refs[i5].rel === "string" && this.refs[i5].rel.toLowerCase() === type) {
+            links.push(this.refs[i5]);
+          }
+        }
+        return links;
+      }
+      /**
+       * Get refs where given attribute has a given value
+       * @param {String} attr
+       * @param {String} value
+       * @returns {Array<Object>}
+       */
+      get(attr, value) {
+        attr = attr.toLowerCase();
+        value = value.toLowerCase();
+        var links = [];
+        for (var i5 = 0; i5 < this.refs.length; i5++) {
+          if (typeof this.refs[i5][attr] === "string" && this.refs[i5][attr].toLowerCase() === value) {
+            links.push(this.refs[i5]);
+          }
+        }
+        return links;
+      }
+      /** Sets a reference. */
+      set(link) {
+        this.refs.push(link);
+        return this;
+      }
+      /**
+       * Sets a reference if a reference with similar properties isn’t already set.
+       */
+      setUnique(link) {
+        if (!this.refs.some((ref) => shallowCompareObjects(ref, link))) {
+          this.refs.push(link);
+        }
+        return this;
+      }
+      has(attr, value) {
+        attr = attr.toLowerCase();
+        value = value.toLowerCase();
+        for (var i5 = 0; i5 < this.refs.length; i5++) {
+          if (typeof this.refs[i5][attr] === "string" && this.refs[i5][attr].toLowerCase() === value) {
+            return true;
+          }
+        }
+        return false;
+      }
+      parse(value, offset) {
+        offset = offset || 0;
+        value = offset ? value.slice(offset) : value;
+        value = trim(value).replace(WS_FOLD_PATTERN, "");
+        var state = STATE.IDLE;
+        var length = value.length;
+        var offset = 0;
+        var ref = null;
+        while (offset < length) {
+          if (state === STATE.IDLE) {
+            if (hasWhitespace(value[offset])) {
+              offset++;
+              continue;
+            } else if (value[offset] === "<") {
+              if (ref != null) {
+                ref.rel != null ? this.refs.push(..._Link.expandRelations(ref)) : this.refs.push(ref);
+              }
+              var end = value.indexOf(">", offset);
+              if (end === -1) throw new Error("Expected end of URI delimiter at offset " + offset);
+              ref = { uri: value.slice(offset + 1, end) };
+              offset = end;
+              state = STATE.URI;
+            } else {
+              throw new Error('Unexpected character "' + value[offset] + '" at offset ' + offset);
+            }
+            offset++;
+          } else if (state === STATE.URI) {
+            if (hasWhitespace(value[offset])) {
+              offset++;
+              continue;
+            } else if (value[offset] === ";") {
+              state = STATE.ATTR;
+              offset++;
+            } else if (value[offset] === ",") {
+              state = STATE.IDLE;
+              offset++;
+            } else {
+              throw new Error('Unexpected character "' + value[offset] + '" at offset ' + offset);
+            }
+          } else if (state === STATE.ATTR) {
+            if (value[offset] === ";" || hasWhitespace(value[offset])) {
+              offset++;
+              continue;
+            }
+            var end = value.indexOf("=", offset);
+            if (end === -1) end = value.indexOf(";", offset);
+            if (end === -1) end = value.length;
+            var attr = trim(value.slice(offset, end)).toLowerCase();
+            var attrValue = "";
+            offset = end + 1;
+            offset = skipWhitespace(value, offset);
+            if (value[offset] === '"') {
+              offset++;
+              while (offset < length) {
+                if (value[offset] === '"') {
+                  offset++;
+                  break;
+                }
+                if (value[offset] === "\\") {
+                  offset++;
+                }
+                attrValue += value[offset];
+                offset++;
+              }
+            } else {
+              var end = offset + 1;
+              while (!DELIMITER_PATTERN.test(value[end]) && end < length) {
+                end++;
+              }
+              attrValue = value.slice(offset, end);
+              offset = end;
+            }
+            if (ref[attr] && _Link.isSingleOccurenceAttr(attr)) {
+            } else if (attr[attr.length - 1] === "*") {
+              ref[attr] = _Link.parseExtendedValue(attrValue);
+            } else {
+              attrValue = attr === "type" ? attrValue.toLowerCase() : attrValue;
+              if (ref[attr] != null) {
+                if (Array.isArray(ref[attr])) {
+                  ref[attr].push(attrValue);
+                } else {
+                  ref[attr] = [ref[attr], attrValue];
+                }
+              } else {
+                ref[attr] = attrValue;
+              }
+            }
+            switch (value[offset]) {
+              case ",":
+                state = STATE.IDLE;
+                break;
+              case ";":
+                state = STATE.ATTR;
+                break;
+            }
+            offset++;
+          } else {
+            throw new Error('Unknown parser state "' + state + '"');
+          }
+        }
+        if (ref != null) {
+          ref.rel != null ? this.refs.push(..._Link.expandRelations(ref)) : this.refs.push(ref);
+        }
+        ref = null;
+        return this;
+      }
+      toString() {
+        var refs = [];
+        var link = "";
+        var ref = null;
+        for (var i5 = 0; i5 < this.refs.length; i5++) {
+          ref = this.refs[i5];
+          link = Object.keys(this.refs[i5]).reduce(function(link2, attr) {
+            if (attr === "uri") return link2;
+            return link2 + "; " + _Link.formatAttribute(attr, ref[attr]);
+          }, "<" + ref.uri + ">");
+          refs.push(link);
+        }
+        return refs.join(", ");
+      }
+    };
+    Link.isCompatibleEncoding = function(value) {
+      return COMPATIBLE_ENCODING_PATTERN.test(value);
+    };
+    Link.parse = function(value, offset) {
+      return new Link().parse(value, offset);
+    };
+    Link.isSingleOccurenceAttr = function(attr) {
+      return attr === "rel" || attr === "type" || attr === "media" || attr === "title" || attr === "title*";
+    };
+    Link.isTokenAttr = function(attr) {
+      return attr === "rel" || attr === "type" || attr === "anchor";
+    };
+    Link.escapeQuotes = function(value) {
+      return value.replace(/"/g, '\\"');
+    };
+    Link.expandRelations = function(ref) {
+      var rels = ref.rel.split(" ");
+      return rels.map(function(rel) {
+        var value = Object.assign({}, ref);
+        value.rel = rel;
+        return value;
+      });
+    };
+    Link.parseExtendedValue = function(value) {
+      var parts = /([^']+)?(?:'([^']*)')?(.+)/.exec(value);
+      return {
+        language: parts[2].toLowerCase(),
+        encoding: Link.isCompatibleEncoding(parts[1]) ? null : parts[1].toLowerCase(),
+        value: Link.isCompatibleEncoding(parts[1]) ? decodeURIComponent(parts[3]) : parts[3]
+      };
+    };
+    Link.formatExtendedAttribute = function(attr, data) {
+      var encoding = (data.encoding || "utf-8").toUpperCase();
+      var language = data.language || "en";
+      var encodedValue = "";
+      if (Buffer.isBuffer(data.value) && Link.isCompatibleEncoding(encoding)) {
+        encodedValue = data.value.toString(encoding);
+      } else if (Buffer.isBuffer(data.value)) {
+        encodedValue = data.value.toString("hex").replace(/[0-9a-f]{2}/gi, "%$1");
+      } else {
+        encodedValue = encodeURIComponent(data.value);
+      }
+      return attr + "=" + encoding + "'" + language + "'" + encodedValue;
+    };
+    Link.formatAttribute = function(attr, value) {
+      if (Array.isArray(value)) {
+        return value.map((item) => {
+          return Link.formatAttribute(attr, item);
+        }).join("; ");
+      }
+      if (attr[attr.length - 1] === "*" || typeof value !== "string") {
+        return Link.formatExtendedAttribute(attr, value);
+      }
+      if (Link.isTokenAttr(attr)) {
+        value = needsQuotes(value) ? '"' + Link.escapeQuotes(value) + '"' : Link.escapeQuotes(value);
+      } else if (needsQuotes(value)) {
+        value = encodeURIComponent(value);
+        value = value.replace(/%20/g, " ").replace(/%2C/g, ",").replace(/%3B/g, ";");
+        value = '"' + value + '"';
+      }
+      return attr + "=" + value;
+    };
+    module.exports = Link;
+  }
+});
+
+// node_modules/jsonld-context-parser/lib/FetchDocumentLoader.js
+var require_FetchDocumentLoader = __commonJS({
+  "node_modules/jsonld-context-parser/lib/FetchDocumentLoader.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.FetchDocumentLoader = void 0;
+    var ErrorCoded_1 = require_ErrorCoded();
+    var http_link_header_1 = require_link();
+    var relative_to_absolute_iri_1 = require_relative_to_absolute_iri();
+    var FetchDocumentLoader = class {
+      constructor(fetcher) {
+        this.fetcher = fetcher;
+      }
+      async load(url) {
+        const response = await (this.fetcher || fetch)(url, { headers: new Headers({ accept: "application/ld+json" }) });
+        if (response.ok && response.headers) {
+          let mediaType = response.headers.get("Content-Type");
+          if (mediaType) {
+            const colonPos = mediaType.indexOf(";");
+            if (colonPos > 0) {
+              mediaType = mediaType.substr(0, colonPos);
+            }
+          }
+          if (mediaType === "application/ld+json") {
+            return await response.json();
+          } else {
+            if (response.headers.has("Link")) {
+              let alternateUrl;
+              response.headers.forEach((value, key) => {
+                if (key === "link") {
+                  const linkHeader = (0, http_link_header_1.parse)(value);
+                  for (const link of linkHeader.get("type", "application/ld+json")) {
+                    if (link.rel === "alternate") {
+                      if (alternateUrl) {
+                        throw new Error("Multiple JSON-LD alternate links were found on " + url);
+                      }
+                      alternateUrl = (0, relative_to_absolute_iri_1.resolve)(link.uri, url);
+                    }
+                  }
+                }
+              });
+              if (alternateUrl) {
+                return this.load(alternateUrl);
+              }
+            }
+            throw new ErrorCoded_1.ErrorCoded(`Unsupported JSON-LD media type ${mediaType}`, ErrorCoded_1.ERROR_CODES.LOADING_DOCUMENT_FAILED);
+          }
+        } else {
+          throw new Error(response.statusText || `Status code: ${response.status}`);
+        }
+      }
+    };
+    exports.FetchDocumentLoader = FetchDocumentLoader;
+  }
+});
+
+// node_modules/jsonld-context-parser/lib/Util.js
+var require_Util = __commonJS({
+  "node_modules/jsonld-context-parser/lib/Util.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Util = void 0;
+    var Util = class _Util {
+      /**
+       * Check if the given term is a valid compact IRI.
+       * Otherwise, it may be an IRI.
+       * @param {string} term A term.
+       * @return {boolean} If it is a compact IRI.
+       */
+      static isCompactIri(term) {
+        return term.indexOf(":") > 0 && !(term && term[0] === "#");
+      }
+      /**
+       * Get the prefix from the given term.
+       * @see https://json-ld.org/spec/latest/json-ld/#compact-iris
+       * @param {string} term A term that is an URL or a prefixed URL.
+       * @param {IJsonLdContextNormalizedRaw} context A context.
+       * @return {string} The prefix or null.
+       */
+      static getPrefix(term, context) {
+        if (term && term[0] === "#") {
+          return null;
+        }
+        const separatorPos = term.indexOf(":");
+        if (separatorPos >= 0) {
+          if (term.length > separatorPos + 1 && term.charAt(separatorPos + 1) === "/" && term.charAt(separatorPos + 2) === "/") {
+            return null;
+          }
+          const prefix2 = term.substr(0, separatorPos);
+          if (prefix2 === "_") {
+            return null;
+          }
+          if (context[prefix2]) {
+            return prefix2;
+          }
+        }
+        return null;
+      }
+      /**
+       * From a given context entry value, get the string value, or the @id field.
+       * @param contextValue A value for a term in a context.
+       * @return {string} The id value, or null.
+       */
+      static getContextValueId(contextValue) {
+        if (contextValue === null || typeof contextValue === "string") {
+          return contextValue;
+        }
+        const id = contextValue["@id"];
+        return id ? id : null;
+      }
+      /**
+       * Check if the given simple term definition (string-based value of a context term)
+       * should be considered a prefix.
+       * @param value A simple term definition value.
+       * @param options Options that define the way how expansion must be done.
+       */
+      static isSimpleTermDefinitionPrefix(value, options) {
+        return !_Util.isPotentialKeyword(value) && (options.allowPrefixNonGenDelims || typeof value === "string" && (value[0] === "_" || _Util.isPrefixIriEndingWithGenDelim(value)));
+      }
+      /**
+       * Check if the given keyword is of the keyword format "@"1*ALPHA.
+       * @param {string} keyword A potential keyword.
+       * @return {boolean} If the given keyword is of the keyword format.
+       */
+      static isPotentialKeyword(keyword) {
+        return typeof keyword === "string" && _Util.KEYWORD_REGEX.test(keyword);
+      }
+      /**
+       * Check if the given prefix ends with a gen-delim character.
+       * @param {string} prefixIri A prefix IRI.
+       * @return {boolean} If the given prefix IRI is valid.
+       */
+      static isPrefixIriEndingWithGenDelim(prefixIri) {
+        return _Util.ENDS_WITH_GEN_DELIM.test(prefixIri);
+      }
+      /**
+       * Check if the given context value can be a prefix value.
+       * @param value A context value.
+       * @return {boolean} If it can be a prefix value.
+       */
+      static isPrefixValue(value) {
+        return value && (typeof value === "string" || value && typeof value === "object");
+      }
+      /**
+       * Check if the given IRI is valid.
+       * @param {string} iri A potential IRI.
+       * @return {boolean} If the given IRI is valid.
+       */
+      static isValidIri(iri) {
+        return Boolean(iri && _Util.IRI_REGEX.test(iri));
+      }
+      /**
+       * Check if the given IRI is valid, this includes the possibility of being a relative IRI.
+       * @param {string} iri A potential IRI.
+       * @return {boolean} If the given IRI is valid.
+       */
+      static isValidIriWeak(iri) {
+        return !!iri && iri[0] !== ":" && _Util.IRI_REGEX_WEAK.test(iri);
+      }
+      /**
+       * Check if the given keyword is a defined according to the JSON-LD specification.
+       * @param {string} keyword A potential keyword.
+       * @return {boolean} If the given keyword is valid.
+       */
+      static isValidKeyword(keyword) {
+        return _Util.VALID_KEYWORDS[keyword];
+      }
+      /**
+       * Check if the given term is protected in the context.
+       * @param {IJsonLdContextNormalizedRaw} context A context.
+       * @param {string} key A context term.
+       * @return {boolean} If the given term has an @protected flag.
+       */
+      static isTermProtected(context, key) {
+        const value = context[key];
+        return !(typeof value === "string") && value && value["@protected"];
+      }
+      /**
+       * Check if the given context has at least one protected term.
+       * @param context A context.
+       * @return If the context has a protected term.
+       */
+      static hasProtectedTerms(context) {
+        for (const key of Object.keys(context)) {
+          if (_Util.isTermProtected(context, key)) {
+            return true;
+          }
+        }
+        return false;
+      }
+      /**
+       * Check if the given key is an internal reserved keyword.
+       * @param key A context key.
+       */
+      static isReservedInternalKeyword(key) {
+        return key.startsWith("@__");
+      }
+      /**
+       * Check if two objects are deepEqual to on another.
+       * @param object1 The first object to test.
+       * @param object2 The second object to test.
+       */
+      static deepEqual(object1, object2) {
+        const objKeys1 = Object.keys(object1);
+        const objKeys2 = Object.keys(object2);
+        if (objKeys1.length !== objKeys2.length)
+          return false;
+        return objKeys1.every((key) => {
+          const value1 = object1[key];
+          const value2 = object2[key];
+          return value1 === value2 || value1 !== null && value2 !== null && typeof value1 === "object" && typeof value2 === "object" && this.deepEqual(value1, value2);
+        });
+      }
+    };
+    Util.IRI_REGEX = /^([A-Za-z][A-Za-z0-9+-.]*|_):[^ "<>{}|\\\[\]`#]*(#[^#]*)?$/;
+    Util.IRI_REGEX_WEAK = /(?::[^:])|\//;
+    Util.KEYWORD_REGEX = /^@[a-z]+$/i;
+    Util.ENDS_WITH_GEN_DELIM = /[:/?#\[\]@]$/;
+    Util.REGEX_LANGUAGE_TAG = /^[a-zA-Z]+(-[a-zA-Z0-9]+)*$/;
+    Util.REGEX_DIRECTION_TAG = /^(ltr)|(rtl)$/;
+    Util.VALID_KEYWORDS = {
+      "@annotation": true,
+      "@base": true,
+      "@container": true,
+      "@context": true,
+      "@direction": true,
+      "@graph": true,
+      "@id": true,
+      "@import": true,
+      "@included": true,
+      "@index": true,
+      "@json": true,
+      "@language": true,
+      "@list": true,
+      "@nest": true,
+      "@none": true,
+      "@prefix": true,
+      "@propagate": true,
+      "@protected": true,
+      "@reverse": true,
+      "@set": true,
+      "@type": true,
+      "@value": true,
+      "@version": true,
+      "@vocab": true
+    };
+    Util.EXPAND_KEYS_BLACKLIST = [
+      "@base",
+      "@vocab",
+      "@language",
+      "@version",
+      "@direction"
+    ];
+    Util.ALIAS_DOMAIN_BLACKLIST = [
+      "@container",
+      "@graph",
+      "@id",
+      "@index",
+      "@list",
+      "@nest",
+      "@none",
+      "@prefix",
+      "@reverse",
+      "@set",
+      "@type",
+      "@value",
+      "@version"
+    ];
+    Util.ALIAS_RANGE_BLACKLIST = [
+      "@context",
+      "@preserve"
+    ];
+    Util.CONTAINERS = [
+      "@list",
+      "@set",
+      "@index",
+      "@language",
+      "@graph",
+      "@id",
+      "@type"
+    ];
+    Util.CONTAINERS_1_0 = [
+      "@list",
+      "@set",
+      "@index"
+    ];
+    exports.Util = Util;
+  }
+});
+
+// node_modules/jsonld-context-parser/lib/JsonLdContextNormalized.js
+var require_JsonLdContextNormalized = __commonJS({
+  "node_modules/jsonld-context-parser/lib/JsonLdContextNormalized.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.defaultExpandOptions = exports.JsonLdContextNormalized = void 0;
+    var relative_to_absolute_iri_1 = require_relative_to_absolute_iri();
+    var ErrorCoded_1 = require_ErrorCoded();
+    var Util_1 = require_Util();
+    var JsonLdContextNormalized = class {
+      constructor(contextRaw) {
+        this.contextRaw = contextRaw;
+      }
+      /**
+       * @return The raw inner context.
+       */
+      getContextRaw() {
+        return this.contextRaw;
+      }
+      /**
+       * Expand the term or prefix of the given term if it has one,
+       * otherwise return the term as-is.
+       *
+       * This will try to expand the IRI as much as possible.
+       *
+       * Iff in vocab-mode, then other references to other terms in the context can be used,
+       * such as to `myTerm`:
+       * ```
+       * {
+       *   "myTerm": "http://example.org/myLongTerm"
+       * }
+       * ```
+       *
+       * @param {string} term A term that is an URL or a prefixed URL.
+       * @param {boolean} expandVocab If the term is a predicate or type and should be expanded based on @vocab,
+       *                              otherwise it is considered a regular term that is expanded based on @base.
+       * @param {IExpandOptions} options Options that define the way how expansion must be done.
+       * @return {string} The expanded term, the term as-is, or null if it was explicitly disabled in the context.
+       * @throws If the term is aliased to an invalid value (not a string, IRI or keyword).
+       */
+      expandTerm(term, expandVocab, options = exports.defaultExpandOptions) {
+        const contextValue = this.contextRaw[term];
+        if (contextValue === null || contextValue && contextValue["@id"] === null) {
+          return null;
+        }
+        let validIriMapping = true;
+        if (contextValue && expandVocab) {
+          const value = Util_1.Util.getContextValueId(contextValue);
+          if (value && value !== term) {
+            if (typeof value !== "string" || !Util_1.Util.isValidIri(value) && !Util_1.Util.isValidKeyword(value)) {
+              if (!Util_1.Util.isPotentialKeyword(value)) {
+                validIriMapping = false;
+              }
+            } else {
+              return value;
+            }
+          }
+        }
+        const prefix2 = Util_1.Util.getPrefix(term, this.contextRaw);
+        const vocab = this.contextRaw["@vocab"];
+        const vocabRelative = (!!vocab || vocab === "") && vocab.indexOf(":") < 0;
+        const base = this.contextRaw["@base"];
+        const potentialKeyword = Util_1.Util.isPotentialKeyword(term);
+        if (prefix2) {
+          const contextPrefixValue = this.contextRaw[prefix2];
+          const value = Util_1.Util.getContextValueId(contextPrefixValue);
+          if (value) {
+            if (typeof contextPrefixValue === "string" || !options.allowPrefixForcing) {
+              if (!Util_1.Util.isSimpleTermDefinitionPrefix(value, options)) {
+                return term;
+              }
+            } else {
+              if (value[0] !== "_" && !potentialKeyword && !contextPrefixValue["@prefix"] && !(term in this.contextRaw)) {
+                return term;
+              }
+            }
+            return value + term.substr(prefix2.length + 1);
+          }
+        } else if (expandVocab && (vocab || vocab === "" || options.allowVocabRelativeToBase && (base && vocabRelative)) && !potentialKeyword && !Util_1.Util.isCompactIri(term)) {
+          if (vocabRelative) {
+            if (options.allowVocabRelativeToBase) {
+              return (vocab || base ? (0, relative_to_absolute_iri_1.resolve)(vocab, base) : "") + term;
+            } else {
+              throw new ErrorCoded_1.ErrorCoded(`Relative vocab expansion for term '${term}' with vocab '${vocab}' is not allowed.`, ErrorCoded_1.ERROR_CODES.INVALID_VOCAB_MAPPING);
+            }
+          } else {
+            return vocab + term;
+          }
+        } else if (!expandVocab && base && !potentialKeyword && !Util_1.Util.isCompactIri(term)) {
+          return (0, relative_to_absolute_iri_1.resolve)(term, base);
+        }
+        if (validIriMapping) {
+          return term;
+        } else {
+          throw new ErrorCoded_1.ErrorCoded(`Invalid IRI mapping found for context entry '${term}': '${JSON.stringify(contextValue)}'`, ErrorCoded_1.ERROR_CODES.INVALID_IRI_MAPPING);
+        }
+      }
+      /**
+       * Compact the given term using @base, @vocab, an aliased term, or a prefixed term.
+       *
+       * This will try to compact the IRI as much as possible.
+       *
+       * @param {string} iri An IRI to compact.
+       * @param {boolean} vocab If the term is a predicate or type and should be compacted based on @vocab,
+       *                        otherwise it is considered a regular term that is compacted based on @base.
+       * @return {string} The compacted term or the IRI as-is.
+       */
+      compactIri(iri, vocab) {
+        if (vocab && this.contextRaw["@vocab"] && iri.startsWith(this.contextRaw["@vocab"])) {
+          return iri.substr(this.contextRaw["@vocab"].length);
+        }
+        if (!vocab && this.contextRaw["@base"] && iri.startsWith(this.contextRaw["@base"])) {
+          return iri.substr(this.contextRaw["@base"].length);
+        }
+        const shortestPrefixing = { prefix: "", suffix: iri };
+        for (const key in this.contextRaw) {
+          const value = this.contextRaw[key];
+          if (value && !Util_1.Util.isPotentialKeyword(key)) {
+            const contextIri = Util_1.Util.getContextValueId(value);
+            if (iri.startsWith(contextIri)) {
+              const suffix = iri.substr(contextIri.length);
+              if (!suffix) {
+                if (vocab) {
+                  return key;
+                }
+              } else if (suffix.length < shortestPrefixing.suffix.length) {
+                shortestPrefixing.prefix = key;
+                shortestPrefixing.suffix = suffix;
+              }
+            }
+          }
+        }
+        if (shortestPrefixing.prefix) {
+          return shortestPrefixing.prefix + ":" + shortestPrefixing.suffix;
+        }
+        return iri;
+      }
+    };
+    exports.JsonLdContextNormalized = JsonLdContextNormalized;
+    exports.defaultExpandOptions = {
+      allowPrefixForcing: true,
+      allowPrefixNonGenDelims: false,
+      allowVocabRelativeToBase: true
+    };
+  }
+});
+
+// node_modules/jsonld-context-parser/lib/ContextParser.js
+var require_ContextParser = __commonJS({
+  "node_modules/jsonld-context-parser/lib/ContextParser.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ContextParser = void 0;
+    var relative_to_absolute_iri_1 = require_relative_to_absolute_iri();
+    var ErrorCoded_1 = require_ErrorCoded();
+    var FetchDocumentLoader_1 = require_FetchDocumentLoader();
+    var JsonLdContextNormalized_1 = require_JsonLdContextNormalized();
+    var Util_1 = require_Util();
+    var ContextParser = class _ContextParser {
+      constructor(options) {
+        options = options || {};
+        this.documentLoader = options.documentLoader || new FetchDocumentLoader_1.FetchDocumentLoader();
+        this.documentCache = {};
+        this.validateContext = !options.skipValidation;
+        this.expandContentTypeToBase = !!options.expandContentTypeToBase;
+        this.remoteContextsDepthLimit = options.remoteContextsDepthLimit || 32;
+        this.redirectSchemaOrgHttps = "redirectSchemaOrgHttps" in options ? !!options.redirectSchemaOrgHttps : true;
+      }
+      /**
+       * Validate the given @language value.
+       * An error will be thrown if it is invalid.
+       * @param value An @language value.
+       * @param {boolean} strictRange If the string value should be strictly checked against a regex.
+       * @param {string} errorCode The error code to emit on errors.
+       * @return {boolean} If validation passed.
+       *                   Can only be false if strictRange is false and the string value did not pass the regex.
+       */
+      static validateLanguage(value, strictRange, errorCode) {
+        if (typeof value !== "string") {
+          throw new ErrorCoded_1.ErrorCoded(`The value of an '@language' must be a string, got '${JSON.stringify(value)}'`, errorCode);
+        }
+        if (!Util_1.Util.REGEX_LANGUAGE_TAG.test(value)) {
+          if (strictRange) {
+            throw new ErrorCoded_1.ErrorCoded(`The value of an '@language' must be a valid language tag, got '${JSON.stringify(value)}'`, errorCode);
+          } else {
+            return false;
+          }
+        }
+        return true;
+      }
+      /**
+       * Validate the given @direction value.
+       * An error will be thrown if it is invalid.
+       * @param value An @direction value.
+       * @param {boolean} strictValues If the string value should be strictly checked against a regex.
+       * @return {boolean} If validation passed.
+       *                   Can only be false if strictRange is false and the string value did not pass the regex.
+       */
+      static validateDirection(value, strictValues) {
+        if (typeof value !== "string") {
+          throw new ErrorCoded_1.ErrorCoded(`The value of an '@direction' must be a string, got '${JSON.stringify(value)}'`, ErrorCoded_1.ERROR_CODES.INVALID_BASE_DIRECTION);
+        }
+        if (!Util_1.Util.REGEX_DIRECTION_TAG.test(value)) {
+          if (strictValues) {
+            throw new ErrorCoded_1.ErrorCoded(`The value of an '@direction' must be 'ltr' or 'rtl', got '${JSON.stringify(value)}'`, ErrorCoded_1.ERROR_CODES.INVALID_BASE_DIRECTION);
+          } else {
+            return false;
+          }
+        }
+        return true;
+      }
+      /**
+       * Add an @id term for all @reverse terms.
+       * @param {IJsonLdContextNormalizedRaw} context A context.
+       * @return {IJsonLdContextNormalizedRaw} The mutated input context.
+       */
+      idifyReverseTerms(context) {
+        for (const key of Object.keys(context)) {
+          let value = context[key];
+          if (value && typeof value === "object") {
+            if (value["@reverse"] && !value["@id"]) {
+              if (typeof value["@reverse"] !== "string" || Util_1.Util.isValidKeyword(value["@reverse"])) {
+                throw new ErrorCoded_1.ErrorCoded(`Invalid @reverse value, must be absolute IRI or blank node: '${value["@reverse"]}'`, ErrorCoded_1.ERROR_CODES.INVALID_IRI_MAPPING);
+              }
+              value = context[key] = Object.assign(Object.assign({}, value), { "@id": value["@reverse"] });
+              value["@id"] = value["@reverse"];
+              if (Util_1.Util.isPotentialKeyword(value["@reverse"])) {
+                delete value["@reverse"];
+              } else {
+                value["@reverse"] = true;
+              }
+            }
+          }
+        }
+        return context;
+      }
+      /**
+       * Expand all prefixed terms in the given context.
+       * @param {IJsonLdContextNormalizedRaw} context A context.
+       * @param {boolean} expandContentTypeToBase If @type inside the context may be expanded
+       *                                          via @base if @vocab is set to null.
+       * @param {string[]} keys Optional set of keys from the context to expand. If left undefined, all
+       * keys in the context will be expanded.
+       */
+      expandPrefixedTerms(context, expandContentTypeToBase, keys) {
+        const contextRaw = context.getContextRaw();
+        for (const key of keys || Object.keys(contextRaw)) {
+          if (Util_1.Util.EXPAND_KEYS_BLACKLIST.indexOf(key) < 0 && !Util_1.Util.isReservedInternalKeyword(key)) {
+            const keyValue = contextRaw[key];
+            if (Util_1.Util.isPotentialKeyword(key) && Util_1.Util.ALIAS_DOMAIN_BLACKLIST.indexOf(key) >= 0) {
+              if (key !== "@type" || typeof contextRaw[key] === "object" && !(contextRaw[key]["@protected"] || contextRaw[key]["@container"] === "@set")) {
+                throw new ErrorCoded_1.ErrorCoded(`Keywords can not be aliased to something else.
+Tried mapping ${key} to ${JSON.stringify(keyValue)}`, ErrorCoded_1.ERROR_CODES.KEYWORD_REDEFINITION);
+              }
+            }
+            if (Util_1.Util.ALIAS_RANGE_BLACKLIST.indexOf(Util_1.Util.getContextValueId(keyValue)) >= 0) {
+              throw new ErrorCoded_1.ErrorCoded(`Aliasing to certain keywords is not allowed.
+Tried mapping ${key} to ${JSON.stringify(keyValue)}`, ErrorCoded_1.ERROR_CODES.INVALID_KEYWORD_ALIAS);
+            }
+            if (keyValue && Util_1.Util.isPotentialKeyword(Util_1.Util.getContextValueId(keyValue)) && keyValue["@prefix"] === true) {
+              throw new ErrorCoded_1.ErrorCoded(`Tried to use keyword aliases as prefix: '${key}': '${JSON.stringify(keyValue)}'`, ErrorCoded_1.ERROR_CODES.INVALID_TERM_DEFINITION);
+            }
+            while (Util_1.Util.isPrefixValue(contextRaw[key])) {
+              const value = contextRaw[key];
+              let changed = false;
+              if (typeof value === "string") {
+                contextRaw[key] = context.expandTerm(value, true);
+                changed = changed || value !== contextRaw[key];
+              } else {
+                const id = value["@id"];
+                const type = value["@type"];
+                const canAddIdEntry = !("@prefix" in value) || Util_1.Util.isValidIri(key);
+                if ("@id" in value) {
+                  if (id !== void 0 && id !== null && typeof id === "string") {
+                    contextRaw[key] = Object.assign(Object.assign({}, contextRaw[key]), { "@id": context.expandTerm(id, true) });
+                    changed = changed || id !== contextRaw[key]["@id"];
+                  }
+                } else if (!Util_1.Util.isPotentialKeyword(key) && canAddIdEntry) {
+                  const newId = context.expandTerm(key, true);
+                  if (newId !== key) {
+                    contextRaw[key] = Object.assign(Object.assign({}, contextRaw[key]), { "@id": newId });
+                    changed = true;
+                  }
+                }
+                if (type && typeof type === "string" && type !== "@vocab" && (!value["@container"] || !value["@container"]["@type"]) && canAddIdEntry) {
+                  let expandedType = context.expandTerm(type, true);
+                  if (expandContentTypeToBase && type === expandedType) {
+                    expandedType = context.expandTerm(type, false);
+                  }
+                  if (expandedType !== type) {
+                    changed = true;
+                    contextRaw[key] = Object.assign(Object.assign({}, contextRaw[key]), { "@type": expandedType });
+                  }
+                }
+              }
+              if (!changed) {
+                break;
+              }
+            }
+          }
+        }
+      }
+      /**
+       * Normalize the @language entries in the given context to lowercase.
+       * @param {IJsonLdContextNormalizedRaw} context A context.
+       * @param {IParseOptions} parseOptions The parsing options.
+       */
+      normalize(context, { processingMode, normalizeLanguageTags }) {
+        if (normalizeLanguageTags || processingMode === 1) {
+          for (const key of Object.keys(context)) {
+            if (key === "@language" && typeof context[key] === "string") {
+              context[key] = context[key].toLowerCase();
+            } else {
+              const value = context[key];
+              if (value && typeof value === "object") {
+                if (typeof value["@language"] === "string") {
+                  const lowercase = value["@language"].toLowerCase();
+                  if (lowercase !== value["@language"]) {
+                    context[key] = Object.assign(Object.assign({}, value), { "@language": lowercase });
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      /**
+       * Convert all @container strings and array values to hash-based values.
+       * @param {IJsonLdContextNormalizedRaw} context A context.
+       */
+      containersToHash(context) {
+        for (const key of Object.keys(context)) {
+          const value = context[key];
+          if (value && typeof value === "object") {
+            if (typeof value["@container"] === "string") {
+              context[key] = Object.assign(Object.assign({}, value), { "@container": { [value["@container"]]: true } });
+            } else if (Array.isArray(value["@container"])) {
+              const newValue = {};
+              for (const containerValue of value["@container"]) {
+                newValue[containerValue] = true;
+              }
+              context[key] = Object.assign(Object.assign({}, value), { "@container": newValue });
+            }
+          }
+        }
+      }
+      /**
+       * Normalize and apply context-level @protected terms onto each term separately.
+       * @param {IJsonLdContextNormalizedRaw} context A context.
+       * @param {number} processingMode The processing mode.
+       */
+      applyScopedProtected(context, { processingMode }, expandOptions) {
+        if (processingMode && processingMode >= 1.1) {
+          if (context["@protected"]) {
+            for (const key of Object.keys(context)) {
+              if (Util_1.Util.isReservedInternalKeyword(key)) {
+                continue;
+              }
+              if (!Util_1.Util.isPotentialKeyword(key) && !Util_1.Util.isTermProtected(context, key)) {
+                const value = context[key];
+                if (value && typeof value === "object") {
+                  if (!("@protected" in context[key])) {
+                    context[key] = Object.assign(Object.assign({}, context[key]), { "@protected": true });
+                  }
+                } else {
+                  context[key] = {
+                    "@id": value,
+                    "@protected": true
+                  };
+                  if (Util_1.Util.isSimpleTermDefinitionPrefix(value, expandOptions)) {
+                    context[key] = Object.assign(Object.assign({}, context[key]), { "@prefix": true });
+                  }
+                }
+              }
+            }
+            delete context["@protected"];
+          }
+        }
+      }
+      /**
+       * Check if the given context inheritance does not contain any overrides of protected terms.
+       * @param {IJsonLdContextNormalizedRaw} contextBefore The context that may contain some protected terms.
+       * @param {IJsonLdContextNormalizedRaw} contextAfter A new context that is being applied on the first one.
+       * @param {IExpandOptions} expandOptions Options that are needed for any expansions during this validation.
+       * @param {string[]} keys Optional set of keys from the context to validate. If left undefined, all
+       * keys defined in contextAfter will be checked.
+       */
+      validateKeywordRedefinitions(contextBefore, contextAfter, expandOptions, keys) {
+        for (const key of keys !== null && keys !== void 0 ? keys : Object.keys(contextAfter)) {
+          if (Util_1.Util.isTermProtected(contextBefore, key)) {
+            if (typeof contextAfter[key] === "string") {
+              contextAfter[key] = { "@id": contextAfter[key], "@protected": true };
+            } else {
+              contextAfter[key] = Object.assign(Object.assign({}, contextAfter[key]), { "@protected": true });
+            }
+            if (!Util_1.Util.deepEqual(contextBefore[key], contextAfter[key])) {
+              throw new ErrorCoded_1.ErrorCoded(`Attempted to override the protected keyword ${key} from ${JSON.stringify(Util_1.Util.getContextValueId(contextBefore[key]))} to ${JSON.stringify(Util_1.Util.getContextValueId(contextAfter[key]))}`, ErrorCoded_1.ERROR_CODES.PROTECTED_TERM_REDEFINITION);
+            }
+          }
+        }
+      }
+      /**
+       * Validate the entries of the given context.
+       * @param {IJsonLdContextNormalizedRaw} context A context.
+       * @param {IParseOptions} options The parse options.
+       */
+      validate(context, { processingMode }) {
+        for (const key of Object.keys(context)) {
+          if (Util_1.Util.isReservedInternalKeyword(key)) {
+            continue;
+          }
+          if (key === "") {
+            throw new ErrorCoded_1.ErrorCoded(`The empty term is not allowed, got: '${key}': '${JSON.stringify(context[key])}'`, ErrorCoded_1.ERROR_CODES.INVALID_TERM_DEFINITION);
+          }
+          const value = context[key];
+          const valueType = typeof value;
+          if (Util_1.Util.isPotentialKeyword(key)) {
+            switch (key.substr(1)) {
+              case "vocab":
+                if (value !== null && valueType !== "string") {
+                  throw new ErrorCoded_1.ErrorCoded(`Found an invalid @vocab IRI: ${value}`, ErrorCoded_1.ERROR_CODES.INVALID_VOCAB_MAPPING);
+                }
+                break;
+              case "base":
+                if (value !== null && valueType !== "string") {
+                  throw new ErrorCoded_1.ErrorCoded(`Found an invalid @base IRI: ${context[key]}`, ErrorCoded_1.ERROR_CODES.INVALID_BASE_IRI);
+                }
+                break;
+              case "language":
+                if (value !== null) {
+                  _ContextParser.validateLanguage(value, true, ErrorCoded_1.ERROR_CODES.INVALID_DEFAULT_LANGUAGE);
+                }
+                break;
+              case "version":
+                if (value !== null && valueType !== "number") {
+                  throw new ErrorCoded_1.ErrorCoded(`Found an invalid @version number: ${value}`, ErrorCoded_1.ERROR_CODES.INVALID_VERSION_VALUE);
+                }
+                break;
+              case "direction":
+                if (value !== null) {
+                  _ContextParser.validateDirection(value, true);
+                }
+                break;
+              case "propagate":
+                if (processingMode === 1) {
+                  throw new ErrorCoded_1.ErrorCoded(`Found an illegal @propagate keyword: ${value}`, ErrorCoded_1.ERROR_CODES.INVALID_CONTEXT_ENTRY);
+                }
+                if (value !== null && valueType !== "boolean") {
+                  throw new ErrorCoded_1.ErrorCoded(`Found an invalid @propagate value: ${value}`, ErrorCoded_1.ERROR_CODES.INVALID_PROPAGATE_VALUE);
+                }
+                break;
+            }
+            if (Util_1.Util.isValidKeyword(key) && Util_1.Util.isValidKeyword(Util_1.Util.getContextValueId(value))) {
+              throw new ErrorCoded_1.ErrorCoded(`Illegal keyword alias in term value, found: '${key}': '${Util_1.Util.getContextValueId(value)}'`, ErrorCoded_1.ERROR_CODES.KEYWORD_REDEFINITION);
+            }
+            continue;
+          }
+          if (value !== null) {
+            switch (valueType) {
+              case "string":
+                if (Util_1.Util.getPrefix(value, context) === key) {
+                  throw new ErrorCoded_1.ErrorCoded(`Detected cyclical IRI mapping in context entry: '${key}': '${JSON.stringify(value)}'`, ErrorCoded_1.ERROR_CODES.CYCLIC_IRI_MAPPING);
+                }
+                if (Util_1.Util.isValidIriWeak(key)) {
+                  if (value === "@type") {
+                    throw new ErrorCoded_1.ErrorCoded(`IRIs can not be mapped to @type, found: '${key}': '${value}'`, ErrorCoded_1.ERROR_CODES.INVALID_IRI_MAPPING);
+                  } else if (Util_1.Util.isValidIri(value) && value !== new JsonLdContextNormalized_1.JsonLdContextNormalized(context).expandTerm(key)) {
+                    throw new ErrorCoded_1.ErrorCoded(`IRIs can not be mapped to other IRIs, found: '${key}': '${value}'`, ErrorCoded_1.ERROR_CODES.INVALID_IRI_MAPPING);
+                  }
+                }
+                break;
+              case "object":
+                if (!Util_1.Util.isCompactIri(key) && !("@id" in value) && (value["@type"] === "@id" ? !context["@base"] : !context["@vocab"])) {
+                  throw new ErrorCoded_1.ErrorCoded(`Missing @id in context entry: '${key}': '${JSON.stringify(value)}'`, ErrorCoded_1.ERROR_CODES.INVALID_IRI_MAPPING);
+                }
+                for (const objectKey of Object.keys(value)) {
+                  const objectValue = value[objectKey];
+                  if (!objectValue) {
+                    continue;
+                  }
+                  switch (objectKey) {
+                    case "@id":
+                      if (Util_1.Util.isValidKeyword(objectValue) && objectValue !== "@type" && objectValue !== "@id" && objectValue !== "@graph" && objectValue !== "@nest") {
+                        throw new ErrorCoded_1.ErrorCoded(`Illegal keyword alias in term value, found: '${key}': '${JSON.stringify(value)}'`, ErrorCoded_1.ERROR_CODES.INVALID_IRI_MAPPING);
+                      }
+                      if (Util_1.Util.isValidIriWeak(key)) {
+                        if (objectValue === "@type") {
+                          throw new ErrorCoded_1.ErrorCoded(`IRIs can not be mapped to @type, found: '${key}': '${JSON.stringify(value)}'`, ErrorCoded_1.ERROR_CODES.INVALID_IRI_MAPPING);
+                        } else if (Util_1.Util.isValidIri(objectValue) && objectValue !== new JsonLdContextNormalized_1.JsonLdContextNormalized(context).expandTerm(key)) {
+                          throw new ErrorCoded_1.ErrorCoded(`IRIs can not be mapped to other IRIs, found: '${key}': '${JSON.stringify(value)}'`, ErrorCoded_1.ERROR_CODES.INVALID_IRI_MAPPING);
+                        }
+                      }
+                      if (typeof objectValue !== "string") {
+                        throw new ErrorCoded_1.ErrorCoded(`Detected non-string @id in context entry: '${key}': '${JSON.stringify(value)}'`, ErrorCoded_1.ERROR_CODES.INVALID_IRI_MAPPING);
+                      }
+                      if (Util_1.Util.getPrefix(objectValue, context) === key) {
+                        throw new ErrorCoded_1.ErrorCoded(`Detected cyclical IRI mapping in context entry: '${key}': '${JSON.stringify(value)}'`, ErrorCoded_1.ERROR_CODES.CYCLIC_IRI_MAPPING);
+                      }
+                      break;
+                    case "@type":
+                      if (value["@container"] === "@type" && objectValue !== "@id" && objectValue !== "@vocab") {
+                        throw new ErrorCoded_1.ErrorCoded(`@container: @type only allows @type: @id or @vocab, but got: '${key}': '${objectValue}'`, ErrorCoded_1.ERROR_CODES.INVALID_TYPE_MAPPING);
+                      }
+                      if (typeof objectValue !== "string") {
+                        throw new ErrorCoded_1.ErrorCoded(`The value of an '@type' must be a string, got '${JSON.stringify(valueType)}'`, ErrorCoded_1.ERROR_CODES.INVALID_TYPE_MAPPING);
+                      }
+                      if (objectValue !== "@id" && objectValue !== "@vocab" && (processingMode === 1 || objectValue !== "@json") && (processingMode === 1 || objectValue !== "@none") && (objectValue[0] === "_" || !Util_1.Util.isValidIri(objectValue))) {
+                        throw new ErrorCoded_1.ErrorCoded(`A context @type must be an absolute IRI, found: '${key}': '${objectValue}'`, ErrorCoded_1.ERROR_CODES.INVALID_TYPE_MAPPING);
+                      }
+                      break;
+                    case "@reverse":
+                      if (typeof objectValue === "string" && value["@id"] && value["@id"] !== objectValue) {
+                        throw new ErrorCoded_1.ErrorCoded(`Found non-matching @id and @reverse term values in '${key}':'${objectValue}' and '${value["@id"]}'`, ErrorCoded_1.ERROR_CODES.INVALID_REVERSE_PROPERTY);
+                      }
+                      if ("@nest" in value) {
+                        throw new ErrorCoded_1.ErrorCoded(`@nest is not allowed in the reverse property '${key}'`, ErrorCoded_1.ERROR_CODES.INVALID_REVERSE_PROPERTY);
+                      }
+                      break;
+                    case "@container":
+                      if (processingMode === 1) {
+                        if (Object.keys(objectValue).length > 1 || Util_1.Util.CONTAINERS_1_0.indexOf(Object.keys(objectValue)[0]) < 0) {
+                          throw new ErrorCoded_1.ErrorCoded(`Invalid term @container for '${key}' ('${Object.keys(objectValue)}') in 1.0, must be only one of ${Util_1.Util.CONTAINERS_1_0.join(", ")}`, ErrorCoded_1.ERROR_CODES.INVALID_CONTAINER_MAPPING);
+                        }
+                      }
+                      for (const containerValue of Object.keys(objectValue)) {
+                        if (containerValue === "@list" && value["@reverse"]) {
+                          throw new ErrorCoded_1.ErrorCoded(`Term value can not be @container: @list and @reverse at the same time on '${key}'`, ErrorCoded_1.ERROR_CODES.INVALID_REVERSE_PROPERTY);
+                        }
+                        if (Util_1.Util.CONTAINERS.indexOf(containerValue) < 0) {
+                          throw new ErrorCoded_1.ErrorCoded(`Invalid term @container for '${key}' ('${containerValue}'), must be one of ${Util_1.Util.CONTAINERS.join(", ")}`, ErrorCoded_1.ERROR_CODES.INVALID_CONTAINER_MAPPING);
+                        }
+                      }
+                      break;
+                    case "@language":
+                      _ContextParser.validateLanguage(objectValue, true, ErrorCoded_1.ERROR_CODES.INVALID_LANGUAGE_MAPPING);
+                      break;
+                    case "@direction":
+                      _ContextParser.validateDirection(objectValue, true);
+                      break;
+                    case "@prefix":
+                      if (objectValue !== null && typeof objectValue !== "boolean") {
+                        throw new ErrorCoded_1.ErrorCoded(`Found an invalid term @prefix boolean in: '${key}': '${JSON.stringify(value)}'`, ErrorCoded_1.ERROR_CODES.INVALID_PREFIX_VALUE);
+                      }
+                      if (!("@id" in value) && !Util_1.Util.isValidIri(key)) {
+                        throw new ErrorCoded_1.ErrorCoded(`Invalid @prefix definition for '${key}' ('${JSON.stringify(value)}'`, ErrorCoded_1.ERROR_CODES.INVALID_TERM_DEFINITION);
+                      }
+                      break;
+                    case "@index":
+                      if (processingMode === 1 || !value["@container"] || !value["@container"]["@index"]) {
+                        throw new ErrorCoded_1.ErrorCoded(`Attempt to add illegal key to value object: '${key}': '${JSON.stringify(value)}'`, ErrorCoded_1.ERROR_CODES.INVALID_TERM_DEFINITION);
+                      }
+                      break;
+                    case "@nest":
+                      if (Util_1.Util.isPotentialKeyword(objectValue) && objectValue !== "@nest") {
+                        throw new ErrorCoded_1.ErrorCoded(`Found an invalid term @nest value in: '${key}': '${JSON.stringify(value)}'`, ErrorCoded_1.ERROR_CODES.INVALID_NEST_VALUE);
+                      }
+                  }
+                }
+                break;
+              default:
+                throw new ErrorCoded_1.ErrorCoded(`Found an invalid term value: '${key}': '${value}'`, ErrorCoded_1.ERROR_CODES.INVALID_TERM_DEFINITION);
+            }
+          }
+        }
+      }
+      /**
+       * Apply the @base context entry to the given context under certain circumstances.
+       * @param context A context.
+       * @param options Parsing options.
+       * @param inheritFromParent If the @base value from the parent context can be inherited.
+       * @return The given context.
+       */
+      applyBaseEntry(context, options, inheritFromParent) {
+        if (typeof context === "string") {
+          return context;
+        }
+        if (inheritFromParent && !("@base" in context) && options.parentContext && typeof options.parentContext === "object" && "@base" in options.parentContext) {
+          context["@base"] = options.parentContext["@base"];
+          if (options.parentContext["@__baseDocument"]) {
+            context["@__baseDocument"] = true;
+          }
+        }
+        if (options.baseIRI && !options.external) {
+          if (!("@base" in context)) {
+            context["@base"] = options.baseIRI;
+            context["@__baseDocument"] = true;
+          } else if (context["@base"] !== null && typeof context["@base"] === "string" && !Util_1.Util.isValidIri(context["@base"])) {
+            context["@base"] = (0, relative_to_absolute_iri_1.resolve)(context["@base"], options.parentContext && options.parentContext["@base"] || options.baseIRI);
+          }
+        }
+        return context;
+      }
+      /**
+       * Resolve relative context IRIs, or return full IRIs as-is.
+       * @param {string} contextIri A context IRI.
+       * @param {string} baseIRI A base IRI.
+       * @return {string} The normalized context IRI.
+       */
+      normalizeContextIri(contextIri, baseIRI) {
+        if (!Util_1.Util.isValidIri(contextIri)) {
+          try {
+            contextIri = (0, relative_to_absolute_iri_1.resolve)(contextIri, baseIRI);
+          } catch (_a) {
+            throw new Error(`Invalid context IRI: ${contextIri}`);
+          }
+        }
+        if (this.redirectSchemaOrgHttps && contextIri.startsWith("http://schema.org")) {
+          contextIri = "https://schema.org/";
+        }
+        return contextIri;
+      }
+      /**
+       * Parse scoped contexts in the given context.
+       * @param {IJsonLdContextNormalizedRaw} context A context.
+       * @param {IParseOptions} options Parsing options.
+       * @return {IJsonLdContextNormalizedRaw} The mutated input context.
+       * @param {string[]} keys Optional set of keys from the context to parseInnerContexts of. If left undefined, all
+       * keys in the context will be iterated over.
+       */
+      async parseInnerContexts(context, options, keys) {
+        for (const key of keys !== null && keys !== void 0 ? keys : Object.keys(context)) {
+          const value = context[key];
+          if (value && typeof value === "object") {
+            if ("@context" in value && value["@context"] !== null && !options.ignoreScopedContexts) {
+              if (this.validateContext) {
+                try {
+                  const parentContext = Object.assign(Object.assign({}, context), { [key]: Object.assign({}, context[key]) });
+                  delete parentContext[key]["@context"];
+                  await this.parse(value["@context"], Object.assign(Object.assign({}, options), { external: false, parentContext, ignoreProtection: true, ignoreRemoteScopedContexts: true, ignoreScopedContexts: true }));
+                } catch (e5) {
+                  throw new ErrorCoded_1.ErrorCoded(e5.message, ErrorCoded_1.ERROR_CODES.INVALID_SCOPED_CONTEXT);
+                }
+              }
+              context[key] = Object.assign(Object.assign({}, value), { "@context": (await this.parse(value["@context"], Object.assign(Object.assign({}, options), { external: false, minimalProcessing: true, ignoreRemoteScopedContexts: true, parentContext: context }))).getContextRaw() });
+            }
+          }
+        }
+        return context;
+      }
+      async parse(context, options = {}, internalOptions = {}) {
+        const { baseIRI, parentContext, external, processingMode = _ContextParser.DEFAULT_PROCESSING_MODE, normalizeLanguageTags, ignoreProtection, minimalProcessing } = options;
+        const remoteContexts = options.remoteContexts || {};
+        if (Object.keys(remoteContexts).length >= this.remoteContextsDepthLimit) {
+          throw new ErrorCoded_1.ErrorCoded("Detected an overflow in remote context inclusions: " + Object.keys(remoteContexts), ErrorCoded_1.ERROR_CODES.CONTEXT_OVERFLOW);
+        }
+        if (context === null || context === void 0) {
+          if (!ignoreProtection && parentContext && Util_1.Util.hasProtectedTerms(parentContext)) {
+            throw new ErrorCoded_1.ErrorCoded("Illegal context nullification when terms are protected", ErrorCoded_1.ERROR_CODES.INVALID_CONTEXT_NULLIFICATION);
+          }
+          return new JsonLdContextNormalized_1.JsonLdContextNormalized(this.applyBaseEntry({}, options, false));
+        } else if (typeof context === "string") {
+          const contextIri = this.normalizeContextIri(context, baseIRI);
+          const overriddenLoad = this.getOverriddenLoad(contextIri, options);
+          if (overriddenLoad) {
+            return new JsonLdContextNormalized_1.JsonLdContextNormalized(overriddenLoad);
+          }
+          const parsedStringContext = await this.parse(await this.load(contextIri), Object.assign(Object.assign({}, options), { baseIRI: contextIri, external: true, remoteContexts: Object.assign(Object.assign({}, remoteContexts), { [contextIri]: true }) }));
+          this.applyBaseEntry(parsedStringContext.getContextRaw(), options, true);
+          return parsedStringContext;
+        } else if (Array.isArray(context)) {
+          const contextIris = [];
+          const contexts = await Promise.all(context.map((subContext, i5) => {
+            if (typeof subContext === "string") {
+              const contextIri = this.normalizeContextIri(subContext, baseIRI);
+              contextIris[i5] = contextIri;
+              const overriddenLoad = this.getOverriddenLoad(contextIri, options);
+              if (overriddenLoad) {
+                return overriddenLoad;
+              }
+              return this.load(contextIri);
+            } else {
+              return subContext;
+            }
+          }));
+          if (minimalProcessing) {
+            return new JsonLdContextNormalized_1.JsonLdContextNormalized(contexts);
+          }
+          const reducedContexts = await contexts.reduce((accContextPromise, contextEntry, i5) => accContextPromise.then((accContext) => this.parse(
+            contextEntry,
+            Object.assign(Object.assign({}, options), { baseIRI: contextIris[i5] || options.baseIRI, external: !!contextIris[i5] || options.external, parentContext: accContext.getContextRaw(), remoteContexts: contextIris[i5] ? Object.assign(Object.assign({}, remoteContexts), { [contextIris[i5]]: true }) : remoteContexts }),
+            // @ts-expect-error: This third argument causes a type error because we have hidden it from consumers
+            {
+              skipValidation: i5 < contexts.length - 1
+            }
+          )), Promise.resolve(new JsonLdContextNormalized_1.JsonLdContextNormalized(parentContext || {})));
+          this.applyBaseEntry(reducedContexts.getContextRaw(), options, true);
+          return reducedContexts;
+        } else if (typeof context === "object") {
+          if ("@context" in context) {
+            if (options === null || options === void 0 ? void 0 : options.disallowDirectlyNestedContext) {
+              throw new ErrorCoded_1.ErrorCoded(`Keywords can not be aliased to something else.
+Tried mapping @context to ${JSON.stringify(context["@context"])}`, ErrorCoded_1.ERROR_CODES.KEYWORD_REDEFINITION);
+            }
+            return await this.parse(context["@context"], options);
+          }
+          context = Object.assign({}, context);
+          if (external) {
+            delete context["@base"];
+          }
+          this.applyBaseEntry(context, options, true);
+          this.containersToHash(context);
+          if (minimalProcessing) {
+            return new JsonLdContextNormalized_1.JsonLdContextNormalized(context);
+          }
+          let importContext = {};
+          if ("@import" in context) {
+            if (processingMode >= 1.1) {
+              if (typeof context["@import"] !== "string") {
+                throw new ErrorCoded_1.ErrorCoded("An @import value must be a string, but got " + typeof context["@import"], ErrorCoded_1.ERROR_CODES.INVALID_IMPORT_VALUE);
+              }
+              importContext = await this.loadImportContext(this.normalizeContextIri(context["@import"], baseIRI));
+              delete context["@import"];
+            } else {
+              throw new ErrorCoded_1.ErrorCoded("Context importing is not supported in JSON-LD 1.0", ErrorCoded_1.ERROR_CODES.INVALID_CONTEXT_ENTRY);
+            }
+          }
+          this.applyScopedProtected(importContext, { processingMode }, JsonLdContextNormalized_1.defaultExpandOptions);
+          const newContext = Object.assign(importContext, context);
+          this.idifyReverseTerms(newContext);
+          this.normalize(newContext, { processingMode, normalizeLanguageTags });
+          this.applyScopedProtected(newContext, { processingMode }, JsonLdContextNormalized_1.defaultExpandOptions);
+          const keys = Object.keys(newContext);
+          const overlappingKeys = [];
+          if (typeof parentContext === "object") {
+            for (const key in parentContext) {
+              if (key in newContext) {
+                overlappingKeys.push(key);
+              } else {
+                newContext[key] = parentContext[key];
+              }
+            }
+          }
+          await this.parseInnerContexts(newContext, options, keys);
+          const newContextWrapped = new JsonLdContextNormalized_1.JsonLdContextNormalized(newContext);
+          if ((newContext && newContext["@version"] || _ContextParser.DEFAULT_PROCESSING_MODE) >= 1.1 && (context["@vocab"] && typeof context["@vocab"] === "string" || context["@vocab"] === "")) {
+            if (parentContext && "@vocab" in parentContext && context["@vocab"].indexOf(":") < 0) {
+              newContext["@vocab"] = parentContext["@vocab"] + context["@vocab"];
+            } else if (Util_1.Util.isCompactIri(context["@vocab"]) || context["@vocab"] in newContext) {
+              newContext["@vocab"] = newContextWrapped.expandTerm(context["@vocab"], true);
+            }
+          }
+          this.expandPrefixedTerms(newContextWrapped, this.expandContentTypeToBase, keys);
+          if (!ignoreProtection && parentContext && processingMode >= 1.1) {
+            this.validateKeywordRedefinitions(parentContext, newContext, JsonLdContextNormalized_1.defaultExpandOptions, overlappingKeys);
+          }
+          if (this.validateContext && !internalOptions.skipValidation) {
+            this.validate(newContext, { processingMode });
+          }
+          return newContextWrapped;
+        } else {
+          throw new ErrorCoded_1.ErrorCoded(`Tried parsing a context that is not a string, array or object, but got ${context}`, ErrorCoded_1.ERROR_CODES.INVALID_LOCAL_CONTEXT);
+        }
+      }
+      /**
+       * Fetch the given URL as a raw JSON-LD context.
+       * @param url An URL.
+       * @return A promise resolving to a raw JSON-LD context.
+       */
+      async load(url) {
+        const cached = this.documentCache[url];
+        if (cached) {
+          return cached;
+        }
+        let document2;
+        try {
+          document2 = await this.documentLoader.load(url);
+        } catch (e5) {
+          throw new ErrorCoded_1.ErrorCoded(`Failed to load remote context ${url}: ${e5.message}`, ErrorCoded_1.ERROR_CODES.LOADING_REMOTE_CONTEXT_FAILED);
+        }
+        if (!("@context" in document2)) {
+          throw new ErrorCoded_1.ErrorCoded(`Missing @context in remote context at ${url}`, ErrorCoded_1.ERROR_CODES.INVALID_REMOTE_CONTEXT);
+        }
+        return this.documentCache[url] = document2["@context"];
+      }
+      /**
+       * Override the given context that may be loaded.
+       *
+       * This will check whether or not the url is recursively being loaded.
+       * @param url An URL.
+       * @param options Parsing options.
+       * @return An overridden context, or null.
+       *         Optionally an error can be thrown if a cyclic context is detected.
+       */
+      getOverriddenLoad(url, options) {
+        if (url in (options.remoteContexts || {})) {
+          if (options.ignoreRemoteScopedContexts) {
+            return url;
+          } else {
+            throw new ErrorCoded_1.ErrorCoded("Detected a cyclic context inclusion of " + url, ErrorCoded_1.ERROR_CODES.RECURSIVE_CONTEXT_INCLUSION);
+          }
+        }
+        return null;
+      }
+      /**
+       * Load an @import'ed context.
+       * @param importContextIri The full URI of an @import value.
+       */
+      async loadImportContext(importContextIri) {
+        let importContext = await this.load(importContextIri);
+        if (typeof importContext !== "object" || Array.isArray(importContext)) {
+          throw new ErrorCoded_1.ErrorCoded("An imported context must be a single object: " + importContextIri, ErrorCoded_1.ERROR_CODES.INVALID_REMOTE_CONTEXT);
+        }
+        if ("@import" in importContext) {
+          throw new ErrorCoded_1.ErrorCoded("An imported context can not import another context: " + importContextIri, ErrorCoded_1.ERROR_CODES.INVALID_CONTEXT_ENTRY);
+        }
+        importContext = Object.assign({}, importContext);
+        this.containersToHash(importContext);
+        return importContext;
+      }
+    };
+    ContextParser.DEFAULT_PROCESSING_MODE = 1.1;
+    exports.ContextParser = ContextParser;
+  }
+});
+
+// node_modules/jsonld-context-parser/lib/IDocumentLoader.js
+var require_IDocumentLoader = __commonJS({
+  "node_modules/jsonld-context-parser/lib/IDocumentLoader.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+  }
+});
+
+// node_modules/jsonld-context-parser/lib/JsonLdContext.js
+var require_JsonLdContext = __commonJS({
+  "node_modules/jsonld-context-parser/lib/JsonLdContext.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+  }
+});
+
+// node_modules/jsonld-context-parser/index.js
+var require_jsonld_context_parser = __commonJS({
+  "node_modules/jsonld-context-parser/index.js"(exports) {
+    "use strict";
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      var desc = Object.getOwnPropertyDescriptor(m2, k2);
+      if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m2[k2];
+        } };
+      }
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      o6[k22] = m2[k2];
+    }));
+    var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
+      for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    __exportStar(require_ContextParser(), exports);
+    __exportStar(require_ErrorCoded(), exports);
+    __exportStar(require_FetchDocumentLoader(), exports);
+    __exportStar(require_IDocumentLoader(), exports);
+    __exportStar(require_JsonLdContext(), exports);
+    __exportStar(require_JsonLdContextNormalized(), exports);
+    __exportStar(require_Util(), exports);
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/containerhandler/ContainerHandlerIdentifier.js
+var require_ContainerHandlerIdentifier = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/containerhandler/ContainerHandlerIdentifier.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ContainerHandlerIdentifier = void 0;
+    var ContainerHandlerIdentifier = class {
+      canCombineWithGraph() {
+        return true;
+      }
+      async handle(containers, parsingContext, util, keys, value, depth) {
+        let id;
+        if (parsingContext.emittedStack[depth + 1] && parsingContext.idStack[depth + 1]) {
+          id = parsingContext.idStack[depth + 1][0];
+        } else {
+          const keyUnaliased = await util.getContainerKey(keys[depth], keys, depth);
+          const maybeId = keyUnaliased !== null ? await util.resourceToTerm(await parsingContext.getContext(keys), keys[depth]) : util.dataFactory.blankNode();
+          if (!maybeId) {
+            parsingContext.emittedStack[depth] = false;
+            return;
+          }
+          id = maybeId;
+          parsingContext.idStack[depth + 1] = [id];
+        }
+        let ids = parsingContext.idStack[depth];
+        if (!ids) {
+          ids = parsingContext.idStack[depth] = [];
+        }
+        if (!ids.some((term) => term.equals(id))) {
+          ids.push(id);
+        }
+        if (!await parsingContext.handlePendingContainerFlushBuffers()) {
+          parsingContext.emittedStack[depth] = false;
+        }
+      }
+    };
+    exports.ContainerHandlerIdentifier = ContainerHandlerIdentifier;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/entryhandler/EntryHandlerPredicate.js
+var require_EntryHandlerPredicate = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/entryhandler/EntryHandlerPredicate.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.EntryHandlerPredicate = void 0;
+    var jsonld_context_parser_1 = require_jsonld_context_parser();
+    var Util_1 = require_Util2();
+    var EntryHandlerPredicate = class _EntryHandlerPredicate {
+      /**
+       * Handle the given predicate-object by either emitting it,
+       * or by placing it in the appropriate stack for later emission when no @graph and/or @id has been defined.
+       * @param {ParsingContext} parsingContext A parsing context.
+       * @param {Util} util A utility instance.
+       * @param {any[]} keys A stack of keys.
+       * @param {number} depth The current depth.
+       * @param {Term} predicate The predicate.
+       * @param {Term} object The object.
+       * @param {boolean} reverse If the property is reversed.
+       * @param {boolean} isEmbedded If the property exists in an embedded node as direct child.
+       * @param {boolean} isAnnotation If the property exists in an annotation object.
+       * @return {Promise<void>} A promise resolving when handling is done.
+       */
+      static async handlePredicateObject(parsingContext, util, keys, depth, predicate2, object2, reverse, isEmbedded, isAnnotation) {
+        const depthProperties = await util.getPropertiesDepth(keys, depth);
+        const depthOffsetGraph = await util.getDepthOffsetGraph(depth, keys);
+        const depthPropertiesGraph = depth - depthOffsetGraph;
+        const subjects2 = parsingContext.idStack[depthProperties];
+        if (subjects2 && !isAnnotation) {
+          for (const subject2 of subjects2) {
+            const atGraph = depthOffsetGraph >= 0;
+            if (atGraph) {
+              const graphs = parsingContext.idStack[depthPropertiesGraph - 1];
+              if (graphs) {
+                for (const graph of graphs) {
+                  util.emitQuadChecked(depth, subject2, predicate2, object2, graph, reverse, isEmbedded);
+                }
+              } else {
+                if (reverse) {
+                  util.validateReverseSubject(object2);
+                  parsingContext.getUnidentifiedGraphBufferSafe(depthPropertiesGraph - 1).push({ subject: object2, predicate: predicate2, object: subject2, isEmbedded });
+                } else {
+                  parsingContext.getUnidentifiedGraphBufferSafe(depthPropertiesGraph - 1).push({ subject: subject2, predicate: predicate2, object: object2, isEmbedded });
+                }
+              }
+            } else {
+              const graph = await util.getGraphContainerValue(keys, depthProperties);
+              util.emitQuadChecked(depth, subject2, predicate2, object2, graph, reverse, isEmbedded);
+            }
+          }
+        } else {
+          if (reverse) {
+            util.validateReverseSubject(object2);
+          }
+          if (isAnnotation) {
+            if (parsingContext.rdfstar) {
+              if (parsingContext.idStack[depth]) {
+                parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Found an illegal @id inside an annotation: ${parsingContext.idStack[depth][0].value}`, jsonld_context_parser_1.ERROR_CODES.INVALID_ANNOTATION));
+              }
+              for (let i5 = 0; i5 < depth; i5++) {
+                if (await util.unaliasKeyword(keys[i5], keys, i5) === "@id") {
+                  parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Found an illegal annotation inside an embedded node`, jsonld_context_parser_1.ERROR_CODES.INVALID_ANNOTATION));
+                }
+              }
+              const annotationsBuffer = parsingContext.getAnnotationsBufferSafe(depthProperties);
+              const newAnnotation = { predicate: predicate2, object: object2, reverse, nestedAnnotations: [], depth: depthProperties };
+              annotationsBuffer.push(newAnnotation);
+              for (let i5 = annotationsBuffer.length - 2; i5 >= 0; i5--) {
+                const existingAnnotation = annotationsBuffer[i5];
+                if (existingAnnotation.depth > depthProperties) {
+                  newAnnotation.nestedAnnotations.push(existingAnnotation);
+                  annotationsBuffer.splice(i5, 1);
+                }
+              }
+            }
+          } else {
+            parsingContext.getUnidentifiedValueBufferSafe(depthProperties).push({ predicate: predicate2, object: object2, reverse, isEmbedded });
+          }
+        }
+      }
+      isPropertyHandler() {
+        return true;
+      }
+      isStackProcessor() {
+        return true;
+      }
+      async validate(parsingContext, util, keys, depth, inProperty) {
+        const key = keys[depth];
+        if (key) {
+          const context = await parsingContext.getContext(keys);
+          if (!parsingContext.jsonLiteralStack[depth] && await util.predicateToTerm(context, keys[depth])) {
+            if (Util_1.Util.getContextValueType(context, key) === "@json") {
+              parsingContext.jsonLiteralStack[depth + 1] = true;
+            }
+            return true;
+          }
+        }
+        return false;
+      }
+      async test(parsingContext, util, key, keys, depth) {
+        return keys[depth];
+      }
+      async handle(parsingContext, util, key, keys, value, depth, testResult) {
+        const keyOriginal = keys[depth];
+        const context = await parsingContext.getContext(keys);
+        const predicate2 = await util.predicateToTerm(context, key);
+        if (predicate2) {
+          const objects = await util.valueToTerm(context, key, value, depth, keys);
+          if (objects.length) {
+            for (let object2 of objects) {
+              let parentKey = await util.unaliasKeywordParent(keys, depth);
+              const reverse = Util_1.Util.isPropertyReverse(context, keyOriginal, parentKey);
+              let parentDepthOffset = 0;
+              while (parentKey === "@reverse" || typeof parentKey === "number") {
+                if (typeof parentKey === "number") {
+                  parentDepthOffset++;
+                } else {
+                  depth--;
+                }
+                parentKey = await util.unaliasKeywordParent(keys, depth - parentDepthOffset);
+              }
+              const isEmbedded = Util_1.Util.isPropertyInEmbeddedNode(parentKey);
+              util.validateReverseInEmbeddedNode(key, reverse, isEmbedded);
+              const isAnnotation = Util_1.Util.isPropertyInAnnotationObject(parentKey);
+              if (value) {
+                const listValueContainer = "@list" in Util_1.Util.getContextValueContainer(context, key);
+                if (listValueContainer || value["@list"]) {
+                  if ((listValueContainer && !Array.isArray(value) && !value["@list"] || value["@list"] && !Array.isArray(value["@list"])) && object2 !== util.rdfNil) {
+                    const listPointer = util.dataFactory.blankNode();
+                    parsingContext.emitQuad(depth, util.dataFactory.quad(listPointer, util.rdfRest, util.rdfNil, util.getDefaultGraph()));
+                    parsingContext.emitQuad(depth, util.dataFactory.quad(listPointer, util.rdfFirst, object2, util.getDefaultGraph()));
+                    object2 = listPointer;
+                  }
+                  if (reverse && !parsingContext.allowSubjectList) {
+                    throw new jsonld_context_parser_1.ErrorCoded(`Found illegal list value in subject position at ${key}`, jsonld_context_parser_1.ERROR_CODES.INVALID_REVERSE_PROPERTY_VALUE);
+                  }
+                }
+              }
+              await _EntryHandlerPredicate.handlePredicateObject(parsingContext, util, keys, depth, predicate2, object2, reverse, isEmbedded, isAnnotation);
+            }
+          }
+        }
+      }
+    };
+    exports.EntryHandlerPredicate = EntryHandlerPredicate;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/containerhandler/ContainerHandlerIndex.js
+var require_ContainerHandlerIndex = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/containerhandler/ContainerHandlerIndex.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ContainerHandlerIndex = void 0;
+    var jsonld_context_parser_1 = require_jsonld_context_parser();
+    var EntryHandlerPredicate_1 = require_EntryHandlerPredicate();
+    var Util_1 = require_Util2();
+    var ContainerHandlerIndex = class {
+      canCombineWithGraph() {
+        return true;
+      }
+      async handle(containers, parsingContext, util, keys, value, depth) {
+        if (!Array.isArray(value)) {
+          const graphContainer = "@graph" in containers;
+          const context = await parsingContext.getContext(keys);
+          const indexKey = keys[depth - 1];
+          const indexPropertyRaw = Util_1.Util.getContextValueIndex(context, indexKey);
+          if (indexPropertyRaw) {
+            if (jsonld_context_parser_1.Util.isPotentialKeyword(indexPropertyRaw)) {
+              throw new jsonld_context_parser_1.ErrorCoded(`Keywords can not be used as @index value, got: ${indexPropertyRaw}`, jsonld_context_parser_1.ERROR_CODES.INVALID_TERM_DEFINITION);
+            }
+            if (typeof indexPropertyRaw !== "string") {
+              throw new jsonld_context_parser_1.ErrorCoded(`@index values must be strings, got: ${indexPropertyRaw}`, jsonld_context_parser_1.ERROR_CODES.INVALID_TERM_DEFINITION);
+            }
+            if (typeof value !== "object") {
+              if (Util_1.Util.getContextValueType(context, indexKey) !== "@id") {
+                throw new jsonld_context_parser_1.ErrorCoded(`Property-based index containers require nodes as values or strings with @type: @id, but got: ${value}`, jsonld_context_parser_1.ERROR_CODES.INVALID_VALUE_OBJECT);
+              }
+              const id = util.resourceToTerm(context, value);
+              if (id) {
+                parsingContext.idStack[depth + 1] = [id];
+              }
+            }
+            const indexProperty = util.createVocabOrBaseTerm(context, indexPropertyRaw);
+            if (indexProperty) {
+              const indexValues = await util.valueToTerm(context, indexPropertyRaw, await util.getContainerKey(keys[depth], keys, depth), depth, keys);
+              if (graphContainer) {
+                const graphId = await util.getGraphContainerValue(keys, depth + 1);
+                for (const indexValue of indexValues) {
+                  parsingContext.emitQuad(depth, util.dataFactory.quad(graphId, indexProperty, indexValue, util.getDefaultGraph()));
+                }
+              } else {
+                for (const indexValue of indexValues) {
+                  await EntryHandlerPredicate_1.EntryHandlerPredicate.handlePredicateObject(parsingContext, util, keys, depth + 1, indexProperty, indexValue, false, false, false);
+                }
+              }
+            }
+          }
+          const depthOffset = graphContainer ? 2 : 1;
+          await parsingContext.newOnValueJob(keys.slice(0, keys.length - depthOffset), value, depth - depthOffset, true);
+          await parsingContext.handlePendingContainerFlushBuffers();
+        }
+        parsingContext.emittedStack[depth] = false;
+      }
+    };
+    exports.ContainerHandlerIndex = ContainerHandlerIndex;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/containerhandler/ContainerHandlerLanguage.js
+var require_ContainerHandlerLanguage = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/containerhandler/ContainerHandlerLanguage.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ContainerHandlerLanguage = void 0;
+    var jsonld_context_parser_1 = require_jsonld_context_parser();
+    var ContainerHandlerLanguage = class {
+      canCombineWithGraph() {
+        return false;
+      }
+      async handle(containers, parsingContext, util, keys, value, depth) {
+        const language = await util.getContainerKey(keys[depth], keys, depth);
+        if (Array.isArray(value)) {
+          value = value.map((subValue) => ({ "@value": subValue, "@language": language }));
+        } else {
+          if (typeof value !== "string") {
+            throw new jsonld_context_parser_1.ErrorCoded(`Got invalid language map value, got '${JSON.stringify(value)}', but expected string`, jsonld_context_parser_1.ERROR_CODES.INVALID_LANGUAGE_MAP_VALUE);
+          }
+          value = { "@value": value, "@language": language };
+        }
+        await parsingContext.newOnValueJob(keys.slice(0, keys.length - 1), value, depth - 1, true);
+        parsingContext.emittedStack[depth] = false;
+      }
+    };
+    exports.ContainerHandlerLanguage = ContainerHandlerLanguage;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/containerhandler/ContainerHandlerType.js
+var require_ContainerHandlerType = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/containerhandler/ContainerHandlerType.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ContainerHandlerType = void 0;
+    var EntryHandlerPredicate_1 = require_EntryHandlerPredicate();
+    var Util_1 = require_Util2();
+    var ContainerHandlerType = class {
+      canCombineWithGraph() {
+        return false;
+      }
+      async handle(containers, parsingContext, util, keys, value, depth) {
+        if (!Array.isArray(value)) {
+          if (typeof value === "string") {
+            const context = await parsingContext.getContext(keys);
+            const containerTypeType = Util_1.Util.getContextValueType(context, keys[depth - 1]);
+            const id = containerTypeType === "@vocab" ? await util.createVocabOrBaseTerm(context, value) : await util.resourceToTerm(context, value);
+            if (id) {
+              const subValue = { "@id": id.termType === "NamedNode" ? id.value : value };
+              await parsingContext.newOnValueJob(keys.slice(0, keys.length - 1), subValue, depth - 1, true);
+              parsingContext.idStack[depth + 1] = [id];
+            }
+          } else {
+            const entryHasIdentifier = !!parsingContext.idStack[depth + 1];
+            if (!entryHasIdentifier) {
+              delete parsingContext.idStack[depth];
+            }
+            await parsingContext.newOnValueJob(keys.slice(0, keys.length - 1), value, depth - 1, true);
+            if (!entryHasIdentifier) {
+              parsingContext.idStack[depth + 1] = parsingContext.idStack[depth];
+            }
+          }
+          const keyOriginal = await util.getContainerKey(keys[depth], keys, depth);
+          const type = keyOriginal !== null ? util.createVocabOrBaseTerm(await parsingContext.getContext(keys), keyOriginal) : null;
+          if (type) {
+            await EntryHandlerPredicate_1.EntryHandlerPredicate.handlePredicateObject(parsingContext, util, keys, depth + 1, util.rdfType, type, false, false, false);
+          }
+          await parsingContext.handlePendingContainerFlushBuffers();
+        }
+        parsingContext.emittedStack[depth] = false;
+      }
+    };
+    exports.ContainerHandlerType = ContainerHandlerType;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/entryhandler/EntryHandlerContainer.js
+var require_EntryHandlerContainer = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/entryhandler/EntryHandlerContainer.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.EntryHandlerContainer = void 0;
+    var ContainerHandlerIdentifier_1 = require_ContainerHandlerIdentifier();
+    var ContainerHandlerIndex_1 = require_ContainerHandlerIndex();
+    var ContainerHandlerLanguage_1 = require_ContainerHandlerLanguage();
+    var ContainerHandlerType_1 = require_ContainerHandlerType();
+    var Util_1 = require_Util2();
+    var EntryHandlerContainer = class _EntryHandlerContainer {
+      /**
+       * Check fit the given container is a simple @graph container.
+       * Concretely, it will check if no @index or @id is active as well.
+       * @param containers A container hash.
+       */
+      static isSimpleGraphContainer(containers) {
+        return "@graph" in containers && ("@set" in containers && Object.keys(containers).length === 2 || Object.keys(containers).length === 1);
+      }
+      /**
+       * Check fit the given container is a complex @graph container.
+       * Concretely, it will check if @index or @id is active as well next to @graph.
+       * @param containers A container hash.
+       */
+      static isComplexGraphContainer(containers) {
+        return "@graph" in containers && ("@set" in containers && Object.keys(containers).length > 2 || !("@set" in containers) && Object.keys(containers).length > 1);
+      }
+      /**
+       * Create an graph container index that can be used for identifying a graph term inside the graphContainerTermStack.
+       * @param containers The applicable containers.
+       * @param depth The container depth.
+       * @param keys The array of keys.
+       * @return The graph index.
+       */
+      static getContainerGraphIndex(containers, depth, keys) {
+        let isSimpleGraphContainer = _EntryHandlerContainer.isSimpleGraphContainer(containers);
+        let index = "";
+        for (let i5 = depth; i5 < keys.length; i5++) {
+          if (!isSimpleGraphContainer || typeof keys[i5] === "number") {
+            index += ":" + keys[i5];
+          }
+          if (!isSimpleGraphContainer && typeof keys[i5] !== "number") {
+            isSimpleGraphContainer = true;
+          }
+        }
+        return index;
+      }
+      /**
+       * Return the applicable container type at the given depth.
+       *
+       * This will ignore any arrays in the key chain.
+       *
+       * @param {ParsingContext} parsingContext A parsing context.
+       * @param {any[]} keys The array of keys.
+       * @param {number} depth The current depth.
+       * @return {Promise<{ containers: {[typeName: string]: boolean}, depth: number, fallback: boolean }>}
+       *          All applicable containers for the given depth,
+       *          the `depth` of the container root (can change when arrays are in the key chain),
+       *          and the `fallback` flag that indicates if the default container type was returned
+       *            (i.e., no dedicated container type is defined).
+       */
+      static async getContainerHandler(parsingContext, keys, depth) {
+        const fallback = {
+          containers: { "@set": true },
+          depth,
+          fallback: true
+        };
+        let checkGraphContainer = false;
+        const context = await parsingContext.getContext(keys, 2);
+        for (let i5 = depth - 1; i5 >= 0; i5--) {
+          if (typeof keys[i5] !== "number") {
+            const containersSelf = Util_1.Util.getContextValue(context, "@container", keys[i5], false);
+            if (containersSelf && _EntryHandlerContainer.isSimpleGraphContainer(containersSelf)) {
+              return {
+                containers: containersSelf,
+                depth: i5 + 1,
+                fallback: false
+              };
+            }
+            const containersParent = Util_1.Util.getContextValue(context, "@container", keys[i5 - 1], false);
+            if (!containersParent) {
+              if (checkGraphContainer) {
+                return fallback;
+              }
+              checkGraphContainer = true;
+            } else {
+              const graphContainer = "@graph" in containersParent;
+              for (const containerHandleName in _EntryHandlerContainer.CONTAINER_HANDLERS) {
+                if (containersParent[containerHandleName]) {
+                  if (graphContainer) {
+                    if (_EntryHandlerContainer.CONTAINER_HANDLERS[containerHandleName].canCombineWithGraph()) {
+                      return {
+                        containers: containersParent,
+                        depth: i5,
+                        fallback: false
+                      };
+                    } else {
+                      return fallback;
+                    }
+                  } else {
+                    if (checkGraphContainer) {
+                      return fallback;
+                    } else {
+                      return {
+                        containers: containersParent,
+                        depth: i5,
+                        fallback: false
+                      };
+                    }
+                  }
+                }
+              }
+              return fallback;
+            }
+          }
+        }
+        return fallback;
+      }
+      /**
+       * Check if we are handling a value at the given depth
+       * that is part of something that should be handled as a container,
+       * AND if this container should be buffered, so that it can be handled by a dedicated container handler.
+       *
+       * For instance, any container with @graph will NOT be buffered.
+       *
+       * This will ignore any arrays in the key chain.
+       *
+       * @param {ParsingContext} parsingContext A parsing context.
+       * @param {any[]} keys The array of keys.
+       * @param {number} depth The current depth.
+       * @return {Promise<boolean>} If we are in the scope of a container handler.
+       */
+      static async isBufferableContainerHandler(parsingContext, keys, depth) {
+        const handler = await _EntryHandlerContainer.getContainerHandler(parsingContext, keys, depth);
+        return !handler.fallback && !("@graph" in handler.containers);
+      }
+      isPropertyHandler() {
+        return false;
+      }
+      isStackProcessor() {
+        return true;
+      }
+      async validate(parsingContext, util, keys, depth, inProperty) {
+        return !!await this.test(parsingContext, util, null, keys, depth);
+      }
+      async test(parsingContext, util, key, keys, depth) {
+        const containers = Util_1.Util.getContextValueContainer(await parsingContext.getContext(keys, 2), keys[depth - 1]);
+        for (const containerName in _EntryHandlerContainer.CONTAINER_HANDLERS) {
+          if (containers[containerName]) {
+            return {
+              containers,
+              handler: _EntryHandlerContainer.CONTAINER_HANDLERS[containerName]
+            };
+          }
+        }
+        return null;
+      }
+      async handle(parsingContext, util, key, keys, value, depth, testResult) {
+        return testResult.handler.handle(testResult.containers, parsingContext, util, keys, value, depth);
+      }
+    };
+    exports.EntryHandlerContainer = EntryHandlerContainer;
+    EntryHandlerContainer.CONTAINER_HANDLERS = {
+      "@id": new ContainerHandlerIdentifier_1.ContainerHandlerIdentifier(),
+      "@index": new ContainerHandlerIndex_1.ContainerHandlerIndex(),
+      "@language": new ContainerHandlerLanguage_1.ContainerHandlerLanguage(),
+      "@type": new ContainerHandlerType_1.ContainerHandlerType()
+    };
+  }
+});
+
+// node_modules/canonicalize/lib/canonicalize.js
+var require_canonicalize = __commonJS({
+  "node_modules/canonicalize/lib/canonicalize.js"(exports, module) {
+    "use strict";
+    module.exports = function serialize(object2) {
+      if (object2 === null || typeof object2 !== "object" || object2.toJSON != null) {
+        return JSON.stringify(object2);
+      }
+      if (Array.isArray(object2)) {
+        return "[" + object2.reduce((t4, cv, ci) => {
+          const comma = ci === 0 ? "" : ",";
+          const value = cv === void 0 || typeof cv === "symbol" ? null : cv;
+          return t4 + comma + serialize(value);
+        }, "") + "]";
+      }
+      return "{" + Object.keys(object2).sort().reduce((t4, cv, ci) => {
+        if (object2[cv] === void 0 || typeof object2[cv] === "symbol") {
+          return t4;
+        }
+        const comma = t4.length === 0 ? "" : ",";
+        return t4 + comma + serialize(cv) + ":" + serialize(object2[cv]);
+      }, "") + "}";
+    };
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/Util.js
+var require_Util2 = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/Util.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Util = void 0;
+    var jsonld_context_parser_1 = require_jsonld_context_parser();
+    var rdf_data_factory_1 = require_rdf_data_factory();
+    var EntryHandlerContainer_1 = require_EntryHandlerContainer();
+    var canonicalizeJson = require_canonicalize();
+    var Util = class _Util {
+      constructor(options) {
+        this.parsingContext = options.parsingContext;
+        this.dataFactory = options.dataFactory || new rdf_data_factory_1.DataFactory();
+        this.rdfFirst = this.dataFactory.namedNode(_Util.RDF + "first");
+        this.rdfRest = this.dataFactory.namedNode(_Util.RDF + "rest");
+        this.rdfNil = this.dataFactory.namedNode(_Util.RDF + "nil");
+        this.rdfType = this.dataFactory.namedNode(_Util.RDF + "type");
+        this.rdfJson = this.dataFactory.namedNode(_Util.RDF + "JSON");
+      }
+      /**
+       * Helper function to get the value of a context entry,
+       * or fallback to a certain value.
+       * @param {JsonLdContextNormalized} context A JSON-LD context.
+       * @param {string} contextKey A pre-defined JSON-LD key in context entries.
+       * @param {string} key A context entry key.
+       * @param {string} fallback A fallback value for when the given contextKey
+       *                          could not be found in the value with the given key.
+       * @return {string} The value of the given contextKey in the entry behind key in the given context,
+       *                  or the given fallback value.
+       */
+      static getContextValue(context, contextKey, key, fallback) {
+        const entry = context.getContextRaw()[key];
+        if (!entry) {
+          return fallback;
+        }
+        const type = entry[contextKey];
+        return type === void 0 ? fallback : type;
+      }
+      /**
+       * Get the container type of the given key in the context.
+       *
+       * Should any context-scoping bugs should occur related to this in the future,
+       * it may be required to increase the offset from the depth at which the context is retrieved by one (to 2).
+       * This is because containers act 2 levels deep.
+       *
+       * @param {JsonLdContextNormalized} context A JSON-LD context.
+       * @param {string} key A context entry key.
+       * @return {string} The container type.
+       */
+      static getContextValueContainer(context, key) {
+        return _Util.getContextValue(context, "@container", key, { "@set": true });
+      }
+      /**
+       * Get the value type of the given key in the context.
+       * @param {JsonLdContextNormalized} context A JSON-LD context.
+       * @param {string} key A context entry key.
+       * @return {string} The node type.
+       */
+      static getContextValueType(context, key) {
+        const valueType = _Util.getContextValue(context, "@type", key, null);
+        if (valueType === "@none") {
+          return null;
+        }
+        return valueType;
+      }
+      /**
+       * Get the language of the given key in the context.
+       * @param {JsonLdContextNormalized} context A JSON-LD context.
+       * @param {string} key A context entry key.
+       * @return {string} The node type.
+       */
+      static getContextValueLanguage(context, key) {
+        return _Util.getContextValue(context, "@language", key, context.getContextRaw()["@language"] || null);
+      }
+      /**
+       * Get the direction of the given key in the context.
+       * @param {JsonLdContextNormalized} context A JSON-LD context.
+       * @param {string} key A context entry key.
+       * @return {string} The node type.
+       */
+      static getContextValueDirection(context, key) {
+        return _Util.getContextValue(context, "@direction", key, context.getContextRaw()["@direction"] || null);
+      }
+      /**
+       * Check if the given key in the context is a reversed property.
+       * @param {JsonLdContextNormalized} context A JSON-LD context.
+       * @param {string} key A context entry key.
+       * @return {boolean} If the context value has a @reverse key.
+       */
+      static isContextValueReverse(context, key) {
+        return !!_Util.getContextValue(context, "@reverse", key, null);
+      }
+      /**
+       * Get the @index of the given key in the context.
+       * @param {JsonLdContextNormalized} context A JSON-LD context.
+       * @param {string} key A context entry key.
+       * @return {string} The index.
+       */
+      static getContextValueIndex(context, key) {
+        return _Util.getContextValue(context, "@index", key, context.getContextRaw()["@index"] || null);
+      }
+      /**
+       * Check if the given key refers to a reversed property.
+       * @param {JsonLdContextNormalized} context A JSON-LD context.
+       * @param {string} key The property key.
+       * @param {string} parentKey The parent key.
+       * @return {boolean} If the property must be reversed.
+       */
+      static isPropertyReverse(context, key, parentKey) {
+        return parentKey === "@reverse" !== _Util.isContextValueReverse(context, key);
+      }
+      /**
+       * Check if the given key exists inside an embedded node as direct child.
+       * @param {string} parentKey The parent key.
+       * @return {boolean} If the property is embedded.
+       */
+      static isPropertyInEmbeddedNode(parentKey) {
+        return parentKey === "@id";
+      }
+      /**
+       * Check if the given key exists inside an annotation object as direct child.
+       * @param {string} parentKey The parent key.
+       * @return {boolean} If the property is an annotation.
+       */
+      static isPropertyInAnnotationObject(parentKey) {
+        return parentKey === "@annotation";
+      }
+      /**
+       * Check if the given IRI is valid.
+       * @param {string} iri A potential IRI.
+       * @return {boolean} If the given IRI is valid.
+       */
+      static isValidIri(iri) {
+        return iri !== null && jsonld_context_parser_1.Util.isValidIri(iri);
+      }
+      /**
+       * Check if the given first array (needle) is a prefix of the given second array (haystack).
+       * @param needle An array to check if it is a prefix.
+       * @param haystack An array to look in.
+       */
+      static isPrefixArray(needle, haystack) {
+        if (needle.length > haystack.length) {
+          return false;
+        }
+        for (let i5 = 0; i5 < needle.length; i5++) {
+          if (needle[i5] !== haystack[i5]) {
+            return false;
+          }
+        }
+        return true;
+      }
+      /**
+       * Make sure that @id-@index pairs are equal over all array values.
+       * Reject otherwise.
+       * @param {any[]} value An array value.
+       * @return {Promise<void>} A promise rejecting if conflicts are present.
+       */
+      async validateValueIndexes(value) {
+        if (this.parsingContext.validateValueIndexes) {
+          const indexHashes = {};
+          for (const entry of value) {
+            if (entry && typeof entry === "object") {
+              const id = entry["@id"];
+              const index = entry["@index"];
+              if (id && index) {
+                const existingIndexValue = indexHashes[id];
+                if (existingIndexValue && existingIndexValue !== index) {
+                  throw new jsonld_context_parser_1.ErrorCoded(`Conflicting @index value for ${id}`, jsonld_context_parser_1.ERROR_CODES.CONFLICTING_INDEXES);
+                }
+                indexHashes[id] = index;
+              }
+            }
+          }
+        }
+      }
+      /**
+       * Convert a given JSON value to an RDF term.
+       * @param {JsonLdContextNormalized} context A JSON-LD context.
+       * @param {string} key The current JSON key.
+       * @param value A JSON value.
+       * @param {number} depth The depth the value is at.
+       * @param {string[]} keys The path of keys.
+       * @return {Promise<RDF.Term[]>} An RDF term array.
+       */
+      async valueToTerm(context, key, value, depth, keys) {
+        if (_Util.getContextValueType(context, key) === "@json") {
+          return [this.dataFactory.literal(this.valueToJsonString(value), this.rdfJson)];
+        }
+        const type = typeof value;
+        switch (type) {
+          case "object":
+            if (value === null || value === void 0) {
+              return [];
+            }
+            if (Array.isArray(value)) {
+              if ("@list" in _Util.getContextValueContainer(context, key)) {
+                if (value.length === 0) {
+                  return [this.rdfNil];
+                } else {
+                  return this.parsingContext.idStack[depth + 1] || [];
+                }
+              }
+              await this.validateValueIndexes(value);
+              return [];
+            }
+            context = await this.getContextSelfOrPropertyScoped(context, key);
+            if ("@context" in value) {
+              context = await this.parsingContext.parseContext(value["@context"], (await this.parsingContext.getContext(keys, 0)).getContextRaw());
+            }
+            value = await this.unaliasKeywords(value, keys, depth, context);
+            if ("@value" in value) {
+              let val;
+              let valueLanguage;
+              let valueDirection;
+              let valueType;
+              let valueIndex;
+              for (key in value) {
+                const subValue = value[key];
+                switch (key) {
+                  case "@value":
+                    val = subValue;
+                    break;
+                  case "@language":
+                    valueLanguage = subValue;
+                    break;
+                  case "@direction":
+                    valueDirection = subValue;
+                    break;
+                  case "@type":
+                    valueType = subValue;
+                    break;
+                  case "@index":
+                    valueIndex = subValue;
+                    break;
+                  case "@annotation":
+                    break;
+                  default:
+                    if (key.startsWith("@")) {
+                      throw new jsonld_context_parser_1.ErrorCoded(`Unknown value entry '${key}' in @value: ${JSON.stringify(value)}`, jsonld_context_parser_1.ERROR_CODES.INVALID_VALUE_OBJECT);
+                    }
+                }
+              }
+              if (await this.unaliasKeyword(valueType, keys, depth, true, context) === "@json") {
+                return [this.dataFactory.literal(this.valueToJsonString(val), this.rdfJson)];
+              }
+              if (val === null) {
+                return [];
+              }
+              if (typeof val === "object") {
+                throw new jsonld_context_parser_1.ErrorCoded(`The value of an '@value' can not be an object, got '${JSON.stringify(val)}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_VALUE_OBJECT_VALUE);
+              }
+              if (this.parsingContext.validateValueIndexes && valueIndex && typeof valueIndex !== "string") {
+                throw new jsonld_context_parser_1.ErrorCoded(`The value of an '@index' must be a string, got '${JSON.stringify(valueIndex)}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_INDEX_VALUE);
+              }
+              if (valueLanguage) {
+                if (typeof val !== "string") {
+                  throw new jsonld_context_parser_1.ErrorCoded(`When an '@language' is set, the value of '@value' must be a string, got '${JSON.stringify(val)}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_LANGUAGE_TAGGED_VALUE);
+                }
+                if (!jsonld_context_parser_1.ContextParser.validateLanguage(valueLanguage, this.parsingContext.strictValues, jsonld_context_parser_1.ERROR_CODES.INVALID_LANGUAGE_TAGGED_STRING)) {
+                  return [];
+                }
+                if (this.parsingContext.normalizeLanguageTags || this.parsingContext.activeProcessingMode === 1) {
+                  valueLanguage = valueLanguage.toLowerCase();
+                }
+              }
+              if (valueDirection) {
+                if (typeof val !== "string") {
+                  throw new Error(`When an '@direction' is set, the value of '@value' must be a string, got '${JSON.stringify(val)}'`);
+                }
+                if (!jsonld_context_parser_1.ContextParser.validateDirection(valueDirection, this.parsingContext.strictValues)) {
+                  return [];
+                }
+              }
+              if (valueLanguage && valueDirection) {
+                if (valueType) {
+                  throw new jsonld_context_parser_1.ErrorCoded(`Can not have '@language', '@direction' and '@type' in a value: '${JSON.stringify(value)}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_VALUE_OBJECT);
+                }
+                return this.nullableTermToArray(this.createLanguageDirectionLiteral(depth, val, valueLanguage, valueDirection));
+              } else if (valueLanguage) {
+                if (valueType) {
+                  throw new jsonld_context_parser_1.ErrorCoded(`Can not have both '@language' and '@type' in a value: '${JSON.stringify(value)}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_VALUE_OBJECT);
+                }
+                return [this.dataFactory.literal(val, valueLanguage)];
+              } else if (valueDirection) {
+                if (valueType) {
+                  throw new jsonld_context_parser_1.ErrorCoded(`Can not have both '@direction' and '@type' in a value: '${JSON.stringify(value)}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_VALUE_OBJECT);
+                }
+                return this.nullableTermToArray(this.createLanguageDirectionLiteral(depth, val, valueLanguage, valueDirection));
+              } else if (valueType) {
+                if (typeof valueType !== "string") {
+                  throw new jsonld_context_parser_1.ErrorCoded(`The value of an '@type' must be a string, got '${JSON.stringify(valueType)}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_TYPED_VALUE);
+                }
+                const typeTerm = this.createVocabOrBaseTerm(context, valueType);
+                if (!typeTerm) {
+                  throw new jsonld_context_parser_1.ErrorCoded(`Invalid '@type' value, got '${JSON.stringify(valueType)}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_TYPED_VALUE);
+                }
+                if (typeTerm.termType !== "NamedNode") {
+                  throw new jsonld_context_parser_1.ErrorCoded(`Illegal value type (${typeTerm.termType}): ${valueType}`, jsonld_context_parser_1.ERROR_CODES.INVALID_TYPED_VALUE);
+                }
+                return [this.dataFactory.literal(val, typeTerm)];
+              }
+              return await this.valueToTerm(new jsonld_context_parser_1.JsonLdContextNormalized({}), key, val, depth, keys);
+            } else if ("@set" in value) {
+              if (Object.keys(value).length > 1) {
+                throw new jsonld_context_parser_1.ErrorCoded(`Found illegal neighbouring entries next to @set for key: '${key}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_SET_OR_LIST_OBJECT);
+              }
+              return [];
+            } else if ("@list" in value) {
+              if (Object.keys(value).length > 1) {
+                throw new jsonld_context_parser_1.ErrorCoded(`Found illegal neighbouring entries next to @list for key: '${key}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_SET_OR_LIST_OBJECT);
+              }
+              const listValue = value["@list"];
+              if (Array.isArray(listValue)) {
+                if (listValue.length === 0) {
+                  return [this.rdfNil];
+                } else {
+                  return this.parsingContext.idStack[depth + 1] || [];
+                }
+              } else {
+                return await this.valueToTerm(await this.parsingContext.getContext(keys), key, listValue, depth - 1, keys.slice(0, -1));
+              }
+            } else if ("@reverse" in value && typeof value["@reverse"] === "boolean") {
+              return [];
+            } else if ("@graph" in _Util.getContextValueContainer(await this.parsingContext.getContext(keys), key)) {
+              const graphContainerEntries = this.parsingContext.graphContainerTermStack[depth + 1];
+              return graphContainerEntries ? Object.values(graphContainerEntries) : [this.dataFactory.blankNode()];
+            } else if ("@id" in value) {
+              if (Object.keys(value).length > 1) {
+                context = await this.parsingContext.getContext(keys, 0);
+              }
+              if ("@context" in value) {
+                context = await this.parsingContext.parseContext(value["@context"], context.getContextRaw());
+              }
+              if (value["@type"] === "@vocab") {
+                return this.nullableTermToArray(this.createVocabOrBaseTerm(context, value["@id"]));
+              } else {
+                const valueId = value["@id"];
+                let valueTerm;
+                if (typeof valueId === "object") {
+                  if (this.parsingContext.rdfstar) {
+                    valueTerm = this.parsingContext.idStack[depth + 1][0];
+                  } else {
+                    throw new jsonld_context_parser_1.ErrorCoded(`Found illegal @id '${value}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_ID_VALUE);
+                  }
+                } else {
+                  valueTerm = this.resourceToTerm(context, valueId);
+                }
+                return this.nullableTermToArray(valueTerm);
+              }
+            } else {
+              if (this.parsingContext.emittedStack[depth + 1] || value && typeof value === "object" && Object.keys(value).length === 0) {
+                return this.parsingContext.idStack[depth + 1] || (this.parsingContext.idStack[depth + 1] = [this.dataFactory.blankNode()]);
+              } else {
+                return [];
+              }
+            }
+          case "string":
+            return this.nullableTermToArray(this.stringValueToTerm(depth, await this.getContextSelfOrPropertyScoped(context, key), key, value, null));
+          case "boolean":
+            return this.nullableTermToArray(this.stringValueToTerm(depth, await this.getContextSelfOrPropertyScoped(context, key), key, Boolean(value).toString(), this.dataFactory.namedNode(_Util.XSD_BOOLEAN)));
+          case "number":
+            return this.nullableTermToArray(this.stringValueToTerm(depth, await this.getContextSelfOrPropertyScoped(context, key), key, value, this.dataFactory.namedNode(value % 1 === 0 && value < 1e21 ? _Util.XSD_INTEGER : _Util.XSD_DOUBLE)));
+          default:
+            this.parsingContext.emitError(new Error(`Could not determine the RDF type of a ${type}`));
+            return [];
+        }
+      }
+      /**
+       * If the context defines a property-scoped context for the given key,
+       * that context will be returned.
+       * Otherwise, the given context will be returned as-is.
+       *
+       * This should be used for valueToTerm cases that are not objects.
+       * @param context A context.
+       * @param key A JSON key.
+       */
+      async getContextSelfOrPropertyScoped(context, key) {
+        const contextKeyEntry = context.getContextRaw()[key];
+        if (contextKeyEntry && typeof contextKeyEntry === "object" && "@context" in contextKeyEntry) {
+          context = await this.parsingContext.parseContext(contextKeyEntry, context.getContextRaw(), true, true);
+        }
+        return context;
+      }
+      /**
+       * If the given term is null, return an empty array, otherwise return an array with the single given term.
+       * @param term A term.
+       */
+      nullableTermToArray(term) {
+        return term ? [term] : [];
+      }
+      /**
+       * Convert a given JSON key to an RDF predicate term,
+       * based on @vocab.
+       * @param {JsonLdContextNormalized} context A JSON-LD context.
+       * @param key A JSON key.
+       * @return {RDF.NamedNode} An RDF named node.
+       */
+      predicateToTerm(context, key) {
+        const expanded = context.expandTerm(key, true, this.parsingContext.getExpandOptions());
+        if (!expanded) {
+          return null;
+        }
+        if (expanded[0] === "_" && expanded[1] === ":") {
+          if (this.parsingContext.produceGeneralizedRdf) {
+            return this.dataFactory.blankNode(expanded.substr(2));
+          } else {
+            return null;
+          }
+        }
+        if (_Util.isValidIri(expanded)) {
+          return this.dataFactory.namedNode(expanded);
+        } else {
+          if (expanded && this.parsingContext.strictValues) {
+            this.parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Invalid predicate IRI: ${expanded}`, jsonld_context_parser_1.ERROR_CODES.INVALID_IRI_MAPPING));
+          } else {
+            return null;
+          }
+        }
+        return null;
+      }
+      /**
+       * Convert a given JSON key to an RDF resource term or blank node,
+       * based on @base.
+       * @param {JsonLdContextNormalized} context A JSON-LD context.
+       * @param key A JSON key.
+       * @return {RDF.NamedNode} An RDF named node or null.
+       */
+      resourceToTerm(context, key) {
+        if (key.startsWith("_:")) {
+          return this.dataFactory.blankNode(key.substr(2));
+        }
+        const iri = context.expandTerm(key, false, this.parsingContext.getExpandOptions());
+        if (!_Util.isValidIri(iri)) {
+          if (iri && this.parsingContext.strictValues) {
+            this.parsingContext.emitError(new Error(`Invalid resource IRI: ${iri}`));
+          } else {
+            return null;
+          }
+        }
+        return this.dataFactory.namedNode(iri);
+      }
+      /**
+       * Convert a given JSON key to an RDF resource term.
+       * It will do this based on the @vocab,
+       * and fallback to @base.
+       * @param {JsonLdContextNormalized} context A JSON-LD context.
+       * @param key A JSON key.
+       * @return {RDF.NamedNode} An RDF named node or null.
+       */
+      createVocabOrBaseTerm(context, key) {
+        if (key.startsWith("_:")) {
+          return this.dataFactory.blankNode(key.substr(2));
+        }
+        const expandOptions = this.parsingContext.getExpandOptions();
+        let expanded = context.expandTerm(key, true, expandOptions);
+        if (expanded === key) {
+          expanded = context.expandTerm(key, false, expandOptions);
+        }
+        if (!_Util.isValidIri(expanded)) {
+          if (expanded && this.parsingContext.strictValues && !expanded.startsWith("@")) {
+            this.parsingContext.emitError(new Error(`Invalid term IRI: ${expanded}`));
+          } else {
+            return null;
+          }
+        }
+        return this.dataFactory.namedNode(expanded);
+      }
+      /**
+       * Ensure that the given value becomes a string.
+       * @param {string | number} value A string or number.
+       * @param {NamedNode} datatype The intended datatype.
+       * @return {string} The returned string.
+       */
+      intToString(value, datatype) {
+        if (typeof value === "number") {
+          if (Number.isFinite(value)) {
+            const isInteger = value % 1 === 0;
+            if (isInteger && (!datatype || datatype.value !== _Util.XSD_DOUBLE)) {
+              return Number(value).toString();
+            } else {
+              return value.toExponential(15).replace(/(\d)0*e\+?/, "$1E");
+            }
+          } else {
+            return value > 0 ? "INF" : "-INF";
+          }
+        } else {
+          return value;
+        }
+      }
+      /**
+       * Convert a given JSON string value to an RDF term.
+       * @param {number} depth The current stack depth.
+       * @param {JsonLdContextNormalized} context A JSON-LD context.
+       * @param {string} key The current JSON key.
+       * @param {string} value A JSON value.
+       * @param {NamedNode} defaultDatatype The default datatype for the given value.
+       * @return {RDF.Term} An RDF term or null.
+       */
+      stringValueToTerm(depth, context, key, value, defaultDatatype) {
+        const contextType = _Util.getContextValueType(context, key);
+        if (contextType) {
+          if (contextType === "@id") {
+            if (!defaultDatatype) {
+              return this.resourceToTerm(context, this.intToString(value, defaultDatatype));
+            }
+          } else if (contextType === "@vocab") {
+            if (!defaultDatatype) {
+              return this.createVocabOrBaseTerm(context, this.intToString(value, defaultDatatype));
+            }
+          } else {
+            defaultDatatype = this.dataFactory.namedNode(contextType);
+          }
+        }
+        if (!defaultDatatype) {
+          const contextLanguage = _Util.getContextValueLanguage(context, key);
+          const contextDirection = _Util.getContextValueDirection(context, key);
+          if (contextDirection && this.parsingContext.rdfDirection !== "disabled") {
+            return this.createLanguageDirectionLiteral(depth, this.intToString(value, defaultDatatype), contextLanguage, contextDirection);
+          } else {
+            return this.dataFactory.literal(this.intToString(value, defaultDatatype), contextLanguage);
+          }
+        }
+        return this.dataFactory.literal(this.intToString(value, defaultDatatype), defaultDatatype);
+      }
+      /**
+       * Create a literal for the given value with the given language and direction.
+       * Auxiliary quads may be emitted.
+       * @param {number} depth The current stack depth.
+       * @param {string} value A string value.
+       * @param {string} language A language tag.
+       * @param {string} direction A direction.
+       * @return {Term} An RDF term.
+       */
+      createLanguageDirectionLiteral(depth, value, language, direction) {
+        if (this.parsingContext.rdfDirection === "i18n-datatype") {
+          if (!language) {
+            language = "";
+          }
+          return this.dataFactory.literal(value, this.dataFactory.namedNode(`https://www.w3.org/ns/i18n#${language}_${direction}`));
+        } else if (this.parsingContext.rdfDirection === "compound-literal") {
+          const valueNode = this.dataFactory.blankNode();
+          const graph = this.getDefaultGraph();
+          this.parsingContext.emitQuad(depth, this.dataFactory.quad(valueNode, this.dataFactory.namedNode(_Util.RDF + "value"), this.dataFactory.literal(value), graph));
+          if (language) {
+            this.parsingContext.emitQuad(depth, this.dataFactory.quad(valueNode, this.dataFactory.namedNode(_Util.RDF + "language"), this.dataFactory.literal(language), graph));
+          }
+          this.parsingContext.emitQuad(depth, this.dataFactory.quad(valueNode, this.dataFactory.namedNode(_Util.RDF + "direction"), this.dataFactory.literal(direction), graph));
+          return valueNode;
+        } else {
+          return this.dataFactory.literal(value, { language: language || "", direction });
+        }
+      }
+      /**
+       * Stringify the given JSON object to a canonical JSON string.
+       * @param value Any valid JSON value.
+       * @return {string} A canonical JSON string.
+       */
+      valueToJsonString(value) {
+        return canonicalizeJson(value);
+      }
+      /**
+       * If the key is not a keyword, try to check if it is an alias for a keyword,
+       * and if so, un-alias it.
+       * @param {string} key A key, can be falsy.
+       * @param {string[]} keys The path of keys.
+       * @param {number} depth The depth to
+       * @param {boolean} disableCache If the cache should be disabled
+       * @param {JsonLdContextNormalized} context A context to unalias with,
+       *                                           will fallback to retrieving the context for the given keys.
+       * @return {Promise<string>} A promise resolving to the key itself, or another key.
+       */
+      async unaliasKeyword(key, keys, depth, disableCache, context) {
+        if (Number.isInteger(key)) {
+          return key;
+        }
+        if (!disableCache) {
+          const cachedUnaliasedKeyword = this.parsingContext.unaliasedKeywordCacheStack[depth];
+          if (cachedUnaliasedKeyword) {
+            return cachedUnaliasedKeyword;
+          }
+        }
+        if (!jsonld_context_parser_1.Util.isPotentialKeyword(key)) {
+          context = context || await this.parsingContext.getContext(keys);
+          let unliased = context.getContextRaw()[key];
+          if (unliased && typeof unliased === "object") {
+            unliased = unliased["@id"];
+          }
+          if (jsonld_context_parser_1.Util.isValidKeyword(unliased)) {
+            key = unliased;
+          }
+        }
+        return disableCache ? key : this.parsingContext.unaliasedKeywordCacheStack[depth] = key;
+      }
+      /**
+       * Unalias the keyword of the parent.
+       * This adds a safety check if no parent exist.
+       * @param {any[]} keys A stack of keys.
+       * @param {number} depth The current depth.
+       * @return {Promise<any>} A promise resolving to the parent key, or another key.
+       */
+      async unaliasKeywordParent(keys, depth) {
+        return await this.unaliasKeyword(depth > 0 && keys[depth - 1], keys, depth - 1);
+      }
+      /**
+       * Un-alias all keywords in the given hash.
+       * @param {{[p: string]: any}} hash A hash object.
+       * @param {string[]} keys The path of keys.
+       * @param {number} depth The depth.
+       * @param {JsonLdContextNormalized} context A context to unalias with,
+       *                                           will fallback to retrieving the context for the given keys.
+       * @return {Promise<{[p: string]: any}>} A promise resolving to the new hash.
+       */
+      async unaliasKeywords(hash, keys, depth, context) {
+        const newHash = {};
+        for (const key in hash) {
+          newHash[await this.unaliasKeyword(key, keys, depth + 1, true, context)] = hash[key];
+        }
+        return newHash;
+      }
+      /**
+       * Check if we are processing a literal (including JSON literals) at the given depth.
+       * This will also check higher levels,
+       * because if a parent is a literal,
+       * then the deeper levels are definitely a literal as well.
+       * @param {any[]} keys The keys.
+       * @param {number} depth The depth.
+       * @return {boolean} If we are processing a literal.
+       */
+      async isLiteral(keys, depth) {
+        for (let i5 = depth; i5 >= 0; i5--) {
+          if (await this.unaliasKeyword(keys[i5], keys, i5) === "@annotation") {
+            return false;
+          }
+          if (this.parsingContext.literalStack[i5] || this.parsingContext.jsonLiteralStack[i5]) {
+            return true;
+          }
+        }
+        return false;
+      }
+      /**
+       * Check how many parents should be skipped for checking the @graph for the given node.
+       *
+       * @param {number} depth The depth of the node.
+       * @param {any[]} keys An array of keys.
+       * @return {number} The graph depth offset.
+       */
+      async getDepthOffsetGraph(depth, keys) {
+        for (let i5 = depth - 1; i5 > 0; i5--) {
+          if (await this.unaliasKeyword(keys[i5], keys, i5) === "@graph") {
+            const containers = (await EntryHandlerContainer_1.EntryHandlerContainer.getContainerHandler(this.parsingContext, keys, i5)).containers;
+            if (EntryHandlerContainer_1.EntryHandlerContainer.isComplexGraphContainer(containers)) {
+              return -1;
+            }
+            return depth - i5 - 1;
+          }
+        }
+        return -1;
+      }
+      /**
+       * Check if the given subject is of a valid type.
+       * This should be called when applying @reverse'd properties.
+       * @param {Term} subject A subject.
+       */
+      validateReverseSubject(subject2) {
+        if (subject2.termType === "Literal") {
+          throw new jsonld_context_parser_1.ErrorCoded(`Found illegal literal in subject position: ${subject2.value}`, jsonld_context_parser_1.ERROR_CODES.INVALID_REVERSE_PROPERTY_VALUE);
+        }
+      }
+      /**
+       * Get the default graph.
+       * @return {Term} An RDF term.
+       */
+      getDefaultGraph() {
+        return this.parsingContext.defaultGraph || this.dataFactory.defaultGraph();
+      }
+      /**
+       * Get the current graph, while taking into account a graph that can be defined via @container: @graph.
+       * If not within a graph container, the default graph will be returned.
+       * @param keys The current keys.
+       * @param depth The current depth.
+       */
+      async getGraphContainerValue(keys, depth) {
+        let graph = this.getDefaultGraph();
+        const { containers, depth: depthContainer } = await EntryHandlerContainer_1.EntryHandlerContainer.getContainerHandler(this.parsingContext, keys, depth);
+        if ("@graph" in containers) {
+          const graphContainerIndex = EntryHandlerContainer_1.EntryHandlerContainer.getContainerGraphIndex(containers, depthContainer, keys);
+          const entry = this.parsingContext.graphContainerTermStack[depthContainer];
+          graph = entry ? entry[graphContainerIndex] : null;
+          if (!graph) {
+            let graphId = null;
+            if ("@id" in containers) {
+              const keyUnaliased = await this.getContainerKey(keys[depthContainer], keys, depthContainer);
+              if (keyUnaliased !== null) {
+                graphId = await this.resourceToTerm(await this.parsingContext.getContext(keys), keyUnaliased);
+              }
+            }
+            if (!graphId) {
+              graphId = this.dataFactory.blankNode();
+            }
+            if (!this.parsingContext.graphContainerTermStack[depthContainer]) {
+              this.parsingContext.graphContainerTermStack[depthContainer] = {};
+            }
+            graph = this.parsingContext.graphContainerTermStack[depthContainer][graphContainerIndex] = graphId;
+          }
+        }
+        return graph;
+      }
+      /**
+       * Get the properties depth for retrieving properties.
+       *
+       * Typically, the properties depth will be identical to the given depth.
+       *
+       * The following exceptions apply:
+       * * When the parent is @reverse, the depth is decremented by one.
+       * * When @nest parents are found, the depth is decremented by the number of @nest parents.
+       * If in combination with the exceptions above an intermediary array is discovered,
+       * the depth is also decremented by this number of arrays.
+       *
+       * @param keys The current key chain.
+       * @param depth The current depth.
+       */
+      async getPropertiesDepth(keys, depth) {
+        let lastValidDepth = depth;
+        for (let i5 = depth - 1; i5 > 0; i5--) {
+          if (typeof keys[i5] !== "number") {
+            const parentKey = await this.unaliasKeyword(keys[i5], keys, i5);
+            if (parentKey === "@reverse") {
+              return i5;
+            } else if (parentKey === "@nest") {
+              lastValidDepth = i5;
+            } else {
+              return lastValidDepth;
+            }
+          }
+        }
+        return lastValidDepth;
+      }
+      /**
+       * Get the key for the current container entry.
+       * @param key A key, can be falsy.
+       * @param keys The key chain.
+       * @param depth The current depth to get the key from.
+       * @return Promise resolving to the key.
+       *         Null will be returned for @none entries, with aliasing taken into account.
+       */
+      async getContainerKey(key, keys, depth) {
+        const keyUnaliased = await this.unaliasKeyword(key, keys, depth);
+        return keyUnaliased === "@none" ? null : keyUnaliased;
+      }
+      /**
+       * Check if no reverse properties are present in embedded nodes.
+       * @param key The current key.
+       * @param reverse If a reverse property is active.
+       * @param isEmbedded If we're in an embedded node.
+       */
+      validateReverseInEmbeddedNode(key, reverse, isEmbedded) {
+        if (isEmbedded && reverse && !this.parsingContext.rdfstarReverseInEmbedded) {
+          throw new jsonld_context_parser_1.ErrorCoded(`Illegal reverse property in embedded node in ${key}`, jsonld_context_parser_1.ERROR_CODES.INVALID_EMBEDDED_NODE);
+        }
+      }
+      /**
+       * Emit a quad, with checks.
+       * @param depth The current depth.
+       * @param subject S
+       * @param predicate P
+       * @param object O
+       * @param graph G
+       * @param reverse If a reverse property is active.
+       * @param isEmbedded If we're in an embedded node.
+       */
+      emitQuadChecked(depth, subject2, predicate2, object2, graph, reverse, isEmbedded) {
+        let quad3;
+        if (reverse) {
+          this.validateReverseSubject(object2);
+          quad3 = this.dataFactory.quad(object2, predicate2, subject2, graph);
+        } else {
+          quad3 = this.dataFactory.quad(subject2, predicate2, object2, graph);
+        }
+        if (isEmbedded) {
+          if (quad3.graph.termType !== "DefaultGraph") {
+            quad3 = this.dataFactory.quad(quad3.subject, quad3.predicate, quad3.object);
+          }
+          if (this.parsingContext.idStack[depth - 1]) {
+            throw new jsonld_context_parser_1.ErrorCoded(`Illegal multiple properties in an embedded node`, jsonld_context_parser_1.ERROR_CODES.INVALID_EMBEDDED_NODE);
+          }
+          this.parsingContext.idStack[depth - 1] = [quad3];
+        } else {
+          this.parsingContext.emitQuad(depth, quad3);
+        }
+        const annotationsBuffer = this.parsingContext.annotationsBuffer[depth];
+        if (annotationsBuffer) {
+          for (const annotation of annotationsBuffer) {
+            this.emitAnnotation(depth, quad3, annotation);
+          }
+          delete this.parsingContext.annotationsBuffer[depth];
+        }
+      }
+      // This is a separate function to enable recursion
+      emitAnnotation(depth, quad3, annotation) {
+        let annotationQuad;
+        if (annotation.reverse) {
+          this.validateReverseSubject(annotation.object);
+          annotationQuad = this.dataFactory.quad(annotation.object, annotation.predicate, quad3);
+        } else {
+          annotationQuad = this.dataFactory.quad(quad3, annotation.predicate, annotation.object);
+        }
+        this.parsingContext.emitQuad(depth, annotationQuad);
+        for (const nestedAnnotation of annotation.nestedAnnotations) {
+          this.emitAnnotation(depth, annotationQuad, nestedAnnotation);
+        }
+      }
+    };
+    exports.Util = Util;
+    Util.XSD = "http://www.w3.org/2001/XMLSchema#";
+    Util.XSD_BOOLEAN = Util.XSD + "boolean";
+    Util.XSD_INTEGER = Util.XSD + "integer";
+    Util.XSD_DOUBLE = Util.XSD + "double";
+    Util.RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/entryhandler/EntryHandlerArrayValue.js
+var require_EntryHandlerArrayValue = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/entryhandler/EntryHandlerArrayValue.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.EntryHandlerArrayValue = void 0;
+    var Util_1 = require_Util2();
+    var jsonld_context_parser_1 = require_jsonld_context_parser();
+    var EntryHandlerArrayValue = class {
+      isPropertyHandler() {
+        return false;
+      }
+      isStackProcessor() {
+        return true;
+      }
+      async validate(parsingContext, util, keys, depth, inProperty) {
+        return this.test(parsingContext, util, null, keys, depth);
+      }
+      async test(parsingContext, util, key, keys, depth) {
+        return typeof keys[depth] === "number";
+      }
+      async handle(parsingContext, util, key, keys, value, depth) {
+        let parentKey = await util.unaliasKeywordParent(keys, depth);
+        if (parentKey === "@list") {
+          let listRootKey = null;
+          let listRootDepth = 0;
+          for (let i5 = depth - 2; i5 > 0; i5--) {
+            const keyOption = keys[i5];
+            if (typeof keyOption === "string" || typeof keyOption === "number") {
+              listRootDepth = i5;
+              listRootKey = keyOption;
+              break;
+            }
+          }
+          if (listRootKey !== null) {
+            const values = await util.valueToTerm(await parsingContext.getContext(keys), listRootKey, value, depth, keys);
+            for (const object2 of values) {
+              await this.handleListElement(parsingContext, util, object2, value, depth, keys.slice(0, listRootDepth), listRootDepth);
+            }
+            if (values.length === 0) {
+              await this.handleListElement(parsingContext, util, null, value, depth, keys.slice(0, listRootDepth), listRootDepth);
+            }
+          }
+        } else if (parentKey === "@set") {
+          await parsingContext.newOnValueJob(keys.slice(0, -2), value, depth - 2, false);
+        } else if (parentKey !== void 0 && parentKey !== "@type") {
+          for (let i5 = depth - 1; i5 > 0; i5--) {
+            if (typeof keys[i5] !== "number") {
+              parentKey = await util.unaliasKeyword(keys[i5], keys, i5);
+              break;
+            }
+          }
+          const parentContext = await parsingContext.getContext(keys.slice(0, -1));
+          if ("@list" in Util_1.Util.getContextValueContainer(parentContext, parentKey)) {
+            parsingContext.emittedStack[depth + 1] = true;
+            const values = await util.valueToTerm(await parsingContext.getContext(keys), parentKey, value, depth, keys);
+            for (const object2 of values) {
+              await this.handleListElement(parsingContext, util, object2, value, depth, keys.slice(0, -1), depth - 1);
+            }
+            if (values.length === 0) {
+              await this.handleListElement(parsingContext, util, null, value, depth, keys.slice(0, -1), depth - 1);
+            }
+          } else {
+            parsingContext.shiftStack(depth, 1);
+            await parsingContext.newOnValueJob(keys.slice(0, -1), value, depth - 1, false);
+            parsingContext.contextTree.removeContext(keys.slice(0, -1));
+          }
+        }
+      }
+      async handleListElement(parsingContext, util, value, valueOriginal, depth, listRootKeys, listRootDepth) {
+        let listPointer = parsingContext.listPointerStack[depth];
+        if (valueOriginal !== null && (await util.unaliasKeywords(valueOriginal, listRootKeys, depth))["@value"] !== null) {
+          if (!listPointer || !listPointer.value) {
+            const linkTerm = util.dataFactory.blankNode();
+            listPointer = { value: linkTerm, listRootDepth, listId: linkTerm };
+          } else {
+            const newLinkTerm = util.dataFactory.blankNode();
+            parsingContext.emitQuad(depth, util.dataFactory.quad(listPointer.value, util.rdfRest, newLinkTerm, util.getDefaultGraph()));
+            listPointer.value = newLinkTerm;
+          }
+          if (value) {
+            parsingContext.emitQuad(depth, util.dataFactory.quad(listPointer.value, util.rdfFirst, value, util.getDefaultGraph()));
+          }
+        } else {
+          if (!listPointer) {
+            listPointer = { listRootDepth, listId: util.rdfNil };
+          }
+        }
+        parsingContext.listPointerStack[depth] = listPointer;
+        if (parsingContext.rdfstar && parsingContext.annotationsBuffer[depth]) {
+          parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Found an illegal annotation inside a list`, jsonld_context_parser_1.ERROR_CODES.INVALID_ANNOTATION));
+        }
+      }
+    };
+    exports.EntryHandlerArrayValue = EntryHandlerArrayValue;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/entryhandler/EntryHandlerInvalidFallback.js
+var require_EntryHandlerInvalidFallback = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/entryhandler/EntryHandlerInvalidFallback.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.EntryHandlerInvalidFallback = void 0;
+    var EntryHandlerInvalidFallback = class {
+      isPropertyHandler() {
+        return false;
+      }
+      isStackProcessor() {
+        return true;
+      }
+      async validate(parsingContext, util, keys, depth, inProperty) {
+        return false;
+      }
+      async test(parsingContext, util, key, keys, depth) {
+        return true;
+      }
+      async handle(parsingContext, util, key, keys, value, depth) {
+        parsingContext.emittedStack[depth] = false;
+      }
+    };
+    exports.EntryHandlerInvalidFallback = EntryHandlerInvalidFallback;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeyword.js
+var require_EntryHandlerKeyword = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeyword.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.EntryHandlerKeyword = void 0;
+    var EntryHandlerKeyword = class {
+      constructor(keyword) {
+        this.keyword = keyword;
+      }
+      isPropertyHandler() {
+        return false;
+      }
+      isStackProcessor() {
+        return true;
+      }
+      async validate(parsingContext, util, keys, depth, inProperty) {
+        return false;
+      }
+      async test(parsingContext, util, key, keys, depth) {
+        return key === this.keyword;
+      }
+    };
+    exports.EntryHandlerKeyword = EntryHandlerKeyword;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordContext.js
+var require_EntryHandlerKeywordContext = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordContext.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.EntryHandlerKeywordContext = void 0;
+    var jsonld_context_parser_1 = require_jsonld_context_parser();
+    var EntryHandlerKeyword_1 = require_EntryHandlerKeyword();
+    var EntryHandlerKeywordContext = class extends EntryHandlerKeyword_1.EntryHandlerKeyword {
+      constructor() {
+        super("@context");
+      }
+      isStackProcessor() {
+        return false;
+      }
+      async handle(parsingContext, util, key, keys, value, depth) {
+        if (parsingContext.streamingProfile && (parsingContext.processingStack[depth] || parsingContext.processingType[depth] || parsingContext.idStack[depth] !== void 0)) {
+          parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded("Found an out-of-order context, while streaming is enabled.(disable `streamingProfile`)", jsonld_context_parser_1.ERROR_CODES.INVALID_STREAMING_KEY_ORDER));
+        }
+        const parentContext = parsingContext.getContext(keys);
+        const context = parsingContext.parseContext(value, (await parentContext).getContextRaw());
+        parsingContext.contextTree.setContext(keys.slice(0, -1), context);
+        parsingContext.emitContext(value);
+        await parsingContext.validateContext(await context);
+      }
+    };
+    exports.EntryHandlerKeywordContext = EntryHandlerKeywordContext;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordGraph.js
+var require_EntryHandlerKeywordGraph = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordGraph.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.EntryHandlerKeywordGraph = void 0;
+    var EntryHandlerKeyword_1 = require_EntryHandlerKeyword();
+    var EntryHandlerKeywordGraph = class extends EntryHandlerKeyword_1.EntryHandlerKeyword {
+      constructor() {
+        super("@graph");
+      }
+      async handle(parsingContext, util, key, keys, value, depth) {
+        parsingContext.graphStack[depth + 1] = true;
+      }
+    };
+    exports.EntryHandlerKeywordGraph = EntryHandlerKeywordGraph;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordId.js
+var require_EntryHandlerKeywordId = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordId.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.EntryHandlerKeywordId = void 0;
+    var jsonld_context_parser_1 = require_jsonld_context_parser();
+    var EntryHandlerKeyword_1 = require_EntryHandlerKeyword();
+    var EntryHandlerKeywordId = class extends EntryHandlerKeyword_1.EntryHandlerKeyword {
+      constructor() {
+        super("@id");
+      }
+      isStackProcessor() {
+        return false;
+      }
+      async handle(parsingContext, util, key, keys, value, depth) {
+        if (typeof value !== "string") {
+          if (parsingContext.rdfstar && typeof value === "object") {
+            const valueKeys = Object.keys(value);
+            if (valueKeys.length === 1 && valueKeys[0] === "@id") {
+              parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Invalid embedded node without property with @id ${value["@id"]}`, jsonld_context_parser_1.ERROR_CODES.INVALID_EMBEDDED_NODE));
+            }
+          } else {
+            parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Found illegal @id '${value}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_ID_VALUE));
+          }
+          return;
+        }
+        const depthProperties = await util.getPropertiesDepth(keys, depth);
+        if (parsingContext.idStack[depthProperties] !== void 0) {
+          if (parsingContext.idStack[depthProperties][0].listHead) {
+            parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Found illegal neighbouring entries next to @list for key: '${keys[depth - 1]}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_SET_OR_LIST_OBJECT));
+          } else {
+            parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Found duplicate @ids '${parsingContext.idStack[depthProperties][0].value}' and '${value}'`, jsonld_context_parser_1.ERROR_CODES.COLLIDING_KEYWORDS));
+          }
+        }
+        if (parsingContext.rdfstar && parsingContext.annotationsBuffer[depth]) {
+          for (const annotation of parsingContext.annotationsBuffer[depth]) {
+            if (annotation.depth === depth) {
+              parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Found an illegal @id inside an annotation: ${value}`, jsonld_context_parser_1.ERROR_CODES.INVALID_ANNOTATION));
+            }
+          }
+        }
+        parsingContext.idStack[depthProperties] = util.nullableTermToArray(await util.resourceToTerm(await parsingContext.getContext(keys), value));
+      }
+    };
+    exports.EntryHandlerKeywordId = EntryHandlerKeywordId;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordIncluded.js
+var require_EntryHandlerKeywordIncluded = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordIncluded.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.EntryHandlerKeywordIncluded = void 0;
+    var jsonld_context_parser_1 = require_jsonld_context_parser();
+    var EntryHandlerKeyword_1 = require_EntryHandlerKeyword();
+    var EntryHandlerKeywordIncluded = class extends EntryHandlerKeyword_1.EntryHandlerKeyword {
+      constructor() {
+        super("@included");
+      }
+      async handle(parsingContext, util, key, keys, value, depth) {
+        if (typeof value !== "object") {
+          parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Found illegal @included '${value}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_INCLUDED_VALUE));
+        }
+        const valueUnliased = await util.unaliasKeywords(value, keys, depth, await parsingContext.getContext(keys));
+        if ("@value" in valueUnliased) {
+          parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Found an illegal @included @value node '${JSON.stringify(value)}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_INCLUDED_VALUE));
+        }
+        if ("@list" in valueUnliased) {
+          parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Found an illegal @included @list node '${JSON.stringify(value)}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_INCLUDED_VALUE));
+        }
+        parsingContext.emittedStack[depth] = false;
+      }
+    };
+    exports.EntryHandlerKeywordIncluded = EntryHandlerKeywordIncluded;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordNest.js
+var require_EntryHandlerKeywordNest = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordNest.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.EntryHandlerKeywordNest = void 0;
+    var jsonld_context_parser_1 = require_jsonld_context_parser();
+    var EntryHandlerKeyword_1 = require_EntryHandlerKeyword();
+    var EntryHandlerKeywordNest = class extends EntryHandlerKeyword_1.EntryHandlerKeyword {
+      constructor() {
+        super("@nest");
+      }
+      async handle(parsingContext, util, key, keys, value, depth) {
+        if (typeof value !== "object") {
+          parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Found invalid @nest entry for '${key}': '${value}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_NEST_VALUE));
+        }
+        if ("@value" in await util.unaliasKeywords(value, keys, depth, await parsingContext.getContext(keys))) {
+          parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Found an invalid @value node for '${key}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_NEST_VALUE));
+        }
+        parsingContext.emittedStack[depth] = false;
+      }
+    };
+    exports.EntryHandlerKeywordNest = EntryHandlerKeywordNest;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordType.js
+var require_EntryHandlerKeywordType = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordType.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.EntryHandlerKeywordType = void 0;
+    var jsonld_context_parser_1 = require_jsonld_context_parser();
+    var Util_1 = require_Util2();
+    var EntryHandlerPredicate_1 = require_EntryHandlerPredicate();
+    var EntryHandlerKeyword_1 = require_EntryHandlerKeyword();
+    var EntryHandlerKeywordType = class extends EntryHandlerKeyword_1.EntryHandlerKeyword {
+      constructor() {
+        super("@type");
+      }
+      isStackProcessor() {
+        return false;
+      }
+      async handle(parsingContext, util, key, keys, value, depth) {
+        const keyOriginal = keys[depth];
+        const context = await parsingContext.getContext(keys);
+        const predicate2 = util.rdfType;
+        const parentKey = await util.unaliasKeywordParent(keys, depth);
+        const reverse = Util_1.Util.isPropertyReverse(context, keyOriginal, parentKey);
+        const isEmbedded = Util_1.Util.isPropertyInEmbeddedNode(parentKey);
+        util.validateReverseInEmbeddedNode(key, reverse, isEmbedded);
+        const isAnnotation = Util_1.Util.isPropertyInAnnotationObject(parentKey);
+        const elements = Array.isArray(value) ? value : [value];
+        for (const element of elements) {
+          if (typeof element !== "string") {
+            parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Found illegal @type '${element}'`, jsonld_context_parser_1.ERROR_CODES.INVALID_TYPE_VALUE));
+          }
+          const type = util.createVocabOrBaseTerm(context, element);
+          if (type) {
+            await EntryHandlerPredicate_1.EntryHandlerPredicate.handlePredicateObject(parsingContext, util, keys, depth, predicate2, type, reverse, isEmbedded, isAnnotation);
+          }
+        }
+        let scopedContext = Promise.resolve(context);
+        let hasTypedScopedContext = false;
+        for (const element of elements.sort()) {
+          const typeContext = Util_1.Util.getContextValue(context, "@context", element, null);
+          if (typeContext) {
+            hasTypedScopedContext = true;
+            scopedContext = scopedContext.then((c4) => parsingContext.parseContext(typeContext, c4.getContextRaw()));
+          }
+        }
+        if (parsingContext.streamingProfile && (hasTypedScopedContext || !parsingContext.streamingProfileAllowOutOfOrderPlainType) && (parsingContext.processingStack[depth] || parsingContext.idStack[depth])) {
+          parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded("Found an out-of-order type-scoped context, while streaming is enabled.(disable `streamingProfile`)", jsonld_context_parser_1.ERROR_CODES.INVALID_STREAMING_KEY_ORDER));
+        }
+        if (hasTypedScopedContext) {
+          scopedContext = scopedContext.then((c4) => {
+            if (c4.getContextRaw()["@propagate"] !== true) {
+              return new jsonld_context_parser_1.JsonLdContextNormalized(Object.assign(Object.assign({}, c4.getContextRaw()), { "@propagate": false, "@__propagateFallback": context.getContextRaw() }));
+            }
+            return c4;
+          });
+          parsingContext.contextTree.setContext(keys.slice(0, keys.length - 1), scopedContext);
+        }
+        parsingContext.processingType[depth] = true;
+      }
+    };
+    exports.EntryHandlerKeywordType = EntryHandlerKeywordType;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordUnknownFallback.js
+var require_EntryHandlerKeywordUnknownFallback = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordUnknownFallback.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.EntryHandlerKeywordUnknownFallback = void 0;
+    var jsonld_context_parser_1 = require_jsonld_context_parser();
+    var EntryHandlerKeywordUnknownFallback = class _EntryHandlerKeywordUnknownFallback {
+      isPropertyHandler() {
+        return false;
+      }
+      isStackProcessor() {
+        return true;
+      }
+      async validate(parsingContext, util, keys, depth, inProperty) {
+        const key = await util.unaliasKeyword(keys[depth], keys, depth);
+        if (jsonld_context_parser_1.Util.isPotentialKeyword(key)) {
+          if (!inProperty) {
+            if (key === "@list") {
+              return false;
+            }
+          }
+          return true;
+        }
+        return false;
+      }
+      async test(parsingContext, util, key, keys, depth) {
+        return jsonld_context_parser_1.Util.isPotentialKeyword(key);
+      }
+      async handle(parsingContext, util, key, keys, value, depth) {
+        const keywordType = _EntryHandlerKeywordUnknownFallback.VALID_KEYWORDS_TYPES[key];
+        if (keywordType !== void 0) {
+          if (keywordType && typeof value !== keywordType.type) {
+            parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Invalid value type for '${key}' with value '${value}'`, keywordType.errorCode));
+          }
+        } else if (parsingContext.strictValues) {
+          parsingContext.emitError(new Error(`Unknown keyword '${key}' with value '${value}'`));
+        }
+        parsingContext.emittedStack[depth] = false;
+      }
+    };
+    exports.EntryHandlerKeywordUnknownFallback = EntryHandlerKeywordUnknownFallback;
+    EntryHandlerKeywordUnknownFallback.VALID_KEYWORDS_TYPES = {
+      "@index": { type: "string", errorCode: jsonld_context_parser_1.ERROR_CODES.INVALID_INDEX_VALUE },
+      "@list": null,
+      "@reverse": { type: "object", errorCode: jsonld_context_parser_1.ERROR_CODES.INVALID_REVERSE_VALUE },
+      "@set": null,
+      "@value": null
+    };
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordValue.js
+var require_EntryHandlerKeywordValue = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordValue.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.EntryHandlerKeywordValue = void 0;
+    var EntryHandlerKeyword_1 = require_EntryHandlerKeyword();
+    var EntryHandlerKeywordValue = class extends EntryHandlerKeyword_1.EntryHandlerKeyword {
+      constructor() {
+        super("@value");
+      }
+      async validate(parsingContext, util, keys, depth, inProperty) {
+        const key = keys[depth];
+        if (key && !parsingContext.literalStack[depth] && await this.test(parsingContext, util, key, keys, depth)) {
+          parsingContext.literalStack[depth] = true;
+        }
+        return super.validate(parsingContext, util, keys, depth, inProperty);
+      }
+      async test(parsingContext, util, key, keys, depth) {
+        return await util.unaliasKeyword(keys[depth], keys.slice(0, keys.length - 1), depth - 1, true) === "@value";
+      }
+      async handle(parsingContext, util, key, keys, value, depth) {
+        parsingContext.literalStack[depth] = true;
+        delete parsingContext.unidentifiedValuesBuffer[depth];
+        delete parsingContext.unidentifiedGraphsBuffer[depth];
+        parsingContext.emittedStack[depth] = false;
+      }
+    };
+    exports.EntryHandlerKeywordValue = EntryHandlerKeywordValue;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/ContextTree.js
+var require_ContextTree = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/ContextTree.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ContextTree = void 0;
+    var ContextTree = class _ContextTree {
+      constructor() {
+        this.subTrees = {};
+      }
+      getContext(keys) {
+        if (keys.length > 0) {
+          const [head, ...tail] = keys;
+          const subTree = this.subTrees[head];
+          if (subTree) {
+            const subContext = subTree.getContext(tail);
+            if (subContext) {
+              return subContext.then(({ context, depth }) => ({ context, depth: depth + 1 }));
+            }
+          }
+        }
+        return this.context ? this.context.then((context) => ({ context, depth: 0 })) : null;
+      }
+      setContext(keys, context) {
+        if (keys.length === 0) {
+          this.context = context;
+        } else {
+          const [head, ...tail] = keys;
+          let subTree = this.subTrees[head];
+          if (!subTree) {
+            subTree = this.subTrees[head] = new _ContextTree();
+          }
+          subTree.setContext(tail, context);
+        }
+      }
+      removeContext(path) {
+        this.setContext(path, null);
+      }
+    };
+    exports.ContextTree = ContextTree;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/ParsingContext.js
+var require_ParsingContext = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/ParsingContext.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ParsingContext = void 0;
+    var jsonld_context_parser_1 = require_jsonld_context_parser();
+    var ErrorCoded_1 = require_ErrorCoded();
+    var ContextTree_1 = require_ContextTree();
+    var JsonLdParser_1 = require_JsonLdParser();
+    var ParsingContext = class _ParsingContext {
+      constructor(options) {
+        this.contextParser = new jsonld_context_parser_1.ContextParser({ documentLoader: options.documentLoader, skipValidation: options.skipContextValidation });
+        this.streamingProfile = !!options.streamingProfile;
+        this.baseIRI = options.baseIRI;
+        this.produceGeneralizedRdf = !!options.produceGeneralizedRdf;
+        this.allowSubjectList = !!options.allowSubjectList;
+        this.processingMode = options.processingMode || JsonLdParser_1.JsonLdParser.DEFAULT_PROCESSING_MODE;
+        this.strictValues = !!options.strictValues;
+        this.validateValueIndexes = !!options.validateValueIndexes;
+        this.defaultGraph = options.defaultGraph;
+        this.rdfDirection = options.rdfDirection;
+        this.normalizeLanguageTags = options.normalizeLanguageTags;
+        this.streamingProfileAllowOutOfOrderPlainType = options.streamingProfileAllowOutOfOrderPlainType;
+        this.rdfstar = options.rdfstar !== false;
+        this.rdfstarReverseInEmbedded = options.rdfstarReverseInEmbedded;
+        this.topLevelProperties = false;
+        this.activeProcessingMode = parseFloat(this.processingMode);
+        this.processingStack = [];
+        this.processingType = [];
+        this.emittedStack = [];
+        this.idStack = [];
+        this.graphStack = [];
+        this.graphContainerTermStack = [];
+        this.listPointerStack = [];
+        this.contextTree = new ContextTree_1.ContextTree();
+        this.literalStack = [];
+        this.validationStack = [];
+        this.unaliasedKeywordCacheStack = [];
+        this.jsonLiteralStack = [];
+        this.unidentifiedValuesBuffer = [];
+        this.unidentifiedGraphsBuffer = [];
+        this.annotationsBuffer = [];
+        this.pendingContainerFlushBuffers = [];
+        this.parser = options.parser;
+        if (options.context) {
+          this.rootContext = this.parseContext(options.context, void 0, void 0, true);
+          this.rootContext.then((context) => this.validateContext(context));
+        } else {
+          this.rootContext = Promise.resolve(new jsonld_context_parser_1.JsonLdContextNormalized(this.baseIRI ? { "@base": this.baseIRI, "@__baseDocument": true } : {}));
+        }
+      }
+      /**
+       * Parse the given context with the configured options.
+       * @param {JsonLdContext} context A context to parse.
+       * @param {JsonLdContextNormalized} parentContext An optional parent context.
+       * @param {boolean} ignoreProtection If @protected term checks should be ignored.
+       * @param {boolean} allowDirectlyNestedContext If @context entries should be allowed. Useful for scoped context.
+       * @return {Promise<JsonLdContextNormalized>} A promise resolving to the parsed context.
+       */
+      async parseContext(context, parentContext, ignoreProtection, allowDirectlyNestedContext) {
+        return this.contextParser.parse(context, {
+          baseIRI: this.baseIRI,
+          ignoreProtection,
+          normalizeLanguageTags: this.normalizeLanguageTags,
+          parentContext,
+          processingMode: this.activeProcessingMode,
+          disallowDirectlyNestedContext: !allowDirectlyNestedContext
+        });
+      }
+      /**
+       * Check if the given context is valid.
+       * If not, an error will be thrown.
+       * @param {JsonLdContextNormalized} context A context.
+       */
+      validateContext(context) {
+        const activeVersion = context.getContextRaw()["@version"];
+        if (activeVersion) {
+          if (this.activeProcessingMode && activeVersion > this.activeProcessingMode) {
+            throw new ErrorCoded_1.ErrorCoded(`Unsupported JSON-LD version '${activeVersion}' under active processing mode ${this.activeProcessingMode}.`, ErrorCoded_1.ERROR_CODES.PROCESSING_MODE_CONFLICT);
+          } else {
+            if (this.activeProcessingMode && activeVersion < this.activeProcessingMode) {
+              throw new ErrorCoded_1.ErrorCoded(`Invalid JSON-LD version ${activeVersion} under active processing mode ${this.activeProcessingMode}.`, ErrorCoded_1.ERROR_CODES.INVALID_VERSION_VALUE);
+            }
+            this.activeProcessingMode = activeVersion;
+          }
+        }
+      }
+      /**
+       * Get the context at the given path.
+       * @param {keys} keys The path of keys to get the context at.
+       * @param {number} offset The path offset, defaults to 1.
+       * @return {Promise<JsonLdContextNormalized>} A promise resolving to a context.
+       */
+      async getContext(keys, offset = 1) {
+        const keysOriginal = keys;
+        while (typeof keys[keys.length - 1] === "number") {
+          keys = keys.slice(0, keys.length - 1);
+        }
+        if (offset) {
+          keys = keys.slice(0, -offset);
+        }
+        const contextData = await this.getContextPropagationAware(keys);
+        const context = contextData.context;
+        let contextRaw = context.getContextRaw();
+        for (let i5 = contextData.depth; i5 < keysOriginal.length - offset; i5++) {
+          const key = keysOriginal[i5];
+          const contextKeyEntry = contextRaw[key];
+          if (contextKeyEntry && typeof contextKeyEntry === "object" && "@context" in contextKeyEntry) {
+            const scopedContext = (await this.parseContext(contextKeyEntry, contextRaw, true, true)).getContextRaw();
+            const propagate = !(key in scopedContext) || scopedContext[key]["@context"]["@propagate"];
+            if (propagate !== false || i5 === keysOriginal.length - 1 - offset) {
+              contextRaw = Object.assign({}, scopedContext);
+              delete contextRaw["@propagate"];
+              contextRaw[key] = Object.assign({}, contextRaw[key]);
+              if ("@id" in contextKeyEntry) {
+                contextRaw[key]["@id"] = contextKeyEntry["@id"];
+              }
+              delete contextRaw[key]["@context"];
+              if (propagate !== false) {
+                this.contextTree.setContext(keysOriginal.slice(0, i5 + offset), Promise.resolve(new jsonld_context_parser_1.JsonLdContextNormalized(contextRaw)));
+              }
+            }
+          }
+        }
+        return new jsonld_context_parser_1.JsonLdContextNormalized(contextRaw);
+      }
+      /**
+       * Get the context at the given path.
+       * Non-propagating contexts will be skipped,
+       * unless the context at that exact depth is retrieved.
+       *
+       * This ONLY takes into account context propagation logic,
+       * so this should usually not be called directly,
+       * call {@link #getContext} instead.
+       *
+       * @param keys The path of keys to get the context at.
+       * @return {Promise<{ context: JsonLdContextNormalized, depth: number }>} A context and its depth.
+       */
+      async getContextPropagationAware(keys) {
+        const originalDepth = keys.length;
+        let contextData = null;
+        let hasApplicablePropertyScopedContext;
+        do {
+          hasApplicablePropertyScopedContext = false;
+          if (contextData && "@__propagateFallback" in contextData.context.getContextRaw()) {
+            contextData.context = new jsonld_context_parser_1.JsonLdContextNormalized(contextData.context.getContextRaw()["@__propagateFallback"]);
+          } else {
+            if (contextData) {
+              keys = keys.slice(0, contextData.depth - 1);
+            }
+            contextData = await this.contextTree.getContext(keys) || { context: await this.rootContext, depth: 0 };
+          }
+          const lastKey = keys[keys.length - 1];
+          if (lastKey in contextData.context.getContextRaw()) {
+            const lastKeyValue = contextData.context.getContextRaw()[lastKey];
+            if (lastKeyValue && typeof lastKeyValue === "object" && "@context" in lastKeyValue) {
+              hasApplicablePropertyScopedContext = true;
+            }
+          }
+        } while (contextData.depth > 0 && contextData.context.getContextRaw()["@propagate"] === false && contextData.depth !== originalDepth && !hasApplicablePropertyScopedContext);
+        if (contextData.depth === 0 && contextData.context.getContextRaw()["@propagate"] === false && contextData.depth !== originalDepth) {
+          contextData.context = new jsonld_context_parser_1.JsonLdContextNormalized({});
+        }
+        return contextData;
+      }
+      /**
+       * Start a new job for parsing the given value.
+       * @param {any[]} keys The stack of keys.
+       * @param value The value to parse.
+       * @param {number} depth The depth to parse at.
+       * @param {boolean} lastDepthCheck If the lastDepth check should be done for buffer draining.
+       * @return {Promise<void>} A promise resolving when the job is done.
+       */
+      async newOnValueJob(keys, value, depth, lastDepthCheck) {
+        await this.parser.newOnValueJob(keys, value, depth, lastDepthCheck);
+      }
+      /**
+       * Flush the pending container flush buffers
+       * @return {boolean} If any pending buffers were flushed.
+       */
+      async handlePendingContainerFlushBuffers() {
+        if (this.pendingContainerFlushBuffers.length > 0) {
+          for (const pendingFlushBuffer of this.pendingContainerFlushBuffers) {
+            await this.parser.flushBuffer(pendingFlushBuffer.depth, pendingFlushBuffer.keys);
+            this.parser.flushStacks(pendingFlushBuffer.depth);
+          }
+          this.pendingContainerFlushBuffers.splice(0, this.pendingContainerFlushBuffers.length);
+          return true;
+        } else {
+          return false;
+        }
+      }
+      /**
+       * Emit the given quad into the output stream.
+       * @param {number} depth The depth the quad was generated at.
+       * @param {Quad} quad A quad to emit.
+       */
+      emitQuad(depth, quad3) {
+        if (depth === 1) {
+          this.topLevelProperties = true;
+        }
+        this.parser.push(quad3);
+      }
+      /**
+       * Emit the given error into the output stream.
+       * @param {Error} error An error to emit.
+       */
+      emitError(error) {
+        this.parser.emit("error", error);
+      }
+      /**
+       * Emit the given context into the output stream under the 'context' event.
+       * @param {JsonLdContext} context A context to emit.
+       */
+      emitContext(context) {
+        this.parser.emit("context", context);
+      }
+      /**
+       * Safely get or create the depth value of {@link ParsingContext.unidentifiedValuesBuffer}.
+       * @param {number} depth A depth.
+       * @return {{predicate: Term; object: Term; reverse: boolean}[]} An element of
+       *                                                               {@link ParsingContext.unidentifiedValuesBuffer}.
+       */
+      getUnidentifiedValueBufferSafe(depth) {
+        let buffer = this.unidentifiedValuesBuffer[depth];
+        if (!buffer) {
+          buffer = [];
+          this.unidentifiedValuesBuffer[depth] = buffer;
+        }
+        return buffer;
+      }
+      /**
+       * Safely get or create the depth value of {@link ParsingContext.unidentifiedGraphsBuffer}.
+       * @param {number} depth A depth.
+       * @return {{predicate: Term; object: Term; reverse: boolean}[]} An element of
+       *                                                               {@link ParsingContext.unidentifiedGraphsBuffer}.
+       */
+      getUnidentifiedGraphBufferSafe(depth) {
+        let buffer = this.unidentifiedGraphsBuffer[depth];
+        if (!buffer) {
+          buffer = [];
+          this.unidentifiedGraphsBuffer[depth] = buffer;
+        }
+        return buffer;
+      }
+      /**
+       * Safely get or create the depth value of {@link ParsingContext.annotationsBuffer}.
+       * @param {number} depth A depth.
+       * @return {} An element of {@link ParsingContext.annotationsBuffer}.
+       */
+      getAnnotationsBufferSafe(depth) {
+        let buffer = this.annotationsBuffer[depth];
+        if (!buffer) {
+          buffer = [];
+          this.annotationsBuffer[depth] = buffer;
+        }
+        return buffer;
+      }
+      /**
+       * @return IExpandOptions The expand options for the active processing mode.
+       */
+      getExpandOptions() {
+        return _ParsingContext.EXPAND_OPTIONS[this.activeProcessingMode];
+      }
+      /**
+       * Shift the stack at the given offset to the given depth.
+       *
+       * This will override anything in the stack at `depth`,
+       * and this will remove anything at `depth + depthOffset`
+       *
+       * @param depth The target depth.
+       * @param depthOffset The origin depth, relative to `depth`.
+       */
+      shiftStack(depth, depthOffset) {
+        const deeperIdStack = this.idStack[depth + depthOffset];
+        if (deeperIdStack) {
+          this.idStack[depth] = deeperIdStack;
+          this.emittedStack[depth] = true;
+          delete this.idStack[depth + depthOffset];
+        }
+        if (this.pendingContainerFlushBuffers.length) {
+          for (const buffer of this.pendingContainerFlushBuffers) {
+            if (buffer.depth >= depth + depthOffset) {
+              buffer.depth -= depthOffset;
+              buffer.keys.splice(depth, depthOffset);
+            }
+          }
+        }
+        if (this.unidentifiedValuesBuffer[depth + depthOffset]) {
+          this.unidentifiedValuesBuffer[depth] = this.unidentifiedValuesBuffer[depth + depthOffset];
+          delete this.unidentifiedValuesBuffer[depth + depthOffset];
+        }
+        if (this.annotationsBuffer[depth + depthOffset - 1]) {
+          if (!this.annotationsBuffer[depth - 1]) {
+            this.annotationsBuffer[depth - 1] = [];
+          }
+          this.annotationsBuffer[depth - 1] = [
+            ...this.annotationsBuffer[depth - 1],
+            ...this.annotationsBuffer[depth + depthOffset - 1]
+          ];
+          delete this.annotationsBuffer[depth + depthOffset - 1];
+        }
+      }
+    };
+    exports.ParsingContext = ParsingContext;
+    ParsingContext.EXPAND_OPTIONS = {
+      1: {
+        allowPrefixForcing: false,
+        allowPrefixNonGenDelims: false,
+        allowVocabRelativeToBase: false
+      },
+      1.1: {
+        allowPrefixForcing: true,
+        allowPrefixNonGenDelims: false,
+        allowVocabRelativeToBase: true
+      }
+    };
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordAnnotation.js
+var require_EntryHandlerKeywordAnnotation = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/entryhandler/keyword/EntryHandlerKeywordAnnotation.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.EntryHandlerKeywordAnnotation = void 0;
+    var EntryHandlerKeyword_1 = require_EntryHandlerKeyword();
+    var jsonld_context_parser_1 = require_jsonld_context_parser();
+    var EntryHandlerKeywordAnnotation = class extends EntryHandlerKeyword_1.EntryHandlerKeyword {
+      constructor() {
+        super("@annotation");
+      }
+      async handle(parsingContext, util, key, keys, value, depth) {
+        if (typeof value === "string" || typeof value === "object" && value["@value"]) {
+          parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Found illegal annotation value: ${JSON.stringify(value)}`, jsonld_context_parser_1.ERROR_CODES.INVALID_ANNOTATION));
+        }
+      }
+    };
+    exports.EntryHandlerKeywordAnnotation = EntryHandlerKeywordAnnotation;
+  }
+});
+
+// node_modules/jsonld-streaming-parser/lib/JsonLdParser.js
+var require_JsonLdParser = __commonJS({
+  "node_modules/jsonld-streaming-parser/lib/JsonLdParser.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.JsonLdParser = void 0;
+    var Parser = require_jsonparse();
+    var jsonld_context_parser_1 = require_jsonld_context_parser();
+    var readable_stream_1 = require_browser3();
+    var EntryHandlerArrayValue_1 = require_EntryHandlerArrayValue();
+    var EntryHandlerContainer_1 = require_EntryHandlerContainer();
+    var EntryHandlerInvalidFallback_1 = require_EntryHandlerInvalidFallback();
+    var EntryHandlerPredicate_1 = require_EntryHandlerPredicate();
+    var EntryHandlerKeywordContext_1 = require_EntryHandlerKeywordContext();
+    var EntryHandlerKeywordGraph_1 = require_EntryHandlerKeywordGraph();
+    var EntryHandlerKeywordId_1 = require_EntryHandlerKeywordId();
+    var EntryHandlerKeywordIncluded_1 = require_EntryHandlerKeywordIncluded();
+    var EntryHandlerKeywordNest_1 = require_EntryHandlerKeywordNest();
+    var EntryHandlerKeywordType_1 = require_EntryHandlerKeywordType();
+    var EntryHandlerKeywordUnknownFallback_1 = require_EntryHandlerKeywordUnknownFallback();
+    var EntryHandlerKeywordValue_1 = require_EntryHandlerKeywordValue();
+    var ParsingContext_1 = require_ParsingContext();
+    var Util_1 = require_Util2();
+    var http_link_header_1 = require_link();
+    var EntryHandlerKeywordAnnotation_1 = require_EntryHandlerKeywordAnnotation();
+    var JsonLdParser2 = class _JsonLdParser extends readable_stream_1.Transform {
+      constructor(options) {
+        super({ readableObjectMode: true });
+        options = options || {};
+        this.options = options;
+        this.parsingContext = new ParsingContext_1.ParsingContext(Object.assign({ parser: this }, options));
+        this.util = new Util_1.Util({ dataFactory: options.dataFactory, parsingContext: this.parsingContext });
+        this.jsonParser = new Parser();
+        this.contextJobs = [];
+        this.typeJobs = [];
+        this.contextAwaitingJobs = [];
+        this.lastDepth = 0;
+        this.lastKeys = [];
+        this.lastOnValueJob = Promise.resolve();
+        this.attachJsonParserListeners();
+        this.on("end", () => {
+          if (typeof this.jsonParser.mode !== "undefined") {
+            this.emit("error", new Error("Unclosed document"));
+          }
+        });
+      }
+      /**
+       * Construct a JsonLdParser from the given HTTP response.
+       *
+       * This will throw an error if no valid JSON response is received
+       * (application/ld+json, application/json, or something+json).
+       *
+       * For raw JSON responses, exactly one link header pointing to a JSON-LD context is required.
+       *
+       * This method is not responsible for handling redirects.
+       *
+       * @param baseIRI The URI of the received response.
+       * @param mediaType The received content type.
+       * @param headers Optional HTTP headers.
+       * @param options Optional parser options.
+       */
+      static fromHttpResponse(baseIRI, mediaType, headers, options) {
+        let context;
+        let wellKnownMediaTypes = ["application/activity+json"];
+        if (options && options.wellKnownMediaTypes) {
+          wellKnownMediaTypes = options.wellKnownMediaTypes;
+        }
+        if (mediaType !== "application/ld+json" && !wellKnownMediaTypes.includes(mediaType)) {
+          if (mediaType !== "application/json" && !mediaType.endsWith("+json")) {
+            throw new jsonld_context_parser_1.ErrorCoded(`Unsupported JSON-LD media type ${mediaType}`, jsonld_context_parser_1.ERROR_CODES.LOADING_DOCUMENT_FAILED);
+          }
+          if (headers && headers.has("Link")) {
+            headers.forEach((value, key) => {
+              if (key === "link") {
+                const linkHeader = (0, http_link_header_1.parse)(value);
+                for (const link of linkHeader.get("rel", "http://www.w3.org/ns/json-ld#context")) {
+                  if (context) {
+                    throw new jsonld_context_parser_1.ErrorCoded("Multiple JSON-LD context link headers were found on " + baseIRI, jsonld_context_parser_1.ERROR_CODES.MULTIPLE_CONTEXT_LINK_HEADERS);
+                  }
+                  context = link.uri;
+                }
+              }
+            });
+          }
+          if (!context && !(options === null || options === void 0 ? void 0 : options.ignoreMissingContextLinkHeader)) {
+            throw new jsonld_context_parser_1.ErrorCoded(`Missing context link header for media type ${mediaType} on ${baseIRI}`, jsonld_context_parser_1.ERROR_CODES.LOADING_DOCUMENT_FAILED);
+          }
+        }
+        let streamingProfile;
+        if (headers && headers.has("Content-Type")) {
+          const contentType = headers.get("Content-Type");
+          const match2 = /; *profile=([^"]*)/.exec(contentType);
+          if (match2 && match2[1] === "http://www.w3.org/ns/json-ld#streaming") {
+            streamingProfile = true;
+          }
+        }
+        return new _JsonLdParser(Object.assign({
+          baseIRI,
+          context,
+          streamingProfile
+        }, options ? options : {}));
+      }
+      /**
+       * Parses the given text stream into a quad stream.
+       * @param {NodeJS.EventEmitter} stream A text stream.
+       * @return {RDF.Stream} A quad stream.
+       */
+      import(stream) {
+        if ("pipe" in stream) {
+          stream.on("error", (error) => parsed.emit("error", error));
+          const parsed = stream.pipe(new _JsonLdParser(this.options));
+          return parsed;
+        } else {
+          const output = new readable_stream_1.PassThrough({ readableObjectMode: true });
+          stream.on("error", (error) => parsed.emit("error", error));
+          stream.on("data", (data) => output.push(data));
+          stream.on("end", () => output.push(null));
+          const parsed = output.pipe(new _JsonLdParser(this.options));
+          return parsed;
+        }
+      }
+      _transform(chunk, encoding, callback) {
+        this.jsonParser.write(chunk);
+        this.lastOnValueJob.then(() => callback(), (error) => callback(error));
+      }
+      /**
+       * Start a new job for parsing the given value.
+       *
+       * This will let the first valid {@link IEntryHandler} handle the entry.
+       *
+       * @param {any[]} keys The stack of keys.
+       * @param value The value to parse.
+       * @param {number} depth The depth to parse at.
+       * @param {boolean} lastDepthCheck If the lastDepth check should be done for buffer draining.
+       * @return {Promise<void>} A promise resolving when the job is done.
+       */
+      async newOnValueJob(keys, value, depth, lastDepthCheck) {
+        let flushStacks = true;
+        if (lastDepthCheck && depth < this.lastDepth) {
+          const listPointer = this.parsingContext.listPointerStack[this.lastDepth];
+          if (listPointer) {
+            if (listPointer.value) {
+              this.push(this.util.dataFactory.quad(listPointer.value, this.util.rdfRest, this.util.rdfNil, this.util.getDefaultGraph()));
+            }
+            listPointer.listId.listHead = true;
+            this.parsingContext.idStack[listPointer.listRootDepth + 1] = [listPointer.listId];
+            this.parsingContext.listPointerStack.splice(this.lastDepth, 1);
+          }
+          if (await EntryHandlerContainer_1.EntryHandlerContainer.isBufferableContainerHandler(this.parsingContext, this.lastKeys, this.lastDepth)) {
+            this.parsingContext.pendingContainerFlushBuffers.push({ depth: this.lastDepth, keys: this.lastKeys.slice(0, this.lastKeys.length) });
+            flushStacks = false;
+          } else {
+            await this.flushBuffer(this.lastDepth, this.lastKeys);
+          }
+        }
+        const key = await this.util.unaliasKeyword(keys[depth], keys, depth);
+        const parentKey = await this.util.unaliasKeywordParent(keys, depth);
+        this.parsingContext.emittedStack[depth] = true;
+        let handleKey = true;
+        if (jsonld_context_parser_1.Util.isValidKeyword(key) && parentKey === "@reverse" && key !== "@context") {
+          this.emit("error", new jsonld_context_parser_1.ErrorCoded(`Found the @id '${value}' inside an @reverse property`, jsonld_context_parser_1.ERROR_CODES.INVALID_REVERSE_PROPERTY_MAP));
+        }
+        let inProperty = false;
+        if (this.parsingContext.validationStack.length > 1) {
+          inProperty = this.parsingContext.validationStack[this.parsingContext.validationStack.length - 1].property;
+        }
+        for (let i5 = Math.max(1, this.parsingContext.validationStack.length - 1); i5 < keys.length - 1; i5++) {
+          const validationResult = this.parsingContext.validationStack[i5] || (this.parsingContext.validationStack[i5] = await this.validateKey(keys.slice(0, i5 + 1), i5, inProperty));
+          if (!validationResult.valid) {
+            this.parsingContext.emittedStack[depth] = false;
+            handleKey = false;
+            break;
+          } else if (!inProperty && validationResult.property) {
+            inProperty = true;
+          }
+        }
+        if (await this.util.isLiteral(keys, depth)) {
+          handleKey = false;
+        }
+        if (handleKey) {
+          for (const entryHandler of _JsonLdParser.ENTRY_HANDLERS) {
+            const testResult = await entryHandler.test(this.parsingContext, this.util, key, keys, depth);
+            if (testResult) {
+              await entryHandler.handle(this.parsingContext, this.util, key, keys, value, depth, testResult);
+              if (entryHandler.isStackProcessor()) {
+                this.parsingContext.processingStack[depth] = true;
+              }
+              break;
+            }
+          }
+        }
+        if (depth === 0 && Array.isArray(value)) {
+          await this.util.validateValueIndexes(value);
+        }
+        if (flushStacks && depth < this.lastDepth) {
+          this.flushStacks(this.lastDepth);
+        }
+        this.lastDepth = depth;
+        this.lastKeys = keys;
+        this.parsingContext.unaliasedKeywordCacheStack.splice(depth - 1);
+      }
+      /**
+       * Flush the processing stacks at the given depth.
+       * @param {number} depth A depth.
+       */
+      flushStacks(depth) {
+        this.parsingContext.processingStack.splice(depth, 1);
+        this.parsingContext.processingType.splice(depth, 1);
+        this.parsingContext.emittedStack.splice(depth, 1);
+        this.parsingContext.idStack.splice(depth, 1);
+        this.parsingContext.graphStack.splice(depth + 1, 1);
+        this.parsingContext.graphContainerTermStack.splice(depth, 1);
+        this.parsingContext.jsonLiteralStack.splice(depth, 1);
+        this.parsingContext.validationStack.splice(depth - 1, 2);
+        this.parsingContext.literalStack.splice(depth, this.parsingContext.literalStack.length - depth);
+        this.parsingContext.annotationsBuffer.splice(depth, 1);
+      }
+      /**
+       * Flush buffers for the given depth.
+       *
+       * This should be called after the last entry at a given depth was processed.
+       *
+       * @param {number} depth A depth.
+       * @param {any[]} keys A stack of keys.
+       * @return {Promise<void>} A promise resolving if flushing is done.
+       */
+      async flushBuffer(depth, keys) {
+        let subjects2 = this.parsingContext.idStack[depth];
+        const subjectsWasDefined = !!subjects2;
+        if (!subjectsWasDefined) {
+          subjects2 = this.parsingContext.idStack[depth] = [this.util.dataFactory.blankNode()];
+        }
+        const valueBuffer = this.parsingContext.unidentifiedValuesBuffer[depth];
+        if (valueBuffer) {
+          for (const subject2 of subjects2) {
+            const depthOffsetGraph = await this.util.getDepthOffsetGraph(depth, keys);
+            const graphs = this.parsingContext.graphStack[depth] || depthOffsetGraph >= 0 ? this.parsingContext.idStack[depth - depthOffsetGraph - 1] : [await this.util.getGraphContainerValue(keys, depth)];
+            if (graphs) {
+              for (const graph of graphs) {
+                this.parsingContext.emittedStack[depth] = true;
+                for (const bufferedValue of valueBuffer) {
+                  this.util.emitQuadChecked(depth, subject2, bufferedValue.predicate, bufferedValue.object, graph, bufferedValue.reverse, bufferedValue.isEmbedded);
+                }
+              }
+            } else {
+              const subGraphBuffer = this.parsingContext.getUnidentifiedGraphBufferSafe(depth - await this.util.getDepthOffsetGraph(depth, keys) - 1);
+              for (const bufferedValue of valueBuffer) {
+                if (bufferedValue.reverse) {
+                  subGraphBuffer.push({
+                    object: subject2,
+                    predicate: bufferedValue.predicate,
+                    subject: bufferedValue.object,
+                    isEmbedded: bufferedValue.isEmbedded
+                  });
+                } else {
+                  subGraphBuffer.push({
+                    object: bufferedValue.object,
+                    predicate: bufferedValue.predicate,
+                    subject: subject2,
+                    isEmbedded: bufferedValue.isEmbedded
+                  });
+                }
+              }
+            }
+          }
+          this.parsingContext.unidentifiedValuesBuffer.splice(depth, 1);
+          this.parsingContext.literalStack.splice(depth, 1);
+          this.parsingContext.jsonLiteralStack.splice(depth, 1);
+        }
+        const graphBuffer = this.parsingContext.unidentifiedGraphsBuffer[depth];
+        if (graphBuffer) {
+          for (const subject2 of subjects2) {
+            const graph = depth === 1 && subject2.termType === "BlankNode" && !this.parsingContext.topLevelProperties ? this.util.getDefaultGraph() : subject2;
+            this.parsingContext.emittedStack[depth] = true;
+            for (const bufferedValue of graphBuffer) {
+              this.parsingContext.emitQuad(depth, this.util.dataFactory.quad(bufferedValue.subject, bufferedValue.predicate, bufferedValue.object, graph));
+            }
+          }
+          this.parsingContext.unidentifiedGraphsBuffer.splice(depth, 1);
+        }
+        const annotationsBuffer = this.parsingContext.annotationsBuffer[depth];
+        if (annotationsBuffer) {
+          if (annotationsBuffer.length > 0 && depth === 1) {
+            this.parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Annotations can not be made on top-level nodes`, jsonld_context_parser_1.ERROR_CODES.INVALID_ANNOTATION));
+          }
+          const annotationsBufferParent = this.parsingContext.getAnnotationsBufferSafe(depth - 1);
+          for (const annotation of annotationsBuffer) {
+            annotationsBufferParent.push(annotation);
+          }
+          delete this.parsingContext.annotationsBuffer[depth];
+        }
+      }
+      /**
+       * Check if at least one {@link IEntryHandler} validates the entry to true.
+       * @param {any[]} keys A stack of keys.
+       * @param {number} depth A depth.
+       * @param {boolean} inProperty If the current depth is part of a valid property node.
+       * @return {Promise<{ valid: boolean, property: boolean }>} A promise resolving to true or false.
+       */
+      async validateKey(keys, depth, inProperty) {
+        for (const entryHandler of _JsonLdParser.ENTRY_HANDLERS) {
+          if (await entryHandler.validate(this.parsingContext, this.util, keys, depth, inProperty)) {
+            return { valid: true, property: inProperty || entryHandler.isPropertyHandler() };
+          }
+        }
+        return { valid: false, property: false };
+      }
+      /**
+       * Attach all required listeners to the JSON parser.
+       *
+       * This should only be called once.
+       */
+      attachJsonParserListeners() {
+        this.jsonParser.onValue = (value) => {
+          const depth = this.jsonParser.stack.length;
+          const keys = new Array(depth + 1).fill(0).map((v2, i5) => {
+            return i5 === depth ? this.jsonParser.key : this.jsonParser.stack[i5].key;
+          });
+          if (!this.isParsingContextInner(depth)) {
+            const valueJobCb = () => this.newOnValueJob(keys, value, depth, true);
+            if (!this.parsingContext.streamingProfile && !this.parsingContext.contextTree.getContext(keys.slice(0, -1))) {
+              if (keys[depth] === "@context") {
+                let jobs = this.contextJobs[depth];
+                if (!jobs) {
+                  jobs = this.contextJobs[depth] = [];
+                }
+                jobs.push(valueJobCb);
+              } else {
+                this.contextAwaitingJobs.push({ job: valueJobCb, keys, depth });
+              }
+            } else {
+              this.lastOnValueJob = this.lastOnValueJob.then(valueJobCb);
+            }
+            if (!this.parsingContext.streamingProfile && depth === 0) {
+              this.lastOnValueJob = this.lastOnValueJob.then(() => this.executeBufferedJobs());
+            }
+          }
+        };
+        this.jsonParser.onError = (error) => {
+          this.emit("error", error);
+        };
+      }
+      /**
+       * Check if the parser is currently parsing an element that is part of an @context entry.
+       * @param {number} depth A depth.
+       * @return {boolean} A boolean.
+       */
+      isParsingContextInner(depth) {
+        for (let i5 = depth; i5 > 0; i5--) {
+          if (this.jsonParser.stack[i5 - 1].key === "@context") {
+            return true;
+          }
+        }
+        return false;
+      }
+      /**
+       * Execute all buffered jobs.
+       * @return {Promise<void>} A promise resolving if all jobs are finished.
+       */
+      async executeBufferedJobs() {
+        for (const jobs of this.contextJobs) {
+          if (jobs) {
+            for (const job of jobs) {
+              await job();
+            }
+          }
+        }
+        this.parsingContext.unaliasedKeywordCacheStack.splice(0);
+        const contextAwaitingJobs = [];
+        for (const job of this.contextAwaitingJobs) {
+          if (await this.util.unaliasKeyword(job.keys[job.depth], job.keys, job.depth, true) === "@type" || typeof job.keys[job.depth] === "number" && await this.util.unaliasKeyword(job.keys[job.depth - 1], job.keys, job.depth - 1, true) === "@type") {
+            this.typeJobs.push({ job: job.job, keys: job.keys.slice(0, job.keys.length - 1) });
+          } else {
+            contextAwaitingJobs.push(job);
+          }
+        }
+        for (const job of contextAwaitingJobs) {
+          if (this.typeJobs.length > 0) {
+            const applicableTypeJobs = [];
+            const applicableTypeJobIds = [];
+            for (let i5 = 0; i5 < this.typeJobs.length; i5++) {
+              const typeJob = this.typeJobs[i5];
+              if (Util_1.Util.isPrefixArray(typeJob.keys, job.keys)) {
+                applicableTypeJobs.push(typeJob);
+                applicableTypeJobIds.push(i5);
+              }
+            }
+            const sortedTypeJobs = applicableTypeJobs.sort((job1, job2) => job1.keys.length - job2.keys.length);
+            for (const typeJob of sortedTypeJobs) {
+              await typeJob.job();
+            }
+            const sortedApplicableTypeJobIds = applicableTypeJobIds.sort().reverse();
+            for (const jobId of sortedApplicableTypeJobIds) {
+              this.typeJobs.splice(jobId, 1);
+            }
+          }
+          await job.job();
+        }
+      }
+    };
+    exports.JsonLdParser = JsonLdParser2;
+    JsonLdParser2.DEFAULT_PROCESSING_MODE = "1.1";
+    JsonLdParser2.ENTRY_HANDLERS = [
+      new EntryHandlerArrayValue_1.EntryHandlerArrayValue(),
+      new EntryHandlerKeywordContext_1.EntryHandlerKeywordContext(),
+      new EntryHandlerKeywordId_1.EntryHandlerKeywordId(),
+      new EntryHandlerKeywordIncluded_1.EntryHandlerKeywordIncluded(),
+      new EntryHandlerKeywordGraph_1.EntryHandlerKeywordGraph(),
+      new EntryHandlerKeywordNest_1.EntryHandlerKeywordNest(),
+      new EntryHandlerKeywordType_1.EntryHandlerKeywordType(),
+      new EntryHandlerKeywordValue_1.EntryHandlerKeywordValue(),
+      new EntryHandlerKeywordAnnotation_1.EntryHandlerKeywordAnnotation(),
+      new EntryHandlerContainer_1.EntryHandlerContainer(),
+      new EntryHandlerKeywordUnknownFallback_1.EntryHandlerKeywordUnknownFallback(),
+      new EntryHandlerPredicate_1.EntryHandlerPredicate(),
+      new EntryHandlerInvalidFallback_1.EntryHandlerInvalidFallback()
+    ];
+  }
+});
+
+// node_modules/jsonld-streaming-parser/index.js
+var require_jsonld_streaming_parser = __commonJS({
+  "node_modules/jsonld-streaming-parser/index.js"(exports) {
+    "use strict";
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      var desc = Object.getOwnPropertyDescriptor(m2, k2);
+      if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m2[k2];
+        } };
+      }
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      o6[k22] = m2[k2];
+    }));
+    var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
+      for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    __exportStar(require_JsonLdParser(), exports);
+  }
+});
+
+// node_modules/rdfa-streaming-parser/lib/IActiveTag.js
+var require_IActiveTag = __commonJS({
+  "node_modules/rdfa-streaming-parser/lib/IActiveTag.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+  }
+});
+
+// node_modules/rdfa-streaming-parser/lib/IHtmlParseListener.js
+var require_IHtmlParseListener = __commonJS({
+  "node_modules/rdfa-streaming-parser/lib/IHtmlParseListener.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+  }
+});
+
+// node_modules/rdfa-streaming-parser/lib/IRdfaPattern.js
+var require_IRdfaPattern = __commonJS({
+  "node_modules/rdfa-streaming-parser/lib/IRdfaPattern.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+  }
+});
+
+// node_modules/entities/lib/generated/decode-data-html.js
+var require_decode_data_html = __commonJS({
+  "node_modules/entities/lib/generated/decode-data-html.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = new Uint16Array(
+      // prettier-ignore
+      '\u1D41<\xD5\u0131\u028A\u049D\u057B\u05D0\u0675\u06DE\u07A2\u07D6\u080F\u0A4A\u0A91\u0DA1\u0E6D\u0F09\u0F26\u10CA\u1228\u12E1\u1415\u149D\u14C3\u14DF\u1525\0\0\0\0\0\0\u156B\u16CD\u198D\u1C12\u1DDD\u1F7E\u2060\u21B0\u228D\u23C0\u23FB\u2442\u2824\u2912\u2D08\u2E48\u2FCE\u3016\u32BA\u3639\u37AC\u38FE\u3A28\u3A71\u3AE0\u3B2E\u0800EMabcfglmnoprstu\\bfms\x7F\x84\x8B\x90\x95\x98\xA6\xB3\xB9\xC8\xCFlig\u803B\xC6\u40C6P\u803B&\u4026cute\u803B\xC1\u40C1reve;\u4102\u0100iyx}rc\u803B\xC2\u40C2;\u4410r;\uC000\u{1D504}rave\u803B\xC0\u40C0pha;\u4391acr;\u4100d;\u6A53\u0100gp\x9D\xA1on;\u4104f;\uC000\u{1D538}plyFunction;\u6061ing\u803B\xC5\u40C5\u0100cs\xBE\xC3r;\uC000\u{1D49C}ign;\u6254ilde\u803B\xC3\u40C3ml\u803B\xC4\u40C4\u0400aceforsu\xE5\xFB\xFE\u0117\u011C\u0122\u0127\u012A\u0100cr\xEA\xF2kslash;\u6216\u0176\xF6\xF8;\u6AE7ed;\u6306y;\u4411\u0180crt\u0105\u010B\u0114ause;\u6235noullis;\u612Ca;\u4392r;\uC000\u{1D505}pf;\uC000\u{1D539}eve;\u42D8c\xF2\u0113mpeq;\u624E\u0700HOacdefhilorsu\u014D\u0151\u0156\u0180\u019E\u01A2\u01B5\u01B7\u01BA\u01DC\u0215\u0273\u0278\u027Ecy;\u4427PY\u803B\xA9\u40A9\u0180cpy\u015D\u0162\u017Aute;\u4106\u0100;i\u0167\u0168\u62D2talDifferentialD;\u6145leys;\u612D\u0200aeio\u0189\u018E\u0194\u0198ron;\u410Cdil\u803B\xC7\u40C7rc;\u4108nint;\u6230ot;\u410A\u0100dn\u01A7\u01ADilla;\u40B8terDot;\u40B7\xF2\u017Fi;\u43A7rcle\u0200DMPT\u01C7\u01CB\u01D1\u01D6ot;\u6299inus;\u6296lus;\u6295imes;\u6297o\u0100cs\u01E2\u01F8kwiseContourIntegral;\u6232eCurly\u0100DQ\u0203\u020FoubleQuote;\u601Duote;\u6019\u0200lnpu\u021E\u0228\u0247\u0255on\u0100;e\u0225\u0226\u6237;\u6A74\u0180git\u022F\u0236\u023Aruent;\u6261nt;\u622FourIntegral;\u622E\u0100fr\u024C\u024E;\u6102oduct;\u6210nterClockwiseContourIntegral;\u6233oss;\u6A2Fcr;\uC000\u{1D49E}p\u0100;C\u0284\u0285\u62D3ap;\u624D\u0580DJSZacefios\u02A0\u02AC\u02B0\u02B4\u02B8\u02CB\u02D7\u02E1\u02E6\u0333\u048D\u0100;o\u0179\u02A5trahd;\u6911cy;\u4402cy;\u4405cy;\u440F\u0180grs\u02BF\u02C4\u02C7ger;\u6021r;\u61A1hv;\u6AE4\u0100ay\u02D0\u02D5ron;\u410E;\u4414l\u0100;t\u02DD\u02DE\u6207a;\u4394r;\uC000\u{1D507}\u0100af\u02EB\u0327\u0100cm\u02F0\u0322ritical\u0200ADGT\u0300\u0306\u0316\u031Ccute;\u40B4o\u0174\u030B\u030D;\u42D9bleAcute;\u42DDrave;\u4060ilde;\u42DCond;\u62C4ferentialD;\u6146\u0470\u033D\0\0\0\u0342\u0354\0\u0405f;\uC000\u{1D53B}\u0180;DE\u0348\u0349\u034D\u40A8ot;\u60DCqual;\u6250ble\u0300CDLRUV\u0363\u0372\u0382\u03CF\u03E2\u03F8ontourIntegra\xEC\u0239o\u0274\u0379\0\0\u037B\xBB\u0349nArrow;\u61D3\u0100eo\u0387\u03A4ft\u0180ART\u0390\u0396\u03A1rrow;\u61D0ightArrow;\u61D4e\xE5\u02CAng\u0100LR\u03AB\u03C4eft\u0100AR\u03B3\u03B9rrow;\u67F8ightArrow;\u67FAightArrow;\u67F9ight\u0100AT\u03D8\u03DErrow;\u61D2ee;\u62A8p\u0241\u03E9\0\0\u03EFrrow;\u61D1ownArrow;\u61D5erticalBar;\u6225n\u0300ABLRTa\u0412\u042A\u0430\u045E\u047F\u037Crrow\u0180;BU\u041D\u041E\u0422\u6193ar;\u6913pArrow;\u61F5reve;\u4311eft\u02D2\u043A\0\u0446\0\u0450ightVector;\u6950eeVector;\u695Eector\u0100;B\u0459\u045A\u61BDar;\u6956ight\u01D4\u0467\0\u0471eeVector;\u695Fector\u0100;B\u047A\u047B\u61C1ar;\u6957ee\u0100;A\u0486\u0487\u62A4rrow;\u61A7\u0100ct\u0492\u0497r;\uC000\u{1D49F}rok;\u4110\u0800NTacdfglmopqstux\u04BD\u04C0\u04C4\u04CB\u04DE\u04E2\u04E7\u04EE\u04F5\u0521\u052F\u0536\u0552\u055D\u0560\u0565G;\u414AH\u803B\xD0\u40D0cute\u803B\xC9\u40C9\u0180aiy\u04D2\u04D7\u04DCron;\u411Arc\u803B\xCA\u40CA;\u442Dot;\u4116r;\uC000\u{1D508}rave\u803B\xC8\u40C8ement;\u6208\u0100ap\u04FA\u04FEcr;\u4112ty\u0253\u0506\0\0\u0512mallSquare;\u65FBerySmallSquare;\u65AB\u0100gp\u0526\u052Aon;\u4118f;\uC000\u{1D53C}silon;\u4395u\u0100ai\u053C\u0549l\u0100;T\u0542\u0543\u6A75ilde;\u6242librium;\u61CC\u0100ci\u0557\u055Ar;\u6130m;\u6A73a;\u4397ml\u803B\xCB\u40CB\u0100ip\u056A\u056Fsts;\u6203onentialE;\u6147\u0280cfios\u0585\u0588\u058D\u05B2\u05CCy;\u4424r;\uC000\u{1D509}lled\u0253\u0597\0\0\u05A3mallSquare;\u65FCerySmallSquare;\u65AA\u0370\u05BA\0\u05BF\0\0\u05C4f;\uC000\u{1D53D}All;\u6200riertrf;\u6131c\xF2\u05CB\u0600JTabcdfgorst\u05E8\u05EC\u05EF\u05FA\u0600\u0612\u0616\u061B\u061D\u0623\u066C\u0672cy;\u4403\u803B>\u403Emma\u0100;d\u05F7\u05F8\u4393;\u43DCreve;\u411E\u0180eiy\u0607\u060C\u0610dil;\u4122rc;\u411C;\u4413ot;\u4120r;\uC000\u{1D50A};\u62D9pf;\uC000\u{1D53E}eater\u0300EFGLST\u0635\u0644\u064E\u0656\u065B\u0666qual\u0100;L\u063E\u063F\u6265ess;\u62DBullEqual;\u6267reater;\u6AA2ess;\u6277lantEqual;\u6A7Eilde;\u6273cr;\uC000\u{1D4A2};\u626B\u0400Aacfiosu\u0685\u068B\u0696\u069B\u069E\u06AA\u06BE\u06CARDcy;\u442A\u0100ct\u0690\u0694ek;\u42C7;\u405Eirc;\u4124r;\u610ClbertSpace;\u610B\u01F0\u06AF\0\u06B2f;\u610DizontalLine;\u6500\u0100ct\u06C3\u06C5\xF2\u06A9rok;\u4126mp\u0144\u06D0\u06D8ownHum\xF0\u012Fqual;\u624F\u0700EJOacdfgmnostu\u06FA\u06FE\u0703\u0707\u070E\u071A\u071E\u0721\u0728\u0744\u0778\u078B\u078F\u0795cy;\u4415lig;\u4132cy;\u4401cute\u803B\xCD\u40CD\u0100iy\u0713\u0718rc\u803B\xCE\u40CE;\u4418ot;\u4130r;\u6111rave\u803B\xCC\u40CC\u0180;ap\u0720\u072F\u073F\u0100cg\u0734\u0737r;\u412AinaryI;\u6148lie\xF3\u03DD\u01F4\u0749\0\u0762\u0100;e\u074D\u074E\u622C\u0100gr\u0753\u0758ral;\u622Bsection;\u62C2isible\u0100CT\u076C\u0772omma;\u6063imes;\u6062\u0180gpt\u077F\u0783\u0788on;\u412Ef;\uC000\u{1D540}a;\u4399cr;\u6110ilde;\u4128\u01EB\u079A\0\u079Ecy;\u4406l\u803B\xCF\u40CF\u0280cfosu\u07AC\u07B7\u07BC\u07C2\u07D0\u0100iy\u07B1\u07B5rc;\u4134;\u4419r;\uC000\u{1D50D}pf;\uC000\u{1D541}\u01E3\u07C7\0\u07CCr;\uC000\u{1D4A5}rcy;\u4408kcy;\u4404\u0380HJacfos\u07E4\u07E8\u07EC\u07F1\u07FD\u0802\u0808cy;\u4425cy;\u440Cppa;\u439A\u0100ey\u07F6\u07FBdil;\u4136;\u441Ar;\uC000\u{1D50E}pf;\uC000\u{1D542}cr;\uC000\u{1D4A6}\u0580JTaceflmost\u0825\u0829\u082C\u0850\u0863\u09B3\u09B8\u09C7\u09CD\u0A37\u0A47cy;\u4409\u803B<\u403C\u0280cmnpr\u0837\u083C\u0841\u0844\u084Dute;\u4139bda;\u439Bg;\u67EAlacetrf;\u6112r;\u619E\u0180aey\u0857\u085C\u0861ron;\u413Ddil;\u413B;\u441B\u0100fs\u0868\u0970t\u0500ACDFRTUVar\u087E\u08A9\u08B1\u08E0\u08E6\u08FC\u092F\u095B\u0390\u096A\u0100nr\u0883\u088FgleBracket;\u67E8row\u0180;BR\u0899\u089A\u089E\u6190ar;\u61E4ightArrow;\u61C6eiling;\u6308o\u01F5\u08B7\0\u08C3bleBracket;\u67E6n\u01D4\u08C8\0\u08D2eeVector;\u6961ector\u0100;B\u08DB\u08DC\u61C3ar;\u6959loor;\u630Aight\u0100AV\u08EF\u08F5rrow;\u6194ector;\u694E\u0100er\u0901\u0917e\u0180;AV\u0909\u090A\u0910\u62A3rrow;\u61A4ector;\u695Aiangle\u0180;BE\u0924\u0925\u0929\u62B2ar;\u69CFqual;\u62B4p\u0180DTV\u0937\u0942\u094CownVector;\u6951eeVector;\u6960ector\u0100;B\u0956\u0957\u61BFar;\u6958ector\u0100;B\u0965\u0966\u61BCar;\u6952ight\xE1\u039Cs\u0300EFGLST\u097E\u098B\u0995\u099D\u09A2\u09ADqualGreater;\u62DAullEqual;\u6266reater;\u6276ess;\u6AA1lantEqual;\u6A7Dilde;\u6272r;\uC000\u{1D50F}\u0100;e\u09BD\u09BE\u62D8ftarrow;\u61DAidot;\u413F\u0180npw\u09D4\u0A16\u0A1Bg\u0200LRlr\u09DE\u09F7\u0A02\u0A10eft\u0100AR\u09E6\u09ECrrow;\u67F5ightArrow;\u67F7ightArrow;\u67F6eft\u0100ar\u03B3\u0A0Aight\xE1\u03BFight\xE1\u03CAf;\uC000\u{1D543}er\u0100LR\u0A22\u0A2CeftArrow;\u6199ightArrow;\u6198\u0180cht\u0A3E\u0A40\u0A42\xF2\u084C;\u61B0rok;\u4141;\u626A\u0400acefiosu\u0A5A\u0A5D\u0A60\u0A77\u0A7C\u0A85\u0A8B\u0A8Ep;\u6905y;\u441C\u0100dl\u0A65\u0A6FiumSpace;\u605Flintrf;\u6133r;\uC000\u{1D510}nusPlus;\u6213pf;\uC000\u{1D544}c\xF2\u0A76;\u439C\u0480Jacefostu\u0AA3\u0AA7\u0AAD\u0AC0\u0B14\u0B19\u0D91\u0D97\u0D9Ecy;\u440Acute;\u4143\u0180aey\u0AB4\u0AB9\u0ABEron;\u4147dil;\u4145;\u441D\u0180gsw\u0AC7\u0AF0\u0B0Eative\u0180MTV\u0AD3\u0ADF\u0AE8ediumSpace;\u600Bhi\u0100cn\u0AE6\u0AD8\xEB\u0AD9eryThi\xEE\u0AD9ted\u0100GL\u0AF8\u0B06reaterGreate\xF2\u0673essLes\xF3\u0A48Line;\u400Ar;\uC000\u{1D511}\u0200Bnpt\u0B22\u0B28\u0B37\u0B3Areak;\u6060BreakingSpace;\u40A0f;\u6115\u0680;CDEGHLNPRSTV\u0B55\u0B56\u0B6A\u0B7C\u0BA1\u0BEB\u0C04\u0C5E\u0C84\u0CA6\u0CD8\u0D61\u0D85\u6AEC\u0100ou\u0B5B\u0B64ngruent;\u6262pCap;\u626DoubleVerticalBar;\u6226\u0180lqx\u0B83\u0B8A\u0B9Bement;\u6209ual\u0100;T\u0B92\u0B93\u6260ilde;\uC000\u2242\u0338ists;\u6204reater\u0380;EFGLST\u0BB6\u0BB7\u0BBD\u0BC9\u0BD3\u0BD8\u0BE5\u626Fqual;\u6271ullEqual;\uC000\u2267\u0338reater;\uC000\u226B\u0338ess;\u6279lantEqual;\uC000\u2A7E\u0338ilde;\u6275ump\u0144\u0BF2\u0BFDownHump;\uC000\u224E\u0338qual;\uC000\u224F\u0338e\u0100fs\u0C0A\u0C27tTriangle\u0180;BE\u0C1A\u0C1B\u0C21\u62EAar;\uC000\u29CF\u0338qual;\u62ECs\u0300;EGLST\u0C35\u0C36\u0C3C\u0C44\u0C4B\u0C58\u626Equal;\u6270reater;\u6278ess;\uC000\u226A\u0338lantEqual;\uC000\u2A7D\u0338ilde;\u6274ested\u0100GL\u0C68\u0C79reaterGreater;\uC000\u2AA2\u0338essLess;\uC000\u2AA1\u0338recedes\u0180;ES\u0C92\u0C93\u0C9B\u6280qual;\uC000\u2AAF\u0338lantEqual;\u62E0\u0100ei\u0CAB\u0CB9verseElement;\u620CghtTriangle\u0180;BE\u0CCB\u0CCC\u0CD2\u62EBar;\uC000\u29D0\u0338qual;\u62ED\u0100qu\u0CDD\u0D0CuareSu\u0100bp\u0CE8\u0CF9set\u0100;E\u0CF0\u0CF3\uC000\u228F\u0338qual;\u62E2erset\u0100;E\u0D03\u0D06\uC000\u2290\u0338qual;\u62E3\u0180bcp\u0D13\u0D24\u0D4Eset\u0100;E\u0D1B\u0D1E\uC000\u2282\u20D2qual;\u6288ceeds\u0200;EST\u0D32\u0D33\u0D3B\u0D46\u6281qual;\uC000\u2AB0\u0338lantEqual;\u62E1ilde;\uC000\u227F\u0338erset\u0100;E\u0D58\u0D5B\uC000\u2283\u20D2qual;\u6289ilde\u0200;EFT\u0D6E\u0D6F\u0D75\u0D7F\u6241qual;\u6244ullEqual;\u6247ilde;\u6249erticalBar;\u6224cr;\uC000\u{1D4A9}ilde\u803B\xD1\u40D1;\u439D\u0700Eacdfgmoprstuv\u0DBD\u0DC2\u0DC9\u0DD5\u0DDB\u0DE0\u0DE7\u0DFC\u0E02\u0E20\u0E22\u0E32\u0E3F\u0E44lig;\u4152cute\u803B\xD3\u40D3\u0100iy\u0DCE\u0DD3rc\u803B\xD4\u40D4;\u441Eblac;\u4150r;\uC000\u{1D512}rave\u803B\xD2\u40D2\u0180aei\u0DEE\u0DF2\u0DF6cr;\u414Cga;\u43A9cron;\u439Fpf;\uC000\u{1D546}enCurly\u0100DQ\u0E0E\u0E1AoubleQuote;\u601Cuote;\u6018;\u6A54\u0100cl\u0E27\u0E2Cr;\uC000\u{1D4AA}ash\u803B\xD8\u40D8i\u016C\u0E37\u0E3Cde\u803B\xD5\u40D5es;\u6A37ml\u803B\xD6\u40D6er\u0100BP\u0E4B\u0E60\u0100ar\u0E50\u0E53r;\u603Eac\u0100ek\u0E5A\u0E5C;\u63DEet;\u63B4arenthesis;\u63DC\u0480acfhilors\u0E7F\u0E87\u0E8A\u0E8F\u0E92\u0E94\u0E9D\u0EB0\u0EFCrtialD;\u6202y;\u441Fr;\uC000\u{1D513}i;\u43A6;\u43A0usMinus;\u40B1\u0100ip\u0EA2\u0EADncareplan\xE5\u069Df;\u6119\u0200;eio\u0EB9\u0EBA\u0EE0\u0EE4\u6ABBcedes\u0200;EST\u0EC8\u0EC9\u0ECF\u0EDA\u627Aqual;\u6AAFlantEqual;\u627Cilde;\u627Eme;\u6033\u0100dp\u0EE9\u0EEEuct;\u620Fortion\u0100;a\u0225\u0EF9l;\u621D\u0100ci\u0F01\u0F06r;\uC000\u{1D4AB};\u43A8\u0200Ufos\u0F11\u0F16\u0F1B\u0F1FOT\u803B"\u4022r;\uC000\u{1D514}pf;\u611Acr;\uC000\u{1D4AC}\u0600BEacefhiorsu\u0F3E\u0F43\u0F47\u0F60\u0F73\u0FA7\u0FAA\u0FAD\u1096\u10A9\u10B4\u10BEarr;\u6910G\u803B\xAE\u40AE\u0180cnr\u0F4E\u0F53\u0F56ute;\u4154g;\u67EBr\u0100;t\u0F5C\u0F5D\u61A0l;\u6916\u0180aey\u0F67\u0F6C\u0F71ron;\u4158dil;\u4156;\u4420\u0100;v\u0F78\u0F79\u611Cerse\u0100EU\u0F82\u0F99\u0100lq\u0F87\u0F8Eement;\u620Builibrium;\u61CBpEquilibrium;\u696Fr\xBB\u0F79o;\u43A1ght\u0400ACDFTUVa\u0FC1\u0FEB\u0FF3\u1022\u1028\u105B\u1087\u03D8\u0100nr\u0FC6\u0FD2gleBracket;\u67E9row\u0180;BL\u0FDC\u0FDD\u0FE1\u6192ar;\u61E5eftArrow;\u61C4eiling;\u6309o\u01F5\u0FF9\0\u1005bleBracket;\u67E7n\u01D4\u100A\0\u1014eeVector;\u695Dector\u0100;B\u101D\u101E\u61C2ar;\u6955loor;\u630B\u0100er\u102D\u1043e\u0180;AV\u1035\u1036\u103C\u62A2rrow;\u61A6ector;\u695Biangle\u0180;BE\u1050\u1051\u1055\u62B3ar;\u69D0qual;\u62B5p\u0180DTV\u1063\u106E\u1078ownVector;\u694FeeVector;\u695Cector\u0100;B\u1082\u1083\u61BEar;\u6954ector\u0100;B\u1091\u1092\u61C0ar;\u6953\u0100pu\u109B\u109Ef;\u611DndImplies;\u6970ightarrow;\u61DB\u0100ch\u10B9\u10BCr;\u611B;\u61B1leDelayed;\u69F4\u0680HOacfhimoqstu\u10E4\u10F1\u10F7\u10FD\u1119\u111E\u1151\u1156\u1161\u1167\u11B5\u11BB\u11BF\u0100Cc\u10E9\u10EEHcy;\u4429y;\u4428FTcy;\u442Ccute;\u415A\u0280;aeiy\u1108\u1109\u110E\u1113\u1117\u6ABCron;\u4160dil;\u415Erc;\u415C;\u4421r;\uC000\u{1D516}ort\u0200DLRU\u112A\u1134\u113E\u1149ownArrow\xBB\u041EeftArrow\xBB\u089AightArrow\xBB\u0FDDpArrow;\u6191gma;\u43A3allCircle;\u6218pf;\uC000\u{1D54A}\u0272\u116D\0\0\u1170t;\u621Aare\u0200;ISU\u117B\u117C\u1189\u11AF\u65A1ntersection;\u6293u\u0100bp\u118F\u119Eset\u0100;E\u1197\u1198\u628Fqual;\u6291erset\u0100;E\u11A8\u11A9\u6290qual;\u6292nion;\u6294cr;\uC000\u{1D4AE}ar;\u62C6\u0200bcmp\u11C8\u11DB\u1209\u120B\u0100;s\u11CD\u11CE\u62D0et\u0100;E\u11CD\u11D5qual;\u6286\u0100ch\u11E0\u1205eeds\u0200;EST\u11ED\u11EE\u11F4\u11FF\u627Bqual;\u6AB0lantEqual;\u627Dilde;\u627FTh\xE1\u0F8C;\u6211\u0180;es\u1212\u1213\u1223\u62D1rset\u0100;E\u121C\u121D\u6283qual;\u6287et\xBB\u1213\u0580HRSacfhiors\u123E\u1244\u1249\u1255\u125E\u1271\u1276\u129F\u12C2\u12C8\u12D1ORN\u803B\xDE\u40DEADE;\u6122\u0100Hc\u124E\u1252cy;\u440By;\u4426\u0100bu\u125A\u125C;\u4009;\u43A4\u0180aey\u1265\u126A\u126Fron;\u4164dil;\u4162;\u4422r;\uC000\u{1D517}\u0100ei\u127B\u1289\u01F2\u1280\0\u1287efore;\u6234a;\u4398\u0100cn\u128E\u1298kSpace;\uC000\u205F\u200ASpace;\u6009lde\u0200;EFT\u12AB\u12AC\u12B2\u12BC\u623Cqual;\u6243ullEqual;\u6245ilde;\u6248pf;\uC000\u{1D54B}ipleDot;\u60DB\u0100ct\u12D6\u12DBr;\uC000\u{1D4AF}rok;\u4166\u0AE1\u12F7\u130E\u131A\u1326\0\u132C\u1331\0\0\0\0\0\u1338\u133D\u1377\u1385\0\u13FF\u1404\u140A\u1410\u0100cr\u12FB\u1301ute\u803B\xDA\u40DAr\u0100;o\u1307\u1308\u619Fcir;\u6949r\u01E3\u1313\0\u1316y;\u440Eve;\u416C\u0100iy\u131E\u1323rc\u803B\xDB\u40DB;\u4423blac;\u4170r;\uC000\u{1D518}rave\u803B\xD9\u40D9acr;\u416A\u0100di\u1341\u1369er\u0100BP\u1348\u135D\u0100ar\u134D\u1350r;\u405Fac\u0100ek\u1357\u1359;\u63DFet;\u63B5arenthesis;\u63DDon\u0100;P\u1370\u1371\u62C3lus;\u628E\u0100gp\u137B\u137Fon;\u4172f;\uC000\u{1D54C}\u0400ADETadps\u1395\u13AE\u13B8\u13C4\u03E8\u13D2\u13D7\u13F3rrow\u0180;BD\u1150\u13A0\u13A4ar;\u6912ownArrow;\u61C5ownArrow;\u6195quilibrium;\u696Eee\u0100;A\u13CB\u13CC\u62A5rrow;\u61A5own\xE1\u03F3er\u0100LR\u13DE\u13E8eftArrow;\u6196ightArrow;\u6197i\u0100;l\u13F9\u13FA\u43D2on;\u43A5ing;\u416Ecr;\uC000\u{1D4B0}ilde;\u4168ml\u803B\xDC\u40DC\u0480Dbcdefosv\u1427\u142C\u1430\u1433\u143E\u1485\u148A\u1490\u1496ash;\u62ABar;\u6AEBy;\u4412ash\u0100;l\u143B\u143C\u62A9;\u6AE6\u0100er\u1443\u1445;\u62C1\u0180bty\u144C\u1450\u147Aar;\u6016\u0100;i\u144F\u1455cal\u0200BLST\u1461\u1465\u146A\u1474ar;\u6223ine;\u407Ceparator;\u6758ilde;\u6240ThinSpace;\u600Ar;\uC000\u{1D519}pf;\uC000\u{1D54D}cr;\uC000\u{1D4B1}dash;\u62AA\u0280cefos\u14A7\u14AC\u14B1\u14B6\u14BCirc;\u4174dge;\u62C0r;\uC000\u{1D51A}pf;\uC000\u{1D54E}cr;\uC000\u{1D4B2}\u0200fios\u14CB\u14D0\u14D2\u14D8r;\uC000\u{1D51B};\u439Epf;\uC000\u{1D54F}cr;\uC000\u{1D4B3}\u0480AIUacfosu\u14F1\u14F5\u14F9\u14FD\u1504\u150F\u1514\u151A\u1520cy;\u442Fcy;\u4407cy;\u442Ecute\u803B\xDD\u40DD\u0100iy\u1509\u150Drc;\u4176;\u442Br;\uC000\u{1D51C}pf;\uC000\u{1D550}cr;\uC000\u{1D4B4}ml;\u4178\u0400Hacdefos\u1535\u1539\u153F\u154B\u154F\u155D\u1560\u1564cy;\u4416cute;\u4179\u0100ay\u1544\u1549ron;\u417D;\u4417ot;\u417B\u01F2\u1554\0\u155BoWidt\xE8\u0AD9a;\u4396r;\u6128pf;\u6124cr;\uC000\u{1D4B5}\u0BE1\u1583\u158A\u1590\0\u15B0\u15B6\u15BF\0\0\0\0\u15C6\u15DB\u15EB\u165F\u166D\0\u1695\u169B\u16B2\u16B9\0\u16BEcute\u803B\xE1\u40E1reve;\u4103\u0300;Ediuy\u159C\u159D\u15A1\u15A3\u15A8\u15AD\u623E;\uC000\u223E\u0333;\u623Frc\u803B\xE2\u40E2te\u80BB\xB4\u0306;\u4430lig\u803B\xE6\u40E6\u0100;r\xB2\u15BA;\uC000\u{1D51E}rave\u803B\xE0\u40E0\u0100ep\u15CA\u15D6\u0100fp\u15CF\u15D4sym;\u6135\xE8\u15D3ha;\u43B1\u0100ap\u15DFc\u0100cl\u15E4\u15E7r;\u4101g;\u6A3F\u0264\u15F0\0\0\u160A\u0280;adsv\u15FA\u15FB\u15FF\u1601\u1607\u6227nd;\u6A55;\u6A5Clope;\u6A58;\u6A5A\u0380;elmrsz\u1618\u1619\u161B\u161E\u163F\u164F\u1659\u6220;\u69A4e\xBB\u1619sd\u0100;a\u1625\u1626\u6221\u0461\u1630\u1632\u1634\u1636\u1638\u163A\u163C\u163E;\u69A8;\u69A9;\u69AA;\u69AB;\u69AC;\u69AD;\u69AE;\u69AFt\u0100;v\u1645\u1646\u621Fb\u0100;d\u164C\u164D\u62BE;\u699D\u0100pt\u1654\u1657h;\u6222\xBB\xB9arr;\u637C\u0100gp\u1663\u1667on;\u4105f;\uC000\u{1D552}\u0380;Eaeiop\u12C1\u167B\u167D\u1682\u1684\u1687\u168A;\u6A70cir;\u6A6F;\u624Ad;\u624Bs;\u4027rox\u0100;e\u12C1\u1692\xF1\u1683ing\u803B\xE5\u40E5\u0180cty\u16A1\u16A6\u16A8r;\uC000\u{1D4B6};\u402Amp\u0100;e\u12C1\u16AF\xF1\u0288ilde\u803B\xE3\u40E3ml\u803B\xE4\u40E4\u0100ci\u16C2\u16C8onin\xF4\u0272nt;\u6A11\u0800Nabcdefiklnoprsu\u16ED\u16F1\u1730\u173C\u1743\u1748\u1778\u177D\u17E0\u17E6\u1839\u1850\u170D\u193D\u1948\u1970ot;\u6AED\u0100cr\u16F6\u171Ek\u0200ceps\u1700\u1705\u170D\u1713ong;\u624Cpsilon;\u43F6rime;\u6035im\u0100;e\u171A\u171B\u623Dq;\u62CD\u0176\u1722\u1726ee;\u62BDed\u0100;g\u172C\u172D\u6305e\xBB\u172Drk\u0100;t\u135C\u1737brk;\u63B6\u0100oy\u1701\u1741;\u4431quo;\u601E\u0280cmprt\u1753\u175B\u1761\u1764\u1768aus\u0100;e\u010A\u0109ptyv;\u69B0s\xE9\u170Cno\xF5\u0113\u0180ahw\u176F\u1771\u1773;\u43B2;\u6136een;\u626Cr;\uC000\u{1D51F}g\u0380costuvw\u178D\u179D\u17B3\u17C1\u17D5\u17DB\u17DE\u0180aiu\u1794\u1796\u179A\xF0\u0760rc;\u65EFp\xBB\u1371\u0180dpt\u17A4\u17A8\u17ADot;\u6A00lus;\u6A01imes;\u6A02\u0271\u17B9\0\0\u17BEcup;\u6A06ar;\u6605riangle\u0100du\u17CD\u17D2own;\u65BDp;\u65B3plus;\u6A04e\xE5\u1444\xE5\u14ADarow;\u690D\u0180ako\u17ED\u1826\u1835\u0100cn\u17F2\u1823k\u0180lst\u17FA\u05AB\u1802ozenge;\u69EBriangle\u0200;dlr\u1812\u1813\u1818\u181D\u65B4own;\u65BEeft;\u65C2ight;\u65B8k;\u6423\u01B1\u182B\0\u1833\u01B2\u182F\0\u1831;\u6592;\u65914;\u6593ck;\u6588\u0100eo\u183E\u184D\u0100;q\u1843\u1846\uC000=\u20E5uiv;\uC000\u2261\u20E5t;\u6310\u0200ptwx\u1859\u185E\u1867\u186Cf;\uC000\u{1D553}\u0100;t\u13CB\u1863om\xBB\u13CCtie;\u62C8\u0600DHUVbdhmptuv\u1885\u1896\u18AA\u18BB\u18D7\u18DB\u18EC\u18FF\u1905\u190A\u1910\u1921\u0200LRlr\u188E\u1890\u1892\u1894;\u6557;\u6554;\u6556;\u6553\u0280;DUdu\u18A1\u18A2\u18A4\u18A6\u18A8\u6550;\u6566;\u6569;\u6564;\u6567\u0200LRlr\u18B3\u18B5\u18B7\u18B9;\u655D;\u655A;\u655C;\u6559\u0380;HLRhlr\u18CA\u18CB\u18CD\u18CF\u18D1\u18D3\u18D5\u6551;\u656C;\u6563;\u6560;\u656B;\u6562;\u655Fox;\u69C9\u0200LRlr\u18E4\u18E6\u18E8\u18EA;\u6555;\u6552;\u6510;\u650C\u0280;DUdu\u06BD\u18F7\u18F9\u18FB\u18FD;\u6565;\u6568;\u652C;\u6534inus;\u629Flus;\u629Eimes;\u62A0\u0200LRlr\u1919\u191B\u191D\u191F;\u655B;\u6558;\u6518;\u6514\u0380;HLRhlr\u1930\u1931\u1933\u1935\u1937\u1939\u193B\u6502;\u656A;\u6561;\u655E;\u653C;\u6524;\u651C\u0100ev\u0123\u1942bar\u803B\xA6\u40A6\u0200ceio\u1951\u1956\u195A\u1960r;\uC000\u{1D4B7}mi;\u604Fm\u0100;e\u171A\u171Cl\u0180;bh\u1968\u1969\u196B\u405C;\u69C5sub;\u67C8\u016C\u1974\u197El\u0100;e\u1979\u197A\u6022t\xBB\u197Ap\u0180;Ee\u012F\u1985\u1987;\u6AAE\u0100;q\u06DC\u06DB\u0CE1\u19A7\0\u19E8\u1A11\u1A15\u1A32\0\u1A37\u1A50\0\0\u1AB4\0\0\u1AC1\0\0\u1B21\u1B2E\u1B4D\u1B52\0\u1BFD\0\u1C0C\u0180cpr\u19AD\u19B2\u19DDute;\u4107\u0300;abcds\u19BF\u19C0\u19C4\u19CA\u19D5\u19D9\u6229nd;\u6A44rcup;\u6A49\u0100au\u19CF\u19D2p;\u6A4Bp;\u6A47ot;\u6A40;\uC000\u2229\uFE00\u0100eo\u19E2\u19E5t;\u6041\xEE\u0693\u0200aeiu\u19F0\u19FB\u1A01\u1A05\u01F0\u19F5\0\u19F8s;\u6A4Don;\u410Ddil\u803B\xE7\u40E7rc;\u4109ps\u0100;s\u1A0C\u1A0D\u6A4Cm;\u6A50ot;\u410B\u0180dmn\u1A1B\u1A20\u1A26il\u80BB\xB8\u01ADptyv;\u69B2t\u8100\xA2;e\u1A2D\u1A2E\u40A2r\xE4\u01B2r;\uC000\u{1D520}\u0180cei\u1A3D\u1A40\u1A4Dy;\u4447ck\u0100;m\u1A47\u1A48\u6713ark\xBB\u1A48;\u43C7r\u0380;Ecefms\u1A5F\u1A60\u1A62\u1A6B\u1AA4\u1AAA\u1AAE\u65CB;\u69C3\u0180;el\u1A69\u1A6A\u1A6D\u42C6q;\u6257e\u0261\u1A74\0\0\u1A88rrow\u0100lr\u1A7C\u1A81eft;\u61BAight;\u61BB\u0280RSacd\u1A92\u1A94\u1A96\u1A9A\u1A9F\xBB\u0F47;\u64C8st;\u629Birc;\u629Aash;\u629Dnint;\u6A10id;\u6AEFcir;\u69C2ubs\u0100;u\u1ABB\u1ABC\u6663it\xBB\u1ABC\u02EC\u1AC7\u1AD4\u1AFA\0\u1B0Aon\u0100;e\u1ACD\u1ACE\u403A\u0100;q\xC7\xC6\u026D\u1AD9\0\0\u1AE2a\u0100;t\u1ADE\u1ADF\u402C;\u4040\u0180;fl\u1AE8\u1AE9\u1AEB\u6201\xEE\u1160e\u0100mx\u1AF1\u1AF6ent\xBB\u1AE9e\xF3\u024D\u01E7\u1AFE\0\u1B07\u0100;d\u12BB\u1B02ot;\u6A6Dn\xF4\u0246\u0180fry\u1B10\u1B14\u1B17;\uC000\u{1D554}o\xE4\u0254\u8100\xA9;s\u0155\u1B1Dr;\u6117\u0100ao\u1B25\u1B29rr;\u61B5ss;\u6717\u0100cu\u1B32\u1B37r;\uC000\u{1D4B8}\u0100bp\u1B3C\u1B44\u0100;e\u1B41\u1B42\u6ACF;\u6AD1\u0100;e\u1B49\u1B4A\u6AD0;\u6AD2dot;\u62EF\u0380delprvw\u1B60\u1B6C\u1B77\u1B82\u1BAC\u1BD4\u1BF9arr\u0100lr\u1B68\u1B6A;\u6938;\u6935\u0270\u1B72\0\0\u1B75r;\u62DEc;\u62DFarr\u0100;p\u1B7F\u1B80\u61B6;\u693D\u0300;bcdos\u1B8F\u1B90\u1B96\u1BA1\u1BA5\u1BA8\u622Arcap;\u6A48\u0100au\u1B9B\u1B9Ep;\u6A46p;\u6A4Aot;\u628Dr;\u6A45;\uC000\u222A\uFE00\u0200alrv\u1BB5\u1BBF\u1BDE\u1BE3rr\u0100;m\u1BBC\u1BBD\u61B7;\u693Cy\u0180evw\u1BC7\u1BD4\u1BD8q\u0270\u1BCE\0\0\u1BD2re\xE3\u1B73u\xE3\u1B75ee;\u62CEedge;\u62CFen\u803B\xA4\u40A4earrow\u0100lr\u1BEE\u1BF3eft\xBB\u1B80ight\xBB\u1BBDe\xE4\u1BDD\u0100ci\u1C01\u1C07onin\xF4\u01F7nt;\u6231lcty;\u632D\u0980AHabcdefhijlorstuwz\u1C38\u1C3B\u1C3F\u1C5D\u1C69\u1C75\u1C8A\u1C9E\u1CAC\u1CB7\u1CFB\u1CFF\u1D0D\u1D7B\u1D91\u1DAB\u1DBB\u1DC6\u1DCDr\xF2\u0381ar;\u6965\u0200glrs\u1C48\u1C4D\u1C52\u1C54ger;\u6020eth;\u6138\xF2\u1133h\u0100;v\u1C5A\u1C5B\u6010\xBB\u090A\u016B\u1C61\u1C67arow;\u690Fa\xE3\u0315\u0100ay\u1C6E\u1C73ron;\u410F;\u4434\u0180;ao\u0332\u1C7C\u1C84\u0100gr\u02BF\u1C81r;\u61CAtseq;\u6A77\u0180glm\u1C91\u1C94\u1C98\u803B\xB0\u40B0ta;\u43B4ptyv;\u69B1\u0100ir\u1CA3\u1CA8sht;\u697F;\uC000\u{1D521}ar\u0100lr\u1CB3\u1CB5\xBB\u08DC\xBB\u101E\u0280aegsv\u1CC2\u0378\u1CD6\u1CDC\u1CE0m\u0180;os\u0326\u1CCA\u1CD4nd\u0100;s\u0326\u1CD1uit;\u6666amma;\u43DDin;\u62F2\u0180;io\u1CE7\u1CE8\u1CF8\u40F7de\u8100\xF7;o\u1CE7\u1CF0ntimes;\u62C7n\xF8\u1CF7cy;\u4452c\u026F\u1D06\0\0\u1D0Arn;\u631Eop;\u630D\u0280lptuw\u1D18\u1D1D\u1D22\u1D49\u1D55lar;\u4024f;\uC000\u{1D555}\u0280;emps\u030B\u1D2D\u1D37\u1D3D\u1D42q\u0100;d\u0352\u1D33ot;\u6251inus;\u6238lus;\u6214quare;\u62A1blebarwedg\xE5\xFAn\u0180adh\u112E\u1D5D\u1D67ownarrow\xF3\u1C83arpoon\u0100lr\u1D72\u1D76ef\xF4\u1CB4igh\xF4\u1CB6\u0162\u1D7F\u1D85karo\xF7\u0F42\u026F\u1D8A\0\0\u1D8Ern;\u631Fop;\u630C\u0180cot\u1D98\u1DA3\u1DA6\u0100ry\u1D9D\u1DA1;\uC000\u{1D4B9};\u4455l;\u69F6rok;\u4111\u0100dr\u1DB0\u1DB4ot;\u62F1i\u0100;f\u1DBA\u1816\u65BF\u0100ah\u1DC0\u1DC3r\xF2\u0429a\xF2\u0FA6angle;\u69A6\u0100ci\u1DD2\u1DD5y;\u445Fgrarr;\u67FF\u0900Dacdefglmnopqrstux\u1E01\u1E09\u1E19\u1E38\u0578\u1E3C\u1E49\u1E61\u1E7E\u1EA5\u1EAF\u1EBD\u1EE1\u1F2A\u1F37\u1F44\u1F4E\u1F5A\u0100Do\u1E06\u1D34o\xF4\u1C89\u0100cs\u1E0E\u1E14ute\u803B\xE9\u40E9ter;\u6A6E\u0200aioy\u1E22\u1E27\u1E31\u1E36ron;\u411Br\u0100;c\u1E2D\u1E2E\u6256\u803B\xEA\u40EAlon;\u6255;\u444Dot;\u4117\u0100Dr\u1E41\u1E45ot;\u6252;\uC000\u{1D522}\u0180;rs\u1E50\u1E51\u1E57\u6A9Aave\u803B\xE8\u40E8\u0100;d\u1E5C\u1E5D\u6A96ot;\u6A98\u0200;ils\u1E6A\u1E6B\u1E72\u1E74\u6A99nters;\u63E7;\u6113\u0100;d\u1E79\u1E7A\u6A95ot;\u6A97\u0180aps\u1E85\u1E89\u1E97cr;\u4113ty\u0180;sv\u1E92\u1E93\u1E95\u6205et\xBB\u1E93p\u01001;\u1E9D\u1EA4\u0133\u1EA1\u1EA3;\u6004;\u6005\u6003\u0100gs\u1EAA\u1EAC;\u414Bp;\u6002\u0100gp\u1EB4\u1EB8on;\u4119f;\uC000\u{1D556}\u0180als\u1EC4\u1ECE\u1ED2r\u0100;s\u1ECA\u1ECB\u62D5l;\u69E3us;\u6A71i\u0180;lv\u1EDA\u1EDB\u1EDF\u43B5on\xBB\u1EDB;\u43F5\u0200csuv\u1EEA\u1EF3\u1F0B\u1F23\u0100io\u1EEF\u1E31rc\xBB\u1E2E\u0269\u1EF9\0\0\u1EFB\xED\u0548ant\u0100gl\u1F02\u1F06tr\xBB\u1E5Dess\xBB\u1E7A\u0180aei\u1F12\u1F16\u1F1Als;\u403Dst;\u625Fv\u0100;D\u0235\u1F20D;\u6A78parsl;\u69E5\u0100Da\u1F2F\u1F33ot;\u6253rr;\u6971\u0180cdi\u1F3E\u1F41\u1EF8r;\u612Fo\xF4\u0352\u0100ah\u1F49\u1F4B;\u43B7\u803B\xF0\u40F0\u0100mr\u1F53\u1F57l\u803B\xEB\u40EBo;\u60AC\u0180cip\u1F61\u1F64\u1F67l;\u4021s\xF4\u056E\u0100eo\u1F6C\u1F74ctatio\xEE\u0559nential\xE5\u0579\u09E1\u1F92\0\u1F9E\0\u1FA1\u1FA7\0\0\u1FC6\u1FCC\0\u1FD3\0\u1FE6\u1FEA\u2000\0\u2008\u205Allingdotse\xF1\u1E44y;\u4444male;\u6640\u0180ilr\u1FAD\u1FB3\u1FC1lig;\u8000\uFB03\u0269\u1FB9\0\0\u1FBDg;\u8000\uFB00ig;\u8000\uFB04;\uC000\u{1D523}lig;\u8000\uFB01lig;\uC000fj\u0180alt\u1FD9\u1FDC\u1FE1t;\u666Dig;\u8000\uFB02ns;\u65B1of;\u4192\u01F0\u1FEE\0\u1FF3f;\uC000\u{1D557}\u0100ak\u05BF\u1FF7\u0100;v\u1FFC\u1FFD\u62D4;\u6AD9artint;\u6A0D\u0100ao\u200C\u2055\u0100cs\u2011\u2052\u03B1\u201A\u2030\u2038\u2045\u2048\0\u2050\u03B2\u2022\u2025\u2027\u202A\u202C\0\u202E\u803B\xBD\u40BD;\u6153\u803B\xBC\u40BC;\u6155;\u6159;\u615B\u01B3\u2034\0\u2036;\u6154;\u6156\u02B4\u203E\u2041\0\0\u2043\u803B\xBE\u40BE;\u6157;\u615C5;\u6158\u01B6\u204C\0\u204E;\u615A;\u615D8;\u615El;\u6044wn;\u6322cr;\uC000\u{1D4BB}\u0880Eabcdefgijlnorstv\u2082\u2089\u209F\u20A5\u20B0\u20B4\u20F0\u20F5\u20FA\u20FF\u2103\u2112\u2138\u0317\u213E\u2152\u219E\u0100;l\u064D\u2087;\u6A8C\u0180cmp\u2090\u2095\u209Dute;\u41F5ma\u0100;d\u209C\u1CDA\u43B3;\u6A86reve;\u411F\u0100iy\u20AA\u20AErc;\u411D;\u4433ot;\u4121\u0200;lqs\u063E\u0642\u20BD\u20C9\u0180;qs\u063E\u064C\u20C4lan\xF4\u0665\u0200;cdl\u0665\u20D2\u20D5\u20E5c;\u6AA9ot\u0100;o\u20DC\u20DD\u6A80\u0100;l\u20E2\u20E3\u6A82;\u6A84\u0100;e\u20EA\u20ED\uC000\u22DB\uFE00s;\u6A94r;\uC000\u{1D524}\u0100;g\u0673\u061Bmel;\u6137cy;\u4453\u0200;Eaj\u065A\u210C\u210E\u2110;\u6A92;\u6AA5;\u6AA4\u0200Eaes\u211B\u211D\u2129\u2134;\u6269p\u0100;p\u2123\u2124\u6A8Arox\xBB\u2124\u0100;q\u212E\u212F\u6A88\u0100;q\u212E\u211Bim;\u62E7pf;\uC000\u{1D558}\u0100ci\u2143\u2146r;\u610Am\u0180;el\u066B\u214E\u2150;\u6A8E;\u6A90\u8300>;cdlqr\u05EE\u2160\u216A\u216E\u2173\u2179\u0100ci\u2165\u2167;\u6AA7r;\u6A7Aot;\u62D7Par;\u6995uest;\u6A7C\u0280adels\u2184\u216A\u2190\u0656\u219B\u01F0\u2189\0\u218Epro\xF8\u209Er;\u6978q\u0100lq\u063F\u2196les\xF3\u2088i\xED\u066B\u0100en\u21A3\u21ADrtneqq;\uC000\u2269\uFE00\xC5\u21AA\u0500Aabcefkosy\u21C4\u21C7\u21F1\u21F5\u21FA\u2218\u221D\u222F\u2268\u227Dr\xF2\u03A0\u0200ilmr\u21D0\u21D4\u21D7\u21DBrs\xF0\u1484f\xBB\u2024il\xF4\u06A9\u0100dr\u21E0\u21E4cy;\u444A\u0180;cw\u08F4\u21EB\u21EFir;\u6948;\u61ADar;\u610Firc;\u4125\u0180alr\u2201\u220E\u2213rts\u0100;u\u2209\u220A\u6665it\xBB\u220Alip;\u6026con;\u62B9r;\uC000\u{1D525}s\u0100ew\u2223\u2229arow;\u6925arow;\u6926\u0280amopr\u223A\u223E\u2243\u225E\u2263rr;\u61FFtht;\u623Bk\u0100lr\u2249\u2253eftarrow;\u61A9ightarrow;\u61AAf;\uC000\u{1D559}bar;\u6015\u0180clt\u226F\u2274\u2278r;\uC000\u{1D4BD}as\xE8\u21F4rok;\u4127\u0100bp\u2282\u2287ull;\u6043hen\xBB\u1C5B\u0AE1\u22A3\0\u22AA\0\u22B8\u22C5\u22CE\0\u22D5\u22F3\0\0\u22F8\u2322\u2367\u2362\u237F\0\u2386\u23AA\u23B4cute\u803B\xED\u40ED\u0180;iy\u0771\u22B0\u22B5rc\u803B\xEE\u40EE;\u4438\u0100cx\u22BC\u22BFy;\u4435cl\u803B\xA1\u40A1\u0100fr\u039F\u22C9;\uC000\u{1D526}rave\u803B\xEC\u40EC\u0200;ino\u073E\u22DD\u22E9\u22EE\u0100in\u22E2\u22E6nt;\u6A0Ct;\u622Dfin;\u69DCta;\u6129lig;\u4133\u0180aop\u22FE\u231A\u231D\u0180cgt\u2305\u2308\u2317r;\u412B\u0180elp\u071F\u230F\u2313in\xE5\u078Ear\xF4\u0720h;\u4131f;\u62B7ed;\u41B5\u0280;cfot\u04F4\u232C\u2331\u233D\u2341are;\u6105in\u0100;t\u2338\u2339\u621Eie;\u69DDdo\xF4\u2319\u0280;celp\u0757\u234C\u2350\u235B\u2361al;\u62BA\u0100gr\u2355\u2359er\xF3\u1563\xE3\u234Darhk;\u6A17rod;\u6A3C\u0200cgpt\u236F\u2372\u2376\u237By;\u4451on;\u412Ff;\uC000\u{1D55A}a;\u43B9uest\u803B\xBF\u40BF\u0100ci\u238A\u238Fr;\uC000\u{1D4BE}n\u0280;Edsv\u04F4\u239B\u239D\u23A1\u04F3;\u62F9ot;\u62F5\u0100;v\u23A6\u23A7\u62F4;\u62F3\u0100;i\u0777\u23AElde;\u4129\u01EB\u23B8\0\u23BCcy;\u4456l\u803B\xEF\u40EF\u0300cfmosu\u23CC\u23D7\u23DC\u23E1\u23E7\u23F5\u0100iy\u23D1\u23D5rc;\u4135;\u4439r;\uC000\u{1D527}ath;\u4237pf;\uC000\u{1D55B}\u01E3\u23EC\0\u23F1r;\uC000\u{1D4BF}rcy;\u4458kcy;\u4454\u0400acfghjos\u240B\u2416\u2422\u2427\u242D\u2431\u2435\u243Bppa\u0100;v\u2413\u2414\u43BA;\u43F0\u0100ey\u241B\u2420dil;\u4137;\u443Ar;\uC000\u{1D528}reen;\u4138cy;\u4445cy;\u445Cpf;\uC000\u{1D55C}cr;\uC000\u{1D4C0}\u0B80ABEHabcdefghjlmnoprstuv\u2470\u2481\u2486\u248D\u2491\u250E\u253D\u255A\u2580\u264E\u265E\u2665\u2679\u267D\u269A\u26B2\u26D8\u275D\u2768\u278B\u27C0\u2801\u2812\u0180art\u2477\u247A\u247Cr\xF2\u09C6\xF2\u0395ail;\u691Barr;\u690E\u0100;g\u0994\u248B;\u6A8Bar;\u6962\u0963\u24A5\0\u24AA\0\u24B1\0\0\0\0\0\u24B5\u24BA\0\u24C6\u24C8\u24CD\0\u24F9ute;\u413Amptyv;\u69B4ra\xEE\u084Cbda;\u43BBg\u0180;dl\u088E\u24C1\u24C3;\u6991\xE5\u088E;\u6A85uo\u803B\xAB\u40ABr\u0400;bfhlpst\u0899\u24DE\u24E6\u24E9\u24EB\u24EE\u24F1\u24F5\u0100;f\u089D\u24E3s;\u691Fs;\u691D\xEB\u2252p;\u61ABl;\u6939im;\u6973l;\u61A2\u0180;ae\u24FF\u2500\u2504\u6AABil;\u6919\u0100;s\u2509\u250A\u6AAD;\uC000\u2AAD\uFE00\u0180abr\u2515\u2519\u251Drr;\u690Crk;\u6772\u0100ak\u2522\u252Cc\u0100ek\u2528\u252A;\u407B;\u405B\u0100es\u2531\u2533;\u698Bl\u0100du\u2539\u253B;\u698F;\u698D\u0200aeuy\u2546\u254B\u2556\u2558ron;\u413E\u0100di\u2550\u2554il;\u413C\xEC\u08B0\xE2\u2529;\u443B\u0200cqrs\u2563\u2566\u256D\u257Da;\u6936uo\u0100;r\u0E19\u1746\u0100du\u2572\u2577har;\u6967shar;\u694Bh;\u61B2\u0280;fgqs\u258B\u258C\u0989\u25F3\u25FF\u6264t\u0280ahlrt\u2598\u25A4\u25B7\u25C2\u25E8rrow\u0100;t\u0899\u25A1a\xE9\u24F6arpoon\u0100du\u25AF\u25B4own\xBB\u045Ap\xBB\u0966eftarrows;\u61C7ight\u0180ahs\u25CD\u25D6\u25DErrow\u0100;s\u08F4\u08A7arpoon\xF3\u0F98quigarro\xF7\u21F0hreetimes;\u62CB\u0180;qs\u258B\u0993\u25FAlan\xF4\u09AC\u0280;cdgs\u09AC\u260A\u260D\u261D\u2628c;\u6AA8ot\u0100;o\u2614\u2615\u6A7F\u0100;r\u261A\u261B\u6A81;\u6A83\u0100;e\u2622\u2625\uC000\u22DA\uFE00s;\u6A93\u0280adegs\u2633\u2639\u263D\u2649\u264Bppro\xF8\u24C6ot;\u62D6q\u0100gq\u2643\u2645\xF4\u0989gt\xF2\u248C\xF4\u099Bi\xED\u09B2\u0180ilr\u2655\u08E1\u265Asht;\u697C;\uC000\u{1D529}\u0100;E\u099C\u2663;\u6A91\u0161\u2669\u2676r\u0100du\u25B2\u266E\u0100;l\u0965\u2673;\u696Alk;\u6584cy;\u4459\u0280;acht\u0A48\u2688\u268B\u2691\u2696r\xF2\u25C1orne\xF2\u1D08ard;\u696Bri;\u65FA\u0100io\u269F\u26A4dot;\u4140ust\u0100;a\u26AC\u26AD\u63B0che\xBB\u26AD\u0200Eaes\u26BB\u26BD\u26C9\u26D4;\u6268p\u0100;p\u26C3\u26C4\u6A89rox\xBB\u26C4\u0100;q\u26CE\u26CF\u6A87\u0100;q\u26CE\u26BBim;\u62E6\u0400abnoptwz\u26E9\u26F4\u26F7\u271A\u272F\u2741\u2747\u2750\u0100nr\u26EE\u26F1g;\u67ECr;\u61FDr\xEB\u08C1g\u0180lmr\u26FF\u270D\u2714eft\u0100ar\u09E6\u2707ight\xE1\u09F2apsto;\u67FCight\xE1\u09FDparrow\u0100lr\u2725\u2729ef\xF4\u24EDight;\u61AC\u0180afl\u2736\u2739\u273Dr;\u6985;\uC000\u{1D55D}us;\u6A2Dimes;\u6A34\u0161\u274B\u274Fst;\u6217\xE1\u134E\u0180;ef\u2757\u2758\u1800\u65CAnge\xBB\u2758ar\u0100;l\u2764\u2765\u4028t;\u6993\u0280achmt\u2773\u2776\u277C\u2785\u2787r\xF2\u08A8orne\xF2\u1D8Car\u0100;d\u0F98\u2783;\u696D;\u600Eri;\u62BF\u0300achiqt\u2798\u279D\u0A40\u27A2\u27AE\u27BBquo;\u6039r;\uC000\u{1D4C1}m\u0180;eg\u09B2\u27AA\u27AC;\u6A8D;\u6A8F\u0100bu\u252A\u27B3o\u0100;r\u0E1F\u27B9;\u601Arok;\u4142\u8400<;cdhilqr\u082B\u27D2\u2639\u27DC\u27E0\u27E5\u27EA\u27F0\u0100ci\u27D7\u27D9;\u6AA6r;\u6A79re\xE5\u25F2mes;\u62C9arr;\u6976uest;\u6A7B\u0100Pi\u27F5\u27F9ar;\u6996\u0180;ef\u2800\u092D\u181B\u65C3r\u0100du\u2807\u280Dshar;\u694Ahar;\u6966\u0100en\u2817\u2821rtneqq;\uC000\u2268\uFE00\xC5\u281E\u0700Dacdefhilnopsu\u2840\u2845\u2882\u288E\u2893\u28A0\u28A5\u28A8\u28DA\u28E2\u28E4\u0A83\u28F3\u2902Dot;\u623A\u0200clpr\u284E\u2852\u2863\u287Dr\u803B\xAF\u40AF\u0100et\u2857\u2859;\u6642\u0100;e\u285E\u285F\u6720se\xBB\u285F\u0100;s\u103B\u2868to\u0200;dlu\u103B\u2873\u2877\u287Bow\xEE\u048Cef\xF4\u090F\xF0\u13D1ker;\u65AE\u0100oy\u2887\u288Cmma;\u6A29;\u443Cash;\u6014asuredangle\xBB\u1626r;\uC000\u{1D52A}o;\u6127\u0180cdn\u28AF\u28B4\u28C9ro\u803B\xB5\u40B5\u0200;acd\u1464\u28BD\u28C0\u28C4s\xF4\u16A7ir;\u6AF0ot\u80BB\xB7\u01B5us\u0180;bd\u28D2\u1903\u28D3\u6212\u0100;u\u1D3C\u28D8;\u6A2A\u0163\u28DE\u28E1p;\u6ADB\xF2\u2212\xF0\u0A81\u0100dp\u28E9\u28EEels;\u62A7f;\uC000\u{1D55E}\u0100ct\u28F8\u28FDr;\uC000\u{1D4C2}pos\xBB\u159D\u0180;lm\u2909\u290A\u290D\u43BCtimap;\u62B8\u0C00GLRVabcdefghijlmoprstuvw\u2942\u2953\u297E\u2989\u2998\u29DA\u29E9\u2A15\u2A1A\u2A58\u2A5D\u2A83\u2A95\u2AA4\u2AA8\u2B04\u2B07\u2B44\u2B7F\u2BAE\u2C34\u2C67\u2C7C\u2CE9\u0100gt\u2947\u294B;\uC000\u22D9\u0338\u0100;v\u2950\u0BCF\uC000\u226B\u20D2\u0180elt\u295A\u2972\u2976ft\u0100ar\u2961\u2967rrow;\u61CDightarrow;\u61CE;\uC000\u22D8\u0338\u0100;v\u297B\u0C47\uC000\u226A\u20D2ightarrow;\u61CF\u0100Dd\u298E\u2993ash;\u62AFash;\u62AE\u0280bcnpt\u29A3\u29A7\u29AC\u29B1\u29CCla\xBB\u02DEute;\u4144g;\uC000\u2220\u20D2\u0280;Eiop\u0D84\u29BC\u29C0\u29C5\u29C8;\uC000\u2A70\u0338d;\uC000\u224B\u0338s;\u4149ro\xF8\u0D84ur\u0100;a\u29D3\u29D4\u666El\u0100;s\u29D3\u0B38\u01F3\u29DF\0\u29E3p\u80BB\xA0\u0B37mp\u0100;e\u0BF9\u0C00\u0280aeouy\u29F4\u29FE\u2A03\u2A10\u2A13\u01F0\u29F9\0\u29FB;\u6A43on;\u4148dil;\u4146ng\u0100;d\u0D7E\u2A0Aot;\uC000\u2A6D\u0338p;\u6A42;\u443Dash;\u6013\u0380;Aadqsx\u0B92\u2A29\u2A2D\u2A3B\u2A41\u2A45\u2A50rr;\u61D7r\u0100hr\u2A33\u2A36k;\u6924\u0100;o\u13F2\u13F0ot;\uC000\u2250\u0338ui\xF6\u0B63\u0100ei\u2A4A\u2A4Ear;\u6928\xED\u0B98ist\u0100;s\u0BA0\u0B9Fr;\uC000\u{1D52B}\u0200Eest\u0BC5\u2A66\u2A79\u2A7C\u0180;qs\u0BBC\u2A6D\u0BE1\u0180;qs\u0BBC\u0BC5\u2A74lan\xF4\u0BE2i\xED\u0BEA\u0100;r\u0BB6\u2A81\xBB\u0BB7\u0180Aap\u2A8A\u2A8D\u2A91r\xF2\u2971rr;\u61AEar;\u6AF2\u0180;sv\u0F8D\u2A9C\u0F8C\u0100;d\u2AA1\u2AA2\u62FC;\u62FAcy;\u445A\u0380AEadest\u2AB7\u2ABA\u2ABE\u2AC2\u2AC5\u2AF6\u2AF9r\xF2\u2966;\uC000\u2266\u0338rr;\u619Ar;\u6025\u0200;fqs\u0C3B\u2ACE\u2AE3\u2AEFt\u0100ar\u2AD4\u2AD9rro\xF7\u2AC1ightarro\xF7\u2A90\u0180;qs\u0C3B\u2ABA\u2AEAlan\xF4\u0C55\u0100;s\u0C55\u2AF4\xBB\u0C36i\xED\u0C5D\u0100;r\u0C35\u2AFEi\u0100;e\u0C1A\u0C25i\xE4\u0D90\u0100pt\u2B0C\u2B11f;\uC000\u{1D55F}\u8180\xAC;in\u2B19\u2B1A\u2B36\u40ACn\u0200;Edv\u0B89\u2B24\u2B28\u2B2E;\uC000\u22F9\u0338ot;\uC000\u22F5\u0338\u01E1\u0B89\u2B33\u2B35;\u62F7;\u62F6i\u0100;v\u0CB8\u2B3C\u01E1\u0CB8\u2B41\u2B43;\u62FE;\u62FD\u0180aor\u2B4B\u2B63\u2B69r\u0200;ast\u0B7B\u2B55\u2B5A\u2B5Flle\xEC\u0B7Bl;\uC000\u2AFD\u20E5;\uC000\u2202\u0338lint;\u6A14\u0180;ce\u0C92\u2B70\u2B73u\xE5\u0CA5\u0100;c\u0C98\u2B78\u0100;e\u0C92\u2B7D\xF1\u0C98\u0200Aait\u2B88\u2B8B\u2B9D\u2BA7r\xF2\u2988rr\u0180;cw\u2B94\u2B95\u2B99\u619B;\uC000\u2933\u0338;\uC000\u219D\u0338ghtarrow\xBB\u2B95ri\u0100;e\u0CCB\u0CD6\u0380chimpqu\u2BBD\u2BCD\u2BD9\u2B04\u0B78\u2BE4\u2BEF\u0200;cer\u0D32\u2BC6\u0D37\u2BC9u\xE5\u0D45;\uC000\u{1D4C3}ort\u026D\u2B05\0\0\u2BD6ar\xE1\u2B56m\u0100;e\u0D6E\u2BDF\u0100;q\u0D74\u0D73su\u0100bp\u2BEB\u2BED\xE5\u0CF8\xE5\u0D0B\u0180bcp\u2BF6\u2C11\u2C19\u0200;Ees\u2BFF\u2C00\u0D22\u2C04\u6284;\uC000\u2AC5\u0338et\u0100;e\u0D1B\u2C0Bq\u0100;q\u0D23\u2C00c\u0100;e\u0D32\u2C17\xF1\u0D38\u0200;Ees\u2C22\u2C23\u0D5F\u2C27\u6285;\uC000\u2AC6\u0338et\u0100;e\u0D58\u2C2Eq\u0100;q\u0D60\u2C23\u0200gilr\u2C3D\u2C3F\u2C45\u2C47\xEC\u0BD7lde\u803B\xF1\u40F1\xE7\u0C43iangle\u0100lr\u2C52\u2C5Ceft\u0100;e\u0C1A\u2C5A\xF1\u0C26ight\u0100;e\u0CCB\u2C65\xF1\u0CD7\u0100;m\u2C6C\u2C6D\u43BD\u0180;es\u2C74\u2C75\u2C79\u4023ro;\u6116p;\u6007\u0480DHadgilrs\u2C8F\u2C94\u2C99\u2C9E\u2CA3\u2CB0\u2CB6\u2CD3\u2CE3ash;\u62ADarr;\u6904p;\uC000\u224D\u20D2ash;\u62AC\u0100et\u2CA8\u2CAC;\uC000\u2265\u20D2;\uC000>\u20D2nfin;\u69DE\u0180Aet\u2CBD\u2CC1\u2CC5rr;\u6902;\uC000\u2264\u20D2\u0100;r\u2CCA\u2CCD\uC000<\u20D2ie;\uC000\u22B4\u20D2\u0100At\u2CD8\u2CDCrr;\u6903rie;\uC000\u22B5\u20D2im;\uC000\u223C\u20D2\u0180Aan\u2CF0\u2CF4\u2D02rr;\u61D6r\u0100hr\u2CFA\u2CFDk;\u6923\u0100;o\u13E7\u13E5ear;\u6927\u1253\u1A95\0\0\0\0\0\0\0\0\0\0\0\0\0\u2D2D\0\u2D38\u2D48\u2D60\u2D65\u2D72\u2D84\u1B07\0\0\u2D8D\u2DAB\0\u2DC8\u2DCE\0\u2DDC\u2E19\u2E2B\u2E3E\u2E43\u0100cs\u2D31\u1A97ute\u803B\xF3\u40F3\u0100iy\u2D3C\u2D45r\u0100;c\u1A9E\u2D42\u803B\xF4\u40F4;\u443E\u0280abios\u1AA0\u2D52\u2D57\u01C8\u2D5Alac;\u4151v;\u6A38old;\u69BClig;\u4153\u0100cr\u2D69\u2D6Dir;\u69BF;\uC000\u{1D52C}\u036F\u2D79\0\0\u2D7C\0\u2D82n;\u42DBave\u803B\xF2\u40F2;\u69C1\u0100bm\u2D88\u0DF4ar;\u69B5\u0200acit\u2D95\u2D98\u2DA5\u2DA8r\xF2\u1A80\u0100ir\u2D9D\u2DA0r;\u69BEoss;\u69BBn\xE5\u0E52;\u69C0\u0180aei\u2DB1\u2DB5\u2DB9cr;\u414Dga;\u43C9\u0180cdn\u2DC0\u2DC5\u01CDron;\u43BF;\u69B6pf;\uC000\u{1D560}\u0180ael\u2DD4\u2DD7\u01D2r;\u69B7rp;\u69B9\u0380;adiosv\u2DEA\u2DEB\u2DEE\u2E08\u2E0D\u2E10\u2E16\u6228r\xF2\u1A86\u0200;efm\u2DF7\u2DF8\u2E02\u2E05\u6A5Dr\u0100;o\u2DFE\u2DFF\u6134f\xBB\u2DFF\u803B\xAA\u40AA\u803B\xBA\u40BAgof;\u62B6r;\u6A56lope;\u6A57;\u6A5B\u0180clo\u2E1F\u2E21\u2E27\xF2\u2E01ash\u803B\xF8\u40F8l;\u6298i\u016C\u2E2F\u2E34de\u803B\xF5\u40F5es\u0100;a\u01DB\u2E3As;\u6A36ml\u803B\xF6\u40F6bar;\u633D\u0AE1\u2E5E\0\u2E7D\0\u2E80\u2E9D\0\u2EA2\u2EB9\0\0\u2ECB\u0E9C\0\u2F13\0\0\u2F2B\u2FBC\0\u2FC8r\u0200;ast\u0403\u2E67\u2E72\u0E85\u8100\xB6;l\u2E6D\u2E6E\u40B6le\xEC\u0403\u0269\u2E78\0\0\u2E7Bm;\u6AF3;\u6AFDy;\u443Fr\u0280cimpt\u2E8B\u2E8F\u2E93\u1865\u2E97nt;\u4025od;\u402Eil;\u6030enk;\u6031r;\uC000\u{1D52D}\u0180imo\u2EA8\u2EB0\u2EB4\u0100;v\u2EAD\u2EAE\u43C6;\u43D5ma\xF4\u0A76ne;\u660E\u0180;tv\u2EBF\u2EC0\u2EC8\u43C0chfork\xBB\u1FFD;\u43D6\u0100au\u2ECF\u2EDFn\u0100ck\u2ED5\u2EDDk\u0100;h\u21F4\u2EDB;\u610E\xF6\u21F4s\u0480;abcdemst\u2EF3\u2EF4\u1908\u2EF9\u2EFD\u2F04\u2F06\u2F0A\u2F0E\u402Bcir;\u6A23ir;\u6A22\u0100ou\u1D40\u2F02;\u6A25;\u6A72n\u80BB\xB1\u0E9Dim;\u6A26wo;\u6A27\u0180ipu\u2F19\u2F20\u2F25ntint;\u6A15f;\uC000\u{1D561}nd\u803B\xA3\u40A3\u0500;Eaceinosu\u0EC8\u2F3F\u2F41\u2F44\u2F47\u2F81\u2F89\u2F92\u2F7E\u2FB6;\u6AB3p;\u6AB7u\xE5\u0ED9\u0100;c\u0ECE\u2F4C\u0300;acens\u0EC8\u2F59\u2F5F\u2F66\u2F68\u2F7Eppro\xF8\u2F43urlye\xF1\u0ED9\xF1\u0ECE\u0180aes\u2F6F\u2F76\u2F7Approx;\u6AB9qq;\u6AB5im;\u62E8i\xED\u0EDFme\u0100;s\u2F88\u0EAE\u6032\u0180Eas\u2F78\u2F90\u2F7A\xF0\u2F75\u0180dfp\u0EEC\u2F99\u2FAF\u0180als\u2FA0\u2FA5\u2FAAlar;\u632Eine;\u6312urf;\u6313\u0100;t\u0EFB\u2FB4\xEF\u0EFBrel;\u62B0\u0100ci\u2FC0\u2FC5r;\uC000\u{1D4C5};\u43C8ncsp;\u6008\u0300fiopsu\u2FDA\u22E2\u2FDF\u2FE5\u2FEB\u2FF1r;\uC000\u{1D52E}pf;\uC000\u{1D562}rime;\u6057cr;\uC000\u{1D4C6}\u0180aeo\u2FF8\u3009\u3013t\u0100ei\u2FFE\u3005rnion\xF3\u06B0nt;\u6A16st\u0100;e\u3010\u3011\u403F\xF1\u1F19\xF4\u0F14\u0A80ABHabcdefhilmnoprstux\u3040\u3051\u3055\u3059\u30E0\u310E\u312B\u3147\u3162\u3172\u318E\u3206\u3215\u3224\u3229\u3258\u326E\u3272\u3290\u32B0\u32B7\u0180art\u3047\u304A\u304Cr\xF2\u10B3\xF2\u03DDail;\u691Car\xF2\u1C65ar;\u6964\u0380cdenqrt\u3068\u3075\u3078\u307F\u308F\u3094\u30CC\u0100eu\u306D\u3071;\uC000\u223D\u0331te;\u4155i\xE3\u116Emptyv;\u69B3g\u0200;del\u0FD1\u3089\u308B\u308D;\u6992;\u69A5\xE5\u0FD1uo\u803B\xBB\u40BBr\u0580;abcfhlpstw\u0FDC\u30AC\u30AF\u30B7\u30B9\u30BC\u30BE\u30C0\u30C3\u30C7\u30CAp;\u6975\u0100;f\u0FE0\u30B4s;\u6920;\u6933s;\u691E\xEB\u225D\xF0\u272El;\u6945im;\u6974l;\u61A3;\u619D\u0100ai\u30D1\u30D5il;\u691Ao\u0100;n\u30DB\u30DC\u6236al\xF3\u0F1E\u0180abr\u30E7\u30EA\u30EEr\xF2\u17E5rk;\u6773\u0100ak\u30F3\u30FDc\u0100ek\u30F9\u30FB;\u407D;\u405D\u0100es\u3102\u3104;\u698Cl\u0100du\u310A\u310C;\u698E;\u6990\u0200aeuy\u3117\u311C\u3127\u3129ron;\u4159\u0100di\u3121\u3125il;\u4157\xEC\u0FF2\xE2\u30FA;\u4440\u0200clqs\u3134\u3137\u313D\u3144a;\u6937dhar;\u6969uo\u0100;r\u020E\u020Dh;\u61B3\u0180acg\u314E\u315F\u0F44l\u0200;ips\u0F78\u3158\u315B\u109Cn\xE5\u10BBar\xF4\u0FA9t;\u65AD\u0180ilr\u3169\u1023\u316Esht;\u697D;\uC000\u{1D52F}\u0100ao\u3177\u3186r\u0100du\u317D\u317F\xBB\u047B\u0100;l\u1091\u3184;\u696C\u0100;v\u318B\u318C\u43C1;\u43F1\u0180gns\u3195\u31F9\u31FCht\u0300ahlrst\u31A4\u31B0\u31C2\u31D8\u31E4\u31EErrow\u0100;t\u0FDC\u31ADa\xE9\u30C8arpoon\u0100du\u31BB\u31BFow\xEE\u317Ep\xBB\u1092eft\u0100ah\u31CA\u31D0rrow\xF3\u0FEAarpoon\xF3\u0551ightarrows;\u61C9quigarro\xF7\u30CBhreetimes;\u62CCg;\u42DAingdotse\xF1\u1F32\u0180ahm\u320D\u3210\u3213r\xF2\u0FEAa\xF2\u0551;\u600Foust\u0100;a\u321E\u321F\u63B1che\xBB\u321Fmid;\u6AEE\u0200abpt\u3232\u323D\u3240\u3252\u0100nr\u3237\u323Ag;\u67EDr;\u61FEr\xEB\u1003\u0180afl\u3247\u324A\u324Er;\u6986;\uC000\u{1D563}us;\u6A2Eimes;\u6A35\u0100ap\u325D\u3267r\u0100;g\u3263\u3264\u4029t;\u6994olint;\u6A12ar\xF2\u31E3\u0200achq\u327B\u3280\u10BC\u3285quo;\u603Ar;\uC000\u{1D4C7}\u0100bu\u30FB\u328Ao\u0100;r\u0214\u0213\u0180hir\u3297\u329B\u32A0re\xE5\u31F8mes;\u62CAi\u0200;efl\u32AA\u1059\u1821\u32AB\u65B9tri;\u69CEluhar;\u6968;\u611E\u0D61\u32D5\u32DB\u32DF\u332C\u3338\u3371\0\u337A\u33A4\0\0\u33EC\u33F0\0\u3428\u3448\u345A\u34AD\u34B1\u34CA\u34F1\0\u3616\0\0\u3633cute;\u415Bqu\xEF\u27BA\u0500;Eaceinpsy\u11ED\u32F3\u32F5\u32FF\u3302\u330B\u330F\u331F\u3326\u3329;\u6AB4\u01F0\u32FA\0\u32FC;\u6AB8on;\u4161u\xE5\u11FE\u0100;d\u11F3\u3307il;\u415Frc;\u415D\u0180Eas\u3316\u3318\u331B;\u6AB6p;\u6ABAim;\u62E9olint;\u6A13i\xED\u1204;\u4441ot\u0180;be\u3334\u1D47\u3335\u62C5;\u6A66\u0380Aacmstx\u3346\u334A\u3357\u335B\u335E\u3363\u336Drr;\u61D8r\u0100hr\u3350\u3352\xEB\u2228\u0100;o\u0A36\u0A34t\u803B\xA7\u40A7i;\u403Bwar;\u6929m\u0100in\u3369\xF0nu\xF3\xF1t;\u6736r\u0100;o\u3376\u2055\uC000\u{1D530}\u0200acoy\u3382\u3386\u3391\u33A0rp;\u666F\u0100hy\u338B\u338Fcy;\u4449;\u4448rt\u026D\u3399\0\0\u339Ci\xE4\u1464ara\xEC\u2E6F\u803B\xAD\u40AD\u0100gm\u33A8\u33B4ma\u0180;fv\u33B1\u33B2\u33B2\u43C3;\u43C2\u0400;deglnpr\u12AB\u33C5\u33C9\u33CE\u33D6\u33DE\u33E1\u33E6ot;\u6A6A\u0100;q\u12B1\u12B0\u0100;E\u33D3\u33D4\u6A9E;\u6AA0\u0100;E\u33DB\u33DC\u6A9D;\u6A9Fe;\u6246lus;\u6A24arr;\u6972ar\xF2\u113D\u0200aeit\u33F8\u3408\u340F\u3417\u0100ls\u33FD\u3404lsetm\xE9\u336Ahp;\u6A33parsl;\u69E4\u0100dl\u1463\u3414e;\u6323\u0100;e\u341C\u341D\u6AAA\u0100;s\u3422\u3423\u6AAC;\uC000\u2AAC\uFE00\u0180flp\u342E\u3433\u3442tcy;\u444C\u0100;b\u3438\u3439\u402F\u0100;a\u343E\u343F\u69C4r;\u633Ff;\uC000\u{1D564}a\u0100dr\u344D\u0402es\u0100;u\u3454\u3455\u6660it\xBB\u3455\u0180csu\u3460\u3479\u349F\u0100au\u3465\u346Fp\u0100;s\u1188\u346B;\uC000\u2293\uFE00p\u0100;s\u11B4\u3475;\uC000\u2294\uFE00u\u0100bp\u347F\u348F\u0180;es\u1197\u119C\u3486et\u0100;e\u1197\u348D\xF1\u119D\u0180;es\u11A8\u11AD\u3496et\u0100;e\u11A8\u349D\xF1\u11AE\u0180;af\u117B\u34A6\u05B0r\u0165\u34AB\u05B1\xBB\u117Car\xF2\u1148\u0200cemt\u34B9\u34BE\u34C2\u34C5r;\uC000\u{1D4C8}tm\xEE\xF1i\xEC\u3415ar\xE6\u11BE\u0100ar\u34CE\u34D5r\u0100;f\u34D4\u17BF\u6606\u0100an\u34DA\u34EDight\u0100ep\u34E3\u34EApsilo\xEE\u1EE0h\xE9\u2EAFs\xBB\u2852\u0280bcmnp\u34FB\u355E\u1209\u358B\u358E\u0480;Edemnprs\u350E\u350F\u3511\u3515\u351E\u3523\u352C\u3531\u3536\u6282;\u6AC5ot;\u6ABD\u0100;d\u11DA\u351Aot;\u6AC3ult;\u6AC1\u0100Ee\u3528\u352A;\u6ACB;\u628Alus;\u6ABFarr;\u6979\u0180eiu\u353D\u3552\u3555t\u0180;en\u350E\u3545\u354Bq\u0100;q\u11DA\u350Feq\u0100;q\u352B\u3528m;\u6AC7\u0100bp\u355A\u355C;\u6AD5;\u6AD3c\u0300;acens\u11ED\u356C\u3572\u3579\u357B\u3326ppro\xF8\u32FAurlye\xF1\u11FE\xF1\u11F3\u0180aes\u3582\u3588\u331Bppro\xF8\u331Aq\xF1\u3317g;\u666A\u0680123;Edehlmnps\u35A9\u35AC\u35AF\u121C\u35B2\u35B4\u35C0\u35C9\u35D5\u35DA\u35DF\u35E8\u35ED\u803B\xB9\u40B9\u803B\xB2\u40B2\u803B\xB3\u40B3;\u6AC6\u0100os\u35B9\u35BCt;\u6ABEub;\u6AD8\u0100;d\u1222\u35C5ot;\u6AC4s\u0100ou\u35CF\u35D2l;\u67C9b;\u6AD7arr;\u697Bult;\u6AC2\u0100Ee\u35E4\u35E6;\u6ACC;\u628Blus;\u6AC0\u0180eiu\u35F4\u3609\u360Ct\u0180;en\u121C\u35FC\u3602q\u0100;q\u1222\u35B2eq\u0100;q\u35E7\u35E4m;\u6AC8\u0100bp\u3611\u3613;\u6AD4;\u6AD6\u0180Aan\u361C\u3620\u362Drr;\u61D9r\u0100hr\u3626\u3628\xEB\u222E\u0100;o\u0A2B\u0A29war;\u692Alig\u803B\xDF\u40DF\u0BE1\u3651\u365D\u3660\u12CE\u3673\u3679\0\u367E\u36C2\0\0\0\0\0\u36DB\u3703\0\u3709\u376C\0\0\0\u3787\u0272\u3656\0\0\u365Bget;\u6316;\u43C4r\xEB\u0E5F\u0180aey\u3666\u366B\u3670ron;\u4165dil;\u4163;\u4442lrec;\u6315r;\uC000\u{1D531}\u0200eiko\u3686\u369D\u36B5\u36BC\u01F2\u368B\0\u3691e\u01004f\u1284\u1281a\u0180;sv\u3698\u3699\u369B\u43B8ym;\u43D1\u0100cn\u36A2\u36B2k\u0100as\u36A8\u36AEppro\xF8\u12C1im\xBB\u12ACs\xF0\u129E\u0100as\u36BA\u36AE\xF0\u12C1rn\u803B\xFE\u40FE\u01EC\u031F\u36C6\u22E7es\u8180\xD7;bd\u36CF\u36D0\u36D8\u40D7\u0100;a\u190F\u36D5r;\u6A31;\u6A30\u0180eps\u36E1\u36E3\u3700\xE1\u2A4D\u0200;bcf\u0486\u36EC\u36F0\u36F4ot;\u6336ir;\u6AF1\u0100;o\u36F9\u36FC\uC000\u{1D565}rk;\u6ADA\xE1\u3362rime;\u6034\u0180aip\u370F\u3712\u3764d\xE5\u1248\u0380adempst\u3721\u374D\u3740\u3751\u3757\u375C\u375Fngle\u0280;dlqr\u3730\u3731\u3736\u3740\u3742\u65B5own\xBB\u1DBBeft\u0100;e\u2800\u373E\xF1\u092E;\u625Cight\u0100;e\u32AA\u374B\xF1\u105Aot;\u65ECinus;\u6A3Alus;\u6A39b;\u69CDime;\u6A3Bezium;\u63E2\u0180cht\u3772\u377D\u3781\u0100ry\u3777\u377B;\uC000\u{1D4C9};\u4446cy;\u445Brok;\u4167\u0100io\u378B\u378Ex\xF4\u1777head\u0100lr\u3797\u37A0eftarro\xF7\u084Fightarrow\xBB\u0F5D\u0900AHabcdfghlmoprstuw\u37D0\u37D3\u37D7\u37E4\u37F0\u37FC\u380E\u381C\u3823\u3834\u3851\u385D\u386B\u38A9\u38CC\u38D2\u38EA\u38F6r\xF2\u03EDar;\u6963\u0100cr\u37DC\u37E2ute\u803B\xFA\u40FA\xF2\u1150r\u01E3\u37EA\0\u37EDy;\u445Eve;\u416D\u0100iy\u37F5\u37FArc\u803B\xFB\u40FB;\u4443\u0180abh\u3803\u3806\u380Br\xF2\u13ADlac;\u4171a\xF2\u13C3\u0100ir\u3813\u3818sht;\u697E;\uC000\u{1D532}rave\u803B\xF9\u40F9\u0161\u3827\u3831r\u0100lr\u382C\u382E\xBB\u0957\xBB\u1083lk;\u6580\u0100ct\u3839\u384D\u026F\u383F\0\0\u384Arn\u0100;e\u3845\u3846\u631Cr\xBB\u3846op;\u630Fri;\u65F8\u0100al\u3856\u385Acr;\u416B\u80BB\xA8\u0349\u0100gp\u3862\u3866on;\u4173f;\uC000\u{1D566}\u0300adhlsu\u114B\u3878\u387D\u1372\u3891\u38A0own\xE1\u13B3arpoon\u0100lr\u3888\u388Cef\xF4\u382Digh\xF4\u382Fi\u0180;hl\u3899\u389A\u389C\u43C5\xBB\u13FAon\xBB\u389Aparrows;\u61C8\u0180cit\u38B0\u38C4\u38C8\u026F\u38B6\0\0\u38C1rn\u0100;e\u38BC\u38BD\u631Dr\xBB\u38BDop;\u630Eng;\u416Fri;\u65F9cr;\uC000\u{1D4CA}\u0180dir\u38D9\u38DD\u38E2ot;\u62F0lde;\u4169i\u0100;f\u3730\u38E8\xBB\u1813\u0100am\u38EF\u38F2r\xF2\u38A8l\u803B\xFC\u40FCangle;\u69A7\u0780ABDacdeflnoprsz\u391C\u391F\u3929\u392D\u39B5\u39B8\u39BD\u39DF\u39E4\u39E8\u39F3\u39F9\u39FD\u3A01\u3A20r\xF2\u03F7ar\u0100;v\u3926\u3927\u6AE8;\u6AE9as\xE8\u03E1\u0100nr\u3932\u3937grt;\u699C\u0380eknprst\u34E3\u3946\u394B\u3952\u395D\u3964\u3996app\xE1\u2415othin\xE7\u1E96\u0180hir\u34EB\u2EC8\u3959op\xF4\u2FB5\u0100;h\u13B7\u3962\xEF\u318D\u0100iu\u3969\u396Dgm\xE1\u33B3\u0100bp\u3972\u3984setneq\u0100;q\u397D\u3980\uC000\u228A\uFE00;\uC000\u2ACB\uFE00setneq\u0100;q\u398F\u3992\uC000\u228B\uFE00;\uC000\u2ACC\uFE00\u0100hr\u399B\u399Fet\xE1\u369Ciangle\u0100lr\u39AA\u39AFeft\xBB\u0925ight\xBB\u1051y;\u4432ash\xBB\u1036\u0180elr\u39C4\u39D2\u39D7\u0180;be\u2DEA\u39CB\u39CFar;\u62BBq;\u625Alip;\u62EE\u0100bt\u39DC\u1468a\xF2\u1469r;\uC000\u{1D533}tr\xE9\u39AEsu\u0100bp\u39EF\u39F1\xBB\u0D1C\xBB\u0D59pf;\uC000\u{1D567}ro\xF0\u0EFBtr\xE9\u39B4\u0100cu\u3A06\u3A0Br;\uC000\u{1D4CB}\u0100bp\u3A10\u3A18n\u0100Ee\u3980\u3A16\xBB\u397En\u0100Ee\u3992\u3A1E\xBB\u3990igzag;\u699A\u0380cefoprs\u3A36\u3A3B\u3A56\u3A5B\u3A54\u3A61\u3A6Airc;\u4175\u0100di\u3A40\u3A51\u0100bg\u3A45\u3A49ar;\u6A5Fe\u0100;q\u15FA\u3A4F;\u6259erp;\u6118r;\uC000\u{1D534}pf;\uC000\u{1D568}\u0100;e\u1479\u3A66at\xE8\u1479cr;\uC000\u{1D4CC}\u0AE3\u178E\u3A87\0\u3A8B\0\u3A90\u3A9B\0\0\u3A9D\u3AA8\u3AAB\u3AAF\0\0\u3AC3\u3ACE\0\u3AD8\u17DC\u17DFtr\xE9\u17D1r;\uC000\u{1D535}\u0100Aa\u3A94\u3A97r\xF2\u03C3r\xF2\u09F6;\u43BE\u0100Aa\u3AA1\u3AA4r\xF2\u03B8r\xF2\u09EBa\xF0\u2713is;\u62FB\u0180dpt\u17A4\u3AB5\u3ABE\u0100fl\u3ABA\u17A9;\uC000\u{1D569}im\xE5\u17B2\u0100Aa\u3AC7\u3ACAr\xF2\u03CEr\xF2\u0A01\u0100cq\u3AD2\u17B8r;\uC000\u{1D4CD}\u0100pt\u17D6\u3ADCr\xE9\u17D4\u0400acefiosu\u3AF0\u3AFD\u3B08\u3B0C\u3B11\u3B15\u3B1B\u3B21c\u0100uy\u3AF6\u3AFBte\u803B\xFD\u40FD;\u444F\u0100iy\u3B02\u3B06rc;\u4177;\u444Bn\u803B\xA5\u40A5r;\uC000\u{1D536}cy;\u4457pf;\uC000\u{1D56A}cr;\uC000\u{1D4CE}\u0100cm\u3B26\u3B29y;\u444El\u803B\xFF\u40FF\u0500acdefhiosw\u3B42\u3B48\u3B54\u3B58\u3B64\u3B69\u3B6D\u3B74\u3B7A\u3B80cute;\u417A\u0100ay\u3B4D\u3B52ron;\u417E;\u4437ot;\u417C\u0100et\u3B5D\u3B61tr\xE6\u155Fa;\u43B6r;\uC000\u{1D537}cy;\u4436grarr;\u61DDpf;\uC000\u{1D56B}cr;\uC000\u{1D4CF}\u0100jn\u3B85\u3B87;\u600Dj;\u600C'.split("").map(function(c4) {
+        return c4.charCodeAt(0);
+      })
+    );
+  }
+});
+
+// node_modules/entities/lib/generated/decode-data-xml.js
+var require_decode_data_xml = __commonJS({
+  "node_modules/entities/lib/generated/decode-data-xml.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.default = new Uint16Array(
+      // prettier-ignore
+      "\u0200aglq	\x1B\u026D\0\0p;\u4026os;\u4027t;\u403Et;\u403Cuot;\u4022".split("").map(function(c4) {
+        return c4.charCodeAt(0);
+      })
+    );
+  }
+});
+
+// node_modules/entities/lib/decode_codepoint.js
+var require_decode_codepoint = __commonJS({
+  "node_modules/entities/lib/decode_codepoint.js"(exports) {
+    "use strict";
+    var _a;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.replaceCodePoint = exports.fromCodePoint = void 0;
+    var decodeMap = /* @__PURE__ */ new Map([
+      [0, 65533],
+      // C1 Unicode control character reference replacements
+      [128, 8364],
+      [130, 8218],
+      [131, 402],
+      [132, 8222],
+      [133, 8230],
+      [134, 8224],
+      [135, 8225],
+      [136, 710],
+      [137, 8240],
+      [138, 352],
+      [139, 8249],
+      [140, 338],
+      [142, 381],
+      [145, 8216],
+      [146, 8217],
+      [147, 8220],
+      [148, 8221],
+      [149, 8226],
+      [150, 8211],
+      [151, 8212],
+      [152, 732],
+      [153, 8482],
+      [154, 353],
+      [155, 8250],
+      [156, 339],
+      [158, 382],
+      [159, 376]
+    ]);
+    exports.fromCodePoint = // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, node/no-unsupported-features/es-builtins
+    (_a = String.fromCodePoint) !== null && _a !== void 0 ? _a : function(codePoint) {
+      var output = "";
+      if (codePoint > 65535) {
+        codePoint -= 65536;
+        output += String.fromCharCode(codePoint >>> 10 & 1023 | 55296);
+        codePoint = 56320 | codePoint & 1023;
+      }
+      output += String.fromCharCode(codePoint);
+      return output;
+    };
+    function replaceCodePoint(codePoint) {
+      var _a2;
+      if (codePoint >= 55296 && codePoint <= 57343 || codePoint > 1114111) {
+        return 65533;
+      }
+      return (_a2 = decodeMap.get(codePoint)) !== null && _a2 !== void 0 ? _a2 : codePoint;
+    }
+    exports.replaceCodePoint = replaceCodePoint;
+    function decodeCodePoint(codePoint) {
+      return (0, exports.fromCodePoint)(replaceCodePoint(codePoint));
+    }
+    exports.default = decodeCodePoint;
+  }
+});
+
+// node_modules/entities/lib/decode.js
+var require_decode = __commonJS({
+  "node_modules/entities/lib/decode.js"(exports) {
+    "use strict";
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      var desc = Object.getOwnPropertyDescriptor(m2, k2);
+      if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m2[k2];
+        } };
+      }
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      o6[k22] = m2[k2];
+    }));
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o6, v2) {
+      Object.defineProperty(o6, "default", { enumerable: true, value: v2 });
+    }) : function(o6, v2) {
+      o6["default"] = v2;
+    });
+    var __importStar = exports && exports.__importStar || function(mod) {
+      if (mod && mod.__esModule) return mod;
+      var result = {};
+      if (mod != null) {
+        for (var k2 in mod) if (k2 !== "default" && Object.prototype.hasOwnProperty.call(mod, k2)) __createBinding(result, mod, k2);
+      }
+      __setModuleDefault(result, mod);
+      return result;
+    };
+    var __importDefault = exports && exports.__importDefault || function(mod) {
+      return mod && mod.__esModule ? mod : { "default": mod };
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.decodeXML = exports.decodeHTMLStrict = exports.decodeHTMLAttribute = exports.decodeHTML = exports.determineBranch = exports.EntityDecoder = exports.DecodingMode = exports.BinTrieFlags = exports.fromCodePoint = exports.replaceCodePoint = exports.decodeCodePoint = exports.xmlDecodeTree = exports.htmlDecodeTree = void 0;
+    var decode_data_html_js_1 = __importDefault(require_decode_data_html());
+    exports.htmlDecodeTree = decode_data_html_js_1.default;
+    var decode_data_xml_js_1 = __importDefault(require_decode_data_xml());
+    exports.xmlDecodeTree = decode_data_xml_js_1.default;
+    var decode_codepoint_js_1 = __importStar(require_decode_codepoint());
+    exports.decodeCodePoint = decode_codepoint_js_1.default;
+    var decode_codepoint_js_2 = require_decode_codepoint();
+    Object.defineProperty(exports, "replaceCodePoint", { enumerable: true, get: function() {
+      return decode_codepoint_js_2.replaceCodePoint;
+    } });
+    Object.defineProperty(exports, "fromCodePoint", { enumerable: true, get: function() {
+      return decode_codepoint_js_2.fromCodePoint;
+    } });
+    var CharCodes;
+    (function(CharCodes2) {
+      CharCodes2[CharCodes2["NUM"] = 35] = "NUM";
+      CharCodes2[CharCodes2["SEMI"] = 59] = "SEMI";
+      CharCodes2[CharCodes2["EQUALS"] = 61] = "EQUALS";
+      CharCodes2[CharCodes2["ZERO"] = 48] = "ZERO";
+      CharCodes2[CharCodes2["NINE"] = 57] = "NINE";
+      CharCodes2[CharCodes2["LOWER_A"] = 97] = "LOWER_A";
+      CharCodes2[CharCodes2["LOWER_F"] = 102] = "LOWER_F";
+      CharCodes2[CharCodes2["LOWER_X"] = 120] = "LOWER_X";
+      CharCodes2[CharCodes2["LOWER_Z"] = 122] = "LOWER_Z";
+      CharCodes2[CharCodes2["UPPER_A"] = 65] = "UPPER_A";
+      CharCodes2[CharCodes2["UPPER_F"] = 70] = "UPPER_F";
+      CharCodes2[CharCodes2["UPPER_Z"] = 90] = "UPPER_Z";
+    })(CharCodes || (CharCodes = {}));
+    var TO_LOWER_BIT = 32;
+    var BinTrieFlags;
+    (function(BinTrieFlags2) {
+      BinTrieFlags2[BinTrieFlags2["VALUE_LENGTH"] = 49152] = "VALUE_LENGTH";
+      BinTrieFlags2[BinTrieFlags2["BRANCH_LENGTH"] = 16256] = "BRANCH_LENGTH";
+      BinTrieFlags2[BinTrieFlags2["JUMP_TABLE"] = 127] = "JUMP_TABLE";
+    })(BinTrieFlags = exports.BinTrieFlags || (exports.BinTrieFlags = {}));
+    function isNumber(code) {
+      return code >= CharCodes.ZERO && code <= CharCodes.NINE;
+    }
+    function isHexadecimalCharacter(code) {
+      return code >= CharCodes.UPPER_A && code <= CharCodes.UPPER_F || code >= CharCodes.LOWER_A && code <= CharCodes.LOWER_F;
+    }
+    function isAsciiAlphaNumeric(code) {
+      return code >= CharCodes.UPPER_A && code <= CharCodes.UPPER_Z || code >= CharCodes.LOWER_A && code <= CharCodes.LOWER_Z || isNumber(code);
+    }
+    function isEntityInAttributeInvalidEnd(code) {
+      return code === CharCodes.EQUALS || isAsciiAlphaNumeric(code);
+    }
+    var EntityDecoderState;
+    (function(EntityDecoderState2) {
+      EntityDecoderState2[EntityDecoderState2["EntityStart"] = 0] = "EntityStart";
+      EntityDecoderState2[EntityDecoderState2["NumericStart"] = 1] = "NumericStart";
+      EntityDecoderState2[EntityDecoderState2["NumericDecimal"] = 2] = "NumericDecimal";
+      EntityDecoderState2[EntityDecoderState2["NumericHex"] = 3] = "NumericHex";
+      EntityDecoderState2[EntityDecoderState2["NamedEntity"] = 4] = "NamedEntity";
+    })(EntityDecoderState || (EntityDecoderState = {}));
+    var DecodingMode;
+    (function(DecodingMode2) {
+      DecodingMode2[DecodingMode2["Legacy"] = 0] = "Legacy";
+      DecodingMode2[DecodingMode2["Strict"] = 1] = "Strict";
+      DecodingMode2[DecodingMode2["Attribute"] = 2] = "Attribute";
+    })(DecodingMode = exports.DecodingMode || (exports.DecodingMode = {}));
+    var EntityDecoder = (
+      /** @class */
+      (function() {
+        function EntityDecoder2(decodeTree, emitCodePoint, errors) {
+          this.decodeTree = decodeTree;
+          this.emitCodePoint = emitCodePoint;
+          this.errors = errors;
+          this.state = EntityDecoderState.EntityStart;
+          this.consumed = 1;
+          this.result = 0;
+          this.treeIndex = 0;
+          this.excess = 1;
+          this.decodeMode = DecodingMode.Strict;
+        }
+        EntityDecoder2.prototype.startEntity = function(decodeMode) {
+          this.decodeMode = decodeMode;
+          this.state = EntityDecoderState.EntityStart;
+          this.result = 0;
+          this.treeIndex = 0;
+          this.excess = 1;
+          this.consumed = 1;
+        };
+        EntityDecoder2.prototype.write = function(str, offset) {
+          switch (this.state) {
+            case EntityDecoderState.EntityStart: {
+              if (str.charCodeAt(offset) === CharCodes.NUM) {
+                this.state = EntityDecoderState.NumericStart;
+                this.consumed += 1;
+                return this.stateNumericStart(str, offset + 1);
+              }
+              this.state = EntityDecoderState.NamedEntity;
+              return this.stateNamedEntity(str, offset);
+            }
+            case EntityDecoderState.NumericStart: {
+              return this.stateNumericStart(str, offset);
+            }
+            case EntityDecoderState.NumericDecimal: {
+              return this.stateNumericDecimal(str, offset);
+            }
+            case EntityDecoderState.NumericHex: {
+              return this.stateNumericHex(str, offset);
+            }
+            case EntityDecoderState.NamedEntity: {
+              return this.stateNamedEntity(str, offset);
+            }
+          }
+        };
+        EntityDecoder2.prototype.stateNumericStart = function(str, offset) {
+          if (offset >= str.length) {
+            return -1;
+          }
+          if ((str.charCodeAt(offset) | TO_LOWER_BIT) === CharCodes.LOWER_X) {
+            this.state = EntityDecoderState.NumericHex;
+            this.consumed += 1;
+            return this.stateNumericHex(str, offset + 1);
+          }
+          this.state = EntityDecoderState.NumericDecimal;
+          return this.stateNumericDecimal(str, offset);
+        };
+        EntityDecoder2.prototype.addToNumericResult = function(str, start, end, base) {
+          if (start !== end) {
+            var digitCount = end - start;
+            this.result = this.result * Math.pow(base, digitCount) + parseInt(str.substr(start, digitCount), base);
+            this.consumed += digitCount;
+          }
+        };
+        EntityDecoder2.prototype.stateNumericHex = function(str, offset) {
+          var startIdx = offset;
+          while (offset < str.length) {
+            var char = str.charCodeAt(offset);
+            if (isNumber(char) || isHexadecimalCharacter(char)) {
+              offset += 1;
+            } else {
+              this.addToNumericResult(str, startIdx, offset, 16);
+              return this.emitNumericEntity(char, 3);
+            }
+          }
+          this.addToNumericResult(str, startIdx, offset, 16);
+          return -1;
+        };
+        EntityDecoder2.prototype.stateNumericDecimal = function(str, offset) {
+          var startIdx = offset;
+          while (offset < str.length) {
+            var char = str.charCodeAt(offset);
+            if (isNumber(char)) {
+              offset += 1;
+            } else {
+              this.addToNumericResult(str, startIdx, offset, 10);
+              return this.emitNumericEntity(char, 2);
+            }
+          }
+          this.addToNumericResult(str, startIdx, offset, 10);
+          return -1;
+        };
+        EntityDecoder2.prototype.emitNumericEntity = function(lastCp, expectedLength) {
+          var _a;
+          if (this.consumed <= expectedLength) {
+            (_a = this.errors) === null || _a === void 0 ? void 0 : _a.absenceOfDigitsInNumericCharacterReference(this.consumed);
+            return 0;
+          }
+          if (lastCp === CharCodes.SEMI) {
+            this.consumed += 1;
+          } else if (this.decodeMode === DecodingMode.Strict) {
+            return 0;
+          }
+          this.emitCodePoint((0, decode_codepoint_js_1.replaceCodePoint)(this.result), this.consumed);
+          if (this.errors) {
+            if (lastCp !== CharCodes.SEMI) {
+              this.errors.missingSemicolonAfterCharacterReference();
+            }
+            this.errors.validateNumericCharacterReference(this.result);
+          }
+          return this.consumed;
+        };
+        EntityDecoder2.prototype.stateNamedEntity = function(str, offset) {
+          var decodeTree = this.decodeTree;
+          var current = decodeTree[this.treeIndex];
+          var valueLength = (current & BinTrieFlags.VALUE_LENGTH) >> 14;
+          for (; offset < str.length; offset++, this.excess++) {
+            var char = str.charCodeAt(offset);
+            this.treeIndex = determineBranch(decodeTree, current, this.treeIndex + Math.max(1, valueLength), char);
+            if (this.treeIndex < 0) {
+              return this.result === 0 || // If we are parsing an attribute
+              this.decodeMode === DecodingMode.Attribute && // We shouldn't have consumed any characters after the entity,
+              (valueLength === 0 || // And there should be no invalid characters.
+              isEntityInAttributeInvalidEnd(char)) ? 0 : this.emitNotTerminatedNamedEntity();
+            }
+            current = decodeTree[this.treeIndex];
+            valueLength = (current & BinTrieFlags.VALUE_LENGTH) >> 14;
+            if (valueLength !== 0) {
+              if (char === CharCodes.SEMI) {
+                return this.emitNamedEntityData(this.treeIndex, valueLength, this.consumed + this.excess);
+              }
+              if (this.decodeMode !== DecodingMode.Strict) {
+                this.result = this.treeIndex;
+                this.consumed += this.excess;
+                this.excess = 0;
+              }
+            }
+          }
+          return -1;
+        };
+        EntityDecoder2.prototype.emitNotTerminatedNamedEntity = function() {
+          var _a;
+          var _b = this, result = _b.result, decodeTree = _b.decodeTree;
+          var valueLength = (decodeTree[result] & BinTrieFlags.VALUE_LENGTH) >> 14;
+          this.emitNamedEntityData(result, valueLength, this.consumed);
+          (_a = this.errors) === null || _a === void 0 ? void 0 : _a.missingSemicolonAfterCharacterReference();
+          return this.consumed;
+        };
+        EntityDecoder2.prototype.emitNamedEntityData = function(result, valueLength, consumed) {
+          var decodeTree = this.decodeTree;
+          this.emitCodePoint(valueLength === 1 ? decodeTree[result] & ~BinTrieFlags.VALUE_LENGTH : decodeTree[result + 1], consumed);
+          if (valueLength === 3) {
+            this.emitCodePoint(decodeTree[result + 2], consumed);
+          }
+          return consumed;
+        };
+        EntityDecoder2.prototype.end = function() {
+          var _a;
+          switch (this.state) {
+            case EntityDecoderState.NamedEntity: {
+              return this.result !== 0 && (this.decodeMode !== DecodingMode.Attribute || this.result === this.treeIndex) ? this.emitNotTerminatedNamedEntity() : 0;
+            }
+            // Otherwise, emit a numeric entity if we have one.
+            case EntityDecoderState.NumericDecimal: {
+              return this.emitNumericEntity(0, 2);
+            }
+            case EntityDecoderState.NumericHex: {
+              return this.emitNumericEntity(0, 3);
+            }
+            case EntityDecoderState.NumericStart: {
+              (_a = this.errors) === null || _a === void 0 ? void 0 : _a.absenceOfDigitsInNumericCharacterReference(this.consumed);
+              return 0;
+            }
+            case EntityDecoderState.EntityStart: {
+              return 0;
+            }
+          }
+        };
+        return EntityDecoder2;
+      })()
+    );
+    exports.EntityDecoder = EntityDecoder;
+    function getDecoder(decodeTree) {
+      var ret = "";
+      var decoder = new EntityDecoder(decodeTree, function(str) {
+        return ret += (0, decode_codepoint_js_1.fromCodePoint)(str);
+      });
+      return function decodeWithTrie(str, decodeMode) {
+        var lastIndex = 0;
+        var offset = 0;
+        while ((offset = str.indexOf("&", offset)) >= 0) {
+          ret += str.slice(lastIndex, offset);
+          decoder.startEntity(decodeMode);
+          var len = decoder.write(
+            str,
+            // Skip the "&"
+            offset + 1
+          );
+          if (len < 0) {
+            lastIndex = offset + decoder.end();
+            break;
+          }
+          lastIndex = offset + len;
+          offset = len === 0 ? lastIndex + 1 : lastIndex;
+        }
+        var result = ret + str.slice(lastIndex);
+        ret = "";
+        return result;
+      };
+    }
+    function determineBranch(decodeTree, current, nodeIdx, char) {
+      var branchCount = (current & BinTrieFlags.BRANCH_LENGTH) >> 7;
+      var jumpOffset = current & BinTrieFlags.JUMP_TABLE;
+      if (branchCount === 0) {
+        return jumpOffset !== 0 && char === jumpOffset ? nodeIdx : -1;
+      }
+      if (jumpOffset) {
+        var value = char - jumpOffset;
+        return value < 0 || value >= branchCount ? -1 : decodeTree[nodeIdx + value] - 1;
+      }
+      var lo = nodeIdx;
+      var hi = lo + branchCount - 1;
+      while (lo <= hi) {
+        var mid = lo + hi >>> 1;
+        var midVal = decodeTree[mid];
+        if (midVal < char) {
+          lo = mid + 1;
+        } else if (midVal > char) {
+          hi = mid - 1;
+        } else {
+          return decodeTree[mid + branchCount];
+        }
+      }
+      return -1;
+    }
+    exports.determineBranch = determineBranch;
+    var htmlDecoder = getDecoder(decode_data_html_js_1.default);
+    var xmlDecoder = getDecoder(decode_data_xml_js_1.default);
+    function decodeHTML(str, mode) {
+      if (mode === void 0) {
+        mode = DecodingMode.Legacy;
+      }
+      return htmlDecoder(str, mode);
+    }
+    exports.decodeHTML = decodeHTML;
+    function decodeHTMLAttribute(str) {
+      return htmlDecoder(str, DecodingMode.Attribute);
+    }
+    exports.decodeHTMLAttribute = decodeHTMLAttribute;
+    function decodeHTMLStrict(str) {
+      return htmlDecoder(str, DecodingMode.Strict);
+    }
+    exports.decodeHTMLStrict = decodeHTMLStrict;
+    function decodeXML(str) {
+      return xmlDecoder(str, DecodingMode.Strict);
+    }
+    exports.decodeXML = decodeXML;
+  }
+});
+
+// node_modules/htmlparser2/lib/Tokenizer.js
+var require_Tokenizer = __commonJS({
+  "node_modules/htmlparser2/lib/Tokenizer.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.QuoteType = void 0;
+    var decode_js_1 = require_decode();
+    var CharCodes;
+    (function(CharCodes2) {
+      CharCodes2[CharCodes2["Tab"] = 9] = "Tab";
+      CharCodes2[CharCodes2["NewLine"] = 10] = "NewLine";
+      CharCodes2[CharCodes2["FormFeed"] = 12] = "FormFeed";
+      CharCodes2[CharCodes2["CarriageReturn"] = 13] = "CarriageReturn";
+      CharCodes2[CharCodes2["Space"] = 32] = "Space";
+      CharCodes2[CharCodes2["ExclamationMark"] = 33] = "ExclamationMark";
+      CharCodes2[CharCodes2["Number"] = 35] = "Number";
+      CharCodes2[CharCodes2["Amp"] = 38] = "Amp";
+      CharCodes2[CharCodes2["SingleQuote"] = 39] = "SingleQuote";
+      CharCodes2[CharCodes2["DoubleQuote"] = 34] = "DoubleQuote";
+      CharCodes2[CharCodes2["Dash"] = 45] = "Dash";
+      CharCodes2[CharCodes2["Slash"] = 47] = "Slash";
+      CharCodes2[CharCodes2["Zero"] = 48] = "Zero";
+      CharCodes2[CharCodes2["Nine"] = 57] = "Nine";
+      CharCodes2[CharCodes2["Semi"] = 59] = "Semi";
+      CharCodes2[CharCodes2["Lt"] = 60] = "Lt";
+      CharCodes2[CharCodes2["Eq"] = 61] = "Eq";
+      CharCodes2[CharCodes2["Gt"] = 62] = "Gt";
+      CharCodes2[CharCodes2["Questionmark"] = 63] = "Questionmark";
+      CharCodes2[CharCodes2["UpperA"] = 65] = "UpperA";
+      CharCodes2[CharCodes2["LowerA"] = 97] = "LowerA";
+      CharCodes2[CharCodes2["UpperF"] = 70] = "UpperF";
+      CharCodes2[CharCodes2["LowerF"] = 102] = "LowerF";
+      CharCodes2[CharCodes2["UpperZ"] = 90] = "UpperZ";
+      CharCodes2[CharCodes2["LowerZ"] = 122] = "LowerZ";
+      CharCodes2[CharCodes2["LowerX"] = 120] = "LowerX";
+      CharCodes2[CharCodes2["OpeningSquareBracket"] = 91] = "OpeningSquareBracket";
+    })(CharCodes || (CharCodes = {}));
+    var State;
+    (function(State2) {
+      State2[State2["Text"] = 1] = "Text";
+      State2[State2["BeforeTagName"] = 2] = "BeforeTagName";
+      State2[State2["InTagName"] = 3] = "InTagName";
+      State2[State2["InSelfClosingTag"] = 4] = "InSelfClosingTag";
+      State2[State2["BeforeClosingTagName"] = 5] = "BeforeClosingTagName";
+      State2[State2["InClosingTagName"] = 6] = "InClosingTagName";
+      State2[State2["AfterClosingTagName"] = 7] = "AfterClosingTagName";
+      State2[State2["BeforeAttributeName"] = 8] = "BeforeAttributeName";
+      State2[State2["InAttributeName"] = 9] = "InAttributeName";
+      State2[State2["AfterAttributeName"] = 10] = "AfterAttributeName";
+      State2[State2["BeforeAttributeValue"] = 11] = "BeforeAttributeValue";
+      State2[State2["InAttributeValueDq"] = 12] = "InAttributeValueDq";
+      State2[State2["InAttributeValueSq"] = 13] = "InAttributeValueSq";
+      State2[State2["InAttributeValueNq"] = 14] = "InAttributeValueNq";
+      State2[State2["BeforeDeclaration"] = 15] = "BeforeDeclaration";
+      State2[State2["InDeclaration"] = 16] = "InDeclaration";
+      State2[State2["InProcessingInstruction"] = 17] = "InProcessingInstruction";
+      State2[State2["BeforeComment"] = 18] = "BeforeComment";
+      State2[State2["CDATASequence"] = 19] = "CDATASequence";
+      State2[State2["InSpecialComment"] = 20] = "InSpecialComment";
+      State2[State2["InCommentLike"] = 21] = "InCommentLike";
+      State2[State2["BeforeSpecialS"] = 22] = "BeforeSpecialS";
+      State2[State2["BeforeSpecialT"] = 23] = "BeforeSpecialT";
+      State2[State2["SpecialStartSequence"] = 24] = "SpecialStartSequence";
+      State2[State2["InSpecialTag"] = 25] = "InSpecialTag";
+      State2[State2["InEntity"] = 26] = "InEntity";
+    })(State || (State = {}));
+    function isWhitespace(c4) {
+      return c4 === CharCodes.Space || c4 === CharCodes.NewLine || c4 === CharCodes.Tab || c4 === CharCodes.FormFeed || c4 === CharCodes.CarriageReturn;
+    }
+    function isEndOfTagSection(c4) {
+      return c4 === CharCodes.Slash || c4 === CharCodes.Gt || isWhitespace(c4);
+    }
+    function isASCIIAlpha(c4) {
+      return c4 >= CharCodes.LowerA && c4 <= CharCodes.LowerZ || c4 >= CharCodes.UpperA && c4 <= CharCodes.UpperZ;
+    }
+    var QuoteType;
+    (function(QuoteType2) {
+      QuoteType2[QuoteType2["NoValue"] = 0] = "NoValue";
+      QuoteType2[QuoteType2["Unquoted"] = 1] = "Unquoted";
+      QuoteType2[QuoteType2["Single"] = 2] = "Single";
+      QuoteType2[QuoteType2["Double"] = 3] = "Double";
+    })(QuoteType || (exports.QuoteType = QuoteType = {}));
+    var Sequences = {
+      Cdata: new Uint8Array([67, 68, 65, 84, 65, 91]),
+      // CDATA[
+      CdataEnd: new Uint8Array([93, 93, 62]),
+      // ]]>
+      CommentEnd: new Uint8Array([45, 45, 62]),
+      // `-->`
+      ScriptEnd: new Uint8Array([60, 47, 115, 99, 114, 105, 112, 116]),
+      // `<\/script`
+      StyleEnd: new Uint8Array([60, 47, 115, 116, 121, 108, 101]),
+      // `</style`
+      TitleEnd: new Uint8Array([60, 47, 116, 105, 116, 108, 101]),
+      // `</title`
+      TextareaEnd: new Uint8Array([
+        60,
+        47,
+        116,
+        101,
+        120,
+        116,
+        97,
+        114,
+        101,
+        97
+      ])
+      // `</textarea`
+    };
+    var Tokenizer = (
+      /** @class */
+      (function() {
+        function Tokenizer2(_a, cbs) {
+          var _b = _a.xmlMode, xmlMode = _b === void 0 ? false : _b, _c = _a.decodeEntities, decodeEntities = _c === void 0 ? true : _c;
+          var _this = this;
+          this.cbs = cbs;
+          this.state = State.Text;
+          this.buffer = "";
+          this.sectionStart = 0;
+          this.index = 0;
+          this.entityStart = 0;
+          this.baseState = State.Text;
+          this.isSpecial = false;
+          this.running = true;
+          this.offset = 0;
+          this.currentSequence = void 0;
+          this.sequenceIndex = 0;
+          this.xmlMode = xmlMode;
+          this.decodeEntities = decodeEntities;
+          this.entityDecoder = new decode_js_1.EntityDecoder(xmlMode ? decode_js_1.xmlDecodeTree : decode_js_1.htmlDecodeTree, function(cp, consumed) {
+            return _this.emitCodePoint(cp, consumed);
+          });
+        }
+        Tokenizer2.prototype.reset = function() {
+          this.state = State.Text;
+          this.buffer = "";
+          this.sectionStart = 0;
+          this.index = 0;
+          this.baseState = State.Text;
+          this.currentSequence = void 0;
+          this.running = true;
+          this.offset = 0;
+        };
+        Tokenizer2.prototype.write = function(chunk) {
+          this.offset += this.buffer.length;
+          this.buffer = chunk;
+          this.parse();
+        };
+        Tokenizer2.prototype.end = function() {
+          if (this.running)
+            this.finish();
+        };
+        Tokenizer2.prototype.pause = function() {
+          this.running = false;
+        };
+        Tokenizer2.prototype.resume = function() {
+          this.running = true;
+          if (this.index < this.buffer.length + this.offset) {
+            this.parse();
+          }
+        };
+        Tokenizer2.prototype.stateText = function(c4) {
+          if (c4 === CharCodes.Lt || !this.decodeEntities && this.fastForwardTo(CharCodes.Lt)) {
+            if (this.index > this.sectionStart) {
+              this.cbs.ontext(this.sectionStart, this.index);
+            }
+            this.state = State.BeforeTagName;
+            this.sectionStart = this.index;
+          } else if (this.decodeEntities && c4 === CharCodes.Amp) {
+            this.startEntity();
+          }
+        };
+        Tokenizer2.prototype.stateSpecialStartSequence = function(c4) {
+          var isEnd = this.sequenceIndex === this.currentSequence.length;
+          var isMatch = isEnd ? (
+            // If we are at the end of the sequence, make sure the tag name has ended
+            isEndOfTagSection(c4)
+          ) : (
+            // Otherwise, do a case-insensitive comparison
+            (c4 | 32) === this.currentSequence[this.sequenceIndex]
+          );
+          if (!isMatch) {
+            this.isSpecial = false;
+          } else if (!isEnd) {
+            this.sequenceIndex++;
+            return;
+          }
+          this.sequenceIndex = 0;
+          this.state = State.InTagName;
+          this.stateInTagName(c4);
+        };
+        Tokenizer2.prototype.stateInSpecialTag = function(c4) {
+          if (this.sequenceIndex === this.currentSequence.length) {
+            if (c4 === CharCodes.Gt || isWhitespace(c4)) {
+              var endOfText = this.index - this.currentSequence.length;
+              if (this.sectionStart < endOfText) {
+                var actualIndex = this.index;
+                this.index = endOfText;
+                this.cbs.ontext(this.sectionStart, endOfText);
+                this.index = actualIndex;
+              }
+              this.isSpecial = false;
+              this.sectionStart = endOfText + 2;
+              this.stateInClosingTagName(c4);
+              return;
+            }
+            this.sequenceIndex = 0;
+          }
+          if ((c4 | 32) === this.currentSequence[this.sequenceIndex]) {
+            this.sequenceIndex += 1;
+          } else if (this.sequenceIndex === 0) {
+            if (this.currentSequence === Sequences.TitleEnd) {
+              if (this.decodeEntities && c4 === CharCodes.Amp) {
+                this.startEntity();
+              }
+            } else if (this.fastForwardTo(CharCodes.Lt)) {
+              this.sequenceIndex = 1;
+            }
+          } else {
+            this.sequenceIndex = Number(c4 === CharCodes.Lt);
+          }
+        };
+        Tokenizer2.prototype.stateCDATASequence = function(c4) {
+          if (c4 === Sequences.Cdata[this.sequenceIndex]) {
+            if (++this.sequenceIndex === Sequences.Cdata.length) {
+              this.state = State.InCommentLike;
+              this.currentSequence = Sequences.CdataEnd;
+              this.sequenceIndex = 0;
+              this.sectionStart = this.index + 1;
+            }
+          } else {
+            this.sequenceIndex = 0;
+            this.state = State.InDeclaration;
+            this.stateInDeclaration(c4);
+          }
+        };
+        Tokenizer2.prototype.fastForwardTo = function(c4) {
+          while (++this.index < this.buffer.length + this.offset) {
+            if (this.buffer.charCodeAt(this.index - this.offset) === c4) {
+              return true;
+            }
+          }
+          this.index = this.buffer.length + this.offset - 1;
+          return false;
+        };
+        Tokenizer2.prototype.stateInCommentLike = function(c4) {
+          if (c4 === this.currentSequence[this.sequenceIndex]) {
+            if (++this.sequenceIndex === this.currentSequence.length) {
+              if (this.currentSequence === Sequences.CdataEnd) {
+                this.cbs.oncdata(this.sectionStart, this.index, 2);
+              } else {
+                this.cbs.oncomment(this.sectionStart, this.index, 2);
+              }
+              this.sequenceIndex = 0;
+              this.sectionStart = this.index + 1;
+              this.state = State.Text;
+            }
+          } else if (this.sequenceIndex === 0) {
+            if (this.fastForwardTo(this.currentSequence[0])) {
+              this.sequenceIndex = 1;
+            }
+          } else if (c4 !== this.currentSequence[this.sequenceIndex - 1]) {
+            this.sequenceIndex = 0;
+          }
+        };
+        Tokenizer2.prototype.isTagStartChar = function(c4) {
+          return this.xmlMode ? !isEndOfTagSection(c4) : isASCIIAlpha(c4);
+        };
+        Tokenizer2.prototype.startSpecial = function(sequence, offset) {
+          this.isSpecial = true;
+          this.currentSequence = sequence;
+          this.sequenceIndex = offset;
+          this.state = State.SpecialStartSequence;
+        };
+        Tokenizer2.prototype.stateBeforeTagName = function(c4) {
+          if (c4 === CharCodes.ExclamationMark) {
+            this.state = State.BeforeDeclaration;
+            this.sectionStart = this.index + 1;
+          } else if (c4 === CharCodes.Questionmark) {
+            this.state = State.InProcessingInstruction;
+            this.sectionStart = this.index + 1;
+          } else if (this.isTagStartChar(c4)) {
+            var lower = c4 | 32;
+            this.sectionStart = this.index;
+            if (this.xmlMode) {
+              this.state = State.InTagName;
+            } else if (lower === Sequences.ScriptEnd[2]) {
+              this.state = State.BeforeSpecialS;
+            } else if (lower === Sequences.TitleEnd[2]) {
+              this.state = State.BeforeSpecialT;
+            } else {
+              this.state = State.InTagName;
+            }
+          } else if (c4 === CharCodes.Slash) {
+            this.state = State.BeforeClosingTagName;
+          } else {
+            this.state = State.Text;
+            this.stateText(c4);
+          }
+        };
+        Tokenizer2.prototype.stateInTagName = function(c4) {
+          if (isEndOfTagSection(c4)) {
+            this.cbs.onopentagname(this.sectionStart, this.index);
+            this.sectionStart = -1;
+            this.state = State.BeforeAttributeName;
+            this.stateBeforeAttributeName(c4);
+          }
+        };
+        Tokenizer2.prototype.stateBeforeClosingTagName = function(c4) {
+          if (isWhitespace(c4)) {
+          } else if (c4 === CharCodes.Gt) {
+            this.state = State.Text;
+          } else {
+            this.state = this.isTagStartChar(c4) ? State.InClosingTagName : State.InSpecialComment;
+            this.sectionStart = this.index;
+          }
+        };
+        Tokenizer2.prototype.stateInClosingTagName = function(c4) {
+          if (c4 === CharCodes.Gt || isWhitespace(c4)) {
+            this.cbs.onclosetag(this.sectionStart, this.index);
+            this.sectionStart = -1;
+            this.state = State.AfterClosingTagName;
+            this.stateAfterClosingTagName(c4);
+          }
+        };
+        Tokenizer2.prototype.stateAfterClosingTagName = function(c4) {
+          if (c4 === CharCodes.Gt || this.fastForwardTo(CharCodes.Gt)) {
+            this.state = State.Text;
+            this.sectionStart = this.index + 1;
+          }
+        };
+        Tokenizer2.prototype.stateBeforeAttributeName = function(c4) {
+          if (c4 === CharCodes.Gt) {
+            this.cbs.onopentagend(this.index);
+            if (this.isSpecial) {
+              this.state = State.InSpecialTag;
+              this.sequenceIndex = 0;
+            } else {
+              this.state = State.Text;
+            }
+            this.sectionStart = this.index + 1;
+          } else if (c4 === CharCodes.Slash) {
+            this.state = State.InSelfClosingTag;
+          } else if (!isWhitespace(c4)) {
+            this.state = State.InAttributeName;
+            this.sectionStart = this.index;
+          }
+        };
+        Tokenizer2.prototype.stateInSelfClosingTag = function(c4) {
+          if (c4 === CharCodes.Gt) {
+            this.cbs.onselfclosingtag(this.index);
+            this.state = State.Text;
+            this.sectionStart = this.index + 1;
+            this.isSpecial = false;
+          } else if (!isWhitespace(c4)) {
+            this.state = State.BeforeAttributeName;
+            this.stateBeforeAttributeName(c4);
+          }
+        };
+        Tokenizer2.prototype.stateInAttributeName = function(c4) {
+          if (c4 === CharCodes.Eq || isEndOfTagSection(c4)) {
+            this.cbs.onattribname(this.sectionStart, this.index);
+            this.sectionStart = this.index;
+            this.state = State.AfterAttributeName;
+            this.stateAfterAttributeName(c4);
+          }
+        };
+        Tokenizer2.prototype.stateAfterAttributeName = function(c4) {
+          if (c4 === CharCodes.Eq) {
+            this.state = State.BeforeAttributeValue;
+          } else if (c4 === CharCodes.Slash || c4 === CharCodes.Gt) {
+            this.cbs.onattribend(QuoteType.NoValue, this.sectionStart);
+            this.sectionStart = -1;
+            this.state = State.BeforeAttributeName;
+            this.stateBeforeAttributeName(c4);
+          } else if (!isWhitespace(c4)) {
+            this.cbs.onattribend(QuoteType.NoValue, this.sectionStart);
+            this.state = State.InAttributeName;
+            this.sectionStart = this.index;
+          }
+        };
+        Tokenizer2.prototype.stateBeforeAttributeValue = function(c4) {
+          if (c4 === CharCodes.DoubleQuote) {
+            this.state = State.InAttributeValueDq;
+            this.sectionStart = this.index + 1;
+          } else if (c4 === CharCodes.SingleQuote) {
+            this.state = State.InAttributeValueSq;
+            this.sectionStart = this.index + 1;
+          } else if (!isWhitespace(c4)) {
+            this.sectionStart = this.index;
+            this.state = State.InAttributeValueNq;
+            this.stateInAttributeValueNoQuotes(c4);
+          }
+        };
+        Tokenizer2.prototype.handleInAttributeValue = function(c4, quote) {
+          if (c4 === quote || !this.decodeEntities && this.fastForwardTo(quote)) {
+            this.cbs.onattribdata(this.sectionStart, this.index);
+            this.sectionStart = -1;
+            this.cbs.onattribend(quote === CharCodes.DoubleQuote ? QuoteType.Double : QuoteType.Single, this.index + 1);
+            this.state = State.BeforeAttributeName;
+          } else if (this.decodeEntities && c4 === CharCodes.Amp) {
+            this.startEntity();
+          }
+        };
+        Tokenizer2.prototype.stateInAttributeValueDoubleQuotes = function(c4) {
+          this.handleInAttributeValue(c4, CharCodes.DoubleQuote);
+        };
+        Tokenizer2.prototype.stateInAttributeValueSingleQuotes = function(c4) {
+          this.handleInAttributeValue(c4, CharCodes.SingleQuote);
+        };
+        Tokenizer2.prototype.stateInAttributeValueNoQuotes = function(c4) {
+          if (isWhitespace(c4) || c4 === CharCodes.Gt) {
+            this.cbs.onattribdata(this.sectionStart, this.index);
+            this.sectionStart = -1;
+            this.cbs.onattribend(QuoteType.Unquoted, this.index);
+            this.state = State.BeforeAttributeName;
+            this.stateBeforeAttributeName(c4);
+          } else if (this.decodeEntities && c4 === CharCodes.Amp) {
+            this.startEntity();
+          }
+        };
+        Tokenizer2.prototype.stateBeforeDeclaration = function(c4) {
+          if (c4 === CharCodes.OpeningSquareBracket) {
+            this.state = State.CDATASequence;
+            this.sequenceIndex = 0;
+          } else {
+            this.state = c4 === CharCodes.Dash ? State.BeforeComment : State.InDeclaration;
+          }
+        };
+        Tokenizer2.prototype.stateInDeclaration = function(c4) {
+          if (c4 === CharCodes.Gt || this.fastForwardTo(CharCodes.Gt)) {
+            this.cbs.ondeclaration(this.sectionStart, this.index);
+            this.state = State.Text;
+            this.sectionStart = this.index + 1;
+          }
+        };
+        Tokenizer2.prototype.stateInProcessingInstruction = function(c4) {
+          if (c4 === CharCodes.Gt || this.fastForwardTo(CharCodes.Gt)) {
+            this.cbs.onprocessinginstruction(this.sectionStart, this.index);
+            this.state = State.Text;
+            this.sectionStart = this.index + 1;
+          }
+        };
+        Tokenizer2.prototype.stateBeforeComment = function(c4) {
+          if (c4 === CharCodes.Dash) {
+            this.state = State.InCommentLike;
+            this.currentSequence = Sequences.CommentEnd;
+            this.sequenceIndex = 2;
+            this.sectionStart = this.index + 1;
+          } else {
+            this.state = State.InDeclaration;
+          }
+        };
+        Tokenizer2.prototype.stateInSpecialComment = function(c4) {
+          if (c4 === CharCodes.Gt || this.fastForwardTo(CharCodes.Gt)) {
+            this.cbs.oncomment(this.sectionStart, this.index, 0);
+            this.state = State.Text;
+            this.sectionStart = this.index + 1;
+          }
+        };
+        Tokenizer2.prototype.stateBeforeSpecialS = function(c4) {
+          var lower = c4 | 32;
+          if (lower === Sequences.ScriptEnd[3]) {
+            this.startSpecial(Sequences.ScriptEnd, 4);
+          } else if (lower === Sequences.StyleEnd[3]) {
+            this.startSpecial(Sequences.StyleEnd, 4);
+          } else {
+            this.state = State.InTagName;
+            this.stateInTagName(c4);
+          }
+        };
+        Tokenizer2.prototype.stateBeforeSpecialT = function(c4) {
+          var lower = c4 | 32;
+          if (lower === Sequences.TitleEnd[3]) {
+            this.startSpecial(Sequences.TitleEnd, 4);
+          } else if (lower === Sequences.TextareaEnd[3]) {
+            this.startSpecial(Sequences.TextareaEnd, 4);
+          } else {
+            this.state = State.InTagName;
+            this.stateInTagName(c4);
+          }
+        };
+        Tokenizer2.prototype.startEntity = function() {
+          this.baseState = this.state;
+          this.state = State.InEntity;
+          this.entityStart = this.index;
+          this.entityDecoder.startEntity(this.xmlMode ? decode_js_1.DecodingMode.Strict : this.baseState === State.Text || this.baseState === State.InSpecialTag ? decode_js_1.DecodingMode.Legacy : decode_js_1.DecodingMode.Attribute);
+        };
+        Tokenizer2.prototype.stateInEntity = function() {
+          var length = this.entityDecoder.write(this.buffer, this.index - this.offset);
+          if (length >= 0) {
+            this.state = this.baseState;
+            if (length === 0) {
+              this.index = this.entityStart;
+            }
+          } else {
+            this.index = this.offset + this.buffer.length - 1;
+          }
+        };
+        Tokenizer2.prototype.cleanup = function() {
+          if (this.running && this.sectionStart !== this.index) {
+            if (this.state === State.Text || this.state === State.InSpecialTag && this.sequenceIndex === 0) {
+              this.cbs.ontext(this.sectionStart, this.index);
+              this.sectionStart = this.index;
+            } else if (this.state === State.InAttributeValueDq || this.state === State.InAttributeValueSq || this.state === State.InAttributeValueNq) {
+              this.cbs.onattribdata(this.sectionStart, this.index);
+              this.sectionStart = this.index;
+            }
+          }
+        };
+        Tokenizer2.prototype.shouldContinue = function() {
+          return this.index < this.buffer.length + this.offset && this.running;
+        };
+        Tokenizer2.prototype.parse = function() {
+          while (this.shouldContinue()) {
+            var c4 = this.buffer.charCodeAt(this.index - this.offset);
+            switch (this.state) {
+              case State.Text: {
+                this.stateText(c4);
+                break;
+              }
+              case State.SpecialStartSequence: {
+                this.stateSpecialStartSequence(c4);
+                break;
+              }
+              case State.InSpecialTag: {
+                this.stateInSpecialTag(c4);
+                break;
+              }
+              case State.CDATASequence: {
+                this.stateCDATASequence(c4);
+                break;
+              }
+              case State.InAttributeValueDq: {
+                this.stateInAttributeValueDoubleQuotes(c4);
+                break;
+              }
+              case State.InAttributeName: {
+                this.stateInAttributeName(c4);
+                break;
+              }
+              case State.InCommentLike: {
+                this.stateInCommentLike(c4);
+                break;
+              }
+              case State.InSpecialComment: {
+                this.stateInSpecialComment(c4);
+                break;
+              }
+              case State.BeforeAttributeName: {
+                this.stateBeforeAttributeName(c4);
+                break;
+              }
+              case State.InTagName: {
+                this.stateInTagName(c4);
+                break;
+              }
+              case State.InClosingTagName: {
+                this.stateInClosingTagName(c4);
+                break;
+              }
+              case State.BeforeTagName: {
+                this.stateBeforeTagName(c4);
+                break;
+              }
+              case State.AfterAttributeName: {
+                this.stateAfterAttributeName(c4);
+                break;
+              }
+              case State.InAttributeValueSq: {
+                this.stateInAttributeValueSingleQuotes(c4);
+                break;
+              }
+              case State.BeforeAttributeValue: {
+                this.stateBeforeAttributeValue(c4);
+                break;
+              }
+              case State.BeforeClosingTagName: {
+                this.stateBeforeClosingTagName(c4);
+                break;
+              }
+              case State.AfterClosingTagName: {
+                this.stateAfterClosingTagName(c4);
+                break;
+              }
+              case State.BeforeSpecialS: {
+                this.stateBeforeSpecialS(c4);
+                break;
+              }
+              case State.BeforeSpecialT: {
+                this.stateBeforeSpecialT(c4);
+                break;
+              }
+              case State.InAttributeValueNq: {
+                this.stateInAttributeValueNoQuotes(c4);
+                break;
+              }
+              case State.InSelfClosingTag: {
+                this.stateInSelfClosingTag(c4);
+                break;
+              }
+              case State.InDeclaration: {
+                this.stateInDeclaration(c4);
+                break;
+              }
+              case State.BeforeDeclaration: {
+                this.stateBeforeDeclaration(c4);
+                break;
+              }
+              case State.BeforeComment: {
+                this.stateBeforeComment(c4);
+                break;
+              }
+              case State.InProcessingInstruction: {
+                this.stateInProcessingInstruction(c4);
+                break;
+              }
+              case State.InEntity: {
+                this.stateInEntity();
+                break;
+              }
+            }
+            this.index++;
+          }
+          this.cleanup();
+        };
+        Tokenizer2.prototype.finish = function() {
+          if (this.state === State.InEntity) {
+            this.entityDecoder.end();
+            this.state = this.baseState;
+          }
+          this.handleTrailingData();
+          this.cbs.onend();
+        };
+        Tokenizer2.prototype.handleTrailingData = function() {
+          var endIndex = this.buffer.length + this.offset;
+          if (this.sectionStart >= endIndex) {
+            return;
+          }
+          if (this.state === State.InCommentLike) {
+            if (this.currentSequence === Sequences.CdataEnd) {
+              this.cbs.oncdata(this.sectionStart, endIndex, 0);
+            } else {
+              this.cbs.oncomment(this.sectionStart, endIndex, 0);
+            }
+          } else if (this.state === State.InTagName || this.state === State.BeforeAttributeName || this.state === State.BeforeAttributeValue || this.state === State.AfterAttributeName || this.state === State.InAttributeName || this.state === State.InAttributeValueSq || this.state === State.InAttributeValueDq || this.state === State.InAttributeValueNq || this.state === State.InClosingTagName) {
+          } else {
+            this.cbs.ontext(this.sectionStart, endIndex);
+          }
+        };
+        Tokenizer2.prototype.emitCodePoint = function(cp, consumed) {
+          if (this.baseState !== State.Text && this.baseState !== State.InSpecialTag) {
+            if (this.sectionStart < this.entityStart) {
+              this.cbs.onattribdata(this.sectionStart, this.entityStart);
+            }
+            this.sectionStart = this.entityStart + consumed;
+            this.index = this.sectionStart - 1;
+            this.cbs.onattribentity(cp);
+          } else {
+            if (this.sectionStart < this.entityStart) {
+              this.cbs.ontext(this.sectionStart, this.entityStart);
+            }
+            this.sectionStart = this.entityStart + consumed;
+            this.index = this.sectionStart - 1;
+            this.cbs.ontextentity(cp, this.sectionStart);
+          }
+        };
+        return Tokenizer2;
+      })()
+    );
+    exports.default = Tokenizer;
+  }
+});
+
+// node_modules/htmlparser2/lib/Parser.js
+var require_Parser = __commonJS({
+  "node_modules/htmlparser2/lib/Parser.js"(exports) {
+    "use strict";
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      var desc = Object.getOwnPropertyDescriptor(m2, k2);
+      if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m2[k2];
+        } };
+      }
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      o6[k22] = m2[k2];
+    }));
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o6, v2) {
+      Object.defineProperty(o6, "default", { enumerable: true, value: v2 });
+    }) : function(o6, v2) {
+      o6["default"] = v2;
+    });
+    var __importStar = exports && exports.__importStar || function(mod) {
+      if (mod && mod.__esModule) return mod;
+      var result = {};
+      if (mod != null) {
+        for (var k2 in mod) if (k2 !== "default" && Object.prototype.hasOwnProperty.call(mod, k2)) __createBinding(result, mod, k2);
+      }
+      __setModuleDefault(result, mod);
+      return result;
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Parser = void 0;
+    var Tokenizer_js_1 = __importStar(require_Tokenizer());
+    var decode_js_1 = require_decode();
+    var formTags = /* @__PURE__ */ new Set([
+      "input",
+      "option",
+      "optgroup",
+      "select",
+      "button",
+      "datalist",
+      "textarea"
+    ]);
+    var pTag = /* @__PURE__ */ new Set(["p"]);
+    var tableSectionTags = /* @__PURE__ */ new Set(["thead", "tbody"]);
+    var ddtTags = /* @__PURE__ */ new Set(["dd", "dt"]);
+    var rtpTags = /* @__PURE__ */ new Set(["rt", "rp"]);
+    var openImpliesClose = /* @__PURE__ */ new Map([
+      ["tr", /* @__PURE__ */ new Set(["tr", "th", "td"])],
+      ["th", /* @__PURE__ */ new Set(["th"])],
+      ["td", /* @__PURE__ */ new Set(["thead", "th", "td"])],
+      ["body", /* @__PURE__ */ new Set(["head", "link", "script"])],
+      ["li", /* @__PURE__ */ new Set(["li"])],
+      ["p", pTag],
+      ["h1", pTag],
+      ["h2", pTag],
+      ["h3", pTag],
+      ["h4", pTag],
+      ["h5", pTag],
+      ["h6", pTag],
+      ["select", formTags],
+      ["input", formTags],
+      ["output", formTags],
+      ["button", formTags],
+      ["datalist", formTags],
+      ["textarea", formTags],
+      ["option", /* @__PURE__ */ new Set(["option"])],
+      ["optgroup", /* @__PURE__ */ new Set(["optgroup", "option"])],
+      ["dd", ddtTags],
+      ["dt", ddtTags],
+      ["address", pTag],
+      ["article", pTag],
+      ["aside", pTag],
+      ["blockquote", pTag],
+      ["details", pTag],
+      ["div", pTag],
+      ["dl", pTag],
+      ["fieldset", pTag],
+      ["figcaption", pTag],
+      ["figure", pTag],
+      ["footer", pTag],
+      ["form", pTag],
+      ["header", pTag],
+      ["hr", pTag],
+      ["main", pTag],
+      ["nav", pTag],
+      ["ol", pTag],
+      ["pre", pTag],
+      ["section", pTag],
+      ["table", pTag],
+      ["ul", pTag],
+      ["rt", rtpTags],
+      ["rp", rtpTags],
+      ["tbody", tableSectionTags],
+      ["tfoot", tableSectionTags]
+    ]);
+    var voidElements = /* @__PURE__ */ new Set([
+      "area",
+      "base",
+      "basefont",
+      "br",
+      "col",
+      "command",
+      "embed",
+      "frame",
+      "hr",
+      "img",
+      "input",
+      "isindex",
+      "keygen",
+      "link",
+      "meta",
+      "param",
+      "source",
+      "track",
+      "wbr"
+    ]);
+    var foreignContextElements = /* @__PURE__ */ new Set(["math", "svg"]);
+    var htmlIntegrationElements = /* @__PURE__ */ new Set([
+      "mi",
+      "mo",
+      "mn",
+      "ms",
+      "mtext",
+      "annotation-xml",
+      "foreignobject",
+      "desc",
+      "title"
+    ]);
+    var reNameEnd = /\s|\//;
+    var Parser = (
+      /** @class */
+      (function() {
+        function Parser2(cbs, options) {
+          if (options === void 0) {
+            options = {};
+          }
+          var _a, _b, _c, _d, _e, _f;
+          this.options = options;
+          this.startIndex = 0;
+          this.endIndex = 0;
+          this.openTagStart = 0;
+          this.tagname = "";
+          this.attribname = "";
+          this.attribvalue = "";
+          this.attribs = null;
+          this.stack = [];
+          this.buffers = [];
+          this.bufferOffset = 0;
+          this.writeIndex = 0;
+          this.ended = false;
+          this.cbs = cbs !== null && cbs !== void 0 ? cbs : {};
+          this.htmlMode = !this.options.xmlMode;
+          this.lowerCaseTagNames = (_a = options.lowerCaseTags) !== null && _a !== void 0 ? _a : this.htmlMode;
+          this.lowerCaseAttributeNames = (_b = options.lowerCaseAttributeNames) !== null && _b !== void 0 ? _b : this.htmlMode;
+          this.recognizeSelfClosing = (_c = options.recognizeSelfClosing) !== null && _c !== void 0 ? _c : !this.htmlMode;
+          this.tokenizer = new ((_d = options.Tokenizer) !== null && _d !== void 0 ? _d : Tokenizer_js_1.default)(this.options, this);
+          this.foreignContext = [!this.htmlMode];
+          (_f = (_e = this.cbs).onparserinit) === null || _f === void 0 ? void 0 : _f.call(_e, this);
+        }
+        Parser2.prototype.ontext = function(start, endIndex) {
+          var _a, _b;
+          var data = this.getSlice(start, endIndex);
+          this.endIndex = endIndex - 1;
+          (_b = (_a = this.cbs).ontext) === null || _b === void 0 ? void 0 : _b.call(_a, data);
+          this.startIndex = endIndex;
+        };
+        Parser2.prototype.ontextentity = function(cp, endIndex) {
+          var _a, _b;
+          this.endIndex = endIndex - 1;
+          (_b = (_a = this.cbs).ontext) === null || _b === void 0 ? void 0 : _b.call(_a, (0, decode_js_1.fromCodePoint)(cp));
+          this.startIndex = endIndex;
+        };
+        Parser2.prototype.isVoidElement = function(name) {
+          return this.htmlMode && voidElements.has(name);
+        };
+        Parser2.prototype.onopentagname = function(start, endIndex) {
+          this.endIndex = endIndex;
+          var name = this.getSlice(start, endIndex);
+          if (this.lowerCaseTagNames) {
+            name = name.toLowerCase();
+          }
+          this.emitOpenTag(name);
+        };
+        Parser2.prototype.emitOpenTag = function(name) {
+          var _a, _b, _c, _d;
+          this.openTagStart = this.startIndex;
+          this.tagname = name;
+          var impliesClose = this.htmlMode && openImpliesClose.get(name);
+          if (impliesClose) {
+            while (this.stack.length > 0 && impliesClose.has(this.stack[0])) {
+              var element = this.stack.shift();
+              (_b = (_a = this.cbs).onclosetag) === null || _b === void 0 ? void 0 : _b.call(_a, element, true);
+            }
+          }
+          if (!this.isVoidElement(name)) {
+            this.stack.unshift(name);
+            if (this.htmlMode) {
+              if (foreignContextElements.has(name)) {
+                this.foreignContext.unshift(true);
+              } else if (htmlIntegrationElements.has(name)) {
+                this.foreignContext.unshift(false);
+              }
+            }
+          }
+          (_d = (_c = this.cbs).onopentagname) === null || _d === void 0 ? void 0 : _d.call(_c, name);
+          if (this.cbs.onopentag)
+            this.attribs = {};
+        };
+        Parser2.prototype.endOpenTag = function(isImplied) {
+          var _a, _b;
+          this.startIndex = this.openTagStart;
+          if (this.attribs) {
+            (_b = (_a = this.cbs).onopentag) === null || _b === void 0 ? void 0 : _b.call(_a, this.tagname, this.attribs, isImplied);
+            this.attribs = null;
+          }
+          if (this.cbs.onclosetag && this.isVoidElement(this.tagname)) {
+            this.cbs.onclosetag(this.tagname, true);
+          }
+          this.tagname = "";
+        };
+        Parser2.prototype.onopentagend = function(endIndex) {
+          this.endIndex = endIndex;
+          this.endOpenTag(false);
+          this.startIndex = endIndex + 1;
+        };
+        Parser2.prototype.onclosetag = function(start, endIndex) {
+          var _a, _b, _c, _d, _e, _f, _g, _h;
+          this.endIndex = endIndex;
+          var name = this.getSlice(start, endIndex);
+          if (this.lowerCaseTagNames) {
+            name = name.toLowerCase();
+          }
+          if (this.htmlMode && (foreignContextElements.has(name) || htmlIntegrationElements.has(name))) {
+            this.foreignContext.shift();
+          }
+          if (!this.isVoidElement(name)) {
+            var pos = this.stack.indexOf(name);
+            if (pos !== -1) {
+              for (var index = 0; index <= pos; index++) {
+                var element = this.stack.shift();
+                (_b = (_a = this.cbs).onclosetag) === null || _b === void 0 ? void 0 : _b.call(_a, element, index !== pos);
+              }
+            } else if (this.htmlMode && name === "p") {
+              this.emitOpenTag("p");
+              this.closeCurrentTag(true);
+            }
+          } else if (this.htmlMode && name === "br") {
+            (_d = (_c = this.cbs).onopentagname) === null || _d === void 0 ? void 0 : _d.call(_c, "br");
+            (_f = (_e = this.cbs).onopentag) === null || _f === void 0 ? void 0 : _f.call(_e, "br", {}, true);
+            (_h = (_g = this.cbs).onclosetag) === null || _h === void 0 ? void 0 : _h.call(_g, "br", false);
+          }
+          this.startIndex = endIndex + 1;
+        };
+        Parser2.prototype.onselfclosingtag = function(endIndex) {
+          this.endIndex = endIndex;
+          if (this.recognizeSelfClosing || this.foreignContext[0]) {
+            this.closeCurrentTag(false);
+            this.startIndex = endIndex + 1;
+          } else {
+            this.onopentagend(endIndex);
+          }
+        };
+        Parser2.prototype.closeCurrentTag = function(isOpenImplied) {
+          var _a, _b;
+          var name = this.tagname;
+          this.endOpenTag(isOpenImplied);
+          if (this.stack[0] === name) {
+            (_b = (_a = this.cbs).onclosetag) === null || _b === void 0 ? void 0 : _b.call(_a, name, !isOpenImplied);
+            this.stack.shift();
+          }
+        };
+        Parser2.prototype.onattribname = function(start, endIndex) {
+          this.startIndex = start;
+          var name = this.getSlice(start, endIndex);
+          this.attribname = this.lowerCaseAttributeNames ? name.toLowerCase() : name;
+        };
+        Parser2.prototype.onattribdata = function(start, endIndex) {
+          this.attribvalue += this.getSlice(start, endIndex);
+        };
+        Parser2.prototype.onattribentity = function(cp) {
+          this.attribvalue += (0, decode_js_1.fromCodePoint)(cp);
+        };
+        Parser2.prototype.onattribend = function(quote, endIndex) {
+          var _a, _b;
+          this.endIndex = endIndex;
+          (_b = (_a = this.cbs).onattribute) === null || _b === void 0 ? void 0 : _b.call(_a, this.attribname, this.attribvalue, quote === Tokenizer_js_1.QuoteType.Double ? '"' : quote === Tokenizer_js_1.QuoteType.Single ? "'" : quote === Tokenizer_js_1.QuoteType.NoValue ? void 0 : null);
+          if (this.attribs && !Object.prototype.hasOwnProperty.call(this.attribs, this.attribname)) {
+            this.attribs[this.attribname] = this.attribvalue;
+          }
+          this.attribvalue = "";
+        };
+        Parser2.prototype.getInstructionName = function(value) {
+          var index = value.search(reNameEnd);
+          var name = index < 0 ? value : value.substr(0, index);
+          if (this.lowerCaseTagNames) {
+            name = name.toLowerCase();
+          }
+          return name;
+        };
+        Parser2.prototype.ondeclaration = function(start, endIndex) {
+          this.endIndex = endIndex;
+          var value = this.getSlice(start, endIndex);
+          if (this.cbs.onprocessinginstruction) {
+            var name = this.getInstructionName(value);
+            this.cbs.onprocessinginstruction("!".concat(name), "!".concat(value));
+          }
+          this.startIndex = endIndex + 1;
+        };
+        Parser2.prototype.onprocessinginstruction = function(start, endIndex) {
+          this.endIndex = endIndex;
+          var value = this.getSlice(start, endIndex);
+          if (this.cbs.onprocessinginstruction) {
+            var name = this.getInstructionName(value);
+            this.cbs.onprocessinginstruction("?".concat(name), "?".concat(value));
+          }
+          this.startIndex = endIndex + 1;
+        };
+        Parser2.prototype.oncomment = function(start, endIndex, offset) {
+          var _a, _b, _c, _d;
+          this.endIndex = endIndex;
+          (_b = (_a = this.cbs).oncomment) === null || _b === void 0 ? void 0 : _b.call(_a, this.getSlice(start, endIndex - offset));
+          (_d = (_c = this.cbs).oncommentend) === null || _d === void 0 ? void 0 : _d.call(_c);
+          this.startIndex = endIndex + 1;
+        };
+        Parser2.prototype.oncdata = function(start, endIndex, offset) {
+          var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+          this.endIndex = endIndex;
+          var value = this.getSlice(start, endIndex - offset);
+          if (!this.htmlMode || this.options.recognizeCDATA) {
+            (_b = (_a = this.cbs).oncdatastart) === null || _b === void 0 ? void 0 : _b.call(_a);
+            (_d = (_c = this.cbs).ontext) === null || _d === void 0 ? void 0 : _d.call(_c, value);
+            (_f = (_e = this.cbs).oncdataend) === null || _f === void 0 ? void 0 : _f.call(_e);
+          } else {
+            (_h = (_g = this.cbs).oncomment) === null || _h === void 0 ? void 0 : _h.call(_g, "[CDATA[".concat(value, "]]"));
+            (_k = (_j = this.cbs).oncommentend) === null || _k === void 0 ? void 0 : _k.call(_j);
+          }
+          this.startIndex = endIndex + 1;
+        };
+        Parser2.prototype.onend = function() {
+          var _a, _b;
+          if (this.cbs.onclosetag) {
+            this.endIndex = this.startIndex;
+            for (var index = 0; index < this.stack.length; index++) {
+              this.cbs.onclosetag(this.stack[index], true);
+            }
+          }
+          (_b = (_a = this.cbs).onend) === null || _b === void 0 ? void 0 : _b.call(_a);
+        };
+        Parser2.prototype.reset = function() {
+          var _a, _b, _c, _d;
+          (_b = (_a = this.cbs).onreset) === null || _b === void 0 ? void 0 : _b.call(_a);
+          this.tokenizer.reset();
+          this.tagname = "";
+          this.attribname = "";
+          this.attribs = null;
+          this.stack.length = 0;
+          this.startIndex = 0;
+          this.endIndex = 0;
+          (_d = (_c = this.cbs).onparserinit) === null || _d === void 0 ? void 0 : _d.call(_c, this);
+          this.buffers.length = 0;
+          this.foreignContext.length = 0;
+          this.foreignContext.unshift(!this.htmlMode);
+          this.bufferOffset = 0;
+          this.writeIndex = 0;
+          this.ended = false;
+        };
+        Parser2.prototype.parseComplete = function(data) {
+          this.reset();
+          this.end(data);
+        };
+        Parser2.prototype.getSlice = function(start, end) {
+          while (start - this.bufferOffset >= this.buffers[0].length) {
+            this.shiftBuffer();
+          }
+          var slice = this.buffers[0].slice(start - this.bufferOffset, end - this.bufferOffset);
+          while (end - this.bufferOffset > this.buffers[0].length) {
+            this.shiftBuffer();
+            slice += this.buffers[0].slice(0, end - this.bufferOffset);
+          }
+          return slice;
+        };
+        Parser2.prototype.shiftBuffer = function() {
+          this.bufferOffset += this.buffers[0].length;
+          this.writeIndex--;
+          this.buffers.shift();
+        };
+        Parser2.prototype.write = function(chunk) {
+          var _a, _b;
+          if (this.ended) {
+            (_b = (_a = this.cbs).onerror) === null || _b === void 0 ? void 0 : _b.call(_a, new Error(".write() after done!"));
+            return;
+          }
+          this.buffers.push(chunk);
+          if (this.tokenizer.running) {
+            this.tokenizer.write(chunk);
+            this.writeIndex++;
+          }
+        };
+        Parser2.prototype.end = function(chunk) {
+          var _a, _b;
+          if (this.ended) {
+            (_b = (_a = this.cbs).onerror) === null || _b === void 0 ? void 0 : _b.call(_a, new Error(".end() after done!"));
+            return;
+          }
+          if (chunk)
+            this.write(chunk);
+          this.ended = true;
+          this.tokenizer.end();
+        };
+        Parser2.prototype.pause = function() {
+          this.tokenizer.pause();
+        };
+        Parser2.prototype.resume = function() {
+          this.tokenizer.resume();
+          while (this.tokenizer.running && this.writeIndex < this.buffers.length) {
+            this.tokenizer.write(this.buffers[this.writeIndex++]);
+          }
+          if (this.ended)
+            this.tokenizer.end();
+        };
+        Parser2.prototype.parseChunk = function(chunk) {
+          this.write(chunk);
+        };
+        Parser2.prototype.done = function(chunk) {
+          this.end(chunk);
+        };
+        return Parser2;
+      })()
+    );
+    exports.Parser = Parser;
+  }
+});
+
+// node_modules/domelementtype/lib/index.js
+var require_lib = __commonJS({
+  "node_modules/domelementtype/lib/index.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Doctype = exports.CDATA = exports.Tag = exports.Style = exports.Script = exports.Comment = exports.Directive = exports.Text = exports.Root = exports.isTag = exports.ElementType = void 0;
+    var ElementType;
+    (function(ElementType2) {
+      ElementType2["Root"] = "root";
+      ElementType2["Text"] = "text";
+      ElementType2["Directive"] = "directive";
+      ElementType2["Comment"] = "comment";
+      ElementType2["Script"] = "script";
+      ElementType2["Style"] = "style";
+      ElementType2["Tag"] = "tag";
+      ElementType2["CDATA"] = "cdata";
+      ElementType2["Doctype"] = "doctype";
+    })(ElementType = exports.ElementType || (exports.ElementType = {}));
+    function isTag(elem) {
+      return elem.type === ElementType.Tag || elem.type === ElementType.Script || elem.type === ElementType.Style;
+    }
+    exports.isTag = isTag;
+    exports.Root = ElementType.Root;
+    exports.Text = ElementType.Text;
+    exports.Directive = ElementType.Directive;
+    exports.Comment = ElementType.Comment;
+    exports.Script = ElementType.Script;
+    exports.Style = ElementType.Style;
+    exports.Tag = ElementType.Tag;
+    exports.CDATA = ElementType.CDATA;
+    exports.Doctype = ElementType.Doctype;
+  }
+});
+
+// node_modules/domhandler/lib/node.js
+var require_node = __commonJS({
+  "node_modules/domhandler/lib/node.js"(exports) {
+    "use strict";
+    var __extends = exports && exports.__extends || /* @__PURE__ */ (function() {
+      var extendStatics = function(d3, b3) {
+        extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d4, b4) {
+          d4.__proto__ = b4;
+        } || function(d4, b4) {
+          for (var p3 in b4) if (Object.prototype.hasOwnProperty.call(b4, p3)) d4[p3] = b4[p3];
+        };
+        return extendStatics(d3, b3);
+      };
+      return function(d3, b3) {
+        if (typeof b3 !== "function" && b3 !== null)
+          throw new TypeError("Class extends value " + String(b3) + " is not a constructor or null");
+        extendStatics(d3, b3);
+        function __() {
+          this.constructor = d3;
+        }
+        d3.prototype = b3 === null ? Object.create(b3) : (__.prototype = b3.prototype, new __());
+      };
+    })();
+    var __assign = exports && exports.__assign || function() {
+      __assign = Object.assign || function(t4) {
+        for (var s4, i5 = 1, n5 = arguments.length; i5 < n5; i5++) {
+          s4 = arguments[i5];
+          for (var p3 in s4) if (Object.prototype.hasOwnProperty.call(s4, p3))
+            t4[p3] = s4[p3];
+        }
+        return t4;
+      };
+      return __assign.apply(this, arguments);
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.cloneNode = exports.hasChildren = exports.isDocument = exports.isDirective = exports.isComment = exports.isText = exports.isCDATA = exports.isTag = exports.Element = exports.Document = exports.CDATA = exports.NodeWithChildren = exports.ProcessingInstruction = exports.Comment = exports.Text = exports.DataNode = exports.Node = void 0;
+    var domelementtype_1 = require_lib();
+    var Node = (
+      /** @class */
+      (function() {
+        function Node2() {
+          this.parent = null;
+          this.prev = null;
+          this.next = null;
+          this.startIndex = null;
+          this.endIndex = null;
+        }
+        Object.defineProperty(Node2.prototype, "parentNode", {
+          // Read-write aliases for properties
+          /**
+           * Same as {@link parent}.
+           * [DOM spec](https://dom.spec.whatwg.org)-compatible alias.
+           */
+          get: function() {
+            return this.parent;
+          },
+          set: function(parent) {
+            this.parent = parent;
+          },
+          enumerable: false,
+          configurable: true
+        });
+        Object.defineProperty(Node2.prototype, "previousSibling", {
+          /**
+           * Same as {@link prev}.
+           * [DOM spec](https://dom.spec.whatwg.org)-compatible alias.
+           */
+          get: function() {
+            return this.prev;
+          },
+          set: function(prev) {
+            this.prev = prev;
+          },
+          enumerable: false,
+          configurable: true
+        });
+        Object.defineProperty(Node2.prototype, "nextSibling", {
+          /**
+           * Same as {@link next}.
+           * [DOM spec](https://dom.spec.whatwg.org)-compatible alias.
+           */
+          get: function() {
+            return this.next;
+          },
+          set: function(next) {
+            this.next = next;
+          },
+          enumerable: false,
+          configurable: true
+        });
+        Node2.prototype.cloneNode = function(recursive) {
+          if (recursive === void 0) {
+            recursive = false;
+          }
+          return cloneNode(this, recursive);
+        };
+        return Node2;
+      })()
+    );
+    exports.Node = Node;
+    var DataNode = (
+      /** @class */
+      (function(_super) {
+        __extends(DataNode2, _super);
+        function DataNode2(data) {
+          var _this = _super.call(this) || this;
+          _this.data = data;
+          return _this;
+        }
+        Object.defineProperty(DataNode2.prototype, "nodeValue", {
+          /**
+           * Same as {@link data}.
+           * [DOM spec](https://dom.spec.whatwg.org)-compatible alias.
+           */
+          get: function() {
+            return this.data;
+          },
+          set: function(data) {
+            this.data = data;
+          },
+          enumerable: false,
+          configurable: true
+        });
+        return DataNode2;
+      })(Node)
+    );
+    exports.DataNode = DataNode;
+    var Text = (
+      /** @class */
+      (function(_super) {
+        __extends(Text2, _super);
+        function Text2() {
+          var _this = _super !== null && _super.apply(this, arguments) || this;
+          _this.type = domelementtype_1.ElementType.Text;
+          return _this;
+        }
+        Object.defineProperty(Text2.prototype, "nodeType", {
+          get: function() {
+            return 3;
+          },
+          enumerable: false,
+          configurable: true
+        });
+        return Text2;
+      })(DataNode)
+    );
+    exports.Text = Text;
+    var Comment = (
+      /** @class */
+      (function(_super) {
+        __extends(Comment2, _super);
+        function Comment2() {
+          var _this = _super !== null && _super.apply(this, arguments) || this;
+          _this.type = domelementtype_1.ElementType.Comment;
+          return _this;
+        }
+        Object.defineProperty(Comment2.prototype, "nodeType", {
+          get: function() {
+            return 8;
+          },
+          enumerable: false,
+          configurable: true
+        });
+        return Comment2;
+      })(DataNode)
+    );
+    exports.Comment = Comment;
+    var ProcessingInstruction = (
+      /** @class */
+      (function(_super) {
+        __extends(ProcessingInstruction2, _super);
+        function ProcessingInstruction2(name, data) {
+          var _this = _super.call(this, data) || this;
+          _this.name = name;
+          _this.type = domelementtype_1.ElementType.Directive;
+          return _this;
+        }
+        Object.defineProperty(ProcessingInstruction2.prototype, "nodeType", {
+          get: function() {
+            return 1;
+          },
+          enumerable: false,
+          configurable: true
+        });
+        return ProcessingInstruction2;
+      })(DataNode)
+    );
+    exports.ProcessingInstruction = ProcessingInstruction;
+    var NodeWithChildren = (
+      /** @class */
+      (function(_super) {
+        __extends(NodeWithChildren2, _super);
+        function NodeWithChildren2(children) {
+          var _this = _super.call(this) || this;
+          _this.children = children;
+          return _this;
+        }
+        Object.defineProperty(NodeWithChildren2.prototype, "firstChild", {
+          // Aliases
+          /** First child of the node. */
+          get: function() {
+            var _a;
+            return (_a = this.children[0]) !== null && _a !== void 0 ? _a : null;
+          },
+          enumerable: false,
+          configurable: true
+        });
+        Object.defineProperty(NodeWithChildren2.prototype, "lastChild", {
+          /** Last child of the node. */
+          get: function() {
+            return this.children.length > 0 ? this.children[this.children.length - 1] : null;
+          },
+          enumerable: false,
+          configurable: true
+        });
+        Object.defineProperty(NodeWithChildren2.prototype, "childNodes", {
+          /**
+           * Same as {@link children}.
+           * [DOM spec](https://dom.spec.whatwg.org)-compatible alias.
+           */
+          get: function() {
+            return this.children;
+          },
+          set: function(children) {
+            this.children = children;
+          },
+          enumerable: false,
+          configurable: true
+        });
+        return NodeWithChildren2;
+      })(Node)
+    );
+    exports.NodeWithChildren = NodeWithChildren;
+    var CDATA = (
+      /** @class */
+      (function(_super) {
+        __extends(CDATA2, _super);
+        function CDATA2() {
+          var _this = _super !== null && _super.apply(this, arguments) || this;
+          _this.type = domelementtype_1.ElementType.CDATA;
+          return _this;
+        }
+        Object.defineProperty(CDATA2.prototype, "nodeType", {
+          get: function() {
+            return 4;
+          },
+          enumerable: false,
+          configurable: true
+        });
+        return CDATA2;
+      })(NodeWithChildren)
+    );
+    exports.CDATA = CDATA;
+    var Document2 = (
+      /** @class */
+      (function(_super) {
+        __extends(Document3, _super);
+        function Document3() {
+          var _this = _super !== null && _super.apply(this, arguments) || this;
+          _this.type = domelementtype_1.ElementType.Root;
+          return _this;
+        }
+        Object.defineProperty(Document3.prototype, "nodeType", {
+          get: function() {
+            return 9;
+          },
+          enumerable: false,
+          configurable: true
+        });
+        return Document3;
+      })(NodeWithChildren)
+    );
+    exports.Document = Document2;
+    var Element = (
+      /** @class */
+      (function(_super) {
+        __extends(Element2, _super);
+        function Element2(name, attribs, children, type) {
+          if (children === void 0) {
+            children = [];
+          }
+          if (type === void 0) {
+            type = name === "script" ? domelementtype_1.ElementType.Script : name === "style" ? domelementtype_1.ElementType.Style : domelementtype_1.ElementType.Tag;
+          }
+          var _this = _super.call(this, children) || this;
+          _this.name = name;
+          _this.attribs = attribs;
+          _this.type = type;
+          return _this;
+        }
+        Object.defineProperty(Element2.prototype, "nodeType", {
+          get: function() {
+            return 1;
+          },
+          enumerable: false,
+          configurable: true
+        });
+        Object.defineProperty(Element2.prototype, "tagName", {
+          // DOM Level 1 aliases
+          /**
+           * Same as {@link name}.
+           * [DOM spec](https://dom.spec.whatwg.org)-compatible alias.
+           */
+          get: function() {
+            return this.name;
+          },
+          set: function(name) {
+            this.name = name;
+          },
+          enumerable: false,
+          configurable: true
+        });
+        Object.defineProperty(Element2.prototype, "attributes", {
+          get: function() {
+            var _this = this;
+            return Object.keys(this.attribs).map(function(name) {
+              var _a, _b;
+              return {
+                name,
+                value: _this.attribs[name],
+                namespace: (_a = _this["x-attribsNamespace"]) === null || _a === void 0 ? void 0 : _a[name],
+                prefix: (_b = _this["x-attribsPrefix"]) === null || _b === void 0 ? void 0 : _b[name]
+              };
+            });
+          },
+          enumerable: false,
+          configurable: true
+        });
+        return Element2;
+      })(NodeWithChildren)
+    );
+    exports.Element = Element;
+    function isTag(node) {
+      return (0, domelementtype_1.isTag)(node);
+    }
+    exports.isTag = isTag;
+    function isCDATA(node) {
+      return node.type === domelementtype_1.ElementType.CDATA;
+    }
+    exports.isCDATA = isCDATA;
+    function isText(node) {
+      return node.type === domelementtype_1.ElementType.Text;
+    }
+    exports.isText = isText;
+    function isComment(node) {
+      return node.type === domelementtype_1.ElementType.Comment;
+    }
+    exports.isComment = isComment;
+    function isDirective(node) {
+      return node.type === domelementtype_1.ElementType.Directive;
+    }
+    exports.isDirective = isDirective;
+    function isDocument(node) {
+      return node.type === domelementtype_1.ElementType.Root;
+    }
+    exports.isDocument = isDocument;
+    function hasChildren(node) {
+      return Object.prototype.hasOwnProperty.call(node, "children");
+    }
+    exports.hasChildren = hasChildren;
+    function cloneNode(node, recursive) {
+      if (recursive === void 0) {
+        recursive = false;
+      }
+      var result;
+      if (isText(node)) {
+        result = new Text(node.data);
+      } else if (isComment(node)) {
+        result = new Comment(node.data);
+      } else if (isTag(node)) {
+        var children = recursive ? cloneChildren(node.children) : [];
+        var clone_1 = new Element(node.name, __assign({}, node.attribs), children);
+        children.forEach(function(child) {
+          return child.parent = clone_1;
+        });
+        if (node.namespace != null) {
+          clone_1.namespace = node.namespace;
+        }
+        if (node["x-attribsNamespace"]) {
+          clone_1["x-attribsNamespace"] = __assign({}, node["x-attribsNamespace"]);
+        }
+        if (node["x-attribsPrefix"]) {
+          clone_1["x-attribsPrefix"] = __assign({}, node["x-attribsPrefix"]);
+        }
+        result = clone_1;
+      } else if (isCDATA(node)) {
+        var children = recursive ? cloneChildren(node.children) : [];
+        var clone_2 = new CDATA(children);
+        children.forEach(function(child) {
+          return child.parent = clone_2;
+        });
+        result = clone_2;
+      } else if (isDocument(node)) {
+        var children = recursive ? cloneChildren(node.children) : [];
+        var clone_3 = new Document2(children);
+        children.forEach(function(child) {
+          return child.parent = clone_3;
+        });
+        if (node["x-mode"]) {
+          clone_3["x-mode"] = node["x-mode"];
+        }
+        result = clone_3;
+      } else if (isDirective(node)) {
+        var instruction = new ProcessingInstruction(node.name, node.data);
+        if (node["x-name"] != null) {
+          instruction["x-name"] = node["x-name"];
+          instruction["x-publicId"] = node["x-publicId"];
+          instruction["x-systemId"] = node["x-systemId"];
+        }
+        result = instruction;
+      } else {
+        throw new Error("Not implemented yet: ".concat(node.type));
+      }
+      result.startIndex = node.startIndex;
+      result.endIndex = node.endIndex;
+      if (node.sourceCodeLocation != null) {
+        result.sourceCodeLocation = node.sourceCodeLocation;
+      }
+      return result;
+    }
+    exports.cloneNode = cloneNode;
+    function cloneChildren(childs) {
+      var children = childs.map(function(child) {
+        return cloneNode(child, true);
+      });
+      for (var i5 = 1; i5 < children.length; i5++) {
+        children[i5].prev = children[i5 - 1];
+        children[i5 - 1].next = children[i5];
+      }
+      return children;
+    }
+  }
+});
+
+// node_modules/domhandler/lib/index.js
+var require_lib2 = __commonJS({
+  "node_modules/domhandler/lib/index.js"(exports) {
+    "use strict";
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      var desc = Object.getOwnPropertyDescriptor(m2, k2);
+      if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m2[k2];
+        } };
+      }
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      o6[k22] = m2[k2];
+    }));
+    var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
+      for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.DomHandler = void 0;
+    var domelementtype_1 = require_lib();
+    var node_js_1 = require_node();
+    __exportStar(require_node(), exports);
+    var defaultOpts = {
+      withStartIndices: false,
+      withEndIndices: false,
+      xmlMode: false
+    };
+    var DomHandler = (
+      /** @class */
+      (function() {
+        function DomHandler2(callback, options, elementCB) {
+          this.dom = [];
+          this.root = new node_js_1.Document(this.dom);
+          this.done = false;
+          this.tagStack = [this.root];
+          this.lastNode = null;
+          this.parser = null;
+          if (typeof options === "function") {
+            elementCB = options;
+            options = defaultOpts;
+          }
+          if (typeof callback === "object") {
+            options = callback;
+            callback = void 0;
+          }
+          this.callback = callback !== null && callback !== void 0 ? callback : null;
+          this.options = options !== null && options !== void 0 ? options : defaultOpts;
+          this.elementCB = elementCB !== null && elementCB !== void 0 ? elementCB : null;
+        }
+        DomHandler2.prototype.onparserinit = function(parser) {
+          this.parser = parser;
+        };
+        DomHandler2.prototype.onreset = function() {
+          this.dom = [];
+          this.root = new node_js_1.Document(this.dom);
+          this.done = false;
+          this.tagStack = [this.root];
+          this.lastNode = null;
+          this.parser = null;
+        };
+        DomHandler2.prototype.onend = function() {
+          if (this.done)
+            return;
+          this.done = true;
+          this.parser = null;
+          this.handleCallback(null);
+        };
+        DomHandler2.prototype.onerror = function(error) {
+          this.handleCallback(error);
+        };
+        DomHandler2.prototype.onclosetag = function() {
+          this.lastNode = null;
+          var elem = this.tagStack.pop();
+          if (this.options.withEndIndices) {
+            elem.endIndex = this.parser.endIndex;
+          }
+          if (this.elementCB)
+            this.elementCB(elem);
+        };
+        DomHandler2.prototype.onopentag = function(name, attribs) {
+          var type = this.options.xmlMode ? domelementtype_1.ElementType.Tag : void 0;
+          var element = new node_js_1.Element(name, attribs, void 0, type);
+          this.addNode(element);
+          this.tagStack.push(element);
+        };
+        DomHandler2.prototype.ontext = function(data) {
+          var lastNode = this.lastNode;
+          if (lastNode && lastNode.type === domelementtype_1.ElementType.Text) {
+            lastNode.data += data;
+            if (this.options.withEndIndices) {
+              lastNode.endIndex = this.parser.endIndex;
+            }
+          } else {
+            var node = new node_js_1.Text(data);
+            this.addNode(node);
+            this.lastNode = node;
+          }
+        };
+        DomHandler2.prototype.oncomment = function(data) {
+          if (this.lastNode && this.lastNode.type === domelementtype_1.ElementType.Comment) {
+            this.lastNode.data += data;
+            return;
+          }
+          var node = new node_js_1.Comment(data);
+          this.addNode(node);
+          this.lastNode = node;
+        };
+        DomHandler2.prototype.oncommentend = function() {
+          this.lastNode = null;
+        };
+        DomHandler2.prototype.oncdatastart = function() {
+          var text = new node_js_1.Text("");
+          var node = new node_js_1.CDATA([text]);
+          this.addNode(node);
+          text.parent = node;
+          this.lastNode = text;
+        };
+        DomHandler2.prototype.oncdataend = function() {
+          this.lastNode = null;
+        };
+        DomHandler2.prototype.onprocessinginstruction = function(name, data) {
+          var node = new node_js_1.ProcessingInstruction(name, data);
+          this.addNode(node);
+        };
+        DomHandler2.prototype.handleCallback = function(error) {
+          if (typeof this.callback === "function") {
+            this.callback(error, this.dom);
+          } else if (error) {
+            throw error;
+          }
+        };
+        DomHandler2.prototype.addNode = function(node) {
+          var parent = this.tagStack[this.tagStack.length - 1];
+          var previousSibling = parent.children[parent.children.length - 1];
+          if (this.options.withStartIndices) {
+            node.startIndex = this.parser.startIndex;
+          }
+          if (this.options.withEndIndices) {
+            node.endIndex = this.parser.endIndex;
+          }
+          parent.children.push(node);
+          if (previousSibling) {
+            node.prev = previousSibling;
+            previousSibling.next = node;
+          }
+          node.parent = parent;
+          this.lastNode = null;
+        };
+        return DomHandler2;
+      })()
+    );
+    exports.DomHandler = DomHandler;
+    exports.default = DomHandler;
+  }
+});
+
+// node_modules/entities/lib/generated/encode-html.js
+var require_encode_html = __commonJS({
+  "node_modules/entities/lib/generated/encode-html.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function restoreDiff(arr) {
+      for (var i5 = 1; i5 < arr.length; i5++) {
+        arr[i5][0] += arr[i5 - 1][0] + 1;
+      }
+      return arr;
+    }
+    exports.default = new Map(/* @__PURE__ */ restoreDiff([[9, "&Tab;"], [0, "&NewLine;"], [22, "&excl;"], [0, "&quot;"], [0, "&num;"], [0, "&dollar;"], [0, "&percnt;"], [0, "&amp;"], [0, "&apos;"], [0, "&lpar;"], [0, "&rpar;"], [0, "&ast;"], [0, "&plus;"], [0, "&comma;"], [1, "&period;"], [0, "&sol;"], [10, "&colon;"], [0, "&semi;"], [0, { v: "&lt;", n: 8402, o: "&nvlt;" }], [0, { v: "&equals;", n: 8421, o: "&bne;" }], [0, { v: "&gt;", n: 8402, o: "&nvgt;" }], [0, "&quest;"], [0, "&commat;"], [26, "&lbrack;"], [0, "&bsol;"], [0, "&rbrack;"], [0, "&Hat;"], [0, "&lowbar;"], [0, "&DiacriticalGrave;"], [5, { n: 106, o: "&fjlig;" }], [20, "&lbrace;"], [0, "&verbar;"], [0, "&rbrace;"], [34, "&nbsp;"], [0, "&iexcl;"], [0, "&cent;"], [0, "&pound;"], [0, "&curren;"], [0, "&yen;"], [0, "&brvbar;"], [0, "&sect;"], [0, "&die;"], [0, "&copy;"], [0, "&ordf;"], [0, "&laquo;"], [0, "&not;"], [0, "&shy;"], [0, "&circledR;"], [0, "&macr;"], [0, "&deg;"], [0, "&PlusMinus;"], [0, "&sup2;"], [0, "&sup3;"], [0, "&acute;"], [0, "&micro;"], [0, "&para;"], [0, "&centerdot;"], [0, "&cedil;"], [0, "&sup1;"], [0, "&ordm;"], [0, "&raquo;"], [0, "&frac14;"], [0, "&frac12;"], [0, "&frac34;"], [0, "&iquest;"], [0, "&Agrave;"], [0, "&Aacute;"], [0, "&Acirc;"], [0, "&Atilde;"], [0, "&Auml;"], [0, "&angst;"], [0, "&AElig;"], [0, "&Ccedil;"], [0, "&Egrave;"], [0, "&Eacute;"], [0, "&Ecirc;"], [0, "&Euml;"], [0, "&Igrave;"], [0, "&Iacute;"], [0, "&Icirc;"], [0, "&Iuml;"], [0, "&ETH;"], [0, "&Ntilde;"], [0, "&Ograve;"], [0, "&Oacute;"], [0, "&Ocirc;"], [0, "&Otilde;"], [0, "&Ouml;"], [0, "&times;"], [0, "&Oslash;"], [0, "&Ugrave;"], [0, "&Uacute;"], [0, "&Ucirc;"], [0, "&Uuml;"], [0, "&Yacute;"], [0, "&THORN;"], [0, "&szlig;"], [0, "&agrave;"], [0, "&aacute;"], [0, "&acirc;"], [0, "&atilde;"], [0, "&auml;"], [0, "&aring;"], [0, "&aelig;"], [0, "&ccedil;"], [0, "&egrave;"], [0, "&eacute;"], [0, "&ecirc;"], [0, "&euml;"], [0, "&igrave;"], [0, "&iacute;"], [0, "&icirc;"], [0, "&iuml;"], [0, "&eth;"], [0, "&ntilde;"], [0, "&ograve;"], [0, "&oacute;"], [0, "&ocirc;"], [0, "&otilde;"], [0, "&ouml;"], [0, "&div;"], [0, "&oslash;"], [0, "&ugrave;"], [0, "&uacute;"], [0, "&ucirc;"], [0, "&uuml;"], [0, "&yacute;"], [0, "&thorn;"], [0, "&yuml;"], [0, "&Amacr;"], [0, "&amacr;"], [0, "&Abreve;"], [0, "&abreve;"], [0, "&Aogon;"], [0, "&aogon;"], [0, "&Cacute;"], [0, "&cacute;"], [0, "&Ccirc;"], [0, "&ccirc;"], [0, "&Cdot;"], [0, "&cdot;"], [0, "&Ccaron;"], [0, "&ccaron;"], [0, "&Dcaron;"], [0, "&dcaron;"], [0, "&Dstrok;"], [0, "&dstrok;"], [0, "&Emacr;"], [0, "&emacr;"], [2, "&Edot;"], [0, "&edot;"], [0, "&Eogon;"], [0, "&eogon;"], [0, "&Ecaron;"], [0, "&ecaron;"], [0, "&Gcirc;"], [0, "&gcirc;"], [0, "&Gbreve;"], [0, "&gbreve;"], [0, "&Gdot;"], [0, "&gdot;"], [0, "&Gcedil;"], [1, "&Hcirc;"], [0, "&hcirc;"], [0, "&Hstrok;"], [0, "&hstrok;"], [0, "&Itilde;"], [0, "&itilde;"], [0, "&Imacr;"], [0, "&imacr;"], [2, "&Iogon;"], [0, "&iogon;"], [0, "&Idot;"], [0, "&imath;"], [0, "&IJlig;"], [0, "&ijlig;"], [0, "&Jcirc;"], [0, "&jcirc;"], [0, "&Kcedil;"], [0, "&kcedil;"], [0, "&kgreen;"], [0, "&Lacute;"], [0, "&lacute;"], [0, "&Lcedil;"], [0, "&lcedil;"], [0, "&Lcaron;"], [0, "&lcaron;"], [0, "&Lmidot;"], [0, "&lmidot;"], [0, "&Lstrok;"], [0, "&lstrok;"], [0, "&Nacute;"], [0, "&nacute;"], [0, "&Ncedil;"], [0, "&ncedil;"], [0, "&Ncaron;"], [0, "&ncaron;"], [0, "&napos;"], [0, "&ENG;"], [0, "&eng;"], [0, "&Omacr;"], [0, "&omacr;"], [2, "&Odblac;"], [0, "&odblac;"], [0, "&OElig;"], [0, "&oelig;"], [0, "&Racute;"], [0, "&racute;"], [0, "&Rcedil;"], [0, "&rcedil;"], [0, "&Rcaron;"], [0, "&rcaron;"], [0, "&Sacute;"], [0, "&sacute;"], [0, "&Scirc;"], [0, "&scirc;"], [0, "&Scedil;"], [0, "&scedil;"], [0, "&Scaron;"], [0, "&scaron;"], [0, "&Tcedil;"], [0, "&tcedil;"], [0, "&Tcaron;"], [0, "&tcaron;"], [0, "&Tstrok;"], [0, "&tstrok;"], [0, "&Utilde;"], [0, "&utilde;"], [0, "&Umacr;"], [0, "&umacr;"], [0, "&Ubreve;"], [0, "&ubreve;"], [0, "&Uring;"], [0, "&uring;"], [0, "&Udblac;"], [0, "&udblac;"], [0, "&Uogon;"], [0, "&uogon;"], [0, "&Wcirc;"], [0, "&wcirc;"], [0, "&Ycirc;"], [0, "&ycirc;"], [0, "&Yuml;"], [0, "&Zacute;"], [0, "&zacute;"], [0, "&Zdot;"], [0, "&zdot;"], [0, "&Zcaron;"], [0, "&zcaron;"], [19, "&fnof;"], [34, "&imped;"], [63, "&gacute;"], [65, "&jmath;"], [142, "&circ;"], [0, "&caron;"], [16, "&breve;"], [0, "&DiacriticalDot;"], [0, "&ring;"], [0, "&ogon;"], [0, "&DiacriticalTilde;"], [0, "&dblac;"], [51, "&DownBreve;"], [127, "&Alpha;"], [0, "&Beta;"], [0, "&Gamma;"], [0, "&Delta;"], [0, "&Epsilon;"], [0, "&Zeta;"], [0, "&Eta;"], [0, "&Theta;"], [0, "&Iota;"], [0, "&Kappa;"], [0, "&Lambda;"], [0, "&Mu;"], [0, "&Nu;"], [0, "&Xi;"], [0, "&Omicron;"], [0, "&Pi;"], [0, "&Rho;"], [1, "&Sigma;"], [0, "&Tau;"], [0, "&Upsilon;"], [0, "&Phi;"], [0, "&Chi;"], [0, "&Psi;"], [0, "&ohm;"], [7, "&alpha;"], [0, "&beta;"], [0, "&gamma;"], [0, "&delta;"], [0, "&epsi;"], [0, "&zeta;"], [0, "&eta;"], [0, "&theta;"], [0, "&iota;"], [0, "&kappa;"], [0, "&lambda;"], [0, "&mu;"], [0, "&nu;"], [0, "&xi;"], [0, "&omicron;"], [0, "&pi;"], [0, "&rho;"], [0, "&sigmaf;"], [0, "&sigma;"], [0, "&tau;"], [0, "&upsi;"], [0, "&phi;"], [0, "&chi;"], [0, "&psi;"], [0, "&omega;"], [7, "&thetasym;"], [0, "&Upsi;"], [2, "&phiv;"], [0, "&piv;"], [5, "&Gammad;"], [0, "&digamma;"], [18, "&kappav;"], [0, "&rhov;"], [3, "&epsiv;"], [0, "&backepsilon;"], [10, "&IOcy;"], [0, "&DJcy;"], [0, "&GJcy;"], [0, "&Jukcy;"], [0, "&DScy;"], [0, "&Iukcy;"], [0, "&YIcy;"], [0, "&Jsercy;"], [0, "&LJcy;"], [0, "&NJcy;"], [0, "&TSHcy;"], [0, "&KJcy;"], [1, "&Ubrcy;"], [0, "&DZcy;"], [0, "&Acy;"], [0, "&Bcy;"], [0, "&Vcy;"], [0, "&Gcy;"], [0, "&Dcy;"], [0, "&IEcy;"], [0, "&ZHcy;"], [0, "&Zcy;"], [0, "&Icy;"], [0, "&Jcy;"], [0, "&Kcy;"], [0, "&Lcy;"], [0, "&Mcy;"], [0, "&Ncy;"], [0, "&Ocy;"], [0, "&Pcy;"], [0, "&Rcy;"], [0, "&Scy;"], [0, "&Tcy;"], [0, "&Ucy;"], [0, "&Fcy;"], [0, "&KHcy;"], [0, "&TScy;"], [0, "&CHcy;"], [0, "&SHcy;"], [0, "&SHCHcy;"], [0, "&HARDcy;"], [0, "&Ycy;"], [0, "&SOFTcy;"], [0, "&Ecy;"], [0, "&YUcy;"], [0, "&YAcy;"], [0, "&acy;"], [0, "&bcy;"], [0, "&vcy;"], [0, "&gcy;"], [0, "&dcy;"], [0, "&iecy;"], [0, "&zhcy;"], [0, "&zcy;"], [0, "&icy;"], [0, "&jcy;"], [0, "&kcy;"], [0, "&lcy;"], [0, "&mcy;"], [0, "&ncy;"], [0, "&ocy;"], [0, "&pcy;"], [0, "&rcy;"], [0, "&scy;"], [0, "&tcy;"], [0, "&ucy;"], [0, "&fcy;"], [0, "&khcy;"], [0, "&tscy;"], [0, "&chcy;"], [0, "&shcy;"], [0, "&shchcy;"], [0, "&hardcy;"], [0, "&ycy;"], [0, "&softcy;"], [0, "&ecy;"], [0, "&yucy;"], [0, "&yacy;"], [1, "&iocy;"], [0, "&djcy;"], [0, "&gjcy;"], [0, "&jukcy;"], [0, "&dscy;"], [0, "&iukcy;"], [0, "&yicy;"], [0, "&jsercy;"], [0, "&ljcy;"], [0, "&njcy;"], [0, "&tshcy;"], [0, "&kjcy;"], [1, "&ubrcy;"], [0, "&dzcy;"], [7074, "&ensp;"], [0, "&emsp;"], [0, "&emsp13;"], [0, "&emsp14;"], [1, "&numsp;"], [0, "&puncsp;"], [0, "&ThinSpace;"], [0, "&hairsp;"], [0, "&NegativeMediumSpace;"], [0, "&zwnj;"], [0, "&zwj;"], [0, "&lrm;"], [0, "&rlm;"], [0, "&dash;"], [2, "&ndash;"], [0, "&mdash;"], [0, "&horbar;"], [0, "&Verbar;"], [1, "&lsquo;"], [0, "&CloseCurlyQuote;"], [0, "&lsquor;"], [1, "&ldquo;"], [0, "&CloseCurlyDoubleQuote;"], [0, "&bdquo;"], [1, "&dagger;"], [0, "&Dagger;"], [0, "&bull;"], [2, "&nldr;"], [0, "&hellip;"], [9, "&permil;"], [0, "&pertenk;"], [0, "&prime;"], [0, "&Prime;"], [0, "&tprime;"], [0, "&backprime;"], [3, "&lsaquo;"], [0, "&rsaquo;"], [3, "&oline;"], [2, "&caret;"], [1, "&hybull;"], [0, "&frasl;"], [10, "&bsemi;"], [7, "&qprime;"], [7, { v: "&MediumSpace;", n: 8202, o: "&ThickSpace;" }], [0, "&NoBreak;"], [0, "&af;"], [0, "&InvisibleTimes;"], [0, "&ic;"], [72, "&euro;"], [46, "&tdot;"], [0, "&DotDot;"], [37, "&complexes;"], [2, "&incare;"], [4, "&gscr;"], [0, "&hamilt;"], [0, "&Hfr;"], [0, "&Hopf;"], [0, "&planckh;"], [0, "&hbar;"], [0, "&imagline;"], [0, "&Ifr;"], [0, "&lagran;"], [0, "&ell;"], [1, "&naturals;"], [0, "&numero;"], [0, "&copysr;"], [0, "&weierp;"], [0, "&Popf;"], [0, "&Qopf;"], [0, "&realine;"], [0, "&real;"], [0, "&reals;"], [0, "&rx;"], [3, "&trade;"], [1, "&integers;"], [2, "&mho;"], [0, "&zeetrf;"], [0, "&iiota;"], [2, "&bernou;"], [0, "&Cayleys;"], [1, "&escr;"], [0, "&Escr;"], [0, "&Fouriertrf;"], [1, "&Mellintrf;"], [0, "&order;"], [0, "&alefsym;"], [0, "&beth;"], [0, "&gimel;"], [0, "&daleth;"], [12, "&CapitalDifferentialD;"], [0, "&dd;"], [0, "&ee;"], [0, "&ii;"], [10, "&frac13;"], [0, "&frac23;"], [0, "&frac15;"], [0, "&frac25;"], [0, "&frac35;"], [0, "&frac45;"], [0, "&frac16;"], [0, "&frac56;"], [0, "&frac18;"], [0, "&frac38;"], [0, "&frac58;"], [0, "&frac78;"], [49, "&larr;"], [0, "&ShortUpArrow;"], [0, "&rarr;"], [0, "&darr;"], [0, "&harr;"], [0, "&updownarrow;"], [0, "&nwarr;"], [0, "&nearr;"], [0, "&LowerRightArrow;"], [0, "&LowerLeftArrow;"], [0, "&nlarr;"], [0, "&nrarr;"], [1, { v: "&rarrw;", n: 824, o: "&nrarrw;" }], [0, "&Larr;"], [0, "&Uarr;"], [0, "&Rarr;"], [0, "&Darr;"], [0, "&larrtl;"], [0, "&rarrtl;"], [0, "&LeftTeeArrow;"], [0, "&mapstoup;"], [0, "&map;"], [0, "&DownTeeArrow;"], [1, "&hookleftarrow;"], [0, "&hookrightarrow;"], [0, "&larrlp;"], [0, "&looparrowright;"], [0, "&harrw;"], [0, "&nharr;"], [1, "&lsh;"], [0, "&rsh;"], [0, "&ldsh;"], [0, "&rdsh;"], [1, "&crarr;"], [0, "&cularr;"], [0, "&curarr;"], [2, "&circlearrowleft;"], [0, "&circlearrowright;"], [0, "&leftharpoonup;"], [0, "&DownLeftVector;"], [0, "&RightUpVector;"], [0, "&LeftUpVector;"], [0, "&rharu;"], [0, "&DownRightVector;"], [0, "&dharr;"], [0, "&dharl;"], [0, "&RightArrowLeftArrow;"], [0, "&udarr;"], [0, "&LeftArrowRightArrow;"], [0, "&leftleftarrows;"], [0, "&upuparrows;"], [0, "&rightrightarrows;"], [0, "&ddarr;"], [0, "&leftrightharpoons;"], [0, "&Equilibrium;"], [0, "&nlArr;"], [0, "&nhArr;"], [0, "&nrArr;"], [0, "&DoubleLeftArrow;"], [0, "&DoubleUpArrow;"], [0, "&DoubleRightArrow;"], [0, "&dArr;"], [0, "&DoubleLeftRightArrow;"], [0, "&DoubleUpDownArrow;"], [0, "&nwArr;"], [0, "&neArr;"], [0, "&seArr;"], [0, "&swArr;"], [0, "&lAarr;"], [0, "&rAarr;"], [1, "&zigrarr;"], [6, "&larrb;"], [0, "&rarrb;"], [15, "&DownArrowUpArrow;"], [7, "&loarr;"], [0, "&roarr;"], [0, "&hoarr;"], [0, "&forall;"], [0, "&comp;"], [0, { v: "&part;", n: 824, o: "&npart;" }], [0, "&exist;"], [0, "&nexist;"], [0, "&empty;"], [1, "&Del;"], [0, "&Element;"], [0, "&NotElement;"], [1, "&ni;"], [0, "&notni;"], [2, "&prod;"], [0, "&coprod;"], [0, "&sum;"], [0, "&minus;"], [0, "&MinusPlus;"], [0, "&dotplus;"], [1, "&Backslash;"], [0, "&lowast;"], [0, "&compfn;"], [1, "&radic;"], [2, "&prop;"], [0, "&infin;"], [0, "&angrt;"], [0, { v: "&ang;", n: 8402, o: "&nang;" }], [0, "&angmsd;"], [0, "&angsph;"], [0, "&mid;"], [0, "&nmid;"], [0, "&DoubleVerticalBar;"], [0, "&NotDoubleVerticalBar;"], [0, "&and;"], [0, "&or;"], [0, { v: "&cap;", n: 65024, o: "&caps;" }], [0, { v: "&cup;", n: 65024, o: "&cups;" }], [0, "&int;"], [0, "&Int;"], [0, "&iiint;"], [0, "&conint;"], [0, "&Conint;"], [0, "&Cconint;"], [0, "&cwint;"], [0, "&ClockwiseContourIntegral;"], [0, "&awconint;"], [0, "&there4;"], [0, "&becaus;"], [0, "&ratio;"], [0, "&Colon;"], [0, "&dotminus;"], [1, "&mDDot;"], [0, "&homtht;"], [0, { v: "&sim;", n: 8402, o: "&nvsim;" }], [0, { v: "&backsim;", n: 817, o: "&race;" }], [0, { v: "&ac;", n: 819, o: "&acE;" }], [0, "&acd;"], [0, "&VerticalTilde;"], [0, "&NotTilde;"], [0, { v: "&eqsim;", n: 824, o: "&nesim;" }], [0, "&sime;"], [0, "&NotTildeEqual;"], [0, "&cong;"], [0, "&simne;"], [0, "&ncong;"], [0, "&ap;"], [0, "&nap;"], [0, "&ape;"], [0, { v: "&apid;", n: 824, o: "&napid;" }], [0, "&backcong;"], [0, { v: "&asympeq;", n: 8402, o: "&nvap;" }], [0, { v: "&bump;", n: 824, o: "&nbump;" }], [0, { v: "&bumpe;", n: 824, o: "&nbumpe;" }], [0, { v: "&doteq;", n: 824, o: "&nedot;" }], [0, "&doteqdot;"], [0, "&efDot;"], [0, "&erDot;"], [0, "&Assign;"], [0, "&ecolon;"], [0, "&ecir;"], [0, "&circeq;"], [1, "&wedgeq;"], [0, "&veeeq;"], [1, "&triangleq;"], [2, "&equest;"], [0, "&ne;"], [0, { v: "&Congruent;", n: 8421, o: "&bnequiv;" }], [0, "&nequiv;"], [1, { v: "&le;", n: 8402, o: "&nvle;" }], [0, { v: "&ge;", n: 8402, o: "&nvge;" }], [0, { v: "&lE;", n: 824, o: "&nlE;" }], [0, { v: "&gE;", n: 824, o: "&ngE;" }], [0, { v: "&lnE;", n: 65024, o: "&lvertneqq;" }], [0, { v: "&gnE;", n: 65024, o: "&gvertneqq;" }], [0, { v: "&ll;", n: new Map(/* @__PURE__ */ restoreDiff([[824, "&nLtv;"], [7577, "&nLt;"]])) }], [0, { v: "&gg;", n: new Map(/* @__PURE__ */ restoreDiff([[824, "&nGtv;"], [7577, "&nGt;"]])) }], [0, "&between;"], [0, "&NotCupCap;"], [0, "&nless;"], [0, "&ngt;"], [0, "&nle;"], [0, "&nge;"], [0, "&lesssim;"], [0, "&GreaterTilde;"], [0, "&nlsim;"], [0, "&ngsim;"], [0, "&LessGreater;"], [0, "&gl;"], [0, "&NotLessGreater;"], [0, "&NotGreaterLess;"], [0, "&pr;"], [0, "&sc;"], [0, "&prcue;"], [0, "&sccue;"], [0, "&PrecedesTilde;"], [0, { v: "&scsim;", n: 824, o: "&NotSucceedsTilde;" }], [0, "&NotPrecedes;"], [0, "&NotSucceeds;"], [0, { v: "&sub;", n: 8402, o: "&NotSubset;" }], [0, { v: "&sup;", n: 8402, o: "&NotSuperset;" }], [0, "&nsub;"], [0, "&nsup;"], [0, "&sube;"], [0, "&supe;"], [0, "&NotSubsetEqual;"], [0, "&NotSupersetEqual;"], [0, { v: "&subne;", n: 65024, o: "&varsubsetneq;" }], [0, { v: "&supne;", n: 65024, o: "&varsupsetneq;" }], [1, "&cupdot;"], [0, "&UnionPlus;"], [0, { v: "&sqsub;", n: 824, o: "&NotSquareSubset;" }], [0, { v: "&sqsup;", n: 824, o: "&NotSquareSuperset;" }], [0, "&sqsube;"], [0, "&sqsupe;"], [0, { v: "&sqcap;", n: 65024, o: "&sqcaps;" }], [0, { v: "&sqcup;", n: 65024, o: "&sqcups;" }], [0, "&CirclePlus;"], [0, "&CircleMinus;"], [0, "&CircleTimes;"], [0, "&osol;"], [0, "&CircleDot;"], [0, "&circledcirc;"], [0, "&circledast;"], [1, "&circleddash;"], [0, "&boxplus;"], [0, "&boxminus;"], [0, "&boxtimes;"], [0, "&dotsquare;"], [0, "&RightTee;"], [0, "&dashv;"], [0, "&DownTee;"], [0, "&bot;"], [1, "&models;"], [0, "&DoubleRightTee;"], [0, "&Vdash;"], [0, "&Vvdash;"], [0, "&VDash;"], [0, "&nvdash;"], [0, "&nvDash;"], [0, "&nVdash;"], [0, "&nVDash;"], [0, "&prurel;"], [1, "&LeftTriangle;"], [0, "&RightTriangle;"], [0, { v: "&LeftTriangleEqual;", n: 8402, o: "&nvltrie;" }], [0, { v: "&RightTriangleEqual;", n: 8402, o: "&nvrtrie;" }], [0, "&origof;"], [0, "&imof;"], [0, "&multimap;"], [0, "&hercon;"], [0, "&intcal;"], [0, "&veebar;"], [1, "&barvee;"], [0, "&angrtvb;"], [0, "&lrtri;"], [0, "&bigwedge;"], [0, "&bigvee;"], [0, "&bigcap;"], [0, "&bigcup;"], [0, "&diam;"], [0, "&sdot;"], [0, "&sstarf;"], [0, "&divideontimes;"], [0, "&bowtie;"], [0, "&ltimes;"], [0, "&rtimes;"], [0, "&leftthreetimes;"], [0, "&rightthreetimes;"], [0, "&backsimeq;"], [0, "&curlyvee;"], [0, "&curlywedge;"], [0, "&Sub;"], [0, "&Sup;"], [0, "&Cap;"], [0, "&Cup;"], [0, "&fork;"], [0, "&epar;"], [0, "&lessdot;"], [0, "&gtdot;"], [0, { v: "&Ll;", n: 824, o: "&nLl;" }], [0, { v: "&Gg;", n: 824, o: "&nGg;" }], [0, { v: "&leg;", n: 65024, o: "&lesg;" }], [0, { v: "&gel;", n: 65024, o: "&gesl;" }], [2, "&cuepr;"], [0, "&cuesc;"], [0, "&NotPrecedesSlantEqual;"], [0, "&NotSucceedsSlantEqual;"], [0, "&NotSquareSubsetEqual;"], [0, "&NotSquareSupersetEqual;"], [2, "&lnsim;"], [0, "&gnsim;"], [0, "&precnsim;"], [0, "&scnsim;"], [0, "&nltri;"], [0, "&NotRightTriangle;"], [0, "&nltrie;"], [0, "&NotRightTriangleEqual;"], [0, "&vellip;"], [0, "&ctdot;"], [0, "&utdot;"], [0, "&dtdot;"], [0, "&disin;"], [0, "&isinsv;"], [0, "&isins;"], [0, { v: "&isindot;", n: 824, o: "&notindot;" }], [0, "&notinvc;"], [0, "&notinvb;"], [1, { v: "&isinE;", n: 824, o: "&notinE;" }], [0, "&nisd;"], [0, "&xnis;"], [0, "&nis;"], [0, "&notnivc;"], [0, "&notnivb;"], [6, "&barwed;"], [0, "&Barwed;"], [1, "&lceil;"], [0, "&rceil;"], [0, "&LeftFloor;"], [0, "&rfloor;"], [0, "&drcrop;"], [0, "&dlcrop;"], [0, "&urcrop;"], [0, "&ulcrop;"], [0, "&bnot;"], [1, "&profline;"], [0, "&profsurf;"], [1, "&telrec;"], [0, "&target;"], [5, "&ulcorn;"], [0, "&urcorn;"], [0, "&dlcorn;"], [0, "&drcorn;"], [2, "&frown;"], [0, "&smile;"], [9, "&cylcty;"], [0, "&profalar;"], [7, "&topbot;"], [6, "&ovbar;"], [1, "&solbar;"], [60, "&angzarr;"], [51, "&lmoustache;"], [0, "&rmoustache;"], [2, "&OverBracket;"], [0, "&bbrk;"], [0, "&bbrktbrk;"], [37, "&OverParenthesis;"], [0, "&UnderParenthesis;"], [0, "&OverBrace;"], [0, "&UnderBrace;"], [2, "&trpezium;"], [4, "&elinters;"], [59, "&blank;"], [164, "&circledS;"], [55, "&boxh;"], [1, "&boxv;"], [9, "&boxdr;"], [3, "&boxdl;"], [3, "&boxur;"], [3, "&boxul;"], [3, "&boxvr;"], [7, "&boxvl;"], [7, "&boxhd;"], [7, "&boxhu;"], [7, "&boxvh;"], [19, "&boxH;"], [0, "&boxV;"], [0, "&boxdR;"], [0, "&boxDr;"], [0, "&boxDR;"], [0, "&boxdL;"], [0, "&boxDl;"], [0, "&boxDL;"], [0, "&boxuR;"], [0, "&boxUr;"], [0, "&boxUR;"], [0, "&boxuL;"], [0, "&boxUl;"], [0, "&boxUL;"], [0, "&boxvR;"], [0, "&boxVr;"], [0, "&boxVR;"], [0, "&boxvL;"], [0, "&boxVl;"], [0, "&boxVL;"], [0, "&boxHd;"], [0, "&boxhD;"], [0, "&boxHD;"], [0, "&boxHu;"], [0, "&boxhU;"], [0, "&boxHU;"], [0, "&boxvH;"], [0, "&boxVh;"], [0, "&boxVH;"], [19, "&uhblk;"], [3, "&lhblk;"], [3, "&block;"], [8, "&blk14;"], [0, "&blk12;"], [0, "&blk34;"], [13, "&square;"], [8, "&blacksquare;"], [0, "&EmptyVerySmallSquare;"], [1, "&rect;"], [0, "&marker;"], [2, "&fltns;"], [1, "&bigtriangleup;"], [0, "&blacktriangle;"], [0, "&triangle;"], [2, "&blacktriangleright;"], [0, "&rtri;"], [3, "&bigtriangledown;"], [0, "&blacktriangledown;"], [0, "&dtri;"], [2, "&blacktriangleleft;"], [0, "&ltri;"], [6, "&loz;"], [0, "&cir;"], [32, "&tridot;"], [2, "&bigcirc;"], [8, "&ultri;"], [0, "&urtri;"], [0, "&lltri;"], [0, "&EmptySmallSquare;"], [0, "&FilledSmallSquare;"], [8, "&bigstar;"], [0, "&star;"], [7, "&phone;"], [49, "&female;"], [1, "&male;"], [29, "&spades;"], [2, "&clubs;"], [1, "&hearts;"], [0, "&diamondsuit;"], [3, "&sung;"], [2, "&flat;"], [0, "&natural;"], [0, "&sharp;"], [163, "&check;"], [3, "&cross;"], [8, "&malt;"], [21, "&sext;"], [33, "&VerticalSeparator;"], [25, "&lbbrk;"], [0, "&rbbrk;"], [84, "&bsolhsub;"], [0, "&suphsol;"], [28, "&LeftDoubleBracket;"], [0, "&RightDoubleBracket;"], [0, "&lang;"], [0, "&rang;"], [0, "&Lang;"], [0, "&Rang;"], [0, "&loang;"], [0, "&roang;"], [7, "&longleftarrow;"], [0, "&longrightarrow;"], [0, "&longleftrightarrow;"], [0, "&DoubleLongLeftArrow;"], [0, "&DoubleLongRightArrow;"], [0, "&DoubleLongLeftRightArrow;"], [1, "&longmapsto;"], [2, "&dzigrarr;"], [258, "&nvlArr;"], [0, "&nvrArr;"], [0, "&nvHarr;"], [0, "&Map;"], [6, "&lbarr;"], [0, "&bkarow;"], [0, "&lBarr;"], [0, "&dbkarow;"], [0, "&drbkarow;"], [0, "&DDotrahd;"], [0, "&UpArrowBar;"], [0, "&DownArrowBar;"], [2, "&Rarrtl;"], [2, "&latail;"], [0, "&ratail;"], [0, "&lAtail;"], [0, "&rAtail;"], [0, "&larrfs;"], [0, "&rarrfs;"], [0, "&larrbfs;"], [0, "&rarrbfs;"], [2, "&nwarhk;"], [0, "&nearhk;"], [0, "&hksearow;"], [0, "&hkswarow;"], [0, "&nwnear;"], [0, "&nesear;"], [0, "&seswar;"], [0, "&swnwar;"], [8, { v: "&rarrc;", n: 824, o: "&nrarrc;" }], [1, "&cudarrr;"], [0, "&ldca;"], [0, "&rdca;"], [0, "&cudarrl;"], [0, "&larrpl;"], [2, "&curarrm;"], [0, "&cularrp;"], [7, "&rarrpl;"], [2, "&harrcir;"], [0, "&Uarrocir;"], [0, "&lurdshar;"], [0, "&ldrushar;"], [2, "&LeftRightVector;"], [0, "&RightUpDownVector;"], [0, "&DownLeftRightVector;"], [0, "&LeftUpDownVector;"], [0, "&LeftVectorBar;"], [0, "&RightVectorBar;"], [0, "&RightUpVectorBar;"], [0, "&RightDownVectorBar;"], [0, "&DownLeftVectorBar;"], [0, "&DownRightVectorBar;"], [0, "&LeftUpVectorBar;"], [0, "&LeftDownVectorBar;"], [0, "&LeftTeeVector;"], [0, "&RightTeeVector;"], [0, "&RightUpTeeVector;"], [0, "&RightDownTeeVector;"], [0, "&DownLeftTeeVector;"], [0, "&DownRightTeeVector;"], [0, "&LeftUpTeeVector;"], [0, "&LeftDownTeeVector;"], [0, "&lHar;"], [0, "&uHar;"], [0, "&rHar;"], [0, "&dHar;"], [0, "&luruhar;"], [0, "&ldrdhar;"], [0, "&ruluhar;"], [0, "&rdldhar;"], [0, "&lharul;"], [0, "&llhard;"], [0, "&rharul;"], [0, "&lrhard;"], [0, "&udhar;"], [0, "&duhar;"], [0, "&RoundImplies;"], [0, "&erarr;"], [0, "&simrarr;"], [0, "&larrsim;"], [0, "&rarrsim;"], [0, "&rarrap;"], [0, "&ltlarr;"], [1, "&gtrarr;"], [0, "&subrarr;"], [1, "&suplarr;"], [0, "&lfisht;"], [0, "&rfisht;"], [0, "&ufisht;"], [0, "&dfisht;"], [5, "&lopar;"], [0, "&ropar;"], [4, "&lbrke;"], [0, "&rbrke;"], [0, "&lbrkslu;"], [0, "&rbrksld;"], [0, "&lbrksld;"], [0, "&rbrkslu;"], [0, "&langd;"], [0, "&rangd;"], [0, "&lparlt;"], [0, "&rpargt;"], [0, "&gtlPar;"], [0, "&ltrPar;"], [3, "&vzigzag;"], [1, "&vangrt;"], [0, "&angrtvbd;"], [6, "&ange;"], [0, "&range;"], [0, "&dwangle;"], [0, "&uwangle;"], [0, "&angmsdaa;"], [0, "&angmsdab;"], [0, "&angmsdac;"], [0, "&angmsdad;"], [0, "&angmsdae;"], [0, "&angmsdaf;"], [0, "&angmsdag;"], [0, "&angmsdah;"], [0, "&bemptyv;"], [0, "&demptyv;"], [0, "&cemptyv;"], [0, "&raemptyv;"], [0, "&laemptyv;"], [0, "&ohbar;"], [0, "&omid;"], [0, "&opar;"], [1, "&operp;"], [1, "&olcross;"], [0, "&odsold;"], [1, "&olcir;"], [0, "&ofcir;"], [0, "&olt;"], [0, "&ogt;"], [0, "&cirscir;"], [0, "&cirE;"], [0, "&solb;"], [0, "&bsolb;"], [3, "&boxbox;"], [3, "&trisb;"], [0, "&rtriltri;"], [0, { v: "&LeftTriangleBar;", n: 824, o: "&NotLeftTriangleBar;" }], [0, { v: "&RightTriangleBar;", n: 824, o: "&NotRightTriangleBar;" }], [11, "&iinfin;"], [0, "&infintie;"], [0, "&nvinfin;"], [4, "&eparsl;"], [0, "&smeparsl;"], [0, "&eqvparsl;"], [5, "&blacklozenge;"], [8, "&RuleDelayed;"], [1, "&dsol;"], [9, "&bigodot;"], [0, "&bigoplus;"], [0, "&bigotimes;"], [1, "&biguplus;"], [1, "&bigsqcup;"], [5, "&iiiint;"], [0, "&fpartint;"], [2, "&cirfnint;"], [0, "&awint;"], [0, "&rppolint;"], [0, "&scpolint;"], [0, "&npolint;"], [0, "&pointint;"], [0, "&quatint;"], [0, "&intlarhk;"], [10, "&pluscir;"], [0, "&plusacir;"], [0, "&simplus;"], [0, "&plusdu;"], [0, "&plussim;"], [0, "&plustwo;"], [1, "&mcomma;"], [0, "&minusdu;"], [2, "&loplus;"], [0, "&roplus;"], [0, "&Cross;"], [0, "&timesd;"], [0, "&timesbar;"], [1, "&smashp;"], [0, "&lotimes;"], [0, "&rotimes;"], [0, "&otimesas;"], [0, "&Otimes;"], [0, "&odiv;"], [0, "&triplus;"], [0, "&triminus;"], [0, "&tritime;"], [0, "&intprod;"], [2, "&amalg;"], [0, "&capdot;"], [1, "&ncup;"], [0, "&ncap;"], [0, "&capand;"], [0, "&cupor;"], [0, "&cupcap;"], [0, "&capcup;"], [0, "&cupbrcap;"], [0, "&capbrcup;"], [0, "&cupcup;"], [0, "&capcap;"], [0, "&ccups;"], [0, "&ccaps;"], [2, "&ccupssm;"], [2, "&And;"], [0, "&Or;"], [0, "&andand;"], [0, "&oror;"], [0, "&orslope;"], [0, "&andslope;"], [1, "&andv;"], [0, "&orv;"], [0, "&andd;"], [0, "&ord;"], [1, "&wedbar;"], [6, "&sdote;"], [3, "&simdot;"], [2, { v: "&congdot;", n: 824, o: "&ncongdot;" }], [0, "&easter;"], [0, "&apacir;"], [0, { v: "&apE;", n: 824, o: "&napE;" }], [0, "&eplus;"], [0, "&pluse;"], [0, "&Esim;"], [0, "&Colone;"], [0, "&Equal;"], [1, "&ddotseq;"], [0, "&equivDD;"], [0, "&ltcir;"], [0, "&gtcir;"], [0, "&ltquest;"], [0, "&gtquest;"], [0, { v: "&leqslant;", n: 824, o: "&nleqslant;" }], [0, { v: "&geqslant;", n: 824, o: "&ngeqslant;" }], [0, "&lesdot;"], [0, "&gesdot;"], [0, "&lesdoto;"], [0, "&gesdoto;"], [0, "&lesdotor;"], [0, "&gesdotol;"], [0, "&lap;"], [0, "&gap;"], [0, "&lne;"], [0, "&gne;"], [0, "&lnap;"], [0, "&gnap;"], [0, "&lEg;"], [0, "&gEl;"], [0, "&lsime;"], [0, "&gsime;"], [0, "&lsimg;"], [0, "&gsiml;"], [0, "&lgE;"], [0, "&glE;"], [0, "&lesges;"], [0, "&gesles;"], [0, "&els;"], [0, "&egs;"], [0, "&elsdot;"], [0, "&egsdot;"], [0, "&el;"], [0, "&eg;"], [2, "&siml;"], [0, "&simg;"], [0, "&simlE;"], [0, "&simgE;"], [0, { v: "&LessLess;", n: 824, o: "&NotNestedLessLess;" }], [0, { v: "&GreaterGreater;", n: 824, o: "&NotNestedGreaterGreater;" }], [1, "&glj;"], [0, "&gla;"], [0, "&ltcc;"], [0, "&gtcc;"], [0, "&lescc;"], [0, "&gescc;"], [0, "&smt;"], [0, "&lat;"], [0, { v: "&smte;", n: 65024, o: "&smtes;" }], [0, { v: "&late;", n: 65024, o: "&lates;" }], [0, "&bumpE;"], [0, { v: "&PrecedesEqual;", n: 824, o: "&NotPrecedesEqual;" }], [0, { v: "&sce;", n: 824, o: "&NotSucceedsEqual;" }], [2, "&prE;"], [0, "&scE;"], [0, "&precneqq;"], [0, "&scnE;"], [0, "&prap;"], [0, "&scap;"], [0, "&precnapprox;"], [0, "&scnap;"], [0, "&Pr;"], [0, "&Sc;"], [0, "&subdot;"], [0, "&supdot;"], [0, "&subplus;"], [0, "&supplus;"], [0, "&submult;"], [0, "&supmult;"], [0, "&subedot;"], [0, "&supedot;"], [0, { v: "&subE;", n: 824, o: "&nsubE;" }], [0, { v: "&supE;", n: 824, o: "&nsupE;" }], [0, "&subsim;"], [0, "&supsim;"], [2, { v: "&subnE;", n: 65024, o: "&varsubsetneqq;" }], [0, { v: "&supnE;", n: 65024, o: "&varsupsetneqq;" }], [2, "&csub;"], [0, "&csup;"], [0, "&csube;"], [0, "&csupe;"], [0, "&subsup;"], [0, "&supsub;"], [0, "&subsub;"], [0, "&supsup;"], [0, "&suphsub;"], [0, "&supdsub;"], [0, "&forkv;"], [0, "&topfork;"], [0, "&mlcp;"], [8, "&Dashv;"], [1, "&Vdashl;"], [0, "&Barv;"], [0, "&vBar;"], [0, "&vBarv;"], [1, "&Vbar;"], [0, "&Not;"], [0, "&bNot;"], [0, "&rnmid;"], [0, "&cirmid;"], [0, "&midcir;"], [0, "&topcir;"], [0, "&nhpar;"], [0, "&parsim;"], [9, { v: "&parsl;", n: 8421, o: "&nparsl;" }], [44343, { n: new Map(/* @__PURE__ */ restoreDiff([[56476, "&Ascr;"], [1, "&Cscr;"], [0, "&Dscr;"], [2, "&Gscr;"], [2, "&Jscr;"], [0, "&Kscr;"], [2, "&Nscr;"], [0, "&Oscr;"], [0, "&Pscr;"], [0, "&Qscr;"], [1, "&Sscr;"], [0, "&Tscr;"], [0, "&Uscr;"], [0, "&Vscr;"], [0, "&Wscr;"], [0, "&Xscr;"], [0, "&Yscr;"], [0, "&Zscr;"], [0, "&ascr;"], [0, "&bscr;"], [0, "&cscr;"], [0, "&dscr;"], [1, "&fscr;"], [1, "&hscr;"], [0, "&iscr;"], [0, "&jscr;"], [0, "&kscr;"], [0, "&lscr;"], [0, "&mscr;"], [0, "&nscr;"], [1, "&pscr;"], [0, "&qscr;"], [0, "&rscr;"], [0, "&sscr;"], [0, "&tscr;"], [0, "&uscr;"], [0, "&vscr;"], [0, "&wscr;"], [0, "&xscr;"], [0, "&yscr;"], [0, "&zscr;"], [52, "&Afr;"], [0, "&Bfr;"], [1, "&Dfr;"], [0, "&Efr;"], [0, "&Ffr;"], [0, "&Gfr;"], [2, "&Jfr;"], [0, "&Kfr;"], [0, "&Lfr;"], [0, "&Mfr;"], [0, "&Nfr;"], [0, "&Ofr;"], [0, "&Pfr;"], [0, "&Qfr;"], [1, "&Sfr;"], [0, "&Tfr;"], [0, "&Ufr;"], [0, "&Vfr;"], [0, "&Wfr;"], [0, "&Xfr;"], [0, "&Yfr;"], [1, "&afr;"], [0, "&bfr;"], [0, "&cfr;"], [0, "&dfr;"], [0, "&efr;"], [0, "&ffr;"], [0, "&gfr;"], [0, "&hfr;"], [0, "&ifr;"], [0, "&jfr;"], [0, "&kfr;"], [0, "&lfr;"], [0, "&mfr;"], [0, "&nfr;"], [0, "&ofr;"], [0, "&pfr;"], [0, "&qfr;"], [0, "&rfr;"], [0, "&sfr;"], [0, "&tfr;"], [0, "&ufr;"], [0, "&vfr;"], [0, "&wfr;"], [0, "&xfr;"], [0, "&yfr;"], [0, "&zfr;"], [0, "&Aopf;"], [0, "&Bopf;"], [1, "&Dopf;"], [0, "&Eopf;"], [0, "&Fopf;"], [0, "&Gopf;"], [1, "&Iopf;"], [0, "&Jopf;"], [0, "&Kopf;"], [0, "&Lopf;"], [0, "&Mopf;"], [1, "&Oopf;"], [3, "&Sopf;"], [0, "&Topf;"], [0, "&Uopf;"], [0, "&Vopf;"], [0, "&Wopf;"], [0, "&Xopf;"], [0, "&Yopf;"], [1, "&aopf;"], [0, "&bopf;"], [0, "&copf;"], [0, "&dopf;"], [0, "&eopf;"], [0, "&fopf;"], [0, "&gopf;"], [0, "&hopf;"], [0, "&iopf;"], [0, "&jopf;"], [0, "&kopf;"], [0, "&lopf;"], [0, "&mopf;"], [0, "&nopf;"], [0, "&oopf;"], [0, "&popf;"], [0, "&qopf;"], [0, "&ropf;"], [0, "&sopf;"], [0, "&topf;"], [0, "&uopf;"], [0, "&vopf;"], [0, "&wopf;"], [0, "&xopf;"], [0, "&yopf;"], [0, "&zopf;"]])) }], [8906, "&fflig;"], [0, "&filig;"], [0, "&fllig;"], [0, "&ffilig;"], [0, "&ffllig;"]]));
+  }
+});
+
+// node_modules/entities/lib/escape.js
+var require_escape = __commonJS({
+  "node_modules/entities/lib/escape.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.escapeText = exports.escapeAttribute = exports.escapeUTF8 = exports.escape = exports.encodeXML = exports.getCodePoint = exports.xmlReplacer = void 0;
+    exports.xmlReplacer = /["&'<>$\x80-\uFFFF]/g;
+    var xmlCodeMap = /* @__PURE__ */ new Map([
+      [34, "&quot;"],
+      [38, "&amp;"],
+      [39, "&apos;"],
+      [60, "&lt;"],
+      [62, "&gt;"]
+    ]);
+    exports.getCodePoint = // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    String.prototype.codePointAt != null ? function(str, index) {
+      return str.codePointAt(index);
+    } : (
+      // http://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
+      function(c4, index) {
+        return (c4.charCodeAt(index) & 64512) === 55296 ? (c4.charCodeAt(index) - 55296) * 1024 + c4.charCodeAt(index + 1) - 56320 + 65536 : c4.charCodeAt(index);
+      }
+    );
+    function encodeXML(str) {
+      var ret = "";
+      var lastIdx = 0;
+      var match2;
+      while ((match2 = exports.xmlReplacer.exec(str)) !== null) {
+        var i5 = match2.index;
+        var char = str.charCodeAt(i5);
+        var next = xmlCodeMap.get(char);
+        if (next !== void 0) {
+          ret += str.substring(lastIdx, i5) + next;
+          lastIdx = i5 + 1;
+        } else {
+          ret += "".concat(str.substring(lastIdx, i5), "&#x").concat((0, exports.getCodePoint)(str, i5).toString(16), ";");
+          lastIdx = exports.xmlReplacer.lastIndex += Number((char & 64512) === 55296);
+        }
+      }
+      return ret + str.substr(lastIdx);
+    }
+    exports.encodeXML = encodeXML;
+    exports.escape = encodeXML;
+    function getEscaper(regex, map) {
+      return function escape2(data) {
+        var match2;
+        var lastIdx = 0;
+        var result = "";
+        while (match2 = regex.exec(data)) {
+          if (lastIdx !== match2.index) {
+            result += data.substring(lastIdx, match2.index);
+          }
+          result += map.get(match2[0].charCodeAt(0));
+          lastIdx = match2.index + 1;
+        }
+        return result + data.substring(lastIdx);
+      };
+    }
+    exports.escapeUTF8 = getEscaper(/[&<>'"]/g, xmlCodeMap);
+    exports.escapeAttribute = getEscaper(/["&\u00A0]/g, /* @__PURE__ */ new Map([
+      [34, "&quot;"],
+      [38, "&amp;"],
+      [160, "&nbsp;"]
+    ]));
+    exports.escapeText = getEscaper(/[&<>\u00A0]/g, /* @__PURE__ */ new Map([
+      [38, "&amp;"],
+      [60, "&lt;"],
+      [62, "&gt;"],
+      [160, "&nbsp;"]
+    ]));
+  }
+});
+
+// node_modules/entities/lib/encode.js
+var require_encode = __commonJS({
+  "node_modules/entities/lib/encode.js"(exports) {
+    "use strict";
+    var __importDefault = exports && exports.__importDefault || function(mod) {
+      return mod && mod.__esModule ? mod : { "default": mod };
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.encodeNonAsciiHTML = exports.encodeHTML = void 0;
+    var encode_html_js_1 = __importDefault(require_encode_html());
+    var escape_js_1 = require_escape();
+    var htmlReplacer = /[\t\n!-,./:-@[-`\f{-}$\x80-\uFFFF]/g;
+    function encodeHTML(data) {
+      return encodeHTMLTrieRe(htmlReplacer, data);
+    }
+    exports.encodeHTML = encodeHTML;
+    function encodeNonAsciiHTML(data) {
+      return encodeHTMLTrieRe(escape_js_1.xmlReplacer, data);
+    }
+    exports.encodeNonAsciiHTML = encodeNonAsciiHTML;
+    function encodeHTMLTrieRe(regExp, str) {
+      var ret = "";
+      var lastIdx = 0;
+      var match2;
+      while ((match2 = regExp.exec(str)) !== null) {
+        var i5 = match2.index;
+        ret += str.substring(lastIdx, i5);
+        var char = str.charCodeAt(i5);
+        var next = encode_html_js_1.default.get(char);
+        if (typeof next === "object") {
+          if (i5 + 1 < str.length) {
+            var nextChar = str.charCodeAt(i5 + 1);
+            var value = typeof next.n === "number" ? next.n === nextChar ? next.o : void 0 : next.n.get(nextChar);
+            if (value !== void 0) {
+              ret += value;
+              lastIdx = regExp.lastIndex += 1;
+              continue;
+            }
+          }
+          next = next.v;
+        }
+        if (next !== void 0) {
+          ret += next;
+          lastIdx = i5 + 1;
+        } else {
+          var cp = (0, escape_js_1.getCodePoint)(str, i5);
+          ret += "&#x".concat(cp.toString(16), ";");
+          lastIdx = regExp.lastIndex += Number(cp !== char);
+        }
+      }
+      return ret + str.substr(lastIdx);
+    }
+  }
+});
+
+// node_modules/entities/lib/index.js
+var require_lib3 = __commonJS({
+  "node_modules/entities/lib/index.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.decodeXMLStrict = exports.decodeHTML5Strict = exports.decodeHTML4Strict = exports.decodeHTML5 = exports.decodeHTML4 = exports.decodeHTMLAttribute = exports.decodeHTMLStrict = exports.decodeHTML = exports.decodeXML = exports.DecodingMode = exports.EntityDecoder = exports.encodeHTML5 = exports.encodeHTML4 = exports.encodeNonAsciiHTML = exports.encodeHTML = exports.escapeText = exports.escapeAttribute = exports.escapeUTF8 = exports.escape = exports.encodeXML = exports.encode = exports.decodeStrict = exports.decode = exports.EncodingMode = exports.EntityLevel = void 0;
+    var decode_js_1 = require_decode();
+    var encode_js_1 = require_encode();
+    var escape_js_1 = require_escape();
+    var EntityLevel;
+    (function(EntityLevel2) {
+      EntityLevel2[EntityLevel2["XML"] = 0] = "XML";
+      EntityLevel2[EntityLevel2["HTML"] = 1] = "HTML";
+    })(EntityLevel = exports.EntityLevel || (exports.EntityLevel = {}));
+    var EncodingMode;
+    (function(EncodingMode2) {
+      EncodingMode2[EncodingMode2["UTF8"] = 0] = "UTF8";
+      EncodingMode2[EncodingMode2["ASCII"] = 1] = "ASCII";
+      EncodingMode2[EncodingMode2["Extensive"] = 2] = "Extensive";
+      EncodingMode2[EncodingMode2["Attribute"] = 3] = "Attribute";
+      EncodingMode2[EncodingMode2["Text"] = 4] = "Text";
+    })(EncodingMode = exports.EncodingMode || (exports.EncodingMode = {}));
+    function decode(data, options) {
+      if (options === void 0) {
+        options = EntityLevel.XML;
+      }
+      var level = typeof options === "number" ? options : options.level;
+      if (level === EntityLevel.HTML) {
+        var mode = typeof options === "object" ? options.mode : void 0;
+        return (0, decode_js_1.decodeHTML)(data, mode);
+      }
+      return (0, decode_js_1.decodeXML)(data);
+    }
+    exports.decode = decode;
+    function decodeStrict(data, options) {
+      var _a;
+      if (options === void 0) {
+        options = EntityLevel.XML;
+      }
+      var opts = typeof options === "number" ? { level: options } : options;
+      (_a = opts.mode) !== null && _a !== void 0 ? _a : opts.mode = decode_js_1.DecodingMode.Strict;
+      return decode(data, opts);
+    }
+    exports.decodeStrict = decodeStrict;
+    function encode(data, options) {
+      if (options === void 0) {
+        options = EntityLevel.XML;
+      }
+      var opts = typeof options === "number" ? { level: options } : options;
+      if (opts.mode === EncodingMode.UTF8)
+        return (0, escape_js_1.escapeUTF8)(data);
+      if (opts.mode === EncodingMode.Attribute)
+        return (0, escape_js_1.escapeAttribute)(data);
+      if (opts.mode === EncodingMode.Text)
+        return (0, escape_js_1.escapeText)(data);
+      if (opts.level === EntityLevel.HTML) {
+        if (opts.mode === EncodingMode.ASCII) {
+          return (0, encode_js_1.encodeNonAsciiHTML)(data);
+        }
+        return (0, encode_js_1.encodeHTML)(data);
+      }
+      return (0, escape_js_1.encodeXML)(data);
+    }
+    exports.encode = encode;
+    var escape_js_2 = require_escape();
+    Object.defineProperty(exports, "encodeXML", { enumerable: true, get: function() {
+      return escape_js_2.encodeXML;
+    } });
+    Object.defineProperty(exports, "escape", { enumerable: true, get: function() {
+      return escape_js_2.escape;
+    } });
+    Object.defineProperty(exports, "escapeUTF8", { enumerable: true, get: function() {
+      return escape_js_2.escapeUTF8;
+    } });
+    Object.defineProperty(exports, "escapeAttribute", { enumerable: true, get: function() {
+      return escape_js_2.escapeAttribute;
+    } });
+    Object.defineProperty(exports, "escapeText", { enumerable: true, get: function() {
+      return escape_js_2.escapeText;
+    } });
+    var encode_js_2 = require_encode();
+    Object.defineProperty(exports, "encodeHTML", { enumerable: true, get: function() {
+      return encode_js_2.encodeHTML;
+    } });
+    Object.defineProperty(exports, "encodeNonAsciiHTML", { enumerable: true, get: function() {
+      return encode_js_2.encodeNonAsciiHTML;
+    } });
+    Object.defineProperty(exports, "encodeHTML4", { enumerable: true, get: function() {
+      return encode_js_2.encodeHTML;
+    } });
+    Object.defineProperty(exports, "encodeHTML5", { enumerable: true, get: function() {
+      return encode_js_2.encodeHTML;
+    } });
+    var decode_js_2 = require_decode();
+    Object.defineProperty(exports, "EntityDecoder", { enumerable: true, get: function() {
+      return decode_js_2.EntityDecoder;
+    } });
+    Object.defineProperty(exports, "DecodingMode", { enumerable: true, get: function() {
+      return decode_js_2.DecodingMode;
+    } });
+    Object.defineProperty(exports, "decodeXML", { enumerable: true, get: function() {
+      return decode_js_2.decodeXML;
+    } });
+    Object.defineProperty(exports, "decodeHTML", { enumerable: true, get: function() {
+      return decode_js_2.decodeHTML;
+    } });
+    Object.defineProperty(exports, "decodeHTMLStrict", { enumerable: true, get: function() {
+      return decode_js_2.decodeHTMLStrict;
+    } });
+    Object.defineProperty(exports, "decodeHTMLAttribute", { enumerable: true, get: function() {
+      return decode_js_2.decodeHTMLAttribute;
+    } });
+    Object.defineProperty(exports, "decodeHTML4", { enumerable: true, get: function() {
+      return decode_js_2.decodeHTML;
+    } });
+    Object.defineProperty(exports, "decodeHTML5", { enumerable: true, get: function() {
+      return decode_js_2.decodeHTML;
+    } });
+    Object.defineProperty(exports, "decodeHTML4Strict", { enumerable: true, get: function() {
+      return decode_js_2.decodeHTMLStrict;
+    } });
+    Object.defineProperty(exports, "decodeHTML5Strict", { enumerable: true, get: function() {
+      return decode_js_2.decodeHTMLStrict;
+    } });
+    Object.defineProperty(exports, "decodeXMLStrict", { enumerable: true, get: function() {
+      return decode_js_2.decodeXML;
+    } });
+  }
+});
+
+// node_modules/dom-serializer/lib/foreignNames.js
+var require_foreignNames = __commonJS({
+  "node_modules/dom-serializer/lib/foreignNames.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.attributeNames = exports.elementNames = void 0;
+    exports.elementNames = new Map([
+      "altGlyph",
+      "altGlyphDef",
+      "altGlyphItem",
+      "animateColor",
+      "animateMotion",
+      "animateTransform",
+      "clipPath",
+      "feBlend",
+      "feColorMatrix",
+      "feComponentTransfer",
+      "feComposite",
+      "feConvolveMatrix",
+      "feDiffuseLighting",
+      "feDisplacementMap",
+      "feDistantLight",
+      "feDropShadow",
+      "feFlood",
+      "feFuncA",
+      "feFuncB",
+      "feFuncG",
+      "feFuncR",
+      "feGaussianBlur",
+      "feImage",
+      "feMerge",
+      "feMergeNode",
+      "feMorphology",
+      "feOffset",
+      "fePointLight",
+      "feSpecularLighting",
+      "feSpotLight",
+      "feTile",
+      "feTurbulence",
+      "foreignObject",
+      "glyphRef",
+      "linearGradient",
+      "radialGradient",
+      "textPath"
+    ].map(function(val) {
+      return [val.toLowerCase(), val];
+    }));
+    exports.attributeNames = new Map([
+      "definitionURL",
+      "attributeName",
+      "attributeType",
+      "baseFrequency",
+      "baseProfile",
+      "calcMode",
+      "clipPathUnits",
+      "diffuseConstant",
+      "edgeMode",
+      "filterUnits",
+      "glyphRef",
+      "gradientTransform",
+      "gradientUnits",
+      "kernelMatrix",
+      "kernelUnitLength",
+      "keyPoints",
+      "keySplines",
+      "keyTimes",
+      "lengthAdjust",
+      "limitingConeAngle",
+      "markerHeight",
+      "markerUnits",
+      "markerWidth",
+      "maskContentUnits",
+      "maskUnits",
+      "numOctaves",
+      "pathLength",
+      "patternContentUnits",
+      "patternTransform",
+      "patternUnits",
+      "pointsAtX",
+      "pointsAtY",
+      "pointsAtZ",
+      "preserveAlpha",
+      "preserveAspectRatio",
+      "primitiveUnits",
+      "refX",
+      "refY",
+      "repeatCount",
+      "repeatDur",
+      "requiredExtensions",
+      "requiredFeatures",
+      "specularConstant",
+      "specularExponent",
+      "spreadMethod",
+      "startOffset",
+      "stdDeviation",
+      "stitchTiles",
+      "surfaceScale",
+      "systemLanguage",
+      "tableValues",
+      "targetX",
+      "targetY",
+      "textLength",
+      "viewBox",
+      "viewTarget",
+      "xChannelSelector",
+      "yChannelSelector",
+      "zoomAndPan"
+    ].map(function(val) {
+      return [val.toLowerCase(), val];
+    }));
+  }
+});
+
+// node_modules/dom-serializer/lib/index.js
+var require_lib4 = __commonJS({
+  "node_modules/dom-serializer/lib/index.js"(exports) {
+    "use strict";
+    var __assign = exports && exports.__assign || function() {
+      __assign = Object.assign || function(t4) {
+        for (var s4, i5 = 1, n5 = arguments.length; i5 < n5; i5++) {
+          s4 = arguments[i5];
+          for (var p3 in s4) if (Object.prototype.hasOwnProperty.call(s4, p3))
+            t4[p3] = s4[p3];
+        }
+        return t4;
+      };
+      return __assign.apply(this, arguments);
+    };
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      var desc = Object.getOwnPropertyDescriptor(m2, k2);
+      if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m2[k2];
+        } };
+      }
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      o6[k22] = m2[k2];
+    }));
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o6, v2) {
+      Object.defineProperty(o6, "default", { enumerable: true, value: v2 });
+    }) : function(o6, v2) {
+      o6["default"] = v2;
+    });
+    var __importStar = exports && exports.__importStar || function(mod) {
+      if (mod && mod.__esModule) return mod;
+      var result = {};
+      if (mod != null) {
+        for (var k2 in mod) if (k2 !== "default" && Object.prototype.hasOwnProperty.call(mod, k2)) __createBinding(result, mod, k2);
+      }
+      __setModuleDefault(result, mod);
+      return result;
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.render = void 0;
+    var ElementType = __importStar(require_lib());
+    var entities_1 = require_lib3();
+    var foreignNames_js_1 = require_foreignNames();
+    var unencodedElements = /* @__PURE__ */ new Set([
+      "style",
+      "script",
+      "xmp",
+      "iframe",
+      "noembed",
+      "noframes",
+      "plaintext",
+      "noscript"
+    ]);
+    function replaceQuotes(value) {
+      return value.replace(/"/g, "&quot;");
+    }
+    function formatAttributes(attributes, opts) {
+      var _a;
+      if (!attributes)
+        return;
+      var encode = ((_a = opts.encodeEntities) !== null && _a !== void 0 ? _a : opts.decodeEntities) === false ? replaceQuotes : opts.xmlMode || opts.encodeEntities !== "utf8" ? entities_1.encodeXML : entities_1.escapeAttribute;
+      return Object.keys(attributes).map(function(key) {
+        var _a2, _b;
+        var value = (_a2 = attributes[key]) !== null && _a2 !== void 0 ? _a2 : "";
+        if (opts.xmlMode === "foreign") {
+          key = (_b = foreignNames_js_1.attributeNames.get(key)) !== null && _b !== void 0 ? _b : key;
+        }
+        if (!opts.emptyAttrs && !opts.xmlMode && value === "") {
+          return key;
+        }
+        return "".concat(key, '="').concat(encode(value), '"');
+      }).join(" ");
+    }
+    var singleTag = /* @__PURE__ */ new Set([
+      "area",
+      "base",
+      "basefont",
+      "br",
+      "col",
+      "command",
+      "embed",
+      "frame",
+      "hr",
+      "img",
+      "input",
+      "isindex",
+      "keygen",
+      "link",
+      "meta",
+      "param",
+      "source",
+      "track",
+      "wbr"
+    ]);
+    function render(node, options) {
+      if (options === void 0) {
+        options = {};
+      }
+      var nodes = "length" in node ? node : [node];
+      var output = "";
+      for (var i5 = 0; i5 < nodes.length; i5++) {
+        output += renderNode(nodes[i5], options);
+      }
+      return output;
+    }
+    exports.render = render;
+    exports.default = render;
+    function renderNode(node, options) {
+      switch (node.type) {
+        case ElementType.Root:
+          return render(node.children, options);
+        // @ts-expect-error We don't use `Doctype` yet
+        case ElementType.Doctype:
+        case ElementType.Directive:
+          return renderDirective(node);
+        case ElementType.Comment:
+          return renderComment(node);
+        case ElementType.CDATA:
+          return renderCdata(node);
+        case ElementType.Script:
+        case ElementType.Style:
+        case ElementType.Tag:
+          return renderTag(node, options);
+        case ElementType.Text:
+          return renderText(node, options);
+      }
+    }
+    var foreignModeIntegrationPoints = /* @__PURE__ */ new Set([
+      "mi",
+      "mo",
+      "mn",
+      "ms",
+      "mtext",
+      "annotation-xml",
+      "foreignObject",
+      "desc",
+      "title"
+    ]);
+    var foreignElements = /* @__PURE__ */ new Set(["svg", "math"]);
+    function renderTag(elem, opts) {
+      var _a;
+      if (opts.xmlMode === "foreign") {
+        elem.name = (_a = foreignNames_js_1.elementNames.get(elem.name)) !== null && _a !== void 0 ? _a : elem.name;
+        if (elem.parent && foreignModeIntegrationPoints.has(elem.parent.name)) {
+          opts = __assign(__assign({}, opts), { xmlMode: false });
+        }
+      }
+      if (!opts.xmlMode && foreignElements.has(elem.name)) {
+        opts = __assign(__assign({}, opts), { xmlMode: "foreign" });
+      }
+      var tag = "<".concat(elem.name);
+      var attribs = formatAttributes(elem.attribs, opts);
+      if (attribs) {
+        tag += " ".concat(attribs);
+      }
+      if (elem.children.length === 0 && (opts.xmlMode ? (
+        // In XML mode or foreign mode, and user hasn't explicitly turned off self-closing tags
+        opts.selfClosingTags !== false
+      ) : (
+        // User explicitly asked for self-closing tags, even in HTML mode
+        opts.selfClosingTags && singleTag.has(elem.name)
+      ))) {
+        if (!opts.xmlMode)
+          tag += " ";
+        tag += "/>";
+      } else {
+        tag += ">";
+        if (elem.children.length > 0) {
+          tag += render(elem.children, opts);
+        }
+        if (opts.xmlMode || !singleTag.has(elem.name)) {
+          tag += "</".concat(elem.name, ">");
+        }
+      }
+      return tag;
+    }
+    function renderDirective(elem) {
+      return "<".concat(elem.data, ">");
+    }
+    function renderText(elem, opts) {
+      var _a;
+      var data = elem.data || "";
+      if (((_a = opts.encodeEntities) !== null && _a !== void 0 ? _a : opts.decodeEntities) !== false && !(!opts.xmlMode && elem.parent && unencodedElements.has(elem.parent.name))) {
+        data = opts.xmlMode || opts.encodeEntities !== "utf8" ? (0, entities_1.encodeXML)(data) : (0, entities_1.escapeText)(data);
+      }
+      return data;
+    }
+    function renderCdata(elem) {
+      return "<![CDATA[".concat(elem.children[0].data, "]]>");
+    }
+    function renderComment(elem) {
+      return "<!--".concat(elem.data, "-->");
+    }
+  }
+});
+
+// node_modules/domutils/lib/stringify.js
+var require_stringify = __commonJS({
+  "node_modules/domutils/lib/stringify.js"(exports) {
+    "use strict";
+    var __importDefault = exports && exports.__importDefault || function(mod) {
+      return mod && mod.__esModule ? mod : { "default": mod };
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.getOuterHTML = getOuterHTML;
+    exports.getInnerHTML = getInnerHTML;
+    exports.getText = getText;
+    exports.textContent = textContent;
+    exports.innerText = innerText;
+    var domhandler_1 = require_lib2();
+    var dom_serializer_1 = __importDefault(require_lib4());
+    var domelementtype_1 = require_lib();
+    function getOuterHTML(node, options) {
+      return (0, dom_serializer_1.default)(node, options);
+    }
+    function getInnerHTML(node, options) {
+      return (0, domhandler_1.hasChildren)(node) ? node.children.map(function(node2) {
+        return getOuterHTML(node2, options);
+      }).join("") : "";
+    }
+    function getText(node) {
+      if (Array.isArray(node))
+        return node.map(getText).join("");
+      if ((0, domhandler_1.isTag)(node))
+        return node.name === "br" ? "\n" : getText(node.children);
+      if ((0, domhandler_1.isCDATA)(node))
+        return getText(node.children);
+      if ((0, domhandler_1.isText)(node))
+        return node.data;
+      return "";
+    }
+    function textContent(node) {
+      if (Array.isArray(node))
+        return node.map(textContent).join("");
+      if ((0, domhandler_1.hasChildren)(node) && !(0, domhandler_1.isComment)(node)) {
+        return textContent(node.children);
+      }
+      if ((0, domhandler_1.isText)(node))
+        return node.data;
+      return "";
+    }
+    function innerText(node) {
+      if (Array.isArray(node))
+        return node.map(innerText).join("");
+      if ((0, domhandler_1.hasChildren)(node) && (node.type === domelementtype_1.ElementType.Tag || (0, domhandler_1.isCDATA)(node))) {
+        return innerText(node.children);
+      }
+      if ((0, domhandler_1.isText)(node))
+        return node.data;
+      return "";
+    }
+  }
+});
+
+// node_modules/domutils/lib/traversal.js
+var require_traversal = __commonJS({
+  "node_modules/domutils/lib/traversal.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.getChildren = getChildren;
+    exports.getParent = getParent;
+    exports.getSiblings = getSiblings;
+    exports.getAttributeValue = getAttributeValue;
+    exports.hasAttrib = hasAttrib;
+    exports.getName = getName;
+    exports.nextElementSibling = nextElementSibling;
+    exports.prevElementSibling = prevElementSibling;
+    var domhandler_1 = require_lib2();
+    function getChildren(elem) {
+      return (0, domhandler_1.hasChildren)(elem) ? elem.children : [];
+    }
+    function getParent(elem) {
+      return elem.parent || null;
+    }
+    function getSiblings(elem) {
+      var _a, _b;
+      var parent = getParent(elem);
+      if (parent != null)
+        return getChildren(parent);
+      var siblings = [elem];
+      var prev = elem.prev, next = elem.next;
+      while (prev != null) {
+        siblings.unshift(prev);
+        _a = prev, prev = _a.prev;
+      }
+      while (next != null) {
+        siblings.push(next);
+        _b = next, next = _b.next;
+      }
+      return siblings;
+    }
+    function getAttributeValue(elem, name) {
+      var _a;
+      return (_a = elem.attribs) === null || _a === void 0 ? void 0 : _a[name];
+    }
+    function hasAttrib(elem, name) {
+      return elem.attribs != null && Object.prototype.hasOwnProperty.call(elem.attribs, name) && elem.attribs[name] != null;
+    }
+    function getName(elem) {
+      return elem.name;
+    }
+    function nextElementSibling(elem) {
+      var _a;
+      var next = elem.next;
+      while (next !== null && !(0, domhandler_1.isTag)(next))
+        _a = next, next = _a.next;
+      return next;
+    }
+    function prevElementSibling(elem) {
+      var _a;
+      var prev = elem.prev;
+      while (prev !== null && !(0, domhandler_1.isTag)(prev))
+        _a = prev, prev = _a.prev;
+      return prev;
+    }
+  }
+});
+
+// node_modules/domutils/lib/manipulation.js
+var require_manipulation = __commonJS({
+  "node_modules/domutils/lib/manipulation.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.removeElement = removeElement;
+    exports.replaceElement = replaceElement;
+    exports.appendChild = appendChild;
+    exports.append = append;
+    exports.prependChild = prependChild;
+    exports.prepend = prepend;
+    function removeElement(elem) {
+      if (elem.prev)
+        elem.prev.next = elem.next;
+      if (elem.next)
+        elem.next.prev = elem.prev;
+      if (elem.parent) {
+        var childs = elem.parent.children;
+        var childsIndex = childs.lastIndexOf(elem);
+        if (childsIndex >= 0) {
+          childs.splice(childsIndex, 1);
+        }
+      }
+      elem.next = null;
+      elem.prev = null;
+      elem.parent = null;
+    }
+    function replaceElement(elem, replacement) {
+      var prev = replacement.prev = elem.prev;
+      if (prev) {
+        prev.next = replacement;
+      }
+      var next = replacement.next = elem.next;
+      if (next) {
+        next.prev = replacement;
+      }
+      var parent = replacement.parent = elem.parent;
+      if (parent) {
+        var childs = parent.children;
+        childs[childs.lastIndexOf(elem)] = replacement;
+        elem.parent = null;
+      }
+    }
+    function appendChild(parent, child) {
+      removeElement(child);
+      child.next = null;
+      child.parent = parent;
+      if (parent.children.push(child) > 1) {
+        var sibling = parent.children[parent.children.length - 2];
+        sibling.next = child;
+        child.prev = sibling;
+      } else {
+        child.prev = null;
+      }
+    }
+    function append(elem, next) {
+      removeElement(next);
+      var parent = elem.parent;
+      var currNext = elem.next;
+      next.next = currNext;
+      next.prev = elem;
+      elem.next = next;
+      next.parent = parent;
+      if (currNext) {
+        currNext.prev = next;
+        if (parent) {
+          var childs = parent.children;
+          childs.splice(childs.lastIndexOf(currNext), 0, next);
+        }
+      } else if (parent) {
+        parent.children.push(next);
+      }
+    }
+    function prependChild(parent, child) {
+      removeElement(child);
+      child.parent = parent;
+      child.prev = null;
+      if (parent.children.unshift(child) !== 1) {
+        var sibling = parent.children[1];
+        sibling.prev = child;
+        child.next = sibling;
+      } else {
+        child.next = null;
+      }
+    }
+    function prepend(elem, prev) {
+      removeElement(prev);
+      var parent = elem.parent;
+      if (parent) {
+        var childs = parent.children;
+        childs.splice(childs.indexOf(elem), 0, prev);
+      }
+      if (elem.prev) {
+        elem.prev.next = prev;
+      }
+      prev.parent = parent;
+      prev.prev = elem.prev;
+      prev.next = elem;
+      elem.prev = prev;
+    }
+  }
+});
+
+// node_modules/domutils/lib/querying.js
+var require_querying = __commonJS({
+  "node_modules/domutils/lib/querying.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.filter = filter;
+    exports.find = find;
+    exports.findOneChild = findOneChild;
+    exports.findOne = findOne;
+    exports.existsOne = existsOne;
+    exports.findAll = findAll;
+    var domhandler_1 = require_lib2();
+    function filter(test, node, recurse, limit) {
+      if (recurse === void 0) {
+        recurse = true;
+      }
+      if (limit === void 0) {
+        limit = Infinity;
+      }
+      return find(test, Array.isArray(node) ? node : [node], recurse, limit);
+    }
+    function find(test, nodes, recurse, limit) {
+      var result = [];
+      var nodeStack = [Array.isArray(nodes) ? nodes : [nodes]];
+      var indexStack = [0];
+      for (; ; ) {
+        if (indexStack[0] >= nodeStack[0].length) {
+          if (indexStack.length === 1) {
+            return result;
+          }
+          nodeStack.shift();
+          indexStack.shift();
+          continue;
+        }
+        var elem = nodeStack[0][indexStack[0]++];
+        if (test(elem)) {
+          result.push(elem);
+          if (--limit <= 0)
+            return result;
+        }
+        if (recurse && (0, domhandler_1.hasChildren)(elem) && elem.children.length > 0) {
+          indexStack.unshift(0);
+          nodeStack.unshift(elem.children);
+        }
+      }
+    }
+    function findOneChild(test, nodes) {
+      return nodes.find(test);
+    }
+    function findOne(test, nodes, recurse) {
+      if (recurse === void 0) {
+        recurse = true;
+      }
+      var searchedNodes = Array.isArray(nodes) ? nodes : [nodes];
+      for (var i5 = 0; i5 < searchedNodes.length; i5++) {
+        var node = searchedNodes[i5];
+        if ((0, domhandler_1.isTag)(node) && test(node)) {
+          return node;
+        }
+        if (recurse && (0, domhandler_1.hasChildren)(node) && node.children.length > 0) {
+          var found = findOne(test, node.children, true);
+          if (found)
+            return found;
+        }
+      }
+      return null;
+    }
+    function existsOne(test, nodes) {
+      return (Array.isArray(nodes) ? nodes : [nodes]).some(function(node) {
+        return (0, domhandler_1.isTag)(node) && test(node) || (0, domhandler_1.hasChildren)(node) && existsOne(test, node.children);
+      });
+    }
+    function findAll(test, nodes) {
+      var result = [];
+      var nodeStack = [Array.isArray(nodes) ? nodes : [nodes]];
+      var indexStack = [0];
+      for (; ; ) {
+        if (indexStack[0] >= nodeStack[0].length) {
+          if (nodeStack.length === 1) {
+            return result;
+          }
+          nodeStack.shift();
+          indexStack.shift();
+          continue;
+        }
+        var elem = nodeStack[0][indexStack[0]++];
+        if ((0, domhandler_1.isTag)(elem) && test(elem))
+          result.push(elem);
+        if ((0, domhandler_1.hasChildren)(elem) && elem.children.length > 0) {
+          indexStack.unshift(0);
+          nodeStack.unshift(elem.children);
+        }
+      }
+    }
+  }
+});
+
+// node_modules/domutils/lib/legacy.js
+var require_legacy2 = __commonJS({
+  "node_modules/domutils/lib/legacy.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.testElement = testElement;
+    exports.getElements = getElements;
+    exports.getElementById = getElementById;
+    exports.getElementsByTagName = getElementsByTagName;
+    exports.getElementsByClassName = getElementsByClassName;
+    exports.getElementsByTagType = getElementsByTagType;
+    var domhandler_1 = require_lib2();
+    var querying_js_1 = require_querying();
+    var Checks = {
+      tag_name: function(name) {
+        if (typeof name === "function") {
+          return function(elem) {
+            return (0, domhandler_1.isTag)(elem) && name(elem.name);
+          };
+        } else if (name === "*") {
+          return domhandler_1.isTag;
+        }
+        return function(elem) {
+          return (0, domhandler_1.isTag)(elem) && elem.name === name;
+        };
+      },
+      tag_type: function(type) {
+        if (typeof type === "function") {
+          return function(elem) {
+            return type(elem.type);
+          };
+        }
+        return function(elem) {
+          return elem.type === type;
+        };
+      },
+      tag_contains: function(data) {
+        if (typeof data === "function") {
+          return function(elem) {
+            return (0, domhandler_1.isText)(elem) && data(elem.data);
+          };
+        }
+        return function(elem) {
+          return (0, domhandler_1.isText)(elem) && elem.data === data;
+        };
+      }
+    };
+    function getAttribCheck(attrib, value) {
+      if (typeof value === "function") {
+        return function(elem) {
+          return (0, domhandler_1.isTag)(elem) && value(elem.attribs[attrib]);
+        };
+      }
+      return function(elem) {
+        return (0, domhandler_1.isTag)(elem) && elem.attribs[attrib] === value;
+      };
+    }
+    function combineFuncs(a3, b3) {
+      return function(elem) {
+        return a3(elem) || b3(elem);
+      };
+    }
+    function compileTest(options) {
+      var funcs = Object.keys(options).map(function(key) {
+        var value = options[key];
+        return Object.prototype.hasOwnProperty.call(Checks, key) ? Checks[key](value) : getAttribCheck(key, value);
+      });
+      return funcs.length === 0 ? null : funcs.reduce(combineFuncs);
+    }
+    function testElement(options, node) {
+      var test = compileTest(options);
+      return test ? test(node) : true;
+    }
+    function getElements(options, nodes, recurse, limit) {
+      if (limit === void 0) {
+        limit = Infinity;
+      }
+      var test = compileTest(options);
+      return test ? (0, querying_js_1.filter)(test, nodes, recurse, limit) : [];
+    }
+    function getElementById(id, nodes, recurse) {
+      if (recurse === void 0) {
+        recurse = true;
+      }
+      if (!Array.isArray(nodes))
+        nodes = [nodes];
+      return (0, querying_js_1.findOne)(getAttribCheck("id", id), nodes, recurse);
+    }
+    function getElementsByTagName(tagName, nodes, recurse, limit) {
+      if (recurse === void 0) {
+        recurse = true;
+      }
+      if (limit === void 0) {
+        limit = Infinity;
+      }
+      return (0, querying_js_1.filter)(Checks["tag_name"](tagName), nodes, recurse, limit);
+    }
+    function getElementsByClassName(className, nodes, recurse, limit) {
+      if (recurse === void 0) {
+        recurse = true;
+      }
+      if (limit === void 0) {
+        limit = Infinity;
+      }
+      return (0, querying_js_1.filter)(getAttribCheck("class", className), nodes, recurse, limit);
+    }
+    function getElementsByTagType(type, nodes, recurse, limit) {
+      if (recurse === void 0) {
+        recurse = true;
+      }
+      if (limit === void 0) {
+        limit = Infinity;
+      }
+      return (0, querying_js_1.filter)(Checks["tag_type"](type), nodes, recurse, limit);
+    }
+  }
+});
+
+// node_modules/domutils/lib/helpers.js
+var require_helpers = __commonJS({
+  "node_modules/domutils/lib/helpers.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.DocumentPosition = void 0;
+    exports.removeSubsets = removeSubsets;
+    exports.compareDocumentPosition = compareDocumentPosition;
+    exports.uniqueSort = uniqueSort;
+    var domhandler_1 = require_lib2();
+    function removeSubsets(nodes) {
+      var idx = nodes.length;
+      while (--idx >= 0) {
+        var node = nodes[idx];
+        if (idx > 0 && nodes.lastIndexOf(node, idx - 1) >= 0) {
+          nodes.splice(idx, 1);
+          continue;
+        }
+        for (var ancestor = node.parent; ancestor; ancestor = ancestor.parent) {
+          if (nodes.includes(ancestor)) {
+            nodes.splice(idx, 1);
+            break;
+          }
+        }
+      }
+      return nodes;
+    }
+    var DocumentPosition;
+    (function(DocumentPosition2) {
+      DocumentPosition2[DocumentPosition2["DISCONNECTED"] = 1] = "DISCONNECTED";
+      DocumentPosition2[DocumentPosition2["PRECEDING"] = 2] = "PRECEDING";
+      DocumentPosition2[DocumentPosition2["FOLLOWING"] = 4] = "FOLLOWING";
+      DocumentPosition2[DocumentPosition2["CONTAINS"] = 8] = "CONTAINS";
+      DocumentPosition2[DocumentPosition2["CONTAINED_BY"] = 16] = "CONTAINED_BY";
+    })(DocumentPosition || (exports.DocumentPosition = DocumentPosition = {}));
+    function compareDocumentPosition(nodeA, nodeB) {
+      var aParents = [];
+      var bParents = [];
+      if (nodeA === nodeB) {
+        return 0;
+      }
+      var current = (0, domhandler_1.hasChildren)(nodeA) ? nodeA : nodeA.parent;
+      while (current) {
+        aParents.unshift(current);
+        current = current.parent;
+      }
+      current = (0, domhandler_1.hasChildren)(nodeB) ? nodeB : nodeB.parent;
+      while (current) {
+        bParents.unshift(current);
+        current = current.parent;
+      }
+      var maxIdx = Math.min(aParents.length, bParents.length);
+      var idx = 0;
+      while (idx < maxIdx && aParents[idx] === bParents[idx]) {
+        idx++;
+      }
+      if (idx === 0) {
+        return DocumentPosition.DISCONNECTED;
+      }
+      var sharedParent = aParents[idx - 1];
+      var siblings = sharedParent.children;
+      var aSibling = aParents[idx];
+      var bSibling = bParents[idx];
+      if (siblings.indexOf(aSibling) > siblings.indexOf(bSibling)) {
+        if (sharedParent === nodeB) {
+          return DocumentPosition.FOLLOWING | DocumentPosition.CONTAINED_BY;
+        }
+        return DocumentPosition.FOLLOWING;
+      }
+      if (sharedParent === nodeA) {
+        return DocumentPosition.PRECEDING | DocumentPosition.CONTAINS;
+      }
+      return DocumentPosition.PRECEDING;
+    }
+    function uniqueSort(nodes) {
+      nodes = nodes.filter(function(node, i5, arr) {
+        return !arr.includes(node, i5 + 1);
+      });
+      nodes.sort(function(a3, b3) {
+        var relative = compareDocumentPosition(a3, b3);
+        if (relative & DocumentPosition.PRECEDING) {
+          return -1;
+        } else if (relative & DocumentPosition.FOLLOWING) {
+          return 1;
+        }
+        return 0;
+      });
+      return nodes;
+    }
+  }
+});
+
+// node_modules/domutils/lib/feeds.js
+var require_feeds = __commonJS({
+  "node_modules/domutils/lib/feeds.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.getFeed = getFeed;
+    var stringify_js_1 = require_stringify();
+    var legacy_js_1 = require_legacy2();
+    function getFeed(doc) {
+      var feedRoot = getOneElement(isValidFeed, doc);
+      return !feedRoot ? null : feedRoot.name === "feed" ? getAtomFeed(feedRoot) : getRssFeed(feedRoot);
+    }
+    function getAtomFeed(feedRoot) {
+      var _a;
+      var childs = feedRoot.children;
+      var feed = {
+        type: "atom",
+        items: (0, legacy_js_1.getElementsByTagName)("entry", childs).map(function(item) {
+          var _a2;
+          var children = item.children;
+          var entry = { media: getMediaElements(children) };
+          addConditionally(entry, "id", "id", children);
+          addConditionally(entry, "title", "title", children);
+          var href2 = (_a2 = getOneElement("link", children)) === null || _a2 === void 0 ? void 0 : _a2.attribs["href"];
+          if (href2) {
+            entry.link = href2;
+          }
+          var description = fetch2("summary", children) || fetch2("content", children);
+          if (description) {
+            entry.description = description;
+          }
+          var pubDate = fetch2("updated", children);
+          if (pubDate) {
+            entry.pubDate = new Date(pubDate);
+          }
+          return entry;
+        })
+      };
+      addConditionally(feed, "id", "id", childs);
+      addConditionally(feed, "title", "title", childs);
+      var href = (_a = getOneElement("link", childs)) === null || _a === void 0 ? void 0 : _a.attribs["href"];
+      if (href) {
+        feed.link = href;
+      }
+      addConditionally(feed, "description", "subtitle", childs);
+      var updated = fetch2("updated", childs);
+      if (updated) {
+        feed.updated = new Date(updated);
+      }
+      addConditionally(feed, "author", "email", childs, true);
+      return feed;
+    }
+    function getRssFeed(feedRoot) {
+      var _a, _b;
+      var childs = (_b = (_a = getOneElement("channel", feedRoot.children)) === null || _a === void 0 ? void 0 : _a.children) !== null && _b !== void 0 ? _b : [];
+      var feed = {
+        type: feedRoot.name.substr(0, 3),
+        id: "",
+        items: (0, legacy_js_1.getElementsByTagName)("item", feedRoot.children).map(function(item) {
+          var children = item.children;
+          var entry = { media: getMediaElements(children) };
+          addConditionally(entry, "id", "guid", children);
+          addConditionally(entry, "title", "title", children);
+          addConditionally(entry, "link", "link", children);
+          addConditionally(entry, "description", "description", children);
+          var pubDate = fetch2("pubDate", children) || fetch2("dc:date", children);
+          if (pubDate)
+            entry.pubDate = new Date(pubDate);
+          return entry;
+        })
+      };
+      addConditionally(feed, "title", "title", childs);
+      addConditionally(feed, "link", "link", childs);
+      addConditionally(feed, "description", "description", childs);
+      var updated = fetch2("lastBuildDate", childs);
+      if (updated) {
+        feed.updated = new Date(updated);
+      }
+      addConditionally(feed, "author", "managingEditor", childs, true);
+      return feed;
+    }
+    var MEDIA_KEYS_STRING = ["url", "type", "lang"];
+    var MEDIA_KEYS_INT = [
+      "fileSize",
+      "bitrate",
+      "framerate",
+      "samplingrate",
+      "channels",
+      "duration",
+      "height",
+      "width"
+    ];
+    function getMediaElements(where) {
+      return (0, legacy_js_1.getElementsByTagName)("media:content", where).map(function(elem) {
+        var attribs = elem.attribs;
+        var media = {
+          medium: attribs["medium"],
+          isDefault: !!attribs["isDefault"]
+        };
+        for (var _i = 0, MEDIA_KEYS_STRING_1 = MEDIA_KEYS_STRING; _i < MEDIA_KEYS_STRING_1.length; _i++) {
+          var attrib = MEDIA_KEYS_STRING_1[_i];
+          if (attribs[attrib]) {
+            media[attrib] = attribs[attrib];
+          }
+        }
+        for (var _a = 0, MEDIA_KEYS_INT_1 = MEDIA_KEYS_INT; _a < MEDIA_KEYS_INT_1.length; _a++) {
+          var attrib = MEDIA_KEYS_INT_1[_a];
+          if (attribs[attrib]) {
+            media[attrib] = parseInt(attribs[attrib], 10);
+          }
+        }
+        if (attribs["expression"]) {
+          media.expression = attribs["expression"];
+        }
+        return media;
+      });
+    }
+    function getOneElement(tagName, node) {
+      return (0, legacy_js_1.getElementsByTagName)(tagName, node, true, 1)[0];
+    }
+    function fetch2(tagName, where, recurse) {
+      if (recurse === void 0) {
+        recurse = false;
+      }
+      return (0, stringify_js_1.textContent)((0, legacy_js_1.getElementsByTagName)(tagName, where, recurse, 1)).trim();
+    }
+    function addConditionally(obj, prop, tagName, where, recurse) {
+      if (recurse === void 0) {
+        recurse = false;
+      }
+      var val = fetch2(tagName, where, recurse);
+      if (val)
+        obj[prop] = val;
+    }
+    function isValidFeed(value) {
+      return value === "rss" || value === "feed" || value === "rdf:RDF";
+    }
+  }
+});
+
+// node_modules/domutils/lib/index.js
+var require_lib5 = __commonJS({
+  "node_modules/domutils/lib/index.js"(exports) {
+    "use strict";
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      var desc = Object.getOwnPropertyDescriptor(m2, k2);
+      if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m2[k2];
+        } };
+      }
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      o6[k22] = m2[k2];
+    }));
+    var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
+      for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.hasChildren = exports.isDocument = exports.isComment = exports.isText = exports.isCDATA = exports.isTag = void 0;
+    __exportStar(require_stringify(), exports);
+    __exportStar(require_traversal(), exports);
+    __exportStar(require_manipulation(), exports);
+    __exportStar(require_querying(), exports);
+    __exportStar(require_legacy2(), exports);
+    __exportStar(require_helpers(), exports);
+    __exportStar(require_feeds(), exports);
+    var domhandler_1 = require_lib2();
+    Object.defineProperty(exports, "isTag", { enumerable: true, get: function() {
+      return domhandler_1.isTag;
+    } });
+    Object.defineProperty(exports, "isCDATA", { enumerable: true, get: function() {
+      return domhandler_1.isCDATA;
+    } });
+    Object.defineProperty(exports, "isText", { enumerable: true, get: function() {
+      return domhandler_1.isText;
+    } });
+    Object.defineProperty(exports, "isComment", { enumerable: true, get: function() {
+      return domhandler_1.isComment;
+    } });
+    Object.defineProperty(exports, "isDocument", { enumerable: true, get: function() {
+      return domhandler_1.isDocument;
+    } });
+    Object.defineProperty(exports, "hasChildren", { enumerable: true, get: function() {
+      return domhandler_1.hasChildren;
+    } });
+  }
+});
+
+// node_modules/htmlparser2/lib/index.js
+var require_lib6 = __commonJS({
+  "node_modules/htmlparser2/lib/index.js"(exports) {
+    "use strict";
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      var desc = Object.getOwnPropertyDescriptor(m2, k2);
+      if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m2[k2];
+        } };
+      }
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      o6[k22] = m2[k2];
+    }));
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o6, v2) {
+      Object.defineProperty(o6, "default", { enumerable: true, value: v2 });
+    }) : function(o6, v2) {
+      o6["default"] = v2;
+    });
+    var __importStar = exports && exports.__importStar || function(mod) {
+      if (mod && mod.__esModule) return mod;
+      var result = {};
+      if (mod != null) {
+        for (var k2 in mod) if (k2 !== "default" && Object.prototype.hasOwnProperty.call(mod, k2)) __createBinding(result, mod, k2);
+      }
+      __setModuleDefault(result, mod);
+      return result;
+    };
+    var __importDefault = exports && exports.__importDefault || function(mod) {
+      return mod && mod.__esModule ? mod : { "default": mod };
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.DomUtils = exports.parseFeed = exports.getFeed = exports.ElementType = exports.QuoteType = exports.Tokenizer = exports.createDomStream = exports.createDocumentStream = exports.parseDOM = exports.parseDocument = exports.DefaultHandler = exports.DomHandler = exports.Parser = void 0;
+    var Parser_js_1 = require_Parser();
+    var Parser_js_2 = require_Parser();
+    Object.defineProperty(exports, "Parser", { enumerable: true, get: function() {
+      return Parser_js_2.Parser;
+    } });
+    var domhandler_1 = require_lib2();
+    var domhandler_2 = require_lib2();
+    Object.defineProperty(exports, "DomHandler", { enumerable: true, get: function() {
+      return domhandler_2.DomHandler;
+    } });
+    Object.defineProperty(exports, "DefaultHandler", { enumerable: true, get: function() {
+      return domhandler_2.DomHandler;
+    } });
+    function parseDocument(data, options) {
+      var handler = new domhandler_1.DomHandler(void 0, options);
+      new Parser_js_1.Parser(handler, options).end(data);
+      return handler.root;
+    }
+    exports.parseDocument = parseDocument;
+    function parseDOM(data, options) {
+      return parseDocument(data, options).children;
+    }
+    exports.parseDOM = parseDOM;
+    function createDocumentStream(callback, options, elementCallback) {
+      var handler = new domhandler_1.DomHandler(function(error) {
+        return callback(error, handler.root);
+      }, options, elementCallback);
+      return new Parser_js_1.Parser(handler, options);
+    }
+    exports.createDocumentStream = createDocumentStream;
+    function createDomStream(callback, options, elementCallback) {
+      var handler = new domhandler_1.DomHandler(callback, options, elementCallback);
+      return new Parser_js_1.Parser(handler, options);
+    }
+    exports.createDomStream = createDomStream;
+    var Tokenizer_js_1 = require_Tokenizer();
+    Object.defineProperty(exports, "Tokenizer", { enumerable: true, get: function() {
+      return __importDefault(Tokenizer_js_1).default;
+    } });
+    Object.defineProperty(exports, "QuoteType", { enumerable: true, get: function() {
+      return Tokenizer_js_1.QuoteType;
+    } });
+    exports.ElementType = __importStar(require_lib());
+    var domutils_1 = require_lib5();
+    var domutils_2 = require_lib5();
+    Object.defineProperty(exports, "getFeed", { enumerable: true, get: function() {
+      return domutils_2.getFeed;
+    } });
+    var parseFeedDefaultOptions = { xmlMode: true };
+    function parseFeed(feed, options) {
+      if (options === void 0) {
+        options = parseFeedDefaultOptions;
+      }
+      return (0, domutils_1.getFeed)(parseDOM(feed, options));
+    }
+    exports.parseFeed = parseFeed;
+    exports.DomUtils = __importStar(require_lib5());
+  }
+});
+
+// node_modules/rdfa-streaming-parser/lib/initial-context-xhtml.json
+var require_initial_context_xhtml = __commonJS({
+  "node_modules/rdfa-streaming-parser/lib/initial-context-xhtml.json"(exports, module) {
+    module.exports = {
+      "@context": {
+        alternate: "http://www.w3.org/1999/xhtml/vocab#alternate",
+        appendix: "http://www.w3.org/1999/xhtml/vocab#appendix",
+        cite: "http://www.w3.org/1999/xhtml/vocab#cite",
+        bookmark: "http://www.w3.org/1999/xhtml/vocab#bookmark",
+        contents: "http://www.w3.org/1999/xhtml/vocab#contents",
+        chapter: "http://www.w3.org/1999/xhtml/vocab#chapter",
+        copyright: "http://www.w3.org/1999/xhtml/vocab#copyright",
+        first: "http://www.w3.org/1999/xhtml/vocab#first",
+        glossary: "http://www.w3.org/1999/xhtml/vocab#glossary",
+        help: "http://www.w3.org/1999/xhtml/vocab#help",
+        icon: "http://www.w3.org/1999/xhtml/vocab#icon",
+        index: "http://www.w3.org/1999/xhtml/vocab#index",
+        last: "http://www.w3.org/1999/xhtml/vocab#last",
+        license: "http://www.w3.org/1999/xhtml/vocab#license",
+        meta: "http://www.w3.org/1999/xhtml/vocab#meta",
+        next: "http://www.w3.org/1999/xhtml/vocab#next",
+        prev: "http://www.w3.org/1999/xhtml/vocab#prev",
+        previous: "http://www.w3.org/1999/xhtml/vocab#previous",
+        section: "http://www.w3.org/1999/xhtml/vocab#section",
+        start: "http://www.w3.org/1999/xhtml/vocab#start",
+        stylesheet: "http://www.w3.org/1999/xhtml/vocab#stylesheet",
+        subsection: "http://www.w3.org/1999/xhtml/vocab#subsection",
+        top: "http://www.w3.org/1999/xhtml/vocab#top",
+        up: "http://www.w3.org/1999/xhtml/vocab#up",
+        p3pv1: "http://www.w3.org/1999/xhtml/vocab#p3pv1"
+      }
+    };
+  }
+});
+
+// node_modules/rdfa-streaming-parser/lib/initial-context.json
+var require_initial_context = __commonJS({
+  "node_modules/rdfa-streaming-parser/lib/initial-context.json"(exports, module) {
+    module.exports = {
+      "@context": {
+        as: "https://www.w3.org/ns/activitystreams#",
+        cat: "http://www.w3.org/ns/dcat#",
+        cc: "http://creativecommons.org/ns#",
+        cnt: "http://www.w3.org/2008/content#",
+        csvw: "http://www.w3.org/ns/csvw#",
+        ctag: "http://commontag.org/ns#",
+        dc: "http://purl.org/dc/terms/",
+        dc11: "http://purl.org/dc/elements/1.1/",
+        dcat: "http://www.w3.org/ns/dcat#",
+        dcterms: "http://purl.org/dc/terms/",
+        dqv: "http://www.w3.org/ns/dqv#",
+        duv: "https://www.w3.org/TR/vocab-duv#",
+        earl: "http://www.w3.org/ns/earl#",
+        foaf: "http://xmlns.com/foaf/0.1/",
+        gldp: "http://www.w3.org/ns/people#",
+        gr: "http://purl.org/goodrelations/v1#",
+        grddl: "http://www.w3.org/2003/g/data-view#",
+        ht: "http://www.w3.org/2006/http#",
+        ical: "http://www.w3.org/2002/12/cal/icaltzd#",
+        ldp: "http://www.w3.org/ns/ldp#",
+        ma: "http://www.w3.org/ns/ma-ont#",
+        oa: "http://www.w3.org/ns/oa#",
+        odrl: "http://www.w3.org/ns/odrl/2/",
+        og: "http://ogp.me/ns#",
+        org: "http://www.w3.org/ns/org#",
+        owl: "http://www.w3.org/2002/07/owl#",
+        prov: "http://www.w3.org/ns/prov#",
+        ptr: "http://www.w3.org/2009/pointers#",
+        qb: "http://purl.org/linked-data/cube#",
+        rev: "http://purl.org/stuff/rev#",
+        rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        rdfa: "http://www.w3.org/ns/rdfa#",
+        rdfs: "http://www.w3.org/2000/01/rdf-schema#",
+        rif: "http://www.w3.org/2007/rif#",
+        rr: "http://www.w3.org/ns/r2rml#",
+        schema: "http://schema.org/",
+        sd: "http://www.w3.org/ns/sparql-service-description#",
+        sioc: "http://rdfs.org/sioc/ns#",
+        skos: "http://www.w3.org/2004/02/skos/core#",
+        skosxl: "http://www.w3.org/2008/05/skos-xl#",
+        ssn: "http://www.w3.org/ns/ssn/",
+        sosa: "http://www.w3.org/ns/sosa/",
+        time: "http://www.w3.org/2006/time#",
+        v: "http://rdf.data-vocabulary.org/#",
+        vcard: "http://www.w3.org/2006/vcard/ns#",
+        void: "http://rdfs.org/ns/void#",
+        wdr: "http://www.w3.org/2007/05/powder#",
+        wdrs: "http://www.w3.org/2007/05/powder-s#",
+        xhv: "http://www.w3.org/1999/xhtml/vocab#",
+        xml: "http://www.w3.org/XML/1998/namespace",
+        xsd: "http://www.w3.org/2001/XMLSchema#",
+        describedby: "http://www.w3.org/2007/05/powder-s#describedby",
+        license: "http://www.w3.org/1999/xhtml/vocab#license",
+        role: "http://www.w3.org/1999/xhtml/vocab#role"
+      }
+    };
+  }
+});
+
+// node_modules/rdfa-streaming-parser/lib/RdfaProfile.js
+var require_RdfaProfile = __commonJS({
+  "node_modules/rdfa-streaming-parser/lib/RdfaProfile.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.RDFA_CONTENTTYPES = exports.RDFA_FEATURES = void 0;
+    exports.RDFA_FEATURES = {
+      "": {
+        baseTag: true,
+        xmlBase: true,
+        langAttribute: true,
+        onlyAllowUriRelRevIfProperty: true,
+        inheritSubjectInHeadBody: true,
+        datetimeAttribute: true,
+        timeTag: true,
+        htmlDatatype: true,
+        copyRdfaPatterns: true,
+        xmlnsPrefixMappings: true,
+        xhtmlInitialContext: true,
+        roleAttribute: true
+      },
+      "core": {
+        baseTag: false,
+        xmlBase: false,
+        langAttribute: true,
+        onlyAllowUriRelRevIfProperty: true,
+        inheritSubjectInHeadBody: false,
+        datetimeAttribute: false,
+        timeTag: false,
+        htmlDatatype: false,
+        copyRdfaPatterns: true,
+        xmlnsPrefixMappings: true,
+        xhtmlInitialContext: false,
+        roleAttribute: false
+      },
+      "html": {
+        baseTag: true,
+        xmlBase: false,
+        langAttribute: true,
+        onlyAllowUriRelRevIfProperty: true,
+        inheritSubjectInHeadBody: true,
+        datetimeAttribute: true,
+        timeTag: true,
+        htmlDatatype: true,
+        copyRdfaPatterns: true,
+        xmlnsPrefixMappings: true,
+        xhtmlInitialContext: false,
+        roleAttribute: true
+      },
+      "xhtml": {
+        baseTag: true,
+        xmlBase: false,
+        langAttribute: true,
+        onlyAllowUriRelRevIfProperty: true,
+        inheritSubjectInHeadBody: true,
+        datetimeAttribute: true,
+        timeTag: true,
+        htmlDatatype: true,
+        copyRdfaPatterns: true,
+        xmlnsPrefixMappings: true,
+        xhtmlInitialContext: true,
+        roleAttribute: true
+      },
+      "xml": {
+        baseTag: false,
+        xmlBase: true,
+        langAttribute: true,
+        onlyAllowUriRelRevIfProperty: false,
+        inheritSubjectInHeadBody: false,
+        datetimeAttribute: true,
+        timeTag: true,
+        htmlDatatype: false,
+        copyRdfaPatterns: false,
+        xmlnsPrefixMappings: true,
+        xhtmlInitialContext: false,
+        roleAttribute: true
+      }
+    };
+    exports.RDFA_CONTENTTYPES = {
+      // HTML
+      "text/html": "html",
+      // XHTML
+      "application/xhtml+xml": "xhtml",
+      // XML
+      "application/xml": "xml",
+      "text/xml": "xml",
+      "image/svg+xml": "xml"
+    };
+  }
+});
+
+// node_modules/rdfa-streaming-parser/lib/Util.js
+var require_Util3 = __commonJS({
+  "node_modules/rdfa-streaming-parser/lib/Util.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Util = void 0;
+    var relative_to_absolute_iri_1 = require_relative_to_absolute_iri();
+    var RdfaProfile_1 = require_RdfaProfile();
+    var rdf_data_factory_1 = require_rdf_data_factory();
+    var Util = class _Util {
+      constructor(dataFactory, baseIRI) {
+        this.dataFactory = dataFactory || new rdf_data_factory_1.DataFactory();
+        this.baseIRI = this.dataFactory.namedNode(baseIRI || "");
+        this.baseIRIDocument = this.baseIRI;
+      }
+      /**
+       * Retrieve the prefixes of the current tag's attributes.
+       * @param {{[p: string]: string}} attributes A tag's attributes.
+       * @param {{[p: string]: string}} parentPrefixes The prefixes from the parent tag.
+       * @param {boolean} xmlnsPrefixMappings If prefixes should be extracted from xmlnsPrefixMappings.
+       * @return {{[p: string]: string}} The new prefixes.
+       */
+      static parsePrefixes(attributes, parentPrefixes, xmlnsPrefixMappings) {
+        const additionalPrefixes = {};
+        if (xmlnsPrefixMappings) {
+          for (const attribute in attributes) {
+            if (attribute.startsWith("xmlns")) {
+              additionalPrefixes[attribute.substr(6)] = attributes[attribute];
+            }
+          }
+        }
+        if (attributes.prefix || Object.keys(additionalPrefixes).length > 0) {
+          const prefixes2 = Object.assign(Object.assign({}, parentPrefixes), additionalPrefixes);
+          if (attributes.prefix) {
+            let prefixMatch;
+            while (prefixMatch = _Util.PREFIX_REGEX.exec(attributes.prefix)) {
+              prefixes2[prefixMatch[1]] = prefixMatch[2];
+            }
+          }
+          return prefixes2;
+        } else {
+          return parentPrefixes;
+        }
+      }
+      /**
+       * Expand the given term value based on the given prefixes.
+       * @param {string} term A term value.
+       * @param {{[p: string]: string}[]} prefixes The available prefixes.
+       * @return {string} An expanded URL, or the term as-is.
+       */
+      static expandPrefixedTerm(term, activeTag) {
+        const colonIndex = term.indexOf(":");
+        let prefix2;
+        let local;
+        if (colonIndex >= 0) {
+          prefix2 = term.substr(0, colonIndex);
+          local = term.substr(colonIndex + 1);
+        }
+        if (prefix2 === "") {
+          return "http://www.w3.org/1999/xhtml/vocab#" + local;
+        }
+        if (prefix2) {
+          const prefixElement = activeTag.prefixesAll[prefix2];
+          if (prefixElement) {
+            return prefixElement + local;
+          }
+        }
+        if (term) {
+          const expandedTerm = activeTag.prefixesAll[term.toLocaleLowerCase()];
+          if (expandedTerm) {
+            return expandedTerm;
+          }
+        }
+        return term;
+      }
+      /**
+       * Check if the given IRI is valid.
+       * @param {string} iri A potential IRI.
+       * @return {boolean} If the given IRI is valid.
+       */
+      static isValidIri(iri) {
+        return _Util.IRI_REGEX.test(iri);
+      }
+      /**
+       * Determine the RDFa profile from the given content type.
+       * Defaults to the default RDFa profile (all features enabled) for unknown content types.
+       * @param {string} contentType A content type.
+       * @returns {RdfaProfile} An RDFa profile.
+       */
+      static contentTypeToProfile(contentType) {
+        return RdfaProfile_1.RDFA_CONTENTTYPES[contentType] || "";
+      }
+      /**
+       * Get the base IRI.
+       * @param {string} baseIriValue A base IRI value.
+       * @return A base IRI named node.
+       */
+      getBaseIRI(baseIriValue) {
+        let href = baseIriValue;
+        const fragmentIndex = href.indexOf("#");
+        if (fragmentIndex >= 0) {
+          href = href.substr(0, fragmentIndex);
+        }
+        return this.dataFactory.namedNode((0, relative_to_absolute_iri_1.resolve)(href, this.baseIRI.value));
+      }
+      /**
+       * If the term is a boolean, return the baseIRI, otherwise return the term as-is.
+       * @param {Term | boolean} term A term or boolean, where the boolean indicates the baseIRI.
+       * @param {IActiveTag} activeTag An active tag.
+       * @returns {Term} A term.
+       */
+      getResourceOrBaseIri(term, activeTag) {
+        return term === true ? this.getBaseIriTerm(activeTag) : term;
+      }
+      /**
+       * Get the active base IRI as an RDF term.
+       * @param {IActiveTag} activeTag The active tag.
+       * @return {NamedNode} The base IRI term.
+       */
+      getBaseIriTerm(activeTag) {
+        return activeTag.localBaseIRI || this.baseIRI;
+      }
+      createVocabIris(terms, activeTag, allowTerms, allowBlankNode) {
+        return terms.split(/\s+/).filter((term) => term && (allowTerms || term.indexOf(":") >= 0)).map((property) => this.createIri(property, activeTag, true, true, allowBlankNode)).filter((term) => term != null);
+      }
+      /**
+       * Create a new literal node.
+       * @param {string} literal The literal value.
+       * @param {IActiveTag} activeTag The current active tag.
+       * @return {Literal} A new literal node.
+       */
+      createLiteral(literal3, activeTag) {
+        var _a;
+        if (activeTag.interpretObjectAsTime && !activeTag.datatype) {
+          for (const entry of _Util.TIME_REGEXES) {
+            if (literal3.match(entry.regex)) {
+              activeTag.datatype = this.dataFactory.namedNode(_Util.XSD + entry.type);
+              break;
+            }
+          }
+        }
+        return this.dataFactory.literal(literal3, activeTag.datatype || ((_a = activeTag.language) === null || _a === void 0 ? void 0 : _a.toLowerCase()));
+      }
+      /**
+       * Create a blank node.
+       * @returns {BlankNode} A new blank node.
+       */
+      createBlankNode() {
+        if (this.blankNodeFactory) {
+          return this.blankNodeFactory();
+        }
+        return this.dataFactory.blankNode();
+      }
+      createIri(term, activeTag, vocab, allowSafeCurie, allowBlankNode) {
+        term = term || "";
+        if (!allowSafeCurie) {
+          if (!vocab) {
+            term = (0, relative_to_absolute_iri_1.resolve)(term, this.getBaseIriTerm(activeTag).value);
+          }
+          if (!_Util.isValidIri(term)) {
+            return null;
+          }
+          return this.dataFactory.namedNode(term);
+        }
+        if (term.length > 0 && term[0] === "[" && term[term.length - 1] === "]") {
+          term = term.substr(1, term.length - 2);
+          if (term.indexOf(":") < 0) {
+            return null;
+          }
+        }
+        if (term.startsWith("_:")) {
+          return allowBlankNode ? this.dataFactory.blankNode(term.substr(2) || "b_identity") : null;
+        }
+        if (vocab) {
+          if (activeTag.vocab && term.indexOf(":") < 0) {
+            return this.dataFactory.namedNode(activeTag.vocab + term);
+          }
+        }
+        let iri = _Util.expandPrefixedTerm(term, activeTag);
+        if (!vocab) {
+          iri = (0, relative_to_absolute_iri_1.resolve)(iri, this.getBaseIriTerm(activeTag).value);
+        } else if (term !== iri) {
+          iri = (0, relative_to_absolute_iri_1.resolve)(iri, this.baseIRIDocument.value);
+        }
+        if (!_Util.isValidIri(iri)) {
+          return null;
+        }
+        return this.dataFactory.namedNode(iri);
+      }
+    };
+    exports.Util = Util;
+    Util.RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    Util.XSD = "http://www.w3.org/2001/XMLSchema#";
+    Util.RDFA = "http://www.w3.org/ns/rdfa#";
+    Util.PREFIX_REGEX = /\s*([^:\s]*)*:\s*([^\s]*)*\s*/g;
+    Util.TIME_REGEXES = [
+      {
+        regex: /^-?P([0-9]+Y)?([0-9]+M)?([0-9]+D)?(T([0-9]+H)?([0-9]+M)?([0-9]+(\.[0-9])?S)?)?$/,
+        type: "duration"
+      },
+      {
+        regex: /^[0-9]+-[0-9][0-9]-[0-9][0-9]T[0-9][0-9]:[0-9][0-9]:[0-9][0-9]((Z?)|([\+-][0-9][0-9]:[0-9][0-9]))$/,
+        type: "dateTime"
+      },
+      { regex: /^[0-9]+-[0-9][0-9]-[0-9][0-9]Z?$/, type: "date" },
+      { regex: /^[0-9][0-9]:[0-9][0-9]:[0-9][0-9]((Z?)|([\+-][0-9][0-9]:[0-9][0-9]))$/, type: "time" },
+      { regex: /^[0-9]+-[0-9][0-9]$/, type: "gYearMonth" },
+      { regex: /^[0-9]+$/, type: "gYear" }
+    ];
+    Util.IRI_REGEX = /^([A-Za-z][A-Za-z0-9+-.]*|_):[^ "<>{}|\\\[\]`]*$/;
+  }
+});
+
+// node_modules/rdfa-streaming-parser/lib/RdfaParser.js
+var require_RdfaParser = __commonJS({
+  "node_modules/rdfa-streaming-parser/lib/RdfaParser.js"(exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.RdfaParser = void 0;
+    var htmlparser2_1 = require_lib6();
+    var readable_stream_1 = require_browser3();
+    var INITIAL_CONTEXT_XHTML = require_initial_context_xhtml();
+    var INITIAL_CONTEXT = require_initial_context();
+    var RdfaProfile_1 = require_RdfaProfile();
+    var Util_1 = require_Util3();
+    var RdfaParser2 = class _RdfaParser extends readable_stream_1.Transform {
+      constructor(options) {
+        super({ readableObjectMode: true });
+        this.activeTagStack = [];
+        options = options || {};
+        this.options = options;
+        this.util = new Util_1.Util(options.dataFactory, options.baseIRI);
+        this.defaultGraph = options.defaultGraph || this.util.dataFactory.defaultGraph();
+        const profile = options.contentType ? Util_1.Util.contentTypeToProfile(options.contentType) : options.profile || "";
+        this.features = options.features || RdfaProfile_1.RDFA_FEATURES[profile];
+        this.htmlParseListener = options.htmlParseListener;
+        this.rdfaPatterns = this.features.copyRdfaPatterns ? {} : null;
+        this.pendingRdfaPatternCopies = this.features.copyRdfaPatterns ? {} : null;
+        this.parser = this.initializeParser(profile === "xml");
+        this.activeTagStack.push({
+          incompleteTriples: [],
+          inlist: false,
+          language: options.language,
+          listMapping: {},
+          listMappingLocal: {},
+          name: "",
+          prefixesAll: Object.assign(Object.assign({}, INITIAL_CONTEXT["@context"]), this.features.xhtmlInitialContext ? INITIAL_CONTEXT_XHTML["@context"] : {}),
+          prefixesCustom: {},
+          skipElement: false,
+          vocab: options.vocab
+        });
+      }
+      /**
+       * Parses the given text stream into a quad stream.
+       * @param {NodeJS.EventEmitter} stream A text stream.
+       * @return {RDF.Stream} A quad stream.
+       */
+      import(stream) {
+        const output = new readable_stream_1.PassThrough({ readableObjectMode: true });
+        stream.on("error", (error) => parsed.emit("error", error));
+        stream.on("data", (data) => output.push(data));
+        stream.on("end", () => output.push(null));
+        const parsed = output.pipe(new _RdfaParser(this.options));
+        return parsed;
+      }
+      _transform(chunk, encoding, callback) {
+        this.parser.write(chunk.toString());
+        callback();
+      }
+      _flush(callback) {
+        this.parser.end();
+        callback();
+      }
+      onTagOpen(name, attributes) {
+        let parentTagI = this.activeTagStack.length - 1;
+        while (parentTagI > 0 && this.activeTagStack[parentTagI].skipElement) {
+          parentTagI--;
+        }
+        let parentTag = this.activeTagStack[parentTagI];
+        if (parentTagI !== this.activeTagStack.length - 1) {
+          parentTag = Object.assign(Object.assign({}, parentTag), { language: this.activeTagStack[this.activeTagStack.length - 1].language, prefixesAll: this.activeTagStack[this.activeTagStack.length - 1].prefixesAll, prefixesCustom: this.activeTagStack[this.activeTagStack.length - 1].prefixesCustom, vocab: this.activeTagStack[this.activeTagStack.length - 1].vocab });
+        }
+        const activeTag = {
+          collectChildTags: parentTag.collectChildTags,
+          collectChildTagsForCurrentTag: parentTag.collectChildTagsForCurrentTag,
+          incompleteTriples: [],
+          inlist: "inlist" in attributes,
+          listMapping: [],
+          listMappingLocal: parentTag.listMapping,
+          localBaseIRI: parentTag.localBaseIRI,
+          name,
+          prefixesAll: null,
+          prefixesCustom: null,
+          skipElement: false
+        };
+        this.activeTagStack.push(activeTag);
+        if (activeTag.collectChildTags) {
+          for (const prefix2 of Object.keys(parentTag.prefixesCustom).sort()) {
+            const suffix = parentTag.prefixesCustom[prefix2];
+            const attributeKey = prefix2 === "" ? "xmlns" : "xmlns:" + prefix2;
+            if (!(attributeKey in attributes)) {
+              attributes[attributeKey] = suffix;
+            }
+          }
+          const attributesSerialized = Object.keys(attributes).map((key) => `${key}="${attributes[key]}"`).join(" ");
+          activeTag.textWithTags = [`<${name}${attributesSerialized ? " " + attributesSerialized : ""}>`];
+          if (this.features.skipHandlingXmlLiteralChildren) {
+            return;
+          }
+        }
+        let allowTermsInRelPredicates = true;
+        let allowTermsInRevPredicates = true;
+        if (this.features.onlyAllowUriRelRevIfProperty) {
+          if ("property" in attributes && "rel" in attributes) {
+            allowTermsInRelPredicates = false;
+            if (attributes.rel.indexOf(":") < 0) {
+              delete attributes.rel;
+            }
+          }
+          if ("property" in attributes && "rev" in attributes) {
+            allowTermsInRevPredicates = false;
+            if (attributes.rev.indexOf(":") < 0) {
+              delete attributes.rev;
+            }
+          }
+        }
+        if (this.features.copyRdfaPatterns) {
+          if (parentTag.collectedPatternTag) {
+            const patternTag = {
+              attributes,
+              children: [],
+              name,
+              referenced: false,
+              rootPattern: false,
+              text: []
+            };
+            parentTag.collectedPatternTag.children.push(patternTag);
+            activeTag.collectedPatternTag = patternTag;
+            return;
+          }
+          if (attributes.typeof === "rdfa:Pattern") {
+            activeTag.collectedPatternTag = {
+              attributes,
+              children: [],
+              name,
+              parentTag,
+              referenced: false,
+              rootPattern: true,
+              text: []
+            };
+            return;
+          }
+          if (attributes.property === "rdfa:copy") {
+            const copyTargetPatternId = attributes.resource || attributes.href || attributes.src;
+            if (this.rdfaPatterns[copyTargetPatternId]) {
+              this.emitPatternCopy(parentTag, this.rdfaPatterns[copyTargetPatternId], copyTargetPatternId);
+            } else {
+              if (!this.pendingRdfaPatternCopies[copyTargetPatternId]) {
+                this.pendingRdfaPatternCopies[copyTargetPatternId] = [];
+              }
+              this.pendingRdfaPatternCopies[copyTargetPatternId].push(parentTag);
+            }
+            return;
+          }
+        }
+        if (this.features.baseTag && name === "base" && attributes.href) {
+          this.util.baseIRI = this.util.getBaseIRI(attributes.href);
+        }
+        if (this.features.xmlBase && attributes["xml:base"]) {
+          activeTag.localBaseIRI = this.util.getBaseIRI(attributes["xml:base"]);
+        }
+        if (this.features.timeTag && name === "time" && !attributes.datatype) {
+          activeTag.interpretObjectAsTime = true;
+        }
+        let newSubject;
+        let currentObjectResource;
+        let typedResource;
+        if ("vocab" in attributes) {
+          if (attributes.vocab) {
+            activeTag.vocab = attributes.vocab;
+            this.emitTriple(this.util.getBaseIriTerm(activeTag), this.util.dataFactory.namedNode(Util_1.Util.RDFA + "usesVocabulary"), this.util.dataFactory.namedNode(activeTag.vocab));
+          } else {
+            activeTag.vocab = this.activeTagStack[0].vocab;
+          }
+        } else {
+          activeTag.vocab = parentTag.vocab;
+        }
+        activeTag.prefixesCustom = Util_1.Util.parsePrefixes(attributes, parentTag.prefixesCustom, this.features.xmlnsPrefixMappings);
+        activeTag.prefixesAll = Object.keys(activeTag.prefixesCustom).length > 0 ? Object.assign(Object.assign({}, parentTag.prefixesAll), activeTag.prefixesCustom) : parentTag.prefixesAll;
+        if (this.features.roleAttribute && attributes.role) {
+          const roleSubject = attributes.id ? this.util.createIri("#" + attributes.id, activeTag, false, false, false) : this.util.createBlankNode();
+          const vocabOld = activeTag.vocab;
+          activeTag.vocab = "http://www.w3.org/1999/xhtml/vocab#";
+          for (const role of this.util.createVocabIris(attributes.role, activeTag, true, false)) {
+            this.emitTriple(roleSubject, this.util.dataFactory.namedNode("http://www.w3.org/1999/xhtml/vocab#role"), role);
+          }
+          activeTag.vocab = vocabOld;
+        }
+        if ("xml:lang" in attributes || this.features.langAttribute && "lang" in attributes) {
+          activeTag.language = attributes["xml:lang"] || attributes.lang;
+        } else {
+          activeTag.language = parentTag.language;
+        }
+        const isRootTag = this.activeTagStack.length === 2;
+        if (!("rel" in attributes) && !("rev" in attributes)) {
+          if ("property" in attributes && !("content" in attributes) && !("datatype" in attributes)) {
+            if ("about" in attributes) {
+              newSubject = this.util.createIri(attributes.about, activeTag, false, true, true);
+              activeTag.explicitNewSubject = !!newSubject;
+            } else if (isRootTag) {
+              newSubject = true;
+            } else if (parentTag.object) {
+              newSubject = parentTag.object;
+            }
+            if ("typeof" in attributes) {
+              if ("about" in attributes) {
+                typedResource = this.util.createIri(attributes.about, activeTag, false, true, true);
+              }
+              if (!typedResource && isRootTag) {
+                typedResource = true;
+              }
+              if (!typedResource && "resource" in attributes) {
+                typedResource = this.util.createIri(attributes.resource, activeTag, false, true, true);
+              }
+              if (!typedResource && ("href" in attributes || "src" in attributes)) {
+                typedResource = this.util.createIri(attributes.href || attributes.src, activeTag, false, false, true);
+              }
+              if (!typedResource && this.isInheritSubjectInHeadBody(name)) {
+                typedResource = newSubject;
+              }
+              if (!typedResource) {
+                typedResource = this.util.createBlankNode();
+              }
+              currentObjectResource = typedResource;
+            }
+          } else {
+            if ("about" in attributes || "resource" in attributes) {
+              newSubject = this.util.createIri(attributes.about || attributes.resource, activeTag, false, true, true);
+              activeTag.explicitNewSubject = !!newSubject;
+            }
+            if (!newSubject && ("href" in attributes || "src" in attributes)) {
+              newSubject = this.util.createIri(attributes.href || attributes.src, activeTag, false, false, true);
+              activeTag.explicitNewSubject = !!newSubject;
+            }
+            if (!newSubject) {
+              if (isRootTag) {
+                newSubject = true;
+              } else if (this.isInheritSubjectInHeadBody(name)) {
+                newSubject = parentTag.object;
+              } else if ("typeof" in attributes) {
+                newSubject = this.util.createBlankNode();
+                activeTag.explicitNewSubject = true;
+              } else if (parentTag.object) {
+                newSubject = parentTag.object;
+                if (!("property" in attributes)) {
+                  activeTag.skipElement = true;
+                }
+              }
+            }
+            if ("typeof" in attributes) {
+              typedResource = newSubject;
+            }
+          }
+        } else {
+          if ("about" in attributes) {
+            newSubject = this.util.createIri(attributes.about, activeTag, false, true, true);
+            activeTag.explicitNewSubject = !!newSubject;
+            if ("typeof" in attributes) {
+              typedResource = newSubject;
+            }
+          } else if (isRootTag) {
+            newSubject = true;
+          } else if (parentTag.object) {
+            newSubject = parentTag.object;
+          }
+          if ("resource" in attributes) {
+            currentObjectResource = this.util.createIri(attributes.resource, activeTag, false, true, true);
+          }
+          if (!currentObjectResource) {
+            if ("href" in attributes || "src" in attributes) {
+              currentObjectResource = this.util.createIri(attributes.href || attributes.src, activeTag, false, false, true);
+            } else if ("typeof" in attributes && !("about" in attributes) && !this.isInheritSubjectInHeadBody(name)) {
+              currentObjectResource = this.util.createBlankNode();
+            }
+          }
+          if ("typeof" in attributes && !("about" in attributes)) {
+            if (this.isInheritSubjectInHeadBody(name)) {
+              typedResource = newSubject;
+            } else {
+              typedResource = currentObjectResource;
+            }
+          }
+        }
+        if (typedResource) {
+          for (const type of this.util.createVocabIris(attributes.typeof, activeTag, true, true)) {
+            this.emitTriple(this.util.getResourceOrBaseIri(typedResource, activeTag), this.util.dataFactory.namedNode(Util_1.Util.RDF + "type"), type);
+          }
+        }
+        if (newSubject) {
+          activeTag.listMapping = {};
+        }
+        if (currentObjectResource) {
+          if ("rel" in attributes && "inlist" in attributes) {
+            for (const predicate2 of this.util.createVocabIris(attributes.rel, activeTag, allowTermsInRelPredicates, false)) {
+              this.addListMapping(activeTag, newSubject, predicate2, currentObjectResource);
+            }
+          }
+          if (!("rel" in attributes && "inlist" in attributes)) {
+            if ("rel" in attributes) {
+              for (const predicate2 of this.util.createVocabIris(attributes.rel, activeTag, allowTermsInRelPredicates, false)) {
+                this.emitTriple(this.util.getResourceOrBaseIri(newSubject, activeTag), predicate2, this.util.getResourceOrBaseIri(currentObjectResource, activeTag));
+              }
+            }
+            if ("rev" in attributes) {
+              for (const predicate2 of this.util.createVocabIris(attributes.rev, activeTag, allowTermsInRevPredicates, false)) {
+                this.emitTriple(this.util.getResourceOrBaseIri(currentObjectResource, activeTag), predicate2, this.util.getResourceOrBaseIri(newSubject, activeTag));
+              }
+            }
+          }
+        }
+        if (!currentObjectResource) {
+          if ("rel" in attributes) {
+            if ("inlist" in attributes) {
+              for (const predicate2 of this.util.createVocabIris(attributes.rel, activeTag, allowTermsInRelPredicates, false)) {
+                this.addListMapping(activeTag, newSubject, predicate2, null);
+                activeTag.incompleteTriples.push({ predicate: predicate2, reverse: false, list: true });
+              }
+            } else {
+              for (const predicate2 of this.util.createVocabIris(attributes.rel, activeTag, allowTermsInRelPredicates, false)) {
+                activeTag.incompleteTriples.push({ predicate: predicate2, reverse: false });
+              }
+            }
+          }
+          if ("rev" in attributes) {
+            for (const predicate2 of this.util.createVocabIris(attributes.rev, activeTag, allowTermsInRevPredicates, false)) {
+              activeTag.incompleteTriples.push({ predicate: predicate2, reverse: true });
+            }
+          }
+          if (activeTag.incompleteTriples.length > 0) {
+            currentObjectResource = this.util.createBlankNode();
+          }
+        }
+        if ("property" in attributes) {
+          activeTag.predicates = this.util.createVocabIris(attributes.property, activeTag, true, false);
+          let localObjectResource;
+          if ("datatype" in attributes) {
+            activeTag.datatype = this.util.createIri(attributes.datatype, activeTag, true, true, false);
+            if (activeTag.datatype && (activeTag.datatype.value === Util_1.Util.RDF + "XMLLiteral" || this.features.htmlDatatype && activeTag.datatype.value === Util_1.Util.RDF + "HTML")) {
+              activeTag.collectChildTags = true;
+              activeTag.collectChildTagsForCurrentTag = true;
+            }
+          } else {
+            if (!("rev" in attributes) && !("rel" in attributes) && !("content" in attributes)) {
+              if ("resource" in attributes) {
+                localObjectResource = this.util.createIri(attributes.resource, activeTag, false, true, true);
+              }
+              if (!localObjectResource && "href" in attributes) {
+                localObjectResource = this.util.createIri(attributes.href, activeTag, false, false, true);
+              }
+              if (!localObjectResource && "src" in attributes) {
+                localObjectResource = this.util.createIri(attributes.src, activeTag, false, false, true);
+              }
+            }
+            if ("typeof" in attributes && !("about" in attributes)) {
+              localObjectResource = typedResource;
+            }
+          }
+          if (!("datatype" in attributes) || attributes.datatype === "") {
+            activeTag.collectChildTagsForCurrentTag = false;
+          }
+          if ("content" in attributes) {
+            const object2 = this.util.createLiteral(attributes.content, activeTag);
+            if ("inlist" in attributes) {
+              for (const predicate2 of activeTag.predicates) {
+                this.addListMapping(activeTag, newSubject, predicate2, object2);
+              }
+            } else {
+              const subject2 = this.util.getResourceOrBaseIri(newSubject, activeTag);
+              for (const predicate2 of activeTag.predicates) {
+                this.emitTriple(subject2, predicate2, object2);
+              }
+            }
+            activeTag.predicates = null;
+          } else if (this.features.datetimeAttribute && "datetime" in attributes) {
+            activeTag.interpretObjectAsTime = true;
+            const object2 = this.util.createLiteral(attributes.datetime, activeTag);
+            if ("inlist" in attributes) {
+              for (const predicate2 of activeTag.predicates) {
+                this.addListMapping(activeTag, newSubject, predicate2, object2);
+              }
+            } else {
+              const subject2 = this.util.getResourceOrBaseIri(newSubject, activeTag);
+              for (const predicate2 of activeTag.predicates) {
+                this.emitTriple(subject2, predicate2, object2);
+              }
+            }
+            activeTag.predicates = null;
+          } else if (localObjectResource) {
+            const object2 = this.util.getResourceOrBaseIri(localObjectResource, activeTag);
+            if ("inlist" in attributes) {
+              for (const predicate2 of activeTag.predicates) {
+                this.addListMapping(activeTag, newSubject, predicate2, object2);
+              }
+            } else {
+              const subject2 = this.util.getResourceOrBaseIri(newSubject, activeTag);
+              for (const predicate2 of activeTag.predicates) {
+                this.emitTriple(subject2, predicate2, object2);
+              }
+            }
+            activeTag.predicates = null;
+          }
+        }
+        let incompleteTriplesCompleted = false;
+        if (!activeTag.skipElement && newSubject && parentTag.incompleteTriples.length > 0) {
+          incompleteTriplesCompleted = true;
+          const subject2 = this.util.getResourceOrBaseIri(parentTag.subject, activeTag);
+          const object2 = this.util.getResourceOrBaseIri(newSubject, activeTag);
+          for (const incompleteTriple of parentTag.incompleteTriples) {
+            if (!incompleteTriple.reverse) {
+              if (incompleteTriple.list) {
+                let firstInListTag = null;
+                for (let i5 = this.activeTagStack.length - 1; i5 >= 0; i5--) {
+                  if (this.activeTagStack[i5].inlist) {
+                    firstInListTag = this.activeTagStack[i5];
+                    break;
+                  }
+                }
+                this.addListMapping(firstInListTag, newSubject, incompleteTriple.predicate, object2);
+              } else {
+                this.emitTriple(subject2, incompleteTriple.predicate, object2);
+              }
+            } else {
+              this.emitTriple(object2, incompleteTriple.predicate, subject2);
+            }
+          }
+        }
+        if (!incompleteTriplesCompleted && parentTag.incompleteTriples.length > 0) {
+          activeTag.incompleteTriples = activeTag.incompleteTriples.concat(parentTag.incompleteTriples);
+        }
+        activeTag.subject = newSubject || parentTag.subject;
+        activeTag.object = currentObjectResource || newSubject;
+      }
+      onText(data) {
+        const activeTag = this.activeTagStack[this.activeTagStack.length - 1];
+        if (this.features.copyRdfaPatterns && activeTag.collectedPatternTag) {
+          activeTag.collectedPatternTag.text.push(data);
+          return;
+        }
+        if (!activeTag.textWithTags) {
+          activeTag.textWithTags = [];
+        }
+        if (!activeTag.textWithoutTags) {
+          activeTag.textWithoutTags = [];
+        }
+        activeTag.textWithTags.push(data);
+        activeTag.textWithoutTags.push(data);
+      }
+      onTagClose() {
+        const activeTag = this.activeTagStack[this.activeTagStack.length - 1];
+        const parentTag = this.activeTagStack[this.activeTagStack.length - 2];
+        if (!(activeTag.collectChildTags && parentTag.collectChildTags && this.features.skipHandlingXmlLiteralChildren)) {
+          if (this.features.copyRdfaPatterns && activeTag.collectedPatternTag && activeTag.collectedPatternTag.rootPattern) {
+            const patternId = activeTag.collectedPatternTag.attributes.resource;
+            delete activeTag.collectedPatternTag.attributes.resource;
+            delete activeTag.collectedPatternTag.attributes.typeof;
+            this.rdfaPatterns[patternId] = activeTag.collectedPatternTag;
+            if (this.pendingRdfaPatternCopies[patternId]) {
+              for (const tag of this.pendingRdfaPatternCopies[patternId]) {
+                this.emitPatternCopy(tag, activeTag.collectedPatternTag, patternId);
+              }
+              delete this.pendingRdfaPatternCopies[patternId];
+            }
+            this.activeTagStack.pop();
+            return;
+          }
+          if (activeTag.predicates) {
+            const subject2 = this.util.getResourceOrBaseIri(activeTag.subject, activeTag);
+            let textSegments;
+            if (!activeTag.collectChildTagsForCurrentTag) {
+              textSegments = activeTag.textWithoutTags || [];
+            } else {
+              textSegments = activeTag.textWithTags || [];
+              if (activeTag.collectChildTags && parentTag.collectChildTags) {
+                textSegments = textSegments.slice(1);
+              }
+            }
+            const object2 = this.util.createLiteral(textSegments.join(""), activeTag);
+            if (activeTag.inlist) {
+              for (const predicate2 of activeTag.predicates) {
+                this.addListMapping(activeTag, subject2, predicate2, object2);
+              }
+            } else {
+              for (const predicate2 of activeTag.predicates) {
+                this.emitTriple(subject2, predicate2, object2);
+              }
+            }
+            if (!parentTag.predicates) {
+              activeTag.textWithoutTags = null;
+              activeTag.textWithTags = null;
+            }
+          }
+          if (activeTag.object && Object.keys(activeTag.listMapping).length > 0) {
+            const subject2 = this.util.getResourceOrBaseIri(activeTag.object, activeTag);
+            for (const predicateValue in activeTag.listMapping) {
+              const predicate2 = this.util.dataFactory.namedNode(predicateValue);
+              const values = activeTag.listMapping[predicateValue];
+              if (values.length > 0) {
+                const bnodes = values.map(() => this.util.createBlankNode());
+                for (let i5 = 0; i5 < values.length; i5++) {
+                  const object2 = this.util.getResourceOrBaseIri(values[i5], activeTag);
+                  this.emitTriple(bnodes[i5], this.util.dataFactory.namedNode(Util_1.Util.RDF + "first"), object2);
+                  this.emitTriple(bnodes[i5], this.util.dataFactory.namedNode(Util_1.Util.RDF + "rest"), i5 < values.length - 1 ? bnodes[i5 + 1] : this.util.dataFactory.namedNode(Util_1.Util.RDF + "nil"));
+                }
+                this.emitTriple(subject2, predicate2, bnodes[0]);
+              } else {
+                this.emitTriple(subject2, predicate2, this.util.dataFactory.namedNode(Util_1.Util.RDF + "nil"));
+              }
+            }
+          }
+        }
+        this.activeTagStack.pop();
+        if (activeTag.collectChildTags && activeTag.textWithTags) {
+          activeTag.textWithTags.push(`</${activeTag.name}>`);
+        }
+        if (activeTag.textWithTags && parentTag) {
+          if (!parentTag.textWithTags) {
+            parentTag.textWithTags = activeTag.textWithTags;
+          } else {
+            parentTag.textWithTags = parentTag.textWithTags.concat(activeTag.textWithTags);
+          }
+        }
+        if (activeTag.textWithoutTags && parentTag) {
+          if (!parentTag.textWithoutTags) {
+            parentTag.textWithoutTags = activeTag.textWithoutTags;
+          } else {
+            parentTag.textWithoutTags = parentTag.textWithoutTags.concat(activeTag.textWithoutTags);
+          }
+        }
+      }
+      onEnd() {
+        if (this.features.copyRdfaPatterns) {
+          this.features.copyRdfaPatterns = false;
+          for (const patternId in this.rdfaPatterns) {
+            const pattern = this.rdfaPatterns[patternId];
+            if (!pattern.referenced) {
+              pattern.attributes.typeof = "rdfa:Pattern";
+              pattern.attributes.resource = patternId;
+              this.emitPatternCopy(pattern.parentTag, pattern, patternId);
+              pattern.referenced = false;
+              delete pattern.attributes.typeof;
+              delete pattern.attributes.resource;
+            }
+          }
+          for (const patternId in this.pendingRdfaPatternCopies) {
+            for (const parentTag of this.pendingRdfaPatternCopies[patternId]) {
+              this.activeTagStack.push(parentTag);
+              this.onTagOpen("link", { property: "rdfa:copy", href: patternId });
+              this.onTagClose();
+              this.activeTagStack.pop();
+            }
+          }
+          this.features.copyRdfaPatterns = true;
+        }
+      }
+      /**
+       * If the new subject can be inherited from the parent object
+       * if the resource defines no new subject.
+       * @param {string} name The current tag name.
+       * @returns {boolean} If the subject can be inherited.
+       */
+      isInheritSubjectInHeadBody(name) {
+        return this.features.inheritSubjectInHeadBody && (name === "head" || name === "body");
+      }
+      /**
+       * Add a list mapping for the given predicate and object in the active tag.
+       * @param {IActiveTag} activeTag The active tag.
+       * @param {Term | boolean} subject A subject term, this will only be used to create a separate list
+       *                                 if activeTag.explicitNewSubject is true.
+       * @param {Term} predicate A predicate term.
+       * @param {Term | boolean} currentObjectResource The current object resource.
+       */
+      addListMapping(activeTag, subject2, predicate2, currentObjectResource) {
+        if (activeTag.explicitNewSubject) {
+          const bNode = this.util.createBlankNode();
+          this.emitTriple(this.util.getResourceOrBaseIri(subject2, activeTag), predicate2, bNode);
+          this.emitTriple(bNode, this.util.dataFactory.namedNode(Util_1.Util.RDF + "first"), this.util.getResourceOrBaseIri(currentObjectResource, activeTag));
+          this.emitTriple(bNode, this.util.dataFactory.namedNode(Util_1.Util.RDF + "rest"), this.util.dataFactory.namedNode(Util_1.Util.RDF + "nil"));
+        } else {
+          let predicateList = activeTag.listMappingLocal[predicate2.value];
+          if (!predicateList) {
+            activeTag.listMappingLocal[predicate2.value] = predicateList = [];
+          }
+          if (currentObjectResource) {
+            predicateList.push(currentObjectResource);
+          }
+        }
+      }
+      /**
+       * Emit the given triple to the stream.
+       * @param {Term} subject A subject term.
+       * @param {Term} predicate A predicate term.
+       * @param {Term} object An object term.
+       */
+      emitTriple(subject2, predicate2, object2) {
+        if (subject2.termType === "NamedNode" && subject2.value.indexOf(":") < 0 || predicate2.termType === "NamedNode" && predicate2.value.indexOf(":") < 0 || object2.termType === "NamedNode" && object2.value.indexOf(":") < 0) {
+          return;
+        }
+        this.push(this.util.dataFactory.quad(subject2, predicate2, object2, this.defaultGraph));
+      }
+      /**
+       * Emit an instantiation of the given pattern with the given parent tag.
+       * @param {IActiveTag} parentTag The parent tag to instantiate in.
+       * @param {IRdfaPattern} pattern The pattern to instantiate.
+       * @param {string} rootPatternId The pattern id.
+       */
+      emitPatternCopy(parentTag, pattern, rootPatternId) {
+        this.activeTagStack.push(parentTag);
+        pattern.referenced = true;
+        if (!pattern.constructedBlankNodes) {
+          pattern.constructedBlankNodes = [];
+          this.util.blankNodeFactory = () => {
+            const bNode = this.util.dataFactory.blankNode();
+            pattern.constructedBlankNodes.push(bNode);
+            return bNode;
+          };
+        } else {
+          let blankNodeIndex = 0;
+          this.util.blankNodeFactory = () => pattern.constructedBlankNodes[blankNodeIndex++];
+        }
+        this.emitPatternCopyAbsolute(pattern, true, rootPatternId);
+        this.util.blankNodeFactory = null;
+        this.activeTagStack.pop();
+      }
+      /**
+       * Emit an instantiation of the given pattern with the given parent tag.
+       *
+       * This should probably not be called directly,
+       * call {@link emitPatternCopy} instead.
+       *
+       * @param {IRdfaPattern} pattern The pattern to instantiate.
+       * @param {boolean} root If this is the root call for the given pattern.
+       * @param {string} rootPatternId The pattern id.
+       */
+      emitPatternCopyAbsolute(pattern, root, rootPatternId) {
+        if (!root && pattern.attributes.property === "rdfa:copy" && pattern.attributes.href === rootPatternId) {
+          return;
+        }
+        this.onTagOpen(pattern.name, pattern.attributes);
+        for (const text of pattern.text) {
+          this.onText(text);
+        }
+        for (const child of pattern.children) {
+          this.emitPatternCopyAbsolute(child, false, rootPatternId);
+        }
+        this.onTagClose();
+      }
+      initializeParser(xmlMode) {
+        return new htmlparser2_1.Parser({
+          onclosetag: () => {
+            try {
+              this.onTagClose();
+              if (this.htmlParseListener) {
+                this.htmlParseListener.onTagClose();
+              }
+            } catch (e5) {
+              this.emit("error", e5);
+            }
+          },
+          onend: () => {
+            try {
+              this.onEnd();
+              if (this.htmlParseListener) {
+                this.htmlParseListener.onEnd();
+              }
+            } catch (e5) {
+              this.emit("error", e5);
+            }
+          },
+          onopentag: (name, attributes) => {
+            try {
+              this.onTagOpen(name, attributes);
+              if (this.htmlParseListener) {
+                this.htmlParseListener.onTagOpen(name, attributes);
+              }
+            } catch (e5) {
+              this.emit("error", e5);
+            }
+          },
+          ontext: (data) => {
+            try {
+              this.onText(data);
+              if (this.htmlParseListener) {
+                this.htmlParseListener.onText(data);
+              }
+            } catch (e5) {
+              this.emit("error", e5);
+            }
+          }
+        }, {
+          decodeEntities: true,
+          recognizeSelfClosing: true,
+          xmlMode
+        });
+      }
+    };
+    exports.RdfaParser = RdfaParser2;
+  }
+});
+
+// node_modules/rdfa-streaming-parser/index.js
+var require_rdfa_streaming_parser = __commonJS({
+  "node_modules/rdfa-streaming-parser/index.js"(exports) {
+    "use strict";
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      var desc = Object.getOwnPropertyDescriptor(m2, k2);
+      if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m2[k2];
+        } };
+      }
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
+      if (k22 === void 0) k22 = k2;
+      o6[k22] = m2[k2];
+    }));
+    var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
+      for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
+    };
+    Object.defineProperty(exports, "__esModule", { value: true });
+    __exportStar(require_IActiveTag(), exports);
+    __exportStar(require_IHtmlParseListener(), exports);
+    __exportStar(require_IRdfaPattern(), exports);
+    __exportStar(require_RdfaParser(), exports);
+    __exportStar(require_RdfaProfile(), exports);
+    __exportStar(require_Util3(), exports);
+  }
+});
+
 // node_modules/rdf-lens/dist/lens.js
 function termToString(term) {
   if (term.termType === "NamedNode") {
@@ -12285,7 +24824,7 @@ var require_loglevel = __commonJS({
       function defaultMethodFactory(methodName, _level, _loggerName) {
         return realMethod(methodName) || enableLoggingWhenConsoleArrives.apply(this, arguments);
       }
-      function Logger(name, factory) {
+      function Logger(name, factory2) {
         var self2 = this;
         var inheritedLevel;
         var defaultLevel;
@@ -12365,7 +24904,7 @@ var require_loglevel = __commonJS({
           "ERROR": 4,
           "SILENT": 5
         };
-        self2.methodFactory = factory || defaultMethodFactory;
+        self2.methodFactory = factory2 || defaultMethodFactory;
         self2.getLevel = function() {
           if (userLevel != null) {
             return userLevel;
@@ -12453,13 +24992,13 @@ var require_loglevel = __commonJS({
 var require_loglevel_plugin_prefix = __commonJS({
   "node_modules/loglevel-plugin-prefix/lib/loglevel-plugin-prefix.js"(exports, module) {
     "use strict";
-    (function(root, factory) {
+    (function(root, factory2) {
       if (typeof define === "function" && define.amd) {
-        define(factory);
+        define(factory2);
       } else if (typeof module === "object" && module.exports) {
-        module.exports = factory();
+        module.exports = factory2();
       } else {
-        root.prefix = factory(root);
+        root.prefix = factory2(root);
       }
     })(exports, function(root) {
       "use strict";
@@ -12638,7 +25177,7 @@ var require_Logger_Browser = __commonJS({
 });
 
 // node_modules/@treecg/types/node_modules/rdf-data-factory/lib/BlankNode.js
-var require_BlankNode = __commonJS({
+var require_BlankNode2 = __commonJS({
   "node_modules/@treecg/types/node_modules/rdf-data-factory/lib/BlankNode.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -12657,7 +25196,7 @@ var require_BlankNode = __commonJS({
 });
 
 // node_modules/@treecg/types/node_modules/rdf-data-factory/lib/DefaultGraph.js
-var require_DefaultGraph = __commonJS({
+var require_DefaultGraph2 = __commonJS({
   "node_modules/@treecg/types/node_modules/rdf-data-factory/lib/DefaultGraph.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -12677,7 +25216,7 @@ var require_DefaultGraph = __commonJS({
 });
 
 // node_modules/@treecg/types/node_modules/rdf-data-factory/lib/NamedNode.js
-var require_NamedNode = __commonJS({
+var require_NamedNode2 = __commonJS({
   "node_modules/@treecg/types/node_modules/rdf-data-factory/lib/NamedNode.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -12696,12 +25235,12 @@ var require_NamedNode = __commonJS({
 });
 
 // node_modules/@treecg/types/node_modules/rdf-data-factory/lib/Literal.js
-var require_Literal = __commonJS({
+var require_Literal2 = __commonJS({
   "node_modules/@treecg/types/node_modules/rdf-data-factory/lib/Literal.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Literal = void 0;
-    var NamedNode_1 = require_NamedNode();
+    var NamedNode_1 = require_NamedNode2();
     var Literal2 = class _Literal {
       constructor(value, languageOrDatatype) {
         this.termType = "Literal";
@@ -12728,7 +25267,7 @@ var require_Literal = __commonJS({
 });
 
 // node_modules/@treecg/types/node_modules/rdf-data-factory/lib/Quad.js
-var require_Quad = __commonJS({
+var require_Quad2 = __commonJS({
   "node_modules/@treecg/types/node_modules/rdf-data-factory/lib/Quad.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -12751,7 +25290,7 @@ var require_Quad = __commonJS({
 });
 
 // node_modules/@treecg/types/node_modules/rdf-data-factory/lib/Variable.js
-var require_Variable = __commonJS({
+var require_Variable2 = __commonJS({
   "node_modules/@treecg/types/node_modules/rdf-data-factory/lib/Variable.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -12770,19 +25309,19 @@ var require_Variable = __commonJS({
 });
 
 // node_modules/@treecg/types/node_modules/rdf-data-factory/lib/DataFactory.js
-var require_DataFactory = __commonJS({
+var require_DataFactory2 = __commonJS({
   "node_modules/@treecg/types/node_modules/rdf-data-factory/lib/DataFactory.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.DataFactory = void 0;
-    var BlankNode_1 = require_BlankNode();
-    var DefaultGraph_1 = require_DefaultGraph();
-    var Literal_1 = require_Literal();
-    var NamedNode_1 = require_NamedNode();
-    var Quad_1 = require_Quad();
-    var Variable_1 = require_Variable();
+    var BlankNode_1 = require_BlankNode2();
+    var DefaultGraph_1 = require_DefaultGraph2();
+    var Literal_1 = require_Literal2();
+    var NamedNode_1 = require_NamedNode2();
+    var Quad_1 = require_Quad2();
+    var Variable_1 = require_Variable2();
     var dataFactoryCounter = 0;
-    var DataFactory3 = class {
+    var DataFactory4 = class {
       constructor(options) {
         this.blankNodeCounter = 0;
         options = options || {};
@@ -12887,12 +25426,12 @@ var require_DataFactory = __commonJS({
         this.blankNodeCounter = 0;
       }
     };
-    exports.DataFactory = DataFactory3;
+    exports.DataFactory = DataFactory4;
   }
 });
 
 // node_modules/@treecg/types/node_modules/rdf-data-factory/index.js
-var require_rdf_data_factory = __commonJS({
+var require_rdf_data_factory2 = __commonJS({
   "node_modules/@treecg/types/node_modules/rdf-data-factory/index.js"(exports) {
     "use strict";
     var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
@@ -12912,13 +25451,13 @@ var require_rdf_data_factory = __commonJS({
       for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
     };
     Object.defineProperty(exports, "__esModule", { value: true });
-    __exportStar(require_BlankNode(), exports);
-    __exportStar(require_DataFactory(), exports);
-    __exportStar(require_DefaultGraph(), exports);
-    __exportStar(require_Literal(), exports);
-    __exportStar(require_NamedNode(), exports);
-    __exportStar(require_Quad(), exports);
-    __exportStar(require_Variable(), exports);
+    __exportStar(require_BlankNode2(), exports);
+    __exportStar(require_DataFactory2(), exports);
+    __exportStar(require_DefaultGraph2(), exports);
+    __exportStar(require_Literal2(), exports);
+    __exportStar(require_NamedNode2(), exports);
+    __exportStar(require_Quad2(), exports);
+    __exportStar(require_Variable2(), exports);
   }
 });
 
@@ -12937,8 +25476,8 @@ var require_Vocabularies = __commonJS({
     };
     exports.__esModule = true;
     exports.EX = exports.SHACL = exports.VOID = exports.PPLAN = exports.PROV = exports.SDS = exports.LDES = exports.TREE = exports.XSD = exports.RDFS = exports.RDF = exports.FOAF = exports.DC = exports.createUriAndTermNamespace = exports.createTermNamespace = exports.createUriNamespace = exports.createNamespace = void 0;
-    var rdf_data_factory_1 = require_rdf_data_factory();
-    var factory = new rdf_data_factory_1.DataFactory();
+    var rdf_data_factory_1 = require_rdf_data_factory2();
+    var factory2 = new rdf_data_factory_1.DataFactory();
     function createNamespace(baseUri, toValue) {
       var localNames = [];
       for (var _i = 2; _i < arguments.length; _i++) {
@@ -12971,7 +25510,7 @@ var require_Vocabularies = __commonJS({
       for (var _i = 1; _i < arguments.length; _i++) {
         localNames[_i - 1] = arguments[_i];
       }
-      return createNamespace.apply(void 0, __spreadArray([baseUri, factory.namedNode], localNames, false));
+      return createNamespace.apply(void 0, __spreadArray([baseUri, factory2.namedNode], localNames, false));
     }
     exports.createTermNamespace = createTermNamespace2;
     function createUriAndTermNamespace2(baseUri) {
@@ -13029,313 +25568,15 @@ var require_dist = __commonJS({
   }
 });
 
-// node_modules/rdf-data-factory/lib/BlankNode.js
-var require_BlankNode2 = __commonJS({
-  "node_modules/rdf-data-factory/lib/BlankNode.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.BlankNode = void 0;
-    var BlankNode2 = class {
-      constructor(value) {
-        this.termType = "BlankNode";
-        this.value = value;
-      }
-      equals(other) {
-        return !!other && other.termType === "BlankNode" && other.value === this.value;
-      }
-    };
-    exports.BlankNode = BlankNode2;
-  }
-});
-
-// node_modules/rdf-data-factory/lib/DefaultGraph.js
-var require_DefaultGraph2 = __commonJS({
-  "node_modules/rdf-data-factory/lib/DefaultGraph.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.DefaultGraph = void 0;
-    var DefaultGraph2 = class {
-      constructor() {
-        this.termType = "DefaultGraph";
-        this.value = "";
-      }
-      equals(other) {
-        return !!other && other.termType === "DefaultGraph";
-      }
-    };
-    exports.DefaultGraph = DefaultGraph2;
-    DefaultGraph2.INSTANCE = new DefaultGraph2();
-  }
-});
-
-// node_modules/rdf-data-factory/lib/NamedNode.js
-var require_NamedNode2 = __commonJS({
-  "node_modules/rdf-data-factory/lib/NamedNode.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.NamedNode = void 0;
-    var NamedNode3 = class {
-      constructor(value) {
-        this.termType = "NamedNode";
-        this.value = value;
-      }
-      equals(other) {
-        return !!other && other.termType === "NamedNode" && other.value === this.value;
-      }
-    };
-    exports.NamedNode = NamedNode3;
-  }
-});
-
-// node_modules/rdf-data-factory/lib/Literal.js
-var require_Literal2 = __commonJS({
-  "node_modules/rdf-data-factory/lib/Literal.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Literal = void 0;
-    var NamedNode_1 = require_NamedNode2();
-    var Literal2 = class _Literal {
-      constructor(value, languageOrDatatype) {
-        this.termType = "Literal";
-        this.value = value;
-        if (typeof languageOrDatatype === "string") {
-          this.language = languageOrDatatype;
-          this.datatype = _Literal.RDF_LANGUAGE_STRING;
-          this.direction = "";
-        } else if (languageOrDatatype) {
-          if ("termType" in languageOrDatatype) {
-            this.language = "";
-            this.datatype = languageOrDatatype;
-            this.direction = "";
-          } else {
-            this.language = languageOrDatatype.language;
-            this.datatype = languageOrDatatype.direction ? _Literal.RDF_DIRECTIONAL_LANGUAGE_STRING : _Literal.RDF_LANGUAGE_STRING;
-            this.direction = languageOrDatatype.direction || "";
-          }
-        } else {
-          this.language = "";
-          this.datatype = _Literal.XSD_STRING;
-          this.direction = "";
-        }
-      }
-      equals(other) {
-        return !!other && other.termType === "Literal" && other.value === this.value && other.language === this.language && (other.direction === this.direction || !other.direction && this.direction === "") && this.datatype.equals(other.datatype);
-      }
-    };
-    exports.Literal = Literal2;
-    Literal2.RDF_LANGUAGE_STRING = new NamedNode_1.NamedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#langString");
-    Literal2.RDF_DIRECTIONAL_LANGUAGE_STRING = new NamedNode_1.NamedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#dirLangString");
-    Literal2.XSD_STRING = new NamedNode_1.NamedNode("http://www.w3.org/2001/XMLSchema#string");
-  }
-});
-
-// node_modules/rdf-data-factory/lib/Quad.js
-var require_Quad2 = __commonJS({
-  "node_modules/rdf-data-factory/lib/Quad.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Quad = void 0;
-    var Quad2 = class {
-      constructor(subject2, predicate2, object2, graph) {
-        this.termType = "Quad";
-        this.value = "";
-        this.subject = subject2;
-        this.predicate = predicate2;
-        this.object = object2;
-        this.graph = graph;
-      }
-      equals(other) {
-        return !!other && (other.termType === "Quad" || !other.termType) && this.subject.equals(other.subject) && this.predicate.equals(other.predicate) && this.object.equals(other.object) && this.graph.equals(other.graph);
-      }
-    };
-    exports.Quad = Quad2;
-  }
-});
-
-// node_modules/rdf-data-factory/lib/Variable.js
-var require_Variable2 = __commonJS({
-  "node_modules/rdf-data-factory/lib/Variable.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Variable = void 0;
-    var Variable2 = class {
-      constructor(value) {
-        this.termType = "Variable";
-        this.value = value;
-      }
-      equals(other) {
-        return !!other && other.termType === "Variable" && other.value === this.value;
-      }
-    };
-    exports.Variable = Variable2;
-  }
-});
-
-// node_modules/rdf-data-factory/lib/DataFactory.js
-var require_DataFactory2 = __commonJS({
-  "node_modules/rdf-data-factory/lib/DataFactory.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.DataFactory = void 0;
-    var BlankNode_1 = require_BlankNode2();
-    var DefaultGraph_1 = require_DefaultGraph2();
-    var Literal_1 = require_Literal2();
-    var NamedNode_1 = require_NamedNode2();
-    var Quad_1 = require_Quad2();
-    var Variable_1 = require_Variable2();
-    var dataFactoryCounter = 0;
-    var DataFactory3 = class {
-      constructor(options) {
-        this.blankNodeCounter = 0;
-        options = options || {};
-        this.blankNodePrefix = options.blankNodePrefix || `df_${dataFactoryCounter++}_`;
-      }
-      /**
-       * @param value The IRI for the named node.
-       * @return A new instance of NamedNode.
-       * @see NamedNode
-       */
-      namedNode(value) {
-        return new NamedNode_1.NamedNode(value);
-      }
-      /**
-       * @param value The optional blank node identifier.
-       * @return A new instance of BlankNode.
-       *         If the `value` parameter is undefined a new identifier
-       *         for the blank node is generated for each call.
-       * @see BlankNode
-       */
-      blankNode(value) {
-        return new BlankNode_1.BlankNode(value || `${this.blankNodePrefix}${this.blankNodeCounter++}`);
-      }
-      /**
-       * @param value              The literal value.
-       * @param languageOrDatatype The optional language, datatype, or directional language.
-       *                           If `languageOrDatatype` is a NamedNode,
-       *                           then it is used for the value of `NamedNode.datatype`.
-       *                           If `languageOrDatatype` is a NamedNode, it is used for the value
-       *                           of `NamedNode.language`.
-       *                           Otherwise, it is used as a directional language,
-       *                           from which the language is set to `languageOrDatatype.language`
-       *                           and the direction to `languageOrDatatype.direction`.
-       * @return A new instance of Literal.
-       * @see Literal
-       */
-      literal(value, languageOrDatatype) {
-        return new Literal_1.Literal(value, languageOrDatatype);
-      }
-      /**
-       * This method is optional.
-       * @param value The variable name
-       * @return A new instance of Variable.
-       * @see Variable
-       */
-      variable(value) {
-        return new Variable_1.Variable(value);
-      }
-      /**
-       * @return An instance of DefaultGraph.
-       */
-      defaultGraph() {
-        return DefaultGraph_1.DefaultGraph.INSTANCE;
-      }
-      /**
-       * @param subject   The quad subject term.
-       * @param predicate The quad predicate term.
-       * @param object    The quad object term.
-       * @param graph     The quad graph term.
-       * @return A new instance of Quad.
-       * @see Quad
-       */
-      quad(subject2, predicate2, object2, graph) {
-        return new Quad_1.Quad(subject2, predicate2, object2, graph || this.defaultGraph());
-      }
-      /**
-       * Create a deep copy of the given term using this data factory.
-       * @param original An RDF term.
-       * @return A deep copy of the given term.
-       */
-      fromTerm(original) {
-        switch (original.termType) {
-          case "NamedNode":
-            return this.namedNode(original.value);
-          case "BlankNode":
-            return this.blankNode(original.value);
-          case "Literal":
-            if (original.language) {
-              return this.literal(original.value, original.language);
-            }
-            if (!original.datatype.equals(Literal_1.Literal.XSD_STRING)) {
-              return this.literal(original.value, this.fromTerm(original.datatype));
-            }
-            return this.literal(original.value);
-          case "Variable":
-            return this.variable(original.value);
-          case "DefaultGraph":
-            return this.defaultGraph();
-          case "Quad":
-            return this.quad(this.fromTerm(original.subject), this.fromTerm(original.predicate), this.fromTerm(original.object), this.fromTerm(original.graph));
-        }
-      }
-      /**
-       * Create a deep copy of the given quad using this data factory.
-       * @param original An RDF quad.
-       * @return A deep copy of the given quad.
-       */
-      fromQuad(original) {
-        return this.fromTerm(original);
-      }
-      /**
-       * Reset the internal blank node counter.
-       */
-      resetBlankNodeCounter() {
-        this.blankNodeCounter = 0;
-      }
-    };
-    exports.DataFactory = DataFactory3;
-  }
-});
-
-// node_modules/rdf-data-factory/index.js
-var require_rdf_data_factory2 = __commonJS({
-  "node_modules/rdf-data-factory/index.js"(exports) {
-    "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
-      if (k22 === void 0) k22 = k2;
-      var desc = Object.getOwnPropertyDescriptor(m2, k2);
-      if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
-        desc = { enumerable: true, get: function() {
-          return m2[k2];
-        } };
-      }
-      Object.defineProperty(o6, k22, desc);
-    }) : (function(o6, m2, k2, k22) {
-      if (k22 === void 0) k22 = k2;
-      o6[k22] = m2[k2];
-    }));
-    var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
-      for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
-    };
-    Object.defineProperty(exports, "__esModule", { value: true });
-    __exportStar(require_BlankNode2(), exports);
-    __exportStar(require_DataFactory2(), exports);
-    __exportStar(require_DefaultGraph2(), exports);
-    __exportStar(require_Literal2(), exports);
-    __exportStar(require_NamedNode2(), exports);
-    __exportStar(require_Quad2(), exports);
-    __exportStar(require_Variable2(), exports);
-  }
-});
-
 // node_modules/rdf-lens/dist/ontology.js
-var import_types, RDFS, SHACL, RDFL;
+var import_types2, RDFS, SHACL, RDFL;
 var init_ontology = __esm({
   "node_modules/rdf-lens/dist/ontology.js"() {
     "use strict";
-    import_types = __toESM(require_dist(), 1);
-    RDFS = (0, import_types.createTermNamespace)("http://www.w3.org/2000/01/rdf-schema#", "subClassOf");
-    SHACL = (0, import_types.createTermNamespace)("http://www.w3.org/ns/shacl#", "Shape", "NodeShape", "PropertyShape", "targetNode", "targetClass", "targetSubjectsOf", "targetObjectsOf", "property", "path", "class", "name", "description", "defaultValue", "alternativePath", "zeroOrMorePath", "oneOrMorePath", "zeroOrOnePath", "inversePath", "minCount", "maxCount", "datatype");
-    RDFL = (0, import_types.createUriAndTermNamespace)("https://w3id.org/rdf-lens/ontology#", "CBD", "PathLens", "Context", "TypedExtract", "EnvVariable", "envKey", "envDefault", "datatype");
+    import_types2 = __toESM(require_dist(), 1);
+    RDFS = (0, import_types2.createTermNamespace)("http://www.w3.org/2000/01/rdf-schema#", "subClassOf");
+    SHACL = (0, import_types2.createTermNamespace)("http://www.w3.org/ns/shacl#", "Shape", "NodeShape", "PropertyShape", "targetNode", "targetClass", "targetSubjectsOf", "targetObjectsOf", "property", "path", "class", "name", "description", "defaultValue", "alternativePath", "zeroOrMorePath", "oneOrMorePath", "zeroOrOnePath", "inversePath", "minCount", "maxCount", "datatype");
+    RDFL = (0, import_types2.createUriAndTermNamespace)("https://w3id.org/rdf-lens/ontology#", "CBD", "PathLens", "Context", "TypedExtract", "EnvVariable", "envKey", "envDefault", "datatype");
   }
 });
 
@@ -13463,29 +25704,29 @@ function optionalField(predicate2, name, convert) {
   });
 }
 function dataTypeToExtract(dataType, t4) {
-  if (dataType.equals(import_types2.XSD.terms.integer))
+  if (dataType.equals(import_types3.XSD.terms.integer))
     return +t4.value;
-  if (dataType.equals(import_types2.XSD.terms.custom("float")))
+  if (dataType.equals(import_types3.XSD.terms.custom("float")))
     return +t4.value;
-  if (dataType.equals(import_types2.XSD.terms.custom("double")))
+  if (dataType.equals(import_types3.XSD.terms.custom("double")))
     return +t4.value;
-  if (dataType.equals(import_types2.XSD.terms.custom("decimal")))
+  if (dataType.equals(import_types3.XSD.terms.custom("decimal")))
     return +t4.value;
-  if (dataType.equals(import_types2.XSD.terms.string))
+  if (dataType.equals(import_types3.XSD.terms.string))
     return t4.value;
-  if (dataType.equals(import_types2.XSD.terms.dateTime))
+  if (dataType.equals(import_types3.XSD.terms.dateTime))
     return new Date(t4.value);
-  if (dataType.equals(import_types2.XSD.terms.custom("boolean")))
+  if (dataType.equals(import_types3.XSD.terms.custom("boolean")))
     return t4.value === "true";
-  if (dataType.equals(import_types2.XSD.terms.custom("iri")))
-    return new import_rdf_data_factory.NamedNode(t4.value);
-  if (dataType.equals(import_types2.XSD.terms.custom("anyURI"))) {
-    return new import_rdf_data_factory.NamedNode(t4.value);
+  if (dataType.equals(import_types3.XSD.terms.custom("iri")))
+    return new import_rdf_data_factory2.NamedNode(t4.value);
+  if (dataType.equals(import_types3.XSD.terms.custom("anyURI"))) {
+    return new import_rdf_data_factory2.NamedNode(t4.value);
   }
   return t4;
 }
 function envLens(dataType) {
-  const checkType = pred(import_types2.RDF.terms.type).thenSome(new BasicLens(({ id }, ctx) => {
+  const checkType = pred(import_types3.RDF.terms.type).thenSome(new BasicLens(({ id }, ctx) => {
     if (!id.equals(RDFL.terms.EnvVariable)) {
       throw new LensError("Expected type " + RDFL.EnvVariable, ctx.lineage);
     }
@@ -13500,7 +25741,7 @@ function envLens(dataType) {
   const envDatatype = pred(RDFL.terms.datatype).one(void 0).map((found) => ({ dt: found?.id }));
   return checkType.and(envName, defaultValue, envDatatype).map(([_2, { key }, { defaultValue: defaultValue2 }, { dt }], ctx) => {
     const value = process.env[key] || defaultValue2;
-    const thisDt = dataType || dt || import_types2.XSD.terms.custom("literal");
+    const thisDt = dataType || dt || import_types3.XSD.terms.custom("literal");
     if (value) {
       return dataTypeToExtract(thisDt, literal2(value));
     } else {
@@ -13545,7 +25786,7 @@ function envReplace() {
       }
     }), id);
   });
-  const actualReplace = match(void 0, import_types2.RDF.terms.type, RDFL.terms.EnvVariable).thenAll(subject).reduce(reduce, empty());
+  const actualReplace = match(void 0, import_types3.RDF.terms.type, RDFL.terms.EnvVariable).thenAll(subject).reduce(reduce, empty());
   return sliced().then(actualReplace);
 }
 function extractLeaf(datatype) {
@@ -13593,7 +25834,7 @@ function getCacheState(le, ctx, st) {
   return o6;
 }
 function extractShape(cache, subclasses, apply) {
-  const checkTy = pred(import_types2.RDF.terms.type).one().map(({ id }, ctx) => {
+  const checkTy = pred(import_types3.RDF.terms.type).one().map(({ id }, ctx) => {
     if (id.equals(SHACL.NodeShape))
       return {};
     throw new LensError("Expected type sh:NodeShape", [
@@ -13632,18 +25873,18 @@ function extractShapes(quads, apply = {}, customClasses = {}) {
   }
   return { lenses: cache, shapes, subClasses };
 }
-var import_types2, import_rdf_data_factory, literal2, quad2, RDFListElement, RdfList, ShaclSequencePath, ShaclAlternativepath, ShaclPredicatePath, ShaclInversePath, ShaclPath, getId, CBDLens, Cached, TypedExtract;
+var import_types3, import_rdf_data_factory2, literal2, quad2, RDFListElement, RdfList, ShaclSequencePath, ShaclAlternativepath, ShaclPredicatePath, ShaclInversePath, ShaclPath, getId, CBDLens, Cached, TypedExtract;
 var init_shacl = __esm({
   "node_modules/rdf-lens/dist/shacl.js"() {
     "use strict";
-    import_types2 = __toESM(require_dist(), 1);
+    import_types3 = __toESM(require_dist(), 1);
     init_lens();
-    import_rdf_data_factory = __toESM(require_rdf_data_factory2(), 1);
+    import_rdf_data_factory2 = __toESM(require_rdf_data_factory(), 1);
     init_ontology();
-    ({ literal: literal2, quad: quad2 } = new import_rdf_data_factory.DataFactory());
-    RDFListElement = pred(import_types2.RDF.terms.first).expectOne().and(pred(import_types2.RDF.terms.rest).expectOne());
+    ({ literal: literal2, quad: quad2 } = new import_rdf_data_factory2.DataFactory());
+    RDFListElement = pred(import_types3.RDF.terms.first).expectOne().and(pred(import_types3.RDF.terms.rest).expectOne());
     RdfList = new BasicLens((c4, ctx) => {
-      if (c4.id.equals(import_types2.RDF.terms.nil)) {
+      if (c4.id.equals(import_types3.RDF.terms.nil)) {
         return [];
       }
       const [first, rest] = RDFListElement.execute(c4, ctx);
@@ -13668,7 +25909,7 @@ var init_shacl = __esm({
       const optionLenses = options.map((id) => ShaclPath.execute({ id, quads: c4.quads }, ctx));
       return optionLenses[0].orAll(...optionLenses.slice(1));
     });
-    ShaclPredicatePath = extractLeaf(import_types2.XSD.terms.custom("iri")).map(pred);
+    ShaclPredicatePath = extractLeaf(import_types3.XSD.terms.custom("iri")).map(pred);
     ShaclInversePath = pred(SHACL.inversePath).one().then(new BasicLens((c4, ctx) => {
       const pathList = RdfList.execute(c4, ctx);
       if (pathList.length === 0) {
@@ -13744,7 +25985,7 @@ var init_shacl = __esm({
     };
     TypedExtract = function(cache, apply, subClasses) {
       const lens = new BasicLens(({ id, quads }, ctx) => {
-        const ty = quads.find((q) => q.subject.equals(id) && q.predicate.equals(import_types2.RDF.terms.type))?.object.value;
+        const ty = quads.find((q) => q.subject.equals(id) && q.predicate.equals(import_types3.RDF.terms.type))?.object.value;
         ctx.lineage.push({ name: "Found type", opts: ty });
         ctx.lineage.push({ name: "TypedExtract", opts: void 0 });
         if (!ty) {
@@ -14406,13 +26647,315 @@ function n4(t4) {
   })(t4, e5, o6);
 }
 
+// src/rdf-webcomponents/core/worker/parsers/index.ts
+init_src();
+var import_rdfxml_streaming_parser = __toESM(require_rdfxml_streaming_parser());
+var import_jsonld_streaming_parser = __toESM(require_jsonld_streaming_parser());
+var import_rdfa_streaming_parser = __toESM(require_rdfa_streaming_parser());
+var import_rdf_data_factory = __toESM(require_rdf_data_factory());
+var factory = new import_rdf_data_factory.DataFactory();
+function detectFormat(url, content) {
+  const urlLower = url.toLowerCase();
+  if (urlLower.endsWith(".ttl")) return "turtle";
+  if (urlLower.endsWith(".nt")) return "n-triples";
+  if (urlLower.endsWith(".nq") || urlLower.endsWith(".nquads")) return "n-quads";
+  if (urlLower.endsWith(".rdf") || urlLower.endsWith(".owl")) return "rdf-xml";
+  if (urlLower.endsWith(".jsonld") || urlLower.endsWith(".json")) return "json-ld";
+  if (url.includes("sparql") || url.includes("query")) {
+    return "sparql-results";
+  }
+  if (content) {
+    const trimmed = content.trim();
+    if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+      try {
+        const json = JSON.parse(trimmed);
+        if (json["@context"] || json["@graph"] || json["@id"] || Array.isArray(json)) {
+          return "json-ld";
+        }
+      } catch {
+      }
+    }
+    if (trimmed.startsWith("<?xml") || trimmed.startsWith("<rdf:RDF")) {
+      return "rdf-xml";
+    }
+    if (trimmed.startsWith("@prefix") || trimmed.startsWith("@base") || trimmed.startsWith("PREFIX")) {
+      return "turtle";
+    }
+    const lines = trimmed.split("\n").filter((l3) => l3.trim() && !l3.trim().startsWith("#"));
+    if (lines.length > 0) {
+      const firstLine = lines[0];
+      const uriCount = (firstLine.match(/<[^>]+>/g) || []).length;
+      if (uriCount >= 3) {
+        if (uriCount >= 4) return "n-quads";
+        return "n-triples";
+      }
+    }
+  }
+  return "turtle";
+}
+function parseN3(content, format = "turtle", onProgress) {
+  return new Promise((resolve) => {
+    const quads = [];
+    const errors = [];
+    const warnings = [];
+    const parser = new N3Parser({
+      format,
+      blankNodePrefix: "_:"
+    });
+    let quadCount = 0;
+    const totalLines = content.split("\n").length;
+    parser.parse(content, (error, quad3) => {
+      if (error) {
+        errors.push({ message: error.message });
+        resolve({ quads, format, errors, warnings });
+      } else if (quad3) {
+        quads.push(quad3);
+        quadCount++;
+        if (onProgress && quadCount % 1e3 === 0) {
+          onProgress({
+            phase: "parsing",
+            progress: Math.min(90, quadCount / Math.max(1, totalLines) * 100),
+            message: `Parsed ${quadCount} triples`,
+            quadCount
+          });
+        }
+      } else {
+        resolve({ quads, format, errors, warnings });
+      }
+    });
+  });
+}
+function parseRdfXml(content, onProgress) {
+  return new Promise((resolve) => {
+    const quads = [];
+    const errors = [];
+    const warnings = [];
+    const parser = new import_rdfxml_streaming_parser.RdfXmlParser({
+      dataFactory: factory
+    });
+    let quadCount = 0;
+    parser.on("data", (quad3) => {
+      quads.push(quad3);
+      quadCount++;
+      if (onProgress && quadCount % 1e3 === 0) {
+        onProgress({
+          phase: "parsing",
+          progress: 90,
+          message: `Parsed ${quadCount} triples`,
+          quadCount
+        });
+      }
+    });
+    parser.on("error", (error) => {
+      errors.push({
+        message: error.message
+      });
+    });
+    parser.on("end", () => {
+      resolve({
+        quads,
+        format: "rdf-xml",
+        errors,
+        warnings
+      });
+    });
+    parser.write(content);
+    parser.end();
+  });
+}
+function parseJsonLd(content, onProgress) {
+  return new Promise((resolve) => {
+    const quads = [];
+    const errors = [];
+    const warnings = [];
+    const parser = new import_jsonld_streaming_parser.JsonLdParser({
+      dataFactory: factory
+    });
+    let quadCount = 0;
+    parser.on("data", (quad3) => {
+      quads.push(quad3);
+      quadCount++;
+      if (onProgress && quadCount % 1e3 === 0) {
+        onProgress({
+          phase: "parsing",
+          progress: 90,
+          message: `Parsed ${quadCount} triples`,
+          quadCount
+        });
+      }
+    });
+    parser.on("error", (error) => {
+      errors.push({
+        message: error.message
+      });
+    });
+    parser.on("end", () => {
+      resolve({
+        quads,
+        format: "json-ld",
+        errors,
+        warnings
+      });
+    });
+    parser.write(content);
+    parser.end();
+  });
+}
+function parseRdfa(content, baseUrl, onProgress) {
+  return new Promise((resolve) => {
+    const quads = [];
+    const errors = [];
+    const warnings = [];
+    const parser = new import_rdfa_streaming_parser.RdfaParser({
+      dataFactory: factory,
+      baseIRI: baseUrl
+    });
+    let quadCount = 0;
+    parser.on("data", (quad3) => {
+      quads.push(quad3);
+      quadCount++;
+      if (onProgress && quadCount % 100 === 0) {
+        onProgress({
+          phase: "parsing",
+          progress: 90,
+          message: `Parsed ${quadCount} triples`,
+          quadCount
+        });
+      }
+    });
+    parser.on("error", (error) => {
+      errors.push({
+        message: error.message
+      });
+    });
+    parser.on("end", () => {
+      resolve({
+        quads,
+        format: "rdfa",
+        errors,
+        warnings
+      });
+    });
+    parser.write(content);
+    parser.end();
+  });
+}
+async function parseRdf(content, format, baseUrl, onProgress) {
+  onProgress?.({
+    phase: "parsing",
+    progress: 0,
+    message: `Starting ${format} parsing`,
+    quadCount: 0
+  });
+  let result;
+  switch (format) {
+    case "turtle":
+    case "n-triples":
+    case "n-quads":
+      result = await parseN3(content, format, onProgress);
+      break;
+    case "rdf-xml":
+      result = await parseRdfXml(content, onProgress);
+      break;
+    case "json-ld":
+      result = await parseJsonLd(content, onProgress);
+      break;
+    case "rdfa":
+      result = await parseRdfa(content, baseUrl || "http://example.org/", onProgress);
+      break;
+    case "sparql-results":
+      throw new Error("SPARQL results should be parsed with parseSparqlResults");
+    default:
+      result = await parseN3(content, "turtle", onProgress);
+  }
+  onProgress?.({
+    phase: "building",
+    progress: 100,
+    message: `Parsed ${result.quads.length} triples`,
+    quadCount: result.quads.length
+  });
+  return result;
+}
+
+// src/rdf-webcomponents/components/rdf-lens-config.ts
+var RDF_LENS_NS = "https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#";
+var RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+var RDF_LENS_CONFIG_TYPE = `${RDF_LENS_NS}RdfLensConfig`;
+var CONFIG_KEYS = /* @__PURE__ */ new Set([
+  "shapeFile",
+  "shapeClass",
+  "shapes",
+  "strict",
+  "multiple",
+  "subject"
+]);
+function parseBoolean(value) {
+  return value === "true" || value === "1";
+}
+async function parseRdfLensConfigRdf(content, format, source) {
+  const parsedFormat = format ?? detectFormat(source, content);
+  const parsed = await parseRdf(content, parsedFormat, source);
+  if (parsed.errors.length > 0) {
+    throw new Error(`Config parse failed: ${parsed.errors[0].message}`);
+  }
+  const warnings = [];
+  const providedKeys = /* @__PURE__ */ new Set();
+  const config = {};
+  const configSubjects = new Set(
+    parsed.quads.filter((quad3) => quad3.predicate.value === RDF_TYPE && quad3.object.value === RDF_LENS_CONFIG_TYPE).map((quad3) => quad3.subject.value)
+  );
+  for (const quad3 of parsed.quads) {
+    if (configSubjects.size > 0 && !configSubjects.has(quad3.subject.value)) {
+      continue;
+    }
+    const predicate2 = quad3.predicate.value;
+    if (!predicate2.startsWith(RDF_LENS_NS)) {
+      continue;
+    }
+    const localName = predicate2.slice(RDF_LENS_NS.length);
+    if (!CONFIG_KEYS.has(localName)) {
+      warnings.push(`Unknown rdf-lens property '${localName}' in config RDF`);
+      continue;
+    }
+    providedKeys.add(localName);
+    const value = quad3.object.value;
+    switch (localName) {
+      case "shapeFile":
+        config.shapeFile = value;
+        break;
+      case "shapeClass":
+        config.shapeClass = value;
+        break;
+      case "shapes":
+        config.shapes = value;
+        break;
+      case "strict":
+        config.strict = parseBoolean(value);
+        break;
+      case "multiple":
+        config.multiple = parseBoolean(value);
+        break;
+      case "subject":
+        config.subject = value;
+        break;
+      default:
+        break;
+    }
+  }
+  return { config, warnings, providedKeys };
+}
+function validateRdfLensConfig(config) {
+  if (!config.shapeFile?.trim() && !config.shapes?.trim()) {
+    throw new Error("rdf-lens config requires either shapeFile or shapes.");
+  }
+  return [];
+}
+
 // src/rdf-webcomponents/components/rdf-lens.ts
 var RdfLens = class extends i4 {
   constructor() {
     super(...arguments);
-    this.validate = false;
-    this.strict = false;
-    this.multiple = false;
+    this.config = "";
     // ===========================================================================
     // Internal State
     // ===========================================================================
@@ -14422,6 +26965,7 @@ var RdfLens = class extends i4 {
     this._loading = false;
     this._error = null;
     this._shapesLoaded = false;
+    this._resolvedConfig = {};
     this._onTriplestoreReady = (event) => {
       const source = event.composedPath?.()[0] ?? event.target;
       console.log(
@@ -14472,13 +27016,7 @@ var RdfLens = class extends i4 {
   // ===========================================================================
   async firstUpdated(changedProperties) {
     super.firstUpdated(changedProperties);
-    if (this.shapeFile) {
-      await this._loadShapes();
-    } else if (this.shapes) {
-      await this._parseInlineShapes();
-    } else {
-      await this._parseInlineScriptShapes();
-    }
+    await this._refreshConfiguration();
   }
   connectedCallback() {
     super.connectedCallback();
@@ -14486,19 +27024,8 @@ var RdfLens = class extends i4 {
   }
   updated(changedProperties) {
     super.updated(changedProperties);
-    if (changedProperties.has("shapeFile") && this.shapeFile) {
-      this._loadShapes();
-    }
-    if (changedProperties.has("shapes") && this.shapes) {
-      this._parseInlineShapes();
-    }
-    if (!this.shapeFile && !this.shapes && !this._shapesLoaded) {
-      this._parseInlineScriptShapes();
-    }
-    if (changedProperties.has("shapeClass") || changedProperties.has("multiple") || changedProperties.has("subject")) {
-      if (this._quads.length > 0 && this._shapesLoaded) {
-        this._extractData();
-      }
+    if (changedProperties.has("config")) {
+      void this._refreshConfiguration();
     }
   }
   disconnectedCallback() {
@@ -14533,18 +27060,17 @@ var RdfLens = class extends i4 {
   // ===========================================================================
   // Private Methods
   // ===========================================================================
-  async _loadShapes() {
-    if (!this.shapeFile) return;
+  async _loadShapes(shapeFile) {
     this._loading = true;
     this._error = null;
     this._emitEvent("shape-loading", { phase: "fetch" });
     try {
-      const response = await fetch(this.shapeFile);
+      const response = await fetch(shapeFile);
       if (!response.ok) {
         throw new Error(`Failed to fetch shapes: ${response.status} ${response.statusText}`);
       }
       const content = await response.text();
-      await this._parseShapesContent(content, this.shapeFile);
+      await this._parseShapesContent(content, shapeFile);
     } catch (error) {
       this._loading = false;
       this._error = error instanceof Error ? error.message : String(error);
@@ -14557,11 +27083,10 @@ var RdfLens = class extends i4 {
       this.requestUpdate();
     }
   }
-  async _parseInlineShapes() {
-    if (!this.shapes) return;
+  async _parseInlineShapes(shapes) {
     this._loading = true;
     try {
-      await this._parseShapesContent(this.shapes, "inline");
+      await this._parseShapesContent(shapes, "inline");
     } catch (error) {
       this._loading = false;
       this._error = error instanceof Error ? error.message : String(error);
@@ -14573,29 +27098,60 @@ var RdfLens = class extends i4 {
       this.requestUpdate();
     }
   }
-  async _parseInlineScriptShapes() {
-    const script = this.querySelector('script[type="text/turtle"]');
-    const content = script?.textContent?.trim();
-    if (!content) {
-      return;
-    }
-    this._loading = true;
+  async _refreshConfiguration() {
     try {
-      await this._parseShapesContent(content, "inline-script");
+      const resolvedConfig = await this._resolveConfig();
+      const warnings = [...resolvedConfig.warnings, ...validateRdfLensConfig(resolvedConfig.config)];
+      for (const warning of warnings) {
+        console.warn(`[rdf-lens] ${warning}`);
+      }
+      this._resolvedConfig = resolvedConfig.config;
+      this._shapeQuads = [];
+      this._shapesLoaded = false;
+      if (this._resolvedConfig.shapeFile) {
+        await this._loadShapes(this._resolvedConfig.shapeFile);
+      } else if (this._resolvedConfig.shapes) {
+        await this._parseInlineShapes(this._resolvedConfig.shapes);
+      }
     } catch (error) {
       this._loading = false;
       this._error = error instanceof Error ? error.message : String(error);
       this._emitEvent("shape-error", {
         message: this._error,
-        phase: "shape",
+        phase: "config",
         error: error instanceof Error ? error : void 0
       });
       this.requestUpdate();
     }
+  }
+  async _resolveConfig() {
+    if (this.config && this.config.trim()) {
+      return parseRdfLensConfigRdf(this.config, void 0, "inline-config-attribute");
+    }
+    const inline = this._readInlineConfigScript();
+    if (inline) {
+      return parseRdfLensConfigRdf(inline.content, inline.format, "inline-config-script");
+    }
+    throw new Error("rdf-lens requires a config RDF payload.");
+  }
+  _readInlineConfigScript() {
+    const script = this.querySelector('script[data-rdf-lens-config="true"][type]');
+    if (!script || !script.textContent?.trim()) {
+      return null;
+    }
+    const type = script.getAttribute("type")?.toLowerCase() ?? "";
+    const content = script.textContent;
+    if (type.includes("ld+json")) return { content, format: "json-ld" };
+    if (type.includes("rdf+xml")) return { content, format: "rdf-xml" };
+    if (type.includes("n-triples")) return { content, format: "n-triples" };
+    if (type.includes("n-quads")) return { content, format: "n-quads" };
+    if (type.includes("turtle") || type.includes("ttl")) return { content, format: "turtle" };
+    if (type.includes("html")) return { content, format: "rdfa" };
+    return { content };
   }
   async _parseShapesContent(content, baseUrl) {
-    const { Parser, DataFactory: DataFactory3 } = await Promise.resolve().then(() => (init_src(), src_exports));
-    const { namedNode: namedNode2 } = DataFactory3;
+    const { Parser, DataFactory: DataFactory4 } = await Promise.resolve().then(() => (init_src(), src_exports));
+    const { namedNode: namedNode2 } = DataFactory4;
     const parser = new Parser({ baseIRI: baseUrl });
     return new Promise((resolve, reject) => {
       const quads = [];
@@ -14657,48 +27213,48 @@ var RdfLens = class extends i4 {
   }
   async _executeLens() {
     const { extractShapes: extractShapes2 } = await Promise.resolve().then(() => (init_dist(), dist_exports));
-    const { DataFactory: DataFactory3 } = await Promise.resolve().then(() => (init_src(), src_exports));
-    const { namedNode: namedNode2 } = DataFactory3;
+    const { DataFactory: DataFactory4 } = await Promise.resolve().then(() => (init_src(), src_exports));
+    const { namedNode: namedNode2 } = DataFactory4;
     const dt = (term) => {
       switch (term.termType) {
         case "NamedNode":
-          return DataFactory3.namedNode(term.value);
+          return DataFactory4.namedNode(term.value);
         case "Literal":
-          if (term.language) return DataFactory3.literal(term.value, term.language);
-          if (term.datatype) return DataFactory3.literal(term.value, DataFactory3.namedNode(term.datatype));
-          return DataFactory3.literal(term.value);
+          if (term.language) return DataFactory4.literal(term.value, term.language);
+          if (term.datatype) return DataFactory4.literal(term.value, DataFactory4.namedNode(term.datatype));
+          return DataFactory4.literal(term.value);
         case "BlankNode":
-          return DataFactory3.blankNode(term.value);
+          return DataFactory4.blankNode(term.value);
         case "DefaultGraph":
-          return DataFactory3.defaultGraph();
+          return DataFactory4.defaultGraph();
         default:
-          return DataFactory3.namedNode(term.value);
+          return DataFactory4.namedNode(term.value);
       }
     };
     const shapeQuads = this._shapeQuads.map(
-      (q) => DataFactory3.quad(
+      (q) => DataFactory4.quad(
         dt(q.subject),
         dt(q.predicate),
         dt(q.object),
-        q.graph ? dt(q.graph) : DataFactory3.defaultGraph()
+        q.graph ? dt(q.graph) : DataFactory4.defaultGraph()
       )
     );
     const dataQuads = this._quads.map(
-      (q) => DataFactory3.quad(
+      (q) => DataFactory4.quad(
         dt(q.subject),
         dt(q.predicate),
         dt(q.object),
-        q.graph ? dt(q.graph) : DataFactory3.defaultGraph()
+        q.graph ? dt(q.graph) : DataFactory4.defaultGraph()
       )
     );
     const shapes = extractShapes2(shapeQuads);
     console.log("[rdf-lens] extractShapes result \u2014 available lenses:", Object.keys(shapes.lenses));
     console.log("[rdf-lens] dataQuads count:", dataQuads.length, "| shapeQuads count:", shapeQuads.length);
     let subjects2 = [];
-    const targetType = this.shapeClass;
+    const targetType = this._resolvedConfig.shapeClass;
     console.log("[rdf-lens] target shapeClass:", targetType);
-    if (this.subject) {
-      subjects2 = [this.subject];
+    if (this._resolvedConfig.subject) {
+      subjects2 = [this._resolvedConfig.subject];
     } else if (targetType) {
       const typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
       subjects2 = dataQuads.filter((q) => q.predicate.value === typePredicate && q.object.value === targetType).map((q) => q.subject.value);
@@ -14722,8 +27278,8 @@ var RdfLens = class extends i4 {
       throw new Error(`No lens found for class: ${lensKey}. Available: ${availableKeys.join(", ")}`);
     }
     const results = [];
-    const subjectsToProcess = this.multiple ? subjects2 : subjects2.slice(0, 1);
-    console.log(`[rdf-lens] executing lens for ${subjectsToProcess.length} subject(s) (multiple=${this.multiple})`);
+    const subjectsToProcess = this._resolvedConfig.multiple ? subjects2 : subjects2.slice(0, 1);
+    console.log(`[rdf-lens] executing lens for ${subjectsToProcess.length} subject(s) (multiple=${this._resolvedConfig.multiple})`);
     for (const subjectUri of subjectsToProcess) {
       try {
         const result = lens.execute({
@@ -14733,7 +27289,7 @@ var RdfLens = class extends i4 {
         console.log(`[rdf-lens] extracted subject ${subjectUri}:`, result);
         results.push(result);
       } catch (error) {
-        if (this.strict) {
+        if (this._resolvedConfig.strict) {
           throw error;
         }
         console.warn(`[rdf-lens] failed to extract ${subjectUri}:`, error);
@@ -14741,7 +27297,7 @@ var RdfLens = class extends i4 {
     }
     console.log(`[rdf-lens] extraction complete: ${results.length} results, emitting shape-processed`);
     return {
-      data: this.multiple ? results : results[0],
+      data: this._resolvedConfig.multiple ? results : results[0],
       count: results.length,
       shapeClass: lensKey
     };
@@ -14805,26 +27361,8 @@ RdfLens.styles = i`
     }
   `;
 __decorateClass([
-  n4({ type: String, attribute: "shape-file" })
-], RdfLens.prototype, "shapeFile", 2);
-__decorateClass([
-  n4({ type: String, attribute: "shape-class" })
-], RdfLens.prototype, "shapeClass", 2);
-__decorateClass([
-  n4({ type: String })
-], RdfLens.prototype, "shapes", 2);
-__decorateClass([
-  n4({ type: Boolean, reflect: true })
-], RdfLens.prototype, "validate", 2);
-__decorateClass([
-  n4({ type: Boolean, reflect: true })
-], RdfLens.prototype, "strict", 2);
-__decorateClass([
-  n4({ type: Boolean, reflect: true })
-], RdfLens.prototype, "multiple", 2);
-__decorateClass([
   n4({ type: String, reflect: true })
-], RdfLens.prototype, "subject", 2);
+], RdfLens.prototype, "config", 2);
 RdfLens = __decorateClass([
   t3("rdf-lens")
 ], RdfLens);
@@ -14846,6 +27384,33 @@ buffer/index.js:
 
 safe-buffer/index.js:
   (*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> *)
+
+xmlchars/xml/1.0/ed5.js:
+  (**
+   * Character classes and associated utilities for the 5th edition of XML 1.0.
+   *
+   * @author Louis-Dominique Dubeau
+   * @license MIT
+   * @copyright Louis-Dominique Dubeau
+   *)
+
+xmlchars/xml/1.1/ed2.js:
+  (**
+   * Character classes and associated utilities for the 2nd edition of XML 1.1.
+   *
+   * @author Louis-Dominique Dubeau
+   * @license MIT
+   * @copyright Louis-Dominique Dubeau
+   *)
+
+xmlchars/xmlns/1.0/ed3.js:
+  (**
+   * Character class utilities for XML NS 1.0 edition 3.
+   *
+   * @author Louis-Dominique Dubeau
+   * @license MIT
+   * @copyright Louis-Dominique Dubeau
+   *)
 
 @lit/reactive-element/css-tag.js:
   (**

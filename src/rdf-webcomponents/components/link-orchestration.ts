@@ -45,7 +45,6 @@ type LensConfig = {
   shapeFile?: string;
   shapeClass?: string;
   shapes?: string;
-  validate?: boolean;
   strict?: boolean;
   multiple?: boolean;
   subject?: string;
@@ -707,13 +706,31 @@ export class LinkOrchestration extends LitElement {
       return;
     }
 
-    if (config.shapeFile) lens.setAttribute('shape-file', config.shapeFile);
-    if (config.shapeClass) lens.setAttribute('shape-class', config.shapeClass);
-    if (config.shapes) (lens as any).shapes = config.shapes;
-    if (config.validate) lens.setAttribute('validate', '');
-    if (config.strict) lens.setAttribute('strict', '');
-    if (config.multiple) lens.setAttribute('multiple', '');
-    if (config.subject) lens.setAttribute('subject', config.subject);
+    const rdfConfig = this._buildLensConfigRdf(config);
+    if (rdfConfig) {
+      lens.setAttribute('config', rdfConfig);
+    }
+  }
+
+  private _buildLensConfigRdf(config: LensConfig): string {
+    const triples: string[] = [];
+
+    if (config.shapeFile) triples.push(`lrdf:shapeFile ${this._iriOrString(config.shapeFile)}`);
+    if (config.shapeClass) triples.push(`lrdf:shapeClass ${this._iriOrString(config.shapeClass)}`);
+    if (config.shapes) triples.push(`lrdf:shapes ${this._ttlString(config.shapes)}`);
+    if (typeof config.strict === 'boolean') triples.push(`lrdf:strict ${config.strict}`);
+    if (typeof config.multiple === 'boolean') triples.push(`lrdf:multiple ${config.multiple}`);
+    if (config.subject) triples.push(`lrdf:subject ${this._iriOrString(config.subject)}`);
+
+    if (triples.length === 0) {
+      return '';
+    }
+
+    return [
+      '@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .',
+      '',
+      `[] a lrdf:RdfLensConfig ;\n  ${triples.join(' ;\n  ')} .`,
+    ].join('\n');
   }
 
   private _applyDisplayConfig(display: HTMLElement, config?: DisplayConfig): string | undefined {

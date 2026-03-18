@@ -183,9 +183,11 @@ const examples = {
   class="my-4"
 >
   <rdf-lens 
-    shape-file="shapes/person.ttl" 
-    shape-class="http://example.org/Person"
-    multiple
+    config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes/person.ttl" ;
+  lrdf:shapeClass <http://example.org/Person> ;
+  lrdf:multiple true .'
   >
     <source-rdf 
       url="data.ttl"

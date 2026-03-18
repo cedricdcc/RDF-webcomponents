@@ -1,0 +1,7 @@
+@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile <https://example.org/shapes/person.ttl> ;
+  lrdf:shapeClass <https://example.org/Person> ;
+  lrdf:multiple true ;
+  lrdf:strict false .

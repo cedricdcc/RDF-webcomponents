@@ -236,7 +236,6 @@ handler.handle(MessageType.EXECUTE_LENS_REQUEST, async (payload: any, message) =
     targetClass,
     subject,
     multiple = false,
-    validate = false,
     shapeCacheKey,
   } = payload;
   
@@ -319,7 +318,6 @@ handler.handle(MessageType.EXECUTE_LENS_REQUEST, async (payload: any, message) =
   
   // Execute lens on subjects
   const results: any[] = [];
-  const validationErrors: string[] = [];
   
   const subjectsToProcess = multiple ? subjects : subjects.slice(0, 1);
   
@@ -334,11 +332,7 @@ handler.handle(MessageType.EXECUTE_LENS_REQUEST, async (payload: any, message) =
       results.push(result);
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
-      if (validate) {
-        validationErrors.push(`${subjectUri}: ${errorMsg}`);
-      } else {
-        console.warn(`Failed to extract ${subjectUri}:`, errorMsg);
-      }
+      console.warn(`Failed to extract ${subjectUri}:`, errorMsg);
     }
     
     if (i % 100 === 0) {
@@ -353,7 +347,6 @@ handler.handle(MessageType.EXECUTE_LENS_REQUEST, async (payload: any, message) =
     subjects: subjectsToProcess,
     shapeClass: lensKey,
     duration: Date.now() - startTime,
-    validationErrors: validationErrors.length > 0 ? validationErrors : undefined,
   };
 });
 

@@ -29,7 +29,10 @@ bun add rdf-webcomponents
 </head>
 <body>
   <lens-display template="person-card.html">
-    <rdf-lens shape-file="shapes.ttl" shape-class="Person">
+    <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes.ttl" ;
+  lrdf:shapeClass "Person" .'>
       <source-rdf url="https://example.org/data.ttl"></source-rdf>
     </rdf-lens>
   </lens-display>
@@ -149,13 +152,20 @@ Extracts structured data from RDF using SHACL shapes.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `shape-file` | string | - | URL to SHACL shapes file |
-| `shape-class` | string | - | Target class URI to extract |
-| `shapes` | string | - | Inline SHACL shapes (Turtle format) |
-| `validate` | boolean | `false` | Validate against shapes |
-| `strict` | boolean | `false` | Throw on validation errors |
-| `multiple` | boolean | `false` | Extract all matching subjects |
-| `subject` | string | - | Specific subject URI to extract |
+| `config` | string | - | Inline RDF config using rdf-lens vocabulary |
+
+#### RDF Config Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `lrdf:shapeFile` | IRI or string | required* | URL to SHACL shapes file |
+| `lrdf:shapeClass` | IRI or string | - | Target class URI to extract |
+| `lrdf:shapes` | string | - | Inline SHACL shapes (Turtle format) |
+| `lrdf:strict` | boolean | `false` | Throw on extraction errors |
+| `lrdf:multiple` | boolean | `false` | Extract all matching subjects |
+| `lrdf:subject` | IRI or string | - | Specific subject URI to extract |
+
+\* either `lrdf:shapeFile` or `lrdf:shapes` is required.
 
 #### Events
 
@@ -201,29 +211,22 @@ ex:PersonShape a sh:NodeShape ;
 **With external shape file:**
 ```html
 <rdf-lens 
-  shape-file="shapes.ttl"
-  shape-class="Person"
-  multiple
+  config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes.ttl" ;
+  lrdf:shapeClass "Person" ;
+  lrdf:multiple true .'
 >
   <source-rdf url="data.ttl"></source-rdf>
 </rdf-lens>
 ```
 
-**With inline shapes:**
+**With inline shapes in RDF config:**
 ```html
-<rdf-lens shape-class="Person">
-  <script type="text/turtle">
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
-    @prefix ex: <http://example.org/> .
-    
-    ex:PersonShape a sh:NodeShape ;
-      sh:targetClass ex:Person ;
-      sh:property [
-        sh:name "name" ;
-        sh:path ex:name ;
-        sh:datatype xsd:string ;
-      ] .
-  </script>
+<rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeClass "Person" ;
+  lrdf:shapes "@prefix sh: <http://www.w3.org/ns/shacl#> . @prefix ex: <http://example.org/> . ex:PersonShape a sh:NodeShape ; sh:targetClass ex:Person ; sh:property [ sh:name \\\"name\\\" ; sh:path ex:name ; sh:datatype xsd:string ] ." .'>
   <source-rdf url="data.ttl"></source-rdf>
 </rdf-lens>
 ```
@@ -553,7 +556,11 @@ document.querySelector('lens-display').addEventListener('render-complete', (e) =
 ```html
 <!-- Query DBpedia for all cities -->
 <lens-display template="city-card.html">
-  <rdf-lens shape-file="shapes.ttl" shape-class="dbo:City" multiple>
+  <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes.ttl" ;
+  lrdf:shapeClass "dbo:City" ;
+  lrdf:multiple true .'>
     <source-rdf config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
 [] a srdf:SourceRdfConfig ;
   srdf:url <https://dbpedia.org/sparql> ;
@@ -617,7 +624,9 @@ lens-display {
 
 ```html
 <lens-display template="card.html" theme="dark">
-  <rdf-lens shape-file="shapes.ttl">
+  <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes.ttl" .'>
     <source-rdf url="data.ttl"></source-rdf>
   </rdf-lens>
 </lens-display>
@@ -661,13 +670,19 @@ lens-display {
    <script type="module" src="lens-display.js"></script>
    ```
 
-3. **Use `multiple` attribute wisely:**
+3. **Use `lrdf:multiple` wisely in config:**
    ```html
    <!-- Good: Limited results -->
-   <rdf-lens shape-class="Person" multiple>
+  <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeClass "Person" ;
+  lrdf:multiple true .'>
    
    <!-- Avoid: Unlimited extraction from large datasets -->
-   <rdf-lens shape-class="Thing" multiple>
+  <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeClass "Thing" ;
+  lrdf:multiple true .'>
    ```
 
 ## 🧪 Browser Support

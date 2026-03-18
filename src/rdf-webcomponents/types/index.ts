@@ -305,8 +305,6 @@ export interface ExecuteLensRequestPayload {
   subject?: string;
   /** Whether to extract all matching subjects */
   multiple?: boolean;
-  /** Whether to validate against shapes */
-  validate?: boolean;
   /** Shape cache key */
   shapeCacheKey?: string;
 }
@@ -325,8 +323,6 @@ export interface ExecuteLensResponsePayload {
   shapeClass: string;
   /** Time taken to execute (ms) */
   duration: number;
-  /** Any validation errors */
-  validationErrors?: string[];
 }
 
 // ============================================================================
@@ -472,27 +468,8 @@ export interface SourceRdfProps {
  * Properties for the rdf-lens component
  */
 export interface RdfLensProps {
-  // Shape definition
-  /** URL to SHACL shapes file */
-  shapeFile?: string;
-  /** Target class URI to extract */
-  shapeClass?: string;
-  
-  // Inline shapes
-  /** Inline SHACL shapes (Turtle format) */
-  shapes?: string;
-  
-  // Processing options
-  /** Whether to validate against shapes */
-  validate?: boolean;
-  /** Whether to throw on validation errors */
-  strict?: boolean;
-  
-  // Multiple results
-  /** Whether to extract all matching subjects */
-  multiple?: boolean;
-  /** Specific subject URI to extract */
-  subject?: string;
+  /** Inline RDF config content in the rdf-lens vocabulary. */
+  config?: string;
 }
 
 /**

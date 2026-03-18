@@ -191,6 +191,18 @@ export default function DemoPage() {
     )} .`;
   };
 
+  const buildLensConfigRdf = (shapeUrl: string) => {
+    const triples: string[] = [
+      `lrdf:shapeFile ${toIriOrString(shapeUrl)}`,
+      `lrdf:shapeClass ${toIriOrString(shapeClass)}`,
+      `lrdf:multiple ${multiple}`,
+    ];
+
+    return `@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .\n\n[] a lrdf:RdfLensConfig ;\n  ${triples.join(
+      ' ;\n  '
+    )} .`;
+  };
+
   const previewSourceUrl = useMemo(() => {
     if (useRemoteData) {
       return remoteDataUrl.trim() || "https://example.org/data.ttl";
@@ -595,7 +607,7 @@ export default function DemoPage() {
               Define SHACL in Turtle and extract structured objects from your RDF graph.
             </p>
             <label className="block space-y-1 text-sm">
-              <span className="font-medium">shape-class</span>
+              <span className="font-medium">lrdf:shapeClass</span>
               <input
                 className="w-full rounded-md border px-2 py-1.5"
                 value={shapeClass}
@@ -676,9 +688,7 @@ export default function DemoPage() {
                       lensRef.current = node;
                     }}
                     key={`lens-${runtime.key}`}
-                    shape-file={runtime.shapeUrl}
-                    shape-class={shapeClass}
-                    multiple={multiple}
+                    config={buildLensConfigRdf(runtime.shapeUrl)}
                   >
                     <source-rdf
                       ref={(node) => {

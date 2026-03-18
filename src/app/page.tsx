@@ -53,7 +53,10 @@ A powerful, framework-agnostic Web Component library for working with RDF data.
 <script type="module" src="https://cdn.example.com/rdf-webcomponents.js"></script>
 
 <lens-display template="person-card.html">
-  <rdf-lens shape-file="shapes.ttl" shape-class="Person">
+  <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes.ttl" ;
+  lrdf:shapeClass "Person" .'>
     <source-rdf url="data.ttl"></source-rdf>
   </rdf-lens>
 </lens-display>
@@ -108,11 +111,16 @@ Extracts structured data using SHACL shapes.
 
 ## Attributes
 
-- **shape-file** - URL to SHACL shapes file
-- **shape-class** - Target class to extract
-- **shapes** - Inline SHACL shapes (Turtle)
-- **multiple** - Extract all matching subjects
-- **validate** - Validate against shapes
+- **config** - Inline RDF config using rdf-lens vocabulary
+
+## RDF Config Properties
+
+- **lrdf:shapeFile** - URL to SHACL shapes file
+- **lrdf:shapeClass** - Target class to extract
+- **lrdf:shapes** - Inline SHACL shapes (Turtle)
+- **lrdf:multiple** - Extract all matching subjects
+- **lrdf:strict** - Fail extraction when a subject cannot be processed
+- **lrdf:subject** - Extract one specific subject URI
 
 ## SHACL Example
 
@@ -130,9 +138,11 @@ ex:PersonShape a sh:NodeShape ;
 
 \`\`\`html
 <rdf-lens 
-  shape-file="shapes.ttl" 
-  shape-class="Person"
-  multiple
+  config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes.ttl" ;
+  lrdf:shapeClass "Person" ;
+  lrdf:multiple true .'
 >
   <source-rdf url="data.ttl"></source-rdf>
 </rdf-lens>
@@ -225,6 +235,34 @@ const sampleTemplate = `<article class="rdf-card" style="border: 1px solid #e0e0
   {{#age}}<p style="margin: 0.25rem 0; color: #666;">Age: {{age}}</p>{{/age}}
   {{#email}}<p style="margin: 0.25rem 0;"><a href="mailto:{{email}}" style="color: #0066cc;">{{email}}</a></p>{{/email}}
 </article>`;
+
+const toTurtleString = (value: string) =>
+  `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`;
+
+const toIriOrString = (value: string) => {
+  const trimmed = value.trim();
+  if (/^https?:\/\//i.test(trimmed) || /^urn:/i.test(trimmed)) {
+    return `<${trimmed}>`;
+  }
+  return toTurtleString(trimmed);
+};
+
+const buildLensConfigRdf = (config: {
+  shapeFile: string;
+  shapeClass?: string;
+  multiple?: boolean;
+  subject?: string;
+}) => {
+  const triples: string[] = [`lrdf:shapeFile ${toIriOrString(config.shapeFile)}`];
+
+  if (config.shapeClass) triples.push(`lrdf:shapeClass ${toIriOrString(config.shapeClass)}`);
+  if (typeof config.multiple === 'boolean') triples.push(`lrdf:multiple ${config.multiple}`);
+  if (config.subject) triples.push(`lrdf:subject ${toIriOrString(config.subject)}`);
+
+  return `@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .\n\n[] a lrdf:RdfLensConfig ;\n  ${triples.join(
+    ' ;\n  '
+  )} .`;
+};
 
 export default function RDFWebComponentsDemo() {
   const [copied, setCopied] = useState<string | null>(null);
@@ -659,9 +697,11 @@ export default function RDFWebComponentsDemo() {
                 <p className="mb-2 text-xs font-semibold text-slate-600 dark:text-slate-400">Example snippet</p>
                 <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg overflow-x-auto">
 {`<lens-display template="card.html">
-  <rdf-lens shape-file="shapes.ttl" 
-            shape-class="dbo:Person" 
-            multiple>
+  <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes.ttl" ;
+  lrdf:shapeClass "dbo:Person" ;
+  lrdf:multiple true .'>
     <source-rdf 
       url="https://dbpedia.org/sparql"
       config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
@@ -677,7 +717,7 @@ export default function RDFWebComponentsDemo() {
                 <div className="rounded-lg border bg-white p-3">
                   {mounted && bundleLoaded ? (
                     <lens-display template={templateUrl} mode="grid">
-                      <rdf-lens shape-file={shapeUrl} shape-class="http://example.org/Person" multiple>
+                      <rdf-lens config={buildLensConfigRdf({ shapeFile: shapeUrl, shapeClass: 'http://example.org/Person', multiple: true })}>
                         <source-rdf
                           url={dataUrl}
                           config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
@@ -709,8 +749,10 @@ export default function RDFWebComponentsDemo() {
                 <p className="mb-2 text-xs font-semibold text-slate-600 dark:text-slate-400">Example snippet</p>
                 <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg overflow-x-auto">
 {`<lens-display template="card.html">
-  <rdf-lens shape-file="shapes.ttl" 
-            shape-class="Person">
+  <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes.ttl" ;
+  lrdf:shapeClass "Person" .'>
     <source-rdf 
       url="data.ttl"
       config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
@@ -727,7 +769,7 @@ export default function RDFWebComponentsDemo() {
                 <div className="rounded-lg border bg-white p-3">
                   {mounted && bundleLoaded ? (
                     <lens-display key="live-static" template={templateUrl} mode="grid">
-                      <rdf-lens shape-file={shapeUrl} shape-class="http://example.org/Person" multiple>
+                      <rdf-lens config={buildLensConfigRdf({ shapeFile: shapeUrl, shapeClass: 'http://example.org/Person', multiple: true })}>
                         <source-rdf
                           url={dataUrl}
                           config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
@@ -759,7 +801,9 @@ export default function RDFWebComponentsDemo() {
                 <p className="mb-2 text-xs font-semibold text-slate-600 dark:text-slate-400">Example snippet</p>
                 <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg overflow-x-auto">
 {`<lens-display template="card.html">
-  <rdf-lens shape-file="shapes.ttl">
+  <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes.ttl" .'>
     <source-rdf 
       url="https://dbpedia.org/sparql"
       config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
@@ -775,12 +819,12 @@ export default function RDFWebComponentsDemo() {
                 <div className="rounded-lg border bg-white p-3">
                   {mounted && bundleLoaded ? (
                     <lens-display key="live-cbd" template={templateUrl} mode="grid">
-                      <rdf-lens
-                        shape-file={shapeUrl}
-                        shape-class="http://example.org/Person"
-                        subject="http://example.org/Alice"
-                        multiple
-                      >
+                      <rdf-lens config={buildLensConfigRdf({
+                        shapeFile: shapeUrl,
+                        shapeClass: 'http://example.org/Person',
+                        subject: 'http://example.org/Alice',
+                        multiple: true,
+                      })}>
                         <source-rdf
                           url={dataUrl}
                           config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
@@ -813,16 +857,10 @@ export default function RDFWebComponentsDemo() {
               <CardContent>
                 <p className="mb-2 text-xs font-semibold text-slate-600 dark:text-slate-400">Example snippet</p>
                 <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg overflow-x-auto">
-{`<rdf-lens shape-class="Person">
-  <script type="text/turtle">
-    ex:PersonShape a sh:NodeShape ;
-      sh:targetClass ex:Person ;
-      sh:property [
-        sh:name "name" ;
-        sh:path ex:name ;
-        sh:datatype xsd:string ;
-      ] .
-  </script>
+{`<rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeClass "Person" ;
+  lrdf:shapes "@prefix sh: <http://www.w3.org/ns/shacl#> . @prefix ex: <http://example.org/> . ex:PersonShape a sh:NodeShape ; sh:targetClass ex:Person ; sh:property [ sh:name \\\"name\\\" ; sh:path ex:name ; sh:datatype xsd:string ] ." .'>
   <source-rdf url="data.ttl"/>
 </rdf-lens>`}
                 </pre>
@@ -830,16 +868,18 @@ export default function RDFWebComponentsDemo() {
                 <div className="rounded-lg border bg-white p-3">
                   {mounted && bundleLoaded ? (
                     <lens-display template={templateUrl} mode="grid">
-                      <rdf-lens shape-class="http://example.org/Person" multiple>
-                        <script type="text/turtle">
-                          {`@prefix sh: <http://www.w3.org/ns/shacl#> .
+                      <rdf-lens config={`@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeClass <http://example.org/Person> ;
+  lrdf:multiple true ;
+  lrdf:shapes ${toTurtleString(`@prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix ex: <http://example.org/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 ex:PersonShape a sh:NodeShape ;
   sh:targetClass ex:Person ;
-  sh:property [ sh:name "name" ; sh:path ex:name ; sh:datatype xsd:string ] .`}
-                        </script>
+  sh:property [ sh:name "name" ; sh:path ex:name ; sh:datatype xsd:string ] .`)} .`}>
                         <source-rdf
                           url={dataUrl}
                           config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .

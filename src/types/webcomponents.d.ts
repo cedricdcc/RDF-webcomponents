@@ -6,10 +6,7 @@ type SourceRdfProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement
 };
 
 type RdfLensProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
-  "shape-file"?: string;
-  "shape-class"?: string;
-  multiple?: boolean;
-  subject?: string;
+  config?: string;
 };
 
 type LensDisplayProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
