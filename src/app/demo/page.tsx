@@ -123,8 +123,12 @@ export default function DemoPage() {
   const [remoteDataUrl, setRemoteDataUrl] = useState(withBasePath("/demo/people.ttl"));
   const [dataFormat, setDataFormat] = useState("turtle");
   const [dataStrategy, setDataStrategy] = useState("file");
+  const [sparqlSelectorMode, setSparqlSelectorMode] = useState<"subjectClass" | "subject" | "subjectQuery">("subjectClass");
+  const [subjectValue, setSubjectValue] = useState("");
   const [subjectClass, setSubjectClass] = useState("");
   const [subjectQuery, setSubjectQuery] = useState("");
+  const [cbdDepth, setCbdDepth] = useState("2");
+  const [sourceCardTab, setSourceCardTab] = useState<"guided" | "ttl">("guided");
   const [rdfInput, setRdfInput] = useState(DEMO_DATA);
 
   const [shapeClass, setShapeClass] = useState("http://example.org/Person");
@@ -142,18 +146,70 @@ export default function DemoPage() {
   const toTurtleString = (value: string) =>
     `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n")}"`;
 
-  const sourceConfigRdf = useMemo(() => {
-    const triples: string[] = [];
+  const toIriOrString = (value: string) => {
+    const trimmed = value.trim();
+    if (/^https?:\/\//i.test(trimmed) || /^urn:/i.test(trimmed)) {
+      return `<${trimmed}>`;
+    }
+    return toTurtleString(trimmed);
+  };
 
-    if (dataFormat) triples.push(`srdf:format ${toTurtleString(dataFormat)}`);
-    if (dataStrategy) triples.push(`srdf:strategy ${toTurtleString(dataStrategy)}`);
-    if (subjectClass.trim()) triples.push(`srdf:subjectClass <${subjectClass.trim()}>`);
-    if (subjectQuery.trim()) triples.push(`srdf:subjectQuery ${toTurtleString(subjectQuery.trim())}`);
+  const buildSourceConfigRdf = (sourceUrl: string) => {
+    const triples: string[] = [
+      `srdf:url ${toIriOrString(sourceUrl)}`,
+      `srdf:strategy ${toTurtleString(dataStrategy)}`,
+    ];
+
+    if (dataFormat) {
+      triples.push(`srdf:format ${toTurtleString(dataFormat)}`);
+    }
+
+    if (dataStrategy === "sparql") {
+      if (sparqlSelectorMode === "subjectClass" && subjectClass.trim()) {
+        triples.push(`srdf:subjectClass ${toIriOrString(subjectClass)}`);
+      }
+      if (sparqlSelectorMode === "subject" && subjectValue.trim()) {
+        triples.push(`srdf:subject ${toIriOrString(subjectValue)}`);
+      }
+      if (sparqlSelectorMode === "subjectQuery" && subjectQuery.trim()) {
+        triples.push(`srdf:subjectQuery ${toTurtleString(subjectQuery.trim())}`);
+      }
+    }
+
+    if (dataStrategy === "cbd") {
+      if (subjectValue.trim()) {
+        triples.push(`srdf:subject ${toIriOrString(subjectValue)}`);
+      }
+      const parsedDepth = Number(cbdDepth);
+      if (Number.isFinite(parsedDepth) && parsedDepth > 0) {
+        triples.push(`srdf:depth ${Math.floor(parsedDepth)}`);
+      }
+    }
 
     return `@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .\n\n[] a srdf:SourceRdfConfig ;\n  ${triples.join(
       ' ;\\n  '
     )} .`;
-  }, [dataFormat, dataStrategy, subjectClass, subjectQuery]);
+  };
+
+  const previewSourceUrl = useMemo(() => {
+    if (useRemoteData) {
+      return remoteDataUrl.trim() || "https://example.org/data.ttl";
+    }
+    return "urn:playground:inline-data";
+  }, [useRemoteData, remoteDataUrl]);
+
+  const sourceConfigRdf = useMemo(() => {
+    return buildSourceConfigRdf(previewSourceUrl);
+  }, [
+    previewSourceUrl,
+    dataFormat,
+    dataStrategy,
+    sparqlSelectorMode,
+    subjectClass,
+    subjectValue,
+    subjectQuery,
+    cbdDepth,
+  ]);
 
   const bundleUrl = useMemo(
     () => `${withBasePath("/rdf-webcomponents.js")}?v=${WEB_COMPONENTS_VERSION}`,
@@ -200,8 +256,12 @@ export default function DemoPage() {
     setRemoteDataUrl(withBasePath("/demo/people.ttl"));
     setDataFormat("turtle");
     setDataStrategy("file");
+    setSparqlSelectorMode("subjectClass");
+    setSubjectValue("");
     setSubjectClass("");
     setSubjectQuery("");
+    setCbdDepth("2");
+    setSourceCardTab("guided");
     setRdfInput(DEMO_DATA);
     setShapeClass("http://example.org/Person");
     setMultiple(true);
@@ -359,7 +419,8 @@ export default function DemoPage() {
           <section className="rounded-xl border bg-white p-4 space-y-3">
             <h2 className="text-lg font-semibold">1. source-rdf</h2>
             <p className="text-xs text-slate-600">
-              Loads RDF from inline text or a remote URL/endpoint. Use remote mode when you want to query a SPARQL endpoint.
+              Strategy-driven builder for source-rdf config. Pick a strategy first, then provide only the variables required
+              for that strategy.
             </p>
             <label className="flex items-center gap-2 text-sm">
               <input
@@ -388,51 +449,143 @@ export default function DemoPage() {
                 />
               </label>
             )}
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <label className="space-y-1">
-                <span className="font-medium">format</span>
-                <select
-                  className="w-full rounded-md border px-2 py-1.5"
-                  value={dataFormat}
-                  onChange={(e) => setDataFormat(e.target.value)}
+            <div className="rounded-md border p-2">
+              <div className="mb-2 flex gap-2 text-xs">
+                <button
+                  type="button"
+                  className={`rounded px-2 py-1 ${sourceCardTab === "guided" ? "bg-slate-900 text-white" : "border"}`}
+                  onClick={() => setSourceCardTab("guided")}
                 >
-                  <option value="turtle">turtle</option>
-                  <option value="json-ld">json-ld</option>
-                  <option value="rdf-xml">rdf-xml</option>
-                  <option value="n-triples">n-triples</option>
-                </select>
-              </label>
-              <label className="space-y-1">
-                <span className="font-medium">strategy</span>
-                <select
-                  className="w-full rounded-md border px-2 py-1.5"
-                  value={dataStrategy}
-                  onChange={(e) => setDataStrategy(e.target.value)}
+                  Guided Inputs
+                </button>
+                <button
+                  type="button"
+                  className={`rounded px-2 py-1 ${sourceCardTab === "ttl" ? "bg-slate-900 text-white" : "border"}`}
+                  onClick={() => setSourceCardTab("ttl")}
                 >
-                  <option value="file">file</option>
-                  <option value="sparql">sparql</option>
-                  <option value="cbd">cbd</option>
-                </select>
-              </label>
+                  Generated TTL Config
+                </button>
+              </div>
+
+              {sourceCardTab === "guided" ? (
+                <div className="space-y-2">
+                  <label className="block space-y-1 text-sm">
+                    <span className="font-medium">1) strategy</span>
+                    <select
+                      className="w-full rounded-md border px-2 py-1.5"
+                      value={dataStrategy}
+                      onChange={(e) => setDataStrategy(e.target.value)}
+                    >
+                      <option value="file">file</option>
+                      <option value="sparql">sparql</option>
+                      <option value="cbd">cbd</option>
+                    </select>
+                  </label>
+
+                  <label className="block space-y-1 text-sm">
+                    <span className="font-medium">2) format</span>
+                    <select
+                      className="w-full rounded-md border px-2 py-1.5"
+                      value={dataFormat}
+                      onChange={(e) => setDataFormat(e.target.value)}
+                    >
+                      <option value="turtle">turtle</option>
+                      <option value="json-ld">json-ld</option>
+                      <option value="rdf-xml">rdf-xml</option>
+                      <option value="n-triples">n-triples</option>
+                    </select>
+                  </label>
+
+                  {dataStrategy === "sparql" ? (
+                    <>
+                      <label className="block space-y-1 text-sm">
+                        <span className="font-medium">3) sparql selector mode</span>
+                        <select
+                          className="w-full rounded-md border px-2 py-1.5"
+                          value={sparqlSelectorMode}
+                          onChange={(e) => setSparqlSelectorMode(e.target.value as "subjectClass" | "subject" | "subjectQuery")}
+                        >
+                          <option value="subjectClass">subjectClass</option>
+                          <option value="subject">subject</option>
+                          <option value="subjectQuery">subjectQuery</option>
+                        </select>
+                      </label>
+
+                      {sparqlSelectorMode === "subjectClass" ? (
+                        <label className="block space-y-1 text-sm">
+                          <span className="font-medium">4) subjectClass (required)</span>
+                          <input
+                            className="w-full rounded-md border px-2 py-1.5"
+                            placeholder="http://example.org/Person"
+                            value={subjectClass}
+                            onChange={(e) => setSubjectClass(e.target.value)}
+                          />
+                        </label>
+                      ) : null}
+
+                      {sparqlSelectorMode === "subject" ? (
+                        <label className="block space-y-1 text-sm">
+                          <span className="font-medium">4) subject (required)</span>
+                          <input
+                            className="w-full rounded-md border px-2 py-1.5"
+                            placeholder="http://example.org/Alice"
+                            value={subjectValue}
+                            onChange={(e) => setSubjectValue(e.target.value)}
+                          />
+                        </label>
+                      ) : null}
+
+                      {sparqlSelectorMode === "subjectQuery" ? (
+                        <label className="block space-y-1 text-sm">
+                          <span className="font-medium">4) subjectQuery (required)</span>
+                          <textarea
+                            className="h-24 w-full rounded-md border p-2 font-mono text-xs"
+                            placeholder="CONSTRUCT { ?s ?p ?o } WHERE { ?s a <http://example.org/Person> . ?s ?p ?o } LIMIT 20"
+                            value={subjectQuery}
+                            onChange={(e) => setSubjectQuery(e.target.value)}
+                          />
+                        </label>
+                      ) : null}
+                    </>
+                  ) : null}
+
+                  {dataStrategy === "cbd" ? (
+                    <>
+                      <label className="block space-y-1 text-sm">
+                        <span className="font-medium">3) subject (required)</span>
+                        <input
+                          className="w-full rounded-md border px-2 py-1.5"
+                          placeholder="http://example.org/Alice"
+                          value={subjectValue}
+                          onChange={(e) => setSubjectValue(e.target.value)}
+                        />
+                      </label>
+                      <label className="block space-y-1 text-sm">
+                        <span className="font-medium">4) depth</span>
+                        <input
+                          className="w-full rounded-md border px-2 py-1.5"
+                          type="number"
+                          min={1}
+                          value={cbdDepth}
+                          onChange={(e) => setCbdDepth(e.target.value)}
+                        />
+                      </label>
+                    </>
+                  ) : null}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-xs text-slate-600">
+                    TTL config built from your current selections.
+                  </p>
+                  <textarea
+                    readOnly
+                    className="h-72 w-full rounded-md border bg-slate-50 p-2 font-mono text-xs"
+                    value={sourceConfigRdf}
+                  />
+                </div>
+              )}
             </div>
-            <label className="block space-y-1 text-sm">
-              <span className="font-medium">subject-class (optional)</span>
-              <input
-                className="w-full rounded-md border px-2 py-1.5"
-                placeholder="http://example.org/Person"
-                value={subjectClass}
-                onChange={(e) => setSubjectClass(e.target.value)}
-              />
-            </label>
-            <label className="block space-y-1 text-sm">
-              <span className="font-medium">subject-query (optional)</span>
-              <textarea
-                className="h-20 w-full rounded-md border p-2 font-mono text-xs"
-                placeholder="CONSTRUCT { ?s ?p ?o } WHERE { ?s a <http://example.org/Person> . ?s ?p ?o } LIMIT 20"
-                value={subjectQuery}
-                onChange={(e) => setSubjectQuery(e.target.value)}
-              />
-            </label>
             <p className="text-xs text-slate-500">Status: {adapterStatus}</p>
           </section>
 
@@ -532,8 +685,7 @@ export default function DemoPage() {
                         adapterRef.current = node;
                       }}
                       key={`adapter-${runtime.key}`}
-                      url={runtime.dataUrl}
-                      config={sourceConfigRdf}
+                      config={buildSourceConfigRdf(runtime.dataUrl)}
                     ></source-rdf>
                   </rdf-lens>
                 </lens-display>
