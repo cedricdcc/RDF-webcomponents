@@ -10,7 +10,7 @@
  * ```html
  * <lens-display template="person-card.html">
  *   <rdf-lens shape-file="shapes.ttl" shape-class="Person">
- *     <rdf-adapter url="data.ttl"></rdf-adapter>
+ *     <source-rdf url="data.ttl"></source-rdf>
  *   </rdf-lens>
  * </lens-display>
  * ```

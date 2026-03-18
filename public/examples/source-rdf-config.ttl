@@ -1,0 +1,8 @@
+@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "file" ;
+  srdf:url "https://example.org/data.ttl" ;
+  srdf:format "turtle" ;
+  srdf:cache "memory" ;
+  srdf:shared false .

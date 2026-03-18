@@ -20,7 +20,7 @@ bun add rdf-webcomponents
 <html>
 <head>
   <!-- Load individual components for smaller bundles -->
-  <script type="module" src="https://cdn.example.com/rdf-adapter.js"></script>
+  <script type="module" src="https://cdn.example.com/source-rdf.js"></script>
   <script type="module" src="https://cdn.example.com/rdf-lens.js"></script>
   <script type="module" src="https://cdn.example.com/lens-display.js"></script>
   
@@ -30,7 +30,7 @@ bun add rdf-webcomponents
 <body>
   <lens-display template="person-card.html">
     <rdf-lens shape-file="shapes.ttl" shape-class="Person">
-      <rdf-adapter url="https://example.org/data.ttl"></rdf-adapter>
+      <source-rdf url="https://example.org/data.ttl"></source-rdf>
     </rdf-lens>
   </lens-display>
 </body>
@@ -39,7 +39,7 @@ bun add rdf-webcomponents
 
 ## 📦 Components
 
-### `<rdf-adapter>`
+### `<source-rdf>`
 
 Fetches and parses RDF data from various sources.
 
@@ -58,18 +58,26 @@ Fetches and parses RDF data from various sources.
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `url` | string | required | URL to RDF data or SPARQL endpoint |
-| `format` | string | auto | RDF format (auto-detected if not specified) |
-| `strategy` | string | `file` | Data source strategy |
-| `subject` | string | - | Subject URI for CBD or direct lookup |
-| `subject-query` | string | - | SPARQL query to discover subjects |
-| `subject-class` | string | - | Class URI to discover instances |
-| `depth` | number | `2` | CBD traversal depth |
-| `graph` | string | - | Named graph to query |
-| `cache` | string | `memory` | Cache strategy (`none`, `memory`, `localStorage`, `indexedDB`) |
-| `cache-ttl` | number | `3600` | Cache TTL in seconds |
-| `shared` | boolean | `false` | Use shared global cache |
-| `headers` | string | - | Custom HTTP headers (JSON string) |
+| `url` | string | - | Optional source URL override (takes precedence over `srdf:url` in config) |
+| `config` | string | - | Inline RDF config using the source-rdf vocabulary |
+
+#### RDF Config Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `srdf:url` | IRI or string | required* | Source URL or SPARQL endpoint URL |
+| `srdf:format` | string | auto | RDF format hint (`turtle`, `json-ld`, `rdf-xml`, `n-triples`, `n-quads`) |
+| `srdf:strategy` | string | `file` | Data source strategy (`file`, `sparql`, `cbd`) |
+| `srdf:subject` | IRI or string | - | Subject URI for CBD or sparql subject selector |
+| `srdf:subjectQuery` | string | - | SPARQL DESCRIBE/CONSTRUCT query returning triples |
+| `srdf:subjectClass` | IRI or string | - | Class URI selector for sparql strategy |
+| `srdf:depth` | integer | `2` | CBD traversal depth |
+| `srdf:cache` | string | `memory` | Cache strategy (`none`, `memory`, `localStorage`, `indexedDB`) |
+| `srdf:cacheTtl` | integer | `3600` | Cache TTL in seconds |
+| `srdf:shared` | boolean | `false` | Use shared global cache |
+| `srdf:headers` | string | - | JSON object string for request headers |
+
+\* unless a `url` attribute is provided.
 
 #### Events
 
@@ -83,40 +91,52 @@ Fetches and parses RDF data from various sources.
 
 **Static RDF File:**
 ```html
-<rdf-adapter 
-  url="https://example.org/data.ttl"
-  format="turtle"
-  cache="indexedDB"
-  shared
-></rdf-adapter>
+<source-rdf config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:url <https://example.org/data.ttl> ;
+  srdf:format "turtle" ;
+  srdf:cache "indexedDB" ;
+  srdf:shared true .'></source-rdf>
 ```
 
 **SPARQL Endpoint - All instances of a class:**
 ```html
-<rdf-adapter 
-  url="https://dbpedia.org/sparql"
-  strategy="sparql"
-  subject-class="dbo:Person"
-></rdf-adapter>
+<source-rdf config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:url <https://dbpedia.org/sparql> ;
+  srdf:strategy "sparql" ;
+  srdf:subjectClass <http://dbpedia.org/ontology/Person> .'></source-rdf>
 ```
 
 **SPARQL Endpoint - CBD for a specific subject:**
 ```html
-<rdf-adapter 
-  url="https://dbpedia.org/sparql"
-  strategy="cbd"
-  subject="http://dbpedia.org/resource/Albert_Einstein"
-  depth="3"
-></rdf-adapter>
+<source-rdf config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:url <https://dbpedia.org/sparql> ;
+  srdf:strategy "cbd" ;
+  srdf:subject <http://dbpedia.org/resource/Albert_Einstein> ;
+  srdf:depth 3 .'></source-rdf>
 ```
 
-**SPARQL Endpoint - Custom subject query:**
+**SPARQL Endpoint - Custom triple query:**
 ```html
-<rdf-adapter 
-  url="https://query.wikidata.org/sparql"
-  strategy="sparql"
-  subject-query="SELECT ?s WHERE { ?s wdt:P31 wd:Q5 . ?s wdt:P27 wd:Q30 } LIMIT 100"
-></rdf-adapter>
+<source-rdf config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:url <https://query.wikidata.org/sparql> ;
+  srdf:strategy "sparql" ;
+  srdf:subjectQuery "CONSTRUCT { ?s ?p ?o } WHERE { ?s wdt:P31 wd:Q5 . ?s ?p ?o } LIMIT 50" .'></source-rdf>
+```
+
+**Config via inline RDF script:**
+```html
+<source-rdf>
+  <script type="text/turtle">
+    @prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+    [] a srdf:SourceRdfConfig ;
+      srdf:url <https://example.org/data.ttl> ;
+      srdf:strategy "file" .
+  </script>
+</source-rdf>
 ```
 
 ---
@@ -185,7 +205,7 @@ ex:PersonShape a sh:NodeShape ;
   shape-class="Person"
   multiple
 >
-  <rdf-adapter url="data.ttl"></rdf-adapter>
+  <source-rdf url="data.ttl"></source-rdf>
 </rdf-lens>
 ```
 
@@ -204,7 +224,7 @@ ex:PersonShape a sh:NodeShape ;
         sh:datatype xsd:string ;
       ] .
   </script>
-  <rdf-adapter url="data.ttl"></rdf-adapter>
+  <source-rdf url="data.ttl"></source-rdf>
 </rdf-lens>
 ```
 
@@ -319,7 +339,7 @@ The template engine supports:
 
 ### `<link-orchestration>`
 
-Scans existing links in the DOM and mounts `<rdf-adapter>`, `<rdf-lens>`, and `<lens-display>` around matching anchors based on rule config.
+Scans existing links in the DOM and mounts `<source-rdf>`, `<rdf-lens>`, and `<lens-display>` around matching anchors based on rule config.
 
 #### Scope behavior
 
@@ -413,7 +433,7 @@ Scans existing links in the DOM and mounts `<rdf-adapter>`, `<rdf-lens>`, and `<
 │  └───────────────────────────────────────────────────────────┘  │
 │                            ▲ quads                               │
 │                            │                                     │
-│                    <rdf-adapter>                                 │
+│                    <source-rdf>                                 │
 │  ┌───────────────────────────────────────────────────────────┐  │
 │  │  RDF Processing Pipeline                                  │  │
 │  │  - Fetch: HTTP, SPARQL endpoints                          │  │
@@ -430,8 +450,8 @@ Components communicate via **reactive properties** and **DOM events**:
 ```html
 <lens-display>           ← receives .data from child
   <rdf-lens>             ← receives .quads from child
-    <rdf-adapter>        ← emits 'triplestore-ready' event
-    </rdf-adapter>
+    <source-rdf>        ← emits 'triplestore-ready' event
+    </source-rdf>
   </rdf-lens>            ← emits 'shape-processed' event
 </lens-display>          ← emits 'render-complete' event
 ```
@@ -464,10 +484,10 @@ Components communicate via **reactive properties** and **DOM events**:
 ### JavaScript API
 
 ```typescript
-import { RdfAdapter, RdfLens, LensDisplay } from 'rdf-webcomponents';
+import { SourceRdf, RdfLens, LensDisplay } from 'rdf-webcomponents';
 
 // Get component reference
-const adapter = document.querySelector('rdf-adapter') as RdfAdapter;
+const adapter = document.querySelector('source-rdf') as SourceRdf;
 
 // Access properties
 console.log(adapter.quads);      // SerializedQuad[]
@@ -491,7 +511,7 @@ display.setData([{ name: 'John', age: 30 }]);
 
 ```typescript
 // Listen for events
-document.querySelector('rdf-adapter').addEventListener('triplestore-ready', (e) => {
+document.querySelector('source-rdf').addEventListener('triplestore-ready', (e) => {
   console.log('Loaded', e.detail.quadCount, 'quads');
   console.log('From cache:', e.detail.fromCache);
   console.log('Duration:', e.detail.duration, 'ms');
@@ -521,7 +541,7 @@ document.querySelector('lens-display').addEventListener('render-complete', (e) =
   </slot>
   
   <rdf-lens>
-    <rdf-adapter url="data.ttl"></rdf-adapter>
+    <source-rdf url="data.ttl"></source-rdf>
   </rdf-lens>
 </lens-display>
 ```
@@ -534,13 +554,13 @@ document.querySelector('lens-display').addEventListener('render-complete', (e) =
 <!-- Query DBpedia for all cities -->
 <lens-display template="city-card.html">
   <rdf-lens shape-file="shapes.ttl" shape-class="dbo:City" multiple>
-    <rdf-adapter 
-      url="https://dbpedia.org/sparql"
-      strategy="sparql"
-      subject-class="dbo:City"
-      cache="indexedDB"
-      cache-ttl="86400"
-    ></rdf-adapter>
+    <source-rdf config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:url <https://dbpedia.org/sparql> ;
+  srdf:strategy "sparql" ;
+  srdf:subjectClass <http://dbpedia.org/ontology/City> ;
+  srdf:cache "indexedDB" ;
+  srdf:cacheTtl 86400 .'></source-rdf>
   </rdf-lens>
 </lens-display>
 ```
@@ -549,8 +569,14 @@ document.querySelector('lens-display').addEventListener('render-complete', (e) =
 
 ```html
 <!-- Combine data from multiple sources -->
-<rdf-adapter id="source1" url="data1.ttl" shared></rdf-adapter>
-<rdf-adapter id="source2" url="data2.ttl" shared></rdf-adapter>
+<source-rdf id="source1" config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:url <https://example.org/data1.ttl> ;
+  srdf:shared true .'></source-rdf>
+<source-rdf id="source2" config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:url <https://example.org/data2.ttl> ;
+  srdf:shared true .'></source-rdf>
 
 <script>
   const combined = [...source1.quads, ...source2.quads];
@@ -592,7 +618,7 @@ lens-display {
 ```html
 <lens-display template="card.html" theme="dark">
   <rdf-lens shape-file="shapes.ttl">
-    <rdf-adapter url="data.ttl"></rdf-adapter>
+    <source-rdf url="data.ttl"></source-rdf>
   </rdf-lens>
 </lens-display>
 
@@ -611,7 +637,7 @@ lens-display {
 
 | Component | Size |
 |-----------|------|
-| `rdf-adapter.js` | ~15KB |
+| `source-rdf.js` | ~15KB |
 | `rdf-lens.js` | ~8KB |
 | `lens-display.js` | ~6KB |
 | `rdf-webcomponents.js` (all) | ~25KB |
@@ -620,12 +646,16 @@ lens-display {
 
 1. **Use appropriate caching:**
    ```html
-   <rdf-adapter url="data.ttl" cache="indexedDB" shared>
+  <source-rdf config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:url <https://example.org/data.ttl> ;
+  srdf:cache "indexedDB" ;
+  srdf:shared true .'></source-rdf>
    ```
 
 2. **Load components separately:**
    ```html
-   <script type="module" src="rdf-adapter.js"></script>
+   <script type="module" src="source-rdf.js"></script>
    <script type="module" src="rdf-lens.js"></script>
    <!-- Only load if needed -->
    <script type="module" src="lens-display.js"></script>

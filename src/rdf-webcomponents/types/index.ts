@@ -50,8 +50,7 @@ export type RdfFormat =
 export type DataSourceStrategy = 
   | 'file'      // Static RDF file
   | 'sparql'    // SPARQL endpoint
-  | 'cbd'       // Concise Bounded Description
-  | 'graph';    // Named graph dump
+  | 'cbd';      // Concise Bounded Description
 
 // ============================================================================
 // Worker Message Protocol
@@ -142,8 +141,6 @@ export interface FetchRequestPayload {
   subject?: string;
   /** Depth for CBD traversal */
   depth?: number;
-  /** Named graph to query */
-  graph?: string;
   /** Custom headers for the request */
   headers?: Record<string, string>;
 }
@@ -460,42 +457,15 @@ export function serializeTerm(term: Term): SerializedTerm {
 // ============================================================================
 
 /**
- * Properties for the rdf-adapter component
+ * Properties for the source-rdf component
  */
-export interface RdfAdapterProps {
+export interface SourceRdfProps {
   // Data source
-  /** URL to RDF data or SPARQL endpoint */
-  url: string;
-  
-  // Format options
-  /** RDF format (auto-detected if not specified) */
-  format?: RdfFormat;
-  
-  // SPARQL options
-  /** Data source strategy */
-  strategy?: DataSourceStrategy;
-  /** Subject URI for CBD or direct lookup */
-  subject?: string;
-  /** Custom SPARQL query for subject discovery */
-  subjectQuery?: string;
-  /** Class URI to discover instances */
-  subjectClass?: string;
-  /** Depth for CBD traversal */
-  depth?: number;
-  /** Named graph to query */
-  graph?: string;
-  
-  // Caching options
-  /** Cache strategy */
-  cache?: 'none' | 'memory' | 'localStorage' | 'indexedDB';
-  /** Cache time-to-live in seconds */
-  cacheTtl?: number;
-  /** Whether to use shared global cache */
-  shared?: boolean;
-  
-  // Request options
-  /** Custom HTTP headers */
-  headers?: Record<string, string>;
+  /** Optional URL to RDF data or SPARQL endpoint (overrides srdf:url in config). */
+  url?: string;
+
+  /** Inline RDF config content in the source-rdf vocabulary. */
+  config?: string;
 }
 
 /**

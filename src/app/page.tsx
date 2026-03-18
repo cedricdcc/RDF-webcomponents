@@ -43,7 +43,7 @@ A powerful, framework-agnostic Web Component library for working with RDF data.
 
 ## Features
 
-- **<rdf-adapter>** - Fetch and parse RDF data from multiple sources
+- **<source-rdf>** - Fetch and parse RDF data from multiple sources
 - **<rdf-lens>** - Extract structured data using SHACL shapes
 - **<lens-display>** - Render data with HTML templates
 
@@ -54,13 +54,13 @@ A powerful, framework-agnostic Web Component library for working with RDF data.
 
 <lens-display template="person-card.html">
   <rdf-lens shape-file="shapes.ttl" shape-class="Person">
-    <rdf-adapter url="data.ttl"></rdf-adapter>
+    <source-rdf url="data.ttl"></source-rdf>
   </rdf-lens>
 </lens-display>
 \`\`\`
 `,
   adapter: `
-# &lt;rdf-adapter&gt;
+# &lt;source-rdf&gt;
 
 Fetches and parses RDF data from various sources.
 
@@ -75,23 +75,30 @@ Fetches and parses RDF data from various sources.
 
 ## Attributes
 
-- **url** - URL to RDF data or SPARQL endpoint
-- **format** - RDF format (auto-detected if not specified)
-- **strategy** - Data source strategy (file, sparql, cbd, graph)
-- **subject** - Subject URI for CBD
-- **subject-class** - Class to discover instances
-- **cache** - Cache strategy (none, memory, localStorage, indexedDB)
-- **shared** - Use shared global cache
+- **url** - Optional source URL override
+- **config** - Inline RDF config using source-rdf vocabulary
+
+## RDF Config Properties
+
+- **srdf:url** - Source URL or SPARQL endpoint
+- **srdf:format** - Optional format hint
+- **srdf:strategy** - file, sparql, cbd
+- **srdf:subject / srdf:subjectClass / srdf:subjectQuery** - Strategy selectors
+- **srdf:depth** - CBD traversal depth
+- **srdf:cache / srdf:cacheTtl / srdf:shared** - Caching controls
+- **srdf:headers** - JSON object string for request headers
 
 ## Example
 
 \`\`\`html
-<rdf-adapter 
+<source-rdf 
   url="https://dbpedia.org/sparql"
-  strategy="sparql"
-  subject-class="dbo:Person"
-  cache="indexedDB"
-></rdf-adapter>
+  config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "sparql" ;
+  srdf:subjectClass <http://dbpedia.org/ontology/Person> ;
+  srdf:cache "indexedDB" .'
+></source-rdf>
 \`\`\`
 `,
   lens: `
@@ -127,7 +134,7 @@ ex:PersonShape a sh:NodeShape ;
   shape-class="Person"
   multiple
 >
-  <rdf-adapter url="data.ttl"></rdf-adapter>
+  <source-rdf url="data.ttl"></source-rdf>
 </rdf-lens>
 \`\`\`
 `,
@@ -347,14 +354,14 @@ export default function RDFWebComponentsDemo() {
 
           {/* Component Cards */}
           <div className="grid md:grid-cols-3 gap-6">
-            <Link href="/adapter" className="block group">
+            <Link href="/source-rdf" className="block group">
               <Card className="hover:shadow-lg transition-all duration-300 hover:border-blue-400 dark:hover:border-blue-600 cursor-pointer h-full">
                 <CardHeader>
                   <div className="h-12 w-12 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                     <Database className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">rdf-adapter</CardTitle>
+                    <CardTitle className="text-lg group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">source-rdf</CardTitle>
                     <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-blue-500 transition-colors" />
                   </div>
                   <CardDescription>
@@ -434,7 +441,7 @@ export default function RDFWebComponentsDemo() {
                     <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-cyan-500 transition-colors" />
                   </div>
                   <CardDescription>
-                    Detect links and mount rdf-adapter, rdf-lens, and lens-display by rule
+                    Detect links and mount source-rdf, rdf-lens, and lens-display by rule
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -491,7 +498,7 @@ export default function RDFWebComponentsDemo() {
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
                   <TabsList className="mb-4">
                     <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="adapter">rdf-adapter</TabsTrigger>
+                    <TabsTrigger value="adapter">source-rdf</TabsTrigger>
                     <TabsTrigger value="lens">rdf-lens</TabsTrigger>
                     <TabsTrigger value="display">lens-display</TabsTrigger>
                   </TabsList>
@@ -655,11 +662,13 @@ export default function RDFWebComponentsDemo() {
   <rdf-lens shape-file="shapes.ttl" 
             shape-class="dbo:Person" 
             multiple>
-    <rdf-adapter 
+    <source-rdf 
       url="https://dbpedia.org/sparql"
-      strategy="sparql"
-      subject-class="dbo:Person"
-      cache="indexedDB"
+      config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "sparql" ;
+  srdf:subjectClass <http://dbpedia.org/ontology/Person> ;
+  srdf:cache "indexedDB" .'
     />
   </rdf-lens>
 </lens-display>`}
@@ -669,7 +678,13 @@ export default function RDFWebComponentsDemo() {
                   {mounted && bundleLoaded ? (
                     <lens-display template={templateUrl} mode="grid">
                       <rdf-lens shape-file={shapeUrl} shape-class="http://example.org/Person" multiple>
-                        <rdf-adapter url={dataUrl} format="turtle" strategy="file"></rdf-adapter>
+                        <source-rdf
+                          url={dataUrl}
+                          config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "file" ;
+  srdf:format "turtle" .'
+                        ></source-rdf>
                       </rdf-lens>
                     </lens-display>
                   ) : (
@@ -696,11 +711,14 @@ export default function RDFWebComponentsDemo() {
 {`<lens-display template="card.html">
   <rdf-lens shape-file="shapes.ttl" 
             shape-class="Person">
-    <rdf-adapter 
+    <source-rdf 
       url="data.ttl"
-      format="turtle"
-      cache="memory"
-      shared
+      config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "file" ;
+  srdf:format "turtle" ;
+  srdf:cache "memory" ;
+  srdf:shared true .'
     />
   </rdf-lens>
 </lens-display>`}
@@ -710,7 +728,13 @@ export default function RDFWebComponentsDemo() {
                   {mounted && bundleLoaded ? (
                     <lens-display key="live-static" template={templateUrl} mode="grid">
                       <rdf-lens shape-file={shapeUrl} shape-class="http://example.org/Person" multiple>
-                        <rdf-adapter url={dataUrl} format="turtle" strategy="file"></rdf-adapter>
+                        <source-rdf
+                          url={dataUrl}
+                          config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "file" ;
+  srdf:format "turtle" .'
+                        ></source-rdf>
                       </rdf-lens>
                     </lens-display>
                   ) : (
@@ -736,11 +760,13 @@ export default function RDFWebComponentsDemo() {
                 <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg overflow-x-auto">
 {`<lens-display template="card.html">
   <rdf-lens shape-file="shapes.ttl">
-    <rdf-adapter 
+    <source-rdf 
       url="https://dbpedia.org/sparql"
-      strategy="cbd"
-      subject="http://dbpedia.org/resource/Albert_Einstein"
-      depth="3"
+      config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "cbd" ;
+  srdf:subject <http://dbpedia.org/resource/Albert_Einstein> ;
+  srdf:depth 3 .'
     />
   </rdf-lens>
 </lens-display>`}
@@ -755,13 +781,15 @@ export default function RDFWebComponentsDemo() {
                         subject="http://example.org/Alice"
                         multiple
                       >
-                        <rdf-adapter
+                        <source-rdf
                           url={dataUrl}
-                          format="turtle"
-                          strategy="cbd"
-                          subject="http://example.org/Alice"
-                          depth={1}
-                        ></rdf-adapter>
+                          config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "cbd" ;
+  srdf:format "turtle" ;
+  srdf:subject <http://example.org/Alice> ;
+  srdf:depth 1 .'
+                        ></source-rdf>
                       </rdf-lens>
                     </lens-display>
                   ) : (
@@ -795,7 +823,7 @@ export default function RDFWebComponentsDemo() {
         sh:datatype xsd:string ;
       ] .
   </script>
-  <rdf-adapter url="data.ttl"/>
+  <source-rdf url="data.ttl"/>
 </rdf-lens>`}
                 </pre>
                 <p className="mb-2 mt-4 text-xs font-semibold text-slate-600 dark:text-slate-400">Live output</p>
@@ -812,7 +840,13 @@ ex:PersonShape a sh:NodeShape ;
   sh:targetClass ex:Person ;
   sh:property [ sh:name "name" ; sh:path ex:name ; sh:datatype xsd:string ] .`}
                         </script>
-                        <rdf-adapter url={dataUrl} format="turtle"></rdf-adapter>
+                        <source-rdf
+                          url={dataUrl}
+                          config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "file" ;
+  srdf:format "turtle" .'
+                        ></source-rdf>
                       </rdf-lens>
                     </lens-display>
                   ) : (
@@ -861,7 +895,7 @@ ex:PersonShape a sh:NodeShape ;
                     <div className="text-slate-400">▲ quads</div>
                   </div>
                   <div className="border border-blue-300 dark:border-blue-700 rounded-lg p-4">
-                    <h4 className="font-bold text-blue-600 dark:text-blue-400 mb-2">rdf-adapter</h4>
+                    <h4 className="font-bold text-blue-600 dark:text-blue-400 mb-2">source-rdf</h4>
                     <p className="text-slate-600 dark:text-slate-400 mb-2">RDF Processing Pipeline</p>
                     <ul className="text-xs text-slate-500 space-y-1">
                       <li>• Fetch: HTTP, SPARQL endpoints</li>

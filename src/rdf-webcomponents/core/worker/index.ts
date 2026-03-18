@@ -49,7 +49,6 @@ handler.handle(MessageType.FETCH_REQUEST, async (payload: any, message) => {
     subjectQuery,
     subjectClass,
     depth = 2,
-    graph,
     headers = {},
     cache = 'memory',
     cacheTtl,
@@ -97,7 +96,6 @@ handler.handle(MessageType.FETCH_REQUEST, async (payload: any, message) => {
       subjectQuery,
       subjectClass,
       depth,
-      graph,
     });
     
     detectedFormat = 'turtle';

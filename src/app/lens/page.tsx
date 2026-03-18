@@ -43,7 +43,7 @@ const examples = {
   shape-file="shapes/person.ttl"
   shape-class="http://example.org/Person"
 >
-  <rdf-adapter url="data.ttl"></rdf-adapter>
+  <source-rdf url="data.ttl"></source-rdf>
 </rdf-lens>`,
 
   multiple: `<!-- Extract all instances -->
@@ -52,11 +52,13 @@ const examples = {
   shape-class="http://example.org/Person"
   multiple
 >
-  <rdf-adapter 
+  <source-rdf 
     url="https://dbpedia.org/sparql"
-    strategy="sparql"
-    subject-class="dbo:Person"
-  ></rdf-adapter>
+    config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "sparql" ;
+  srdf:subjectClass <http://dbpedia.org/ontology/Person> .'
+  ></source-rdf>
 </rdf-lens>`,
 
   inline: `<!-- Inline SHACL shapes -->
@@ -81,7 +83,7 @@ const examples = {
         sh:maxCount 1 ;
       ] .
   </script>
-  <rdf-adapter url="data.ttl"></rdf-adapter>
+  <source-rdf url="data.ttl"></source-rdf>
 </rdf-lens>`,
 
   nested: `<!-- Nested object extraction -->
@@ -119,7 +121,7 @@ const examples = {
   validate
   strict
 >
-  <rdf-adapter url="data.ttl"></rdf-adapter>
+  <source-rdf url="data.ttl"></source-rdf>
 </rdf-lens>`,
 };
 
@@ -511,10 +513,10 @@ lens.addEventListener('shape-error', (e) => {
 
             {/* Navigation */}
             <div className="flex justify-between">
-              <Link href="/adapter">
+              <Link href="/source-rdf">
                 <Button variant="outline">
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Previous: rdf-adapter
+                  Previous: source-rdf
                 </Button>
               </Link>
               <Link href="/display">

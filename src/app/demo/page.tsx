@@ -139,6 +139,22 @@ export default function DemoPage() {
   const displayRef = useRef<HTMLElement | null>(null);
   const urlsRef = useRef<string[]>([]);
 
+  const toTurtleString = (value: string) =>
+    `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n")}"`;
+
+  const sourceConfigRdf = useMemo(() => {
+    const triples: string[] = [];
+
+    if (dataFormat) triples.push(`srdf:format ${toTurtleString(dataFormat)}`);
+    if (dataStrategy) triples.push(`srdf:strategy ${toTurtleString(dataStrategy)}`);
+    if (subjectClass.trim()) triples.push(`srdf:subjectClass <${subjectClass.trim()}>`);
+    if (subjectQuery.trim()) triples.push(`srdf:subjectQuery ${toTurtleString(subjectQuery.trim())}`);
+
+    return `@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .\n\n[] a srdf:SourceRdfConfig ;\n  ${triples.join(
+      ' ;\\n  '
+    )} .`;
+  }, [dataFormat, dataStrategy, subjectClass, subjectQuery]);
+
   const bundleUrl = useMemo(
     () => `${withBasePath("/rdf-webcomponents.js")}?v=${WEB_COMPONENTS_VERSION}`,
     []
@@ -219,17 +235,17 @@ export default function DemoPage() {
     const onAdapterReady = (event: Event) => {
       const detail = (event as CustomEvent).detail;
       setAdapterStatus("ready");
-      pushEvent("rdf-adapter: triplestore-ready", detail);
+      pushEvent("source-rdf: triplestore-ready", detail);
     };
     const onAdapterLoading = (event: Event) => {
       const detail = (event as CustomEvent).detail;
       setAdapterStatus("loading");
-      pushEvent("rdf-adapter: triplestore-loading", detail);
+      pushEvent("source-rdf: triplestore-loading", detail);
     };
     const onAdapterError = (event: Event) => {
       const detail = (event as CustomEvent).detail;
       setAdapterStatus("error");
-      pushEvent("rdf-adapter: triplestore-error", detail);
+      pushEvent("source-rdf: triplestore-error", detail);
     };
 
     const onShapesLoaded = (event: Event) => {
@@ -298,11 +314,11 @@ export default function DemoPage() {
           <h1 className="text-3xl font-bold">RDF Playground</h1>
           <p className="max-w-3xl text-sm text-slate-600">
             Edit RDF input, build your own SHACL shape, and tune the rendering template. This page is split into
-            three sections that map directly to <strong>rdf-adapter</strong>, <strong>rdf-lens</strong>, and
+            three sections that map directly to <strong>source-rdf</strong>, <strong>rdf-lens</strong>, and
             <strong> lens-display</strong>.
           </p>
           <div className="flex flex-wrap gap-4 text-xs text-slate-600">
-            <Link className="underline" href="/adapter">rdf-adapter docs</Link>
+            <Link className="underline" href="/source-rdf">source-rdf docs</Link>
             <Link className="underline" href="/lens">rdf-lens docs</Link>
             <Link className="underline" href="/display">lens-display docs</Link>
             <Link className="underline" href="/orchestration">link-orchestration docs</Link>
@@ -341,7 +357,7 @@ export default function DemoPage() {
 
         <div className="grid gap-6 lg:grid-cols-3">
           <section className="rounded-xl border bg-white p-4 space-y-3">
-            <h2 className="text-lg font-semibold">1. rdf-adapter</h2>
+            <h2 className="text-lg font-semibold">1. source-rdf</h2>
             <p className="text-xs text-slate-600">
               Loads RDF from inline text or a remote URL/endpoint. Use remote mode when you want to query a SPARQL endpoint.
             </p>
@@ -381,9 +397,9 @@ export default function DemoPage() {
                   onChange={(e) => setDataFormat(e.target.value)}
                 >
                   <option value="turtle">turtle</option>
-                  <option value="jsonld">jsonld</option>
-                  <option value="rdfxml">rdfxml</option>
-                  <option value="ntriples">ntriples</option>
+                  <option value="json-ld">json-ld</option>
+                  <option value="rdf-xml">rdf-xml</option>
+                  <option value="n-triples">n-triples</option>
                 </select>
               </label>
               <label className="space-y-1">
@@ -396,7 +412,6 @@ export default function DemoPage() {
                   <option value="file">file</option>
                   <option value="sparql">sparql</option>
                   <option value="cbd">cbd</option>
-                  <option value="graph">graph</option>
                 </select>
               </label>
             </div>
@@ -413,7 +428,7 @@ export default function DemoPage() {
               <span className="font-medium">subject-query (optional)</span>
               <textarea
                 className="h-20 w-full rounded-md border p-2 font-mono text-xs"
-                placeholder="SELECT ?s WHERE { ?s a <http://example.org/Person> } LIMIT 20"
+                placeholder="CONSTRUCT { ?s ?p ?o } WHERE { ?s a <http://example.org/Person> . ?s ?p ?o } LIMIT 20"
                 value={subjectQuery}
                 onChange={(e) => setSubjectQuery(e.target.value)}
               />
@@ -491,7 +506,7 @@ export default function DemoPage() {
           <section className="rounded-xl border bg-white p-4">
             <h2 className="text-lg font-semibold">Live Render</h2>
             <p className="mb-3 text-xs text-slate-600">
-              This is the real web component chain: <code>rdf-adapter</code> -&gt; <code>rdf-lens</code> -&gt; <code>lens-display</code>.
+              This is the real web component chain: <code>source-rdf</code> -&gt; <code>rdf-lens</code> -&gt; <code>lens-display</code>.
             </p>
             <div className="min-h-40 rounded-md border bg-slate-50 p-3">
               {mounted && bundleLoaded && runtime ? (
@@ -512,18 +527,14 @@ export default function DemoPage() {
                     shape-class={shapeClass}
                     multiple={multiple}
                   >
-                    <rdf-adapter
+                    <source-rdf
                       ref={(node) => {
                         adapterRef.current = node;
                       }}
                       key={`adapter-${runtime.key}`}
                       url={runtime.dataUrl}
-                      format={dataFormat}
-                      strategy={dataStrategy}
-                      cache="none"
-                      subject-class={subjectClass || undefined}
-                      subject-query={subjectQuery || undefined}
-                    ></rdf-adapter>
+                      config={sourceConfigRdf}
+                    ></source-rdf>
                   </rdf-lens>
                 </lens-display>
               ) : (

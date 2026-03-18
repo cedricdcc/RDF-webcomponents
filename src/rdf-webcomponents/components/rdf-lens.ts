@@ -4,7 +4,7 @@
  * 
  * <rdf-lens> processes RDF data using SHACL shapes and rdf-lens.
  * It extracts structured data from the triplestore provided by
- * a child <rdf-adapter> component.
+ * a child <source-rdf> component.
  * 
  * @example
  * ```html
@@ -13,7 +13,7 @@
  *   shape-class="Person"
  *   multiple
  * >
- *   <rdf-adapter url="data.ttl"></rdf-adapter>
+ *   <source-rdf url="data.ttl"></source-rdf>
  * </rdf-lens>
  * ```
  */
@@ -36,7 +36,7 @@ import { MessageType } from '../types';
  * RDF Lens Web Component
  * 
  * Uses SHACL shapes to extract structured data from RDF triplestores.
- * Works with <rdf-adapter> as a child component.
+ * Works with <source-rdf> as a child component.
  */
 @customElement('rdf-lens')
 export class RdfLens extends LitElement implements RdfLensProps {

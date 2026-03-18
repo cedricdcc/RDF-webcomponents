@@ -28,13 +28,13 @@ type LinkMatchRule = {
 };
 
 type AdapterConfig = {
+  url?: string;
   format?: string;
   strategy?: string;
   subject?: string;
   subjectQuery?: string;
   subjectClass?: string;
   depth?: number;
-  graph?: string;
   cache?: 'none' | 'memory' | 'localStorage' | 'indexedDB';
   cacheTtl?: number;
   shared?: boolean;
@@ -631,8 +631,8 @@ export class LinkOrchestration extends LitElement {
     link: HTMLAnchorElement,
     rule: LinkOrchestrationRule,
   ): Promise<{ display: HTMLElement; lens: HTMLElement; adapter: HTMLElement; inlineTemplateBlobUrl?: string }> {
-    const adapter = document.createElement('rdf-adapter');
-    adapter.setAttribute('url', link.href);
+    const adapter = document.createElement('source-rdf');
+    adapter.setAttribute('url', rule.adapter?.url ?? link.href);
 
     this._applyAdapterConfig(adapter, rule.adapter);
 
@@ -659,17 +659,47 @@ export class LinkOrchestration extends LitElement {
       return;
     }
 
-    if (config.format) adapter.setAttribute('format', config.format);
-    if (config.strategy) adapter.setAttribute('strategy', config.strategy);
-    if (config.subject) adapter.setAttribute('subject', config.subject);
-    if (config.subjectQuery) adapter.setAttribute('subject-query', config.subjectQuery);
-    if (config.subjectClass) adapter.setAttribute('subject-class', config.subjectClass);
-    if (typeof config.depth === 'number') adapter.setAttribute('depth', String(config.depth));
-    if (config.graph) adapter.setAttribute('graph', config.graph);
-    if (config.cache) adapter.setAttribute('cache', config.cache);
-    if (typeof config.cacheTtl === 'number') adapter.setAttribute('cache-ttl', String(config.cacheTtl));
-    if (config.shared) adapter.setAttribute('shared', '');
-    if (config.headers) adapter.setAttribute('headers', JSON.stringify(config.headers));
+    const rdfConfig = this._buildAdapterConfigRdf(config);
+    if (rdfConfig) {
+      adapter.setAttribute('config', rdfConfig);
+    }
+  }
+
+  private _buildAdapterConfigRdf(config: AdapterConfig): string {
+    const triples: string[] = [];
+
+    if (config.url) triples.push(`srdf:url ${this._iriOrString(config.url)}`);
+    if (config.format) triples.push(`srdf:format ${this._ttlString(config.format)}`);
+    if (config.strategy) triples.push(`srdf:strategy ${this._ttlString(config.strategy)}`);
+    if (config.subject) triples.push(`srdf:subject ${this._iriOrString(config.subject)}`);
+    if (config.subjectQuery) triples.push(`srdf:subjectQuery ${this._ttlString(config.subjectQuery)}`);
+    if (config.subjectClass) triples.push(`srdf:subjectClass ${this._iriOrString(config.subjectClass)}`);
+    if (typeof config.depth === 'number') triples.push(`srdf:depth ${config.depth}`);
+    if (config.cache) triples.push(`srdf:cache ${this._ttlString(config.cache)}`);
+    if (typeof config.cacheTtl === 'number') triples.push(`srdf:cacheTtl ${config.cacheTtl}`);
+    if (typeof config.shared === 'boolean') triples.push(`srdf:shared ${config.shared}`);
+    if (config.headers) triples.push(`srdf:headers ${this._ttlString(JSON.stringify(config.headers))}`);
+
+    if (triples.length === 0) {
+      return '';
+    }
+
+    return [
+      '@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .',
+      '',
+      `[] a srdf:SourceRdfConfig ;\n  ${triples.join(' ;\n  ')} .`,
+    ].join('\n');
+  }
+
+  private _ttlString(value: string): string {
+    return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`;
+  }
+
+  private _iriOrString(value: string): string {
+    if (/^https?:\/\//i.test(value)) {
+      return `<${value}>`;
+    }
+    return this._ttlString(value);
   }
 
   private _applyLensConfig(lens: HTMLElement, config?: LensConfig): void {

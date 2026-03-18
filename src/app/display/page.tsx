@@ -187,10 +187,13 @@ const examples = {
     shape-class="http://example.org/Person"
     multiple
   >
-    <rdf-adapter 
+    <source-rdf 
       url="data.ttl"
-      cache="indexedDB"
-    ></rdf-adapter>
+      config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "file" ;
+  srdf:cache "indexedDB" .'
+    ></source-rdf>
   </rdf-lens>
 </lens-display>
 
