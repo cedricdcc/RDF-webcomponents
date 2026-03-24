@@ -1,0 +1,128 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix ex: <http://example.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+# Shape for catalog metadata extraction
+ex:CatalogShape a sh:NodeShape ;
+  sh:targetClass dcat:Catalog ;
+  sh:property [
+    sh:name "label" ;
+    sh:path rdfs:label ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "comment" ;
+    sh:path rdfs:comment ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "title" ;
+    sh:path dcterms:title ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "description" ;
+    sh:path dcterms:description ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "created" ;
+    sh:path dcterms:created ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "modified" ;
+    sh:path dcterms:modified ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "publisher" ;
+    sh:path dcterms:publisher ;
+    sh:class foaf:Organization ;
+    sh:maxCount 1 ;
+  ] .
+
+# Shape for catalog publisher organization
+ex:PublisherShape a sh:NodeShape ;
+  sh:targetClass foaf:Organization ;
+  sh:property [
+    sh:name "name" ;
+    sh:path foaf:name ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+  ] .
+
+# Shape for dataset extraction
+ex:DatasetShape a sh:NodeShape ;
+  sh:targetClass dcat:Dataset ;
+  sh:property [
+    sh:name "label" ;
+    sh:path rdfs:label ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "comment" ;
+    sh:path rdfs:comment ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "title" ;
+    sh:path dcterms:title ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "description" ;
+    sh:path dcterms:description ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "identifier" ;
+    sh:path dcterms:identifier ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "version" ;
+    sh:path owl:versionInfo ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "themes" ;
+    sh:path dcat:theme ;
+    sh:datatype xsd:string ;
+  ] , [
+    sh:name "types" ;
+    sh:path rdf:type ;
+    sh:datatype xsd:anyURI ;
+  ] , [
+    sh:name "catalog" ;
+    sh:path dcterms:isPartOf ;
+    sh:datatype xsd:anyURI ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "distribution" ;
+    sh:path dcat:distribution ;
+    sh:class dcat:Distribution ;
+    sh:maxCount 1 ;
+  ] .
+
+# Shape for dataset distribution details
+ex:DistributionShape a sh:NodeShape ;
+  sh:targetClass dcat:Distribution ;
+  sh:property [
+    sh:name "mediaType" ;
+    sh:path dcat:mediaType ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+  ] , [
+    sh:name "accessURL" ;
+    sh:path dcat:accessURL ;
+    sh:datatype xsd:anyURI ;
+    sh:maxCount 1 ;
+  ] .

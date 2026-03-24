@@ -135,7 +135,13 @@ class TemplateEngine {
     // Handle ${data.field} interpolation
     result = result.replace(/\$\{(?:data\.)?([^}]+)\}/g, (_, path) => {
       const value = this.getNestedValue(data, path);
-      return this.escapeHtml(String(value ?? ''));
+      return this.escapeHtml(this.formatTemplateValue(value));
+    });
+
+    // Handle {{{field}}} (unescaped)
+    result = result.replace(/\{\{\{([^}]+)\}\}\}/g, (_, path) => {
+      const value = this.getNestedValue(data, path.trim());
+      return String(value ?? '');
     });
 
     // Handle {{field}} interpolation (mustache-style)
@@ -153,16 +159,7 @@ class TemplateEngine {
       if (value === null || value === undefined) {
         return '';
       }
-      if (typeof value === 'object') {
-        return JSON.stringify(value);
-      }
-      return this.escapeHtml(String(value));
-    });
-
-    // Handle {{{field}}} (unescaped)
-    result = result.replace(/\{\{\{([^}]+)\}\}\}/g, (_, path) => {
-      const value = this.getNestedValue(data, path.trim());
-      return String(value ?? '');
+      return this.escapeHtml(this.formatTemplateValue(value));
     });
 
     return result;
@@ -191,6 +188,52 @@ class TemplateEngine {
     }
 
     return current;
+  }
+
+  private formatTemplateValue(value: any): string {
+    if (value === null || value === undefined) {
+      return '';
+    }
+
+    if (Array.isArray(value)) {
+      return value
+        .map((entry) => this.formatTemplateValue(entry))
+        .filter((entry) => entry.length > 0)
+        .join(', ');
+    }
+
+    if (typeof value === 'object') {
+      if ('value' in value && value.value !== undefined && value.value !== null) {
+        return String(value.value);
+      }
+
+      if ('id' in value && value.id !== undefined && value.id !== null) {
+        return String(value.id);
+      }
+
+      return JSON.stringify(value);
+    }
+
+    // Sometimes RDF extractions provide arrays serialized as JSON strings.
+    // Parse these defensively so templates render a readable list.
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (Array.isArray(parsed)) {
+            return parsed
+              .map((entry) => this.formatTemplateValue(entry))
+              .filter((entry) => entry.length > 0)
+              .join(', ');
+          }
+        } catch {
+          // Ignore parse errors and fall back to raw string.
+        }
+      }
+    }
+
+    return String(value);
   }
 
   /**
@@ -709,6 +752,19 @@ export class LensDisplay extends LitElement implements LensDisplayProps {
     // Create a copy
     const prepared = { ...item };
 
+    // Normalize common fields for templates that need to support
+    // either single values or arrays (for example dcat:theme).
+    if ('themes' in prepared) {
+      const themes = (prepared as any).themes;
+      const themeList = this._normalizeToStringArray(themes);
+      if (themeList.length > 0) {
+        (prepared as any).themesText = themeList.join(', ');
+        (prepared as any).themesPillsHtml = themeList
+          .map((theme) => `<span class="theme-tag">${this._escapeHtml(theme)}</span>`)
+          .join('');
+      }
+    }
+
     // Add _properties array for default templates
     if (!prepared._properties) {
       prepared._properties = Object.entries(item)
@@ -717,6 +773,45 @@ export class LensDisplay extends LitElement implements LensDisplayProps {
     }
 
     return prepared;
+  }
+
+  private _normalizeToStringArray(value: unknown): string[] {
+    if (value === null || value === undefined) {
+      return [];
+    }
+
+    if (Array.isArray(value)) {
+      return value.map((entry) => String(entry).trim()).filter((entry) => entry.length > 0);
+    }
+
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (Array.isArray(parsed)) {
+            return parsed.map((entry) => String(entry).trim()).filter((entry) => entry.length > 0);
+          }
+        } catch {
+          // Fall through to plain string handling.
+        }
+      }
+      return trimmed.length > 0 ? [trimmed] : [];
+    }
+
+    return [String(value)];
+  }
+
+  private _escapeHtml(value: string): string {
+    const map: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+    };
+
+    return value.replace(/[&<>"']/g, (char) => map[char]);
   }
 
   private _templateExpectsItemsArray(): boolean {

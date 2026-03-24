@@ -1,0 +1,37 @@
+<article class="component-card">
+  <header class="head">
+    <h1>{{label}}</h1>
+    <p>{{comment}}</p>
+  </header>
+
+  <section class="section">
+    <h2>Configuration Properties</h2>
+    <ul class="prop-list">
+      <li><code>lrdf:shapeFile</code> URL to SHACL/lens shape document.</li>
+      <li><code>lrdf:shapeClass</code> Target class URI for extraction.</li>
+      <li><code>lrdf:shapes</code> Inline shape content.</li>
+      <li><code>lrdf:strict</code> Fail extraction on errors when true.</li>
+      <li><code>lrdf:multiple</code> Extract all matching subjects.</li>
+      <li><code>lrdf:subject</code> Optional explicit subject URI.</li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <h2>File</h2>
+    <a href="./rdf-lens.ttl" target="_blank" rel="noopener noreferrer">Open rdf-lens.ttl</a>
+  </section>
+</article>
+
+<style>
+  .component-card { max-width: 860px; margin: 2rem auto; background: #fff; border: 2px solid #dbe4ff; border-radius: 14px; box-shadow: 0 10px 26px rgba(30, 41, 59, 0.08); overflow: hidden; }
+  .head { padding: 1.4rem 1.4rem 1rem; background: linear-gradient(135deg, #bfdbfe 0%, #dbeafe 100%); }
+  .head h1 { margin: 0; font-size: 1.6rem; color: #1f2a44; }
+  .head p { margin: 0.45rem 0 0; color: #334155; line-height: 1.5; }
+  .section { padding: 1rem 1.4rem 1.4rem; }
+  .section h2 { margin: 0 0 0.55rem; font-size: 1.05rem; color: #1f2a44; }
+  .prop-list { margin: 0; padding-left: 1.1rem; }
+  .prop-list li { margin: 0.45rem 0; color: #334155; }
+  code { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; padding: 0.1rem 0.35rem; }
+  a { color: #1d4ed8; font-weight: 600; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+</style>

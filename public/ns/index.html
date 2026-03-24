@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RDF Web Components Ontology Catalog</title>
+  <!-- Load individual components as ES modules -->
+  <script type="module" src="/source-rdf.js"></script>
+  <script type="module" src="/rdf-lens.js"></script>
+  <script type="module" src="/lens-display.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: #1e293b;
+    }
+
+    main {
+      width: 100%;
+    }
+
+    source-rdf,
+    rdf-lens,
+    lens-display {
+      display: block;
+      width: 100%;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+      color: #64748b;
+      font-size: 1.1rem;
+    }
+
+    .loading::before {
+      content: "";
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+      border: 3px solid #e2e8f0;
+      border-top-color: #6366f1;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .error {
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      margin: 2rem;
+    }
+
+    .error strong {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <lens-display
+      template="./catalog-template.html"
+      config='@prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .
+[] a drdf:LensDisplayConfig ;
+  drdf:theme "default" ;
+  drdf:class "catalog-display" .'
+    >
+      <rdf-lens
+        config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "./catalog-shapes.ttl" ;
+  lrdf:shapeClass <http://www.w3.org/ns/dcat#Dataset> ;
+  lrdf:multiple true .'
+      >
+        <source-rdf url="./index.ttl"></source-rdf>
+      </rdf-lens>
+    </lens-display>
+  </main>
+
+  <script>
+    // Catch all errors globally
+    window.addEventListener('error', (e) => {
+      console.error('🔥 Global error:', e.message, e.error);
+    });
+
+    window.addEventListener('unhandledrejection', (e) => {
+      console.error('🔥 Unhandled rejection:', e.reason);
+    });
+
+    // Wait for components to register
+    console.log('Waiting for web components to register...');
+    
+    Promise.all([
+      customElements.whenDefined('source-rdf'),
+      customElements.whenDefined('rdf-lens'),
+      customElements.whenDefined('lens-display')
+    ]).then(() => {
+      console.log('✅ All web components registered successfully!');
+      initDebug();
+    }).catch(err => {
+      console.error('❌ Error waiting for components:', err);
+      // Try to init anyway after 2 seconds
+      setTimeout(initDebug, 2000);
+    });
+
+    function initDebug() {
+    console.log('=== RDF Catalog Loader Debug ===');
+    
+    // Add loading state
+    const mainElement = document.querySelector('main');
+    const loading = document.createElement('div');
+    loading.className = 'loading';
+    loading.textContent = 'Loading catalog...';
+    
+    const originalContent = mainElement.innerHTML;
+    mainElement.innerHTML = loading.outerHTML + originalContent;
+
+    // Get all components
+    const sourceRdf = document.querySelector('source-rdf');
+    const rdfLens = document.querySelector('rdf-lens');
+    const lensDisplay = document.querySelector('lens-display');
+
+    console.log('Components found:', {
+      sourceRdf: !!sourceRdf,
+      rdfLens: !!rdfLens,
+      lensDisplay: !!lensDisplay
+    });
+
+    if (sourceRdf) {
+      console.log('\n📋 source-rdf configuration:');
+      console.log('  url:', sourceRdf.getAttribute('url'));
+      console.log('  config preview:', sourceRdf.getAttribute('config')?.substring(0, 100) + '...');
+    }
+
+    // Listen to source-rdf events
+    if (sourceRdf) {
+      console.log('source-rdf attributes:', {
+        url: sourceRdf.getAttribute('url'),
+        config: sourceRdf.getAttribute('config')?.substring(0, 50) + '...'
+      });
+
+      // Catch ALL events
+      const originalAddEventListener = sourceRdf.addEventListener;
+      sourceRdf.addEventListener = function(type, listener, options) {
+        console.log(`  ↳ Listener added for: ${type}`);
+        return originalAddEventListener.call(this, type, listener, options);
+      };
+
+      sourceRdf.addEventListener('triplestore-loading', (e) => {
+        console.log('📥 source-rdf: Loading started', e.detail);
+      });
+
+      sourceRdf.addEventListener('triplestore-ready', (e) => {
+        console.log('✅ source-rdf: Data loaded successfully', e.detail);
+      });
+
+      sourceRdf.addEventListener('triplestore-error', (e) => {
+        console.error('❌ source-rdf: Error loading data', e.detail);
+        showError(`Source RDF Error: ${e.detail.message}`);
+      });
+
+      // Check if component has internal error
+      setTimeout(() => {
+        if (sourceRdf._store) {
+          console.log('source-rdf store ready:', sourceRdf._store);
+        } else {
+          console.warn('⚠️ source-rdf._store is not initialized');
+        }
+        console.log('source-rdf internal state:', {
+          loading: sourceRdf.loading,
+          error: sourceRdf.error,
+          quadCount: sourceRdf.quadCount
+        });
+      }, 2000);
+
+      // DEBUG: Try to manually trigger fetch
+      setTimeout(() => {
+        console.log('\n⚡ Attempting manual component trigger (3 seconds)...');
+        
+        if (sourceRdf && typeof sourceRdf.reload === 'function') {
+          console.log('Calling sourceRdf.reload()');
+          sourceRdf.reload().catch(err => console.error('reload() error:', err));
+        } else {
+          console.warn('sourceRdf.reload not available');
+        }
+        
+        // Check if config was parsed
+        console.log('sourceRdf attributes at 3s:');
+        console.log('  getAttribute("config"):', sourceRdf.getAttribute('config')?.substring(0, 50) + '...');
+        console.log('  config property:', sourceRdf.config?.substring(0, 50) + '...');
+      }, 3000);
+    }
+
+    // Listen to rdf-lens events
+    if (rdfLens) {
+      console.log('\n🔍 rdf-lens configuration:');
+      console.log('  config preview:', rdfLens.getAttribute('config')?.substring(0, 100) + '...');
+
+      rdfLens.addEventListener('shapes-loaded', (e) => {
+        console.log('📋 rdf-lens: Shapes loaded', e.detail);
+      });
+
+      rdfLens.addEventListener('extraction-start', (e) => {
+        console.log('🔍 rdf-lens: Extraction started', e.detail);
+      });
+
+      rdfLens.addEventListener('shape-processed', (e) => {
+        console.log('✅ rdf-lens: Extraction completed', e.detail);
+        const loadingEl = document.querySelector('.loading');
+        if (loadingEl) {
+          loadingEl.remove();
+        }
+      });
+
+      rdfLens.addEventListener('shape-error', (e) => {
+        console.error('❌ rdf-lens: Extraction error', e.detail);
+        showError(`RDF Lens Error: ${e.detail.message}`);
+      });
+
+      setTimeout(() => {
+        console.log('rdf-lens internal state:', {
+          processing: rdfLens.processing || false
+        });
+      }, 1000);
+    }
+
+    // Listen to lens-display events
+    if (lensDisplay) {
+      lensDisplay.addEventListener('render-complete', (e) => {
+        console.log('🎨 lens-display: Rendering completed', e.detail);
+      });
+
+      lensDisplay.addEventListener('render-error', (e) => {
+        console.error('❌ lens-display: Rendering error', e.detail);
+        showError(`Lens Display Error: ${e.detail.message}`);
+      });
+    }
+
+    function showError(message) {
+      const loadingEl = document.querySelector('.loading');
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'error';
+      errorDiv.innerHTML = `<strong>Error:</strong> ${message}`;
+      mainElement.insertBefore(errorDiv, mainElement.firstChild);
+      if (loadingEl) loadingEl.remove();
+    }
+
+    // Timeout fallback
+    setTimeout(() => {
+      const loadingEl = document.querySelector('.loading');
+      if (loadingEl) {
+        console.warn('⏱️ Timeout: Components took too long to load');
+        console.log('Check browser console above for specific errors');
+        
+        // Debug info
+        console.log('\n=== DEBUG INFO ===');
+        console.log('sourceRdf ready:', sourceRdf?.readyState, sourceRdf?.dataset);
+        console.log('rdfLens ready:', rdfLens?.readyState, rdfLens?.dataset);
+        console.log('lensDisplay ready:', lensDisplay?.readyState, lensDisplay?.dataset);
+        
+        if (sourceRdf) {
+          console.log('source-rdf HTML:', sourceRdf.outerHTML.substring(0, 200));
+        }
+      }
+    }, 15000);
+    } // End of initDebug function
+  </script>
+</body>
+</html>
