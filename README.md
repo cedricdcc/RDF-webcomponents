@@ -1,164 +1,468 @@
-# 🚀 Welcome to the Next.js Code Scaffold
+# RDF Web Components
 
-A modern, production-ready web application scaffold powered by cutting-edge technologies to accelerate your development workflow.
+RDF Web Components is a framework-agnostic web component stack for loading RDF, extracting shape-based data, and rendering it in templates.
 
-## ✨ Technology Stack
+It provides four components that can run independently or as a pipeline:
+- source-rdf: fetches and parses RDF data.
+- rdf-lens: applies SHACL-like extraction with rdf-lens.
+- lens-display: renders extracted data into HTML templates.
+- link-orchestration: auto-mounts the pipeline on matched links.
 
-This scaffold provides a robust foundation built with:
+This README is written for:
+- End users integrating the components in static HTML or any frontend stack.
+- Developers working on this repository and component internals.
 
-### 🎯 Core Framework
-- **⚡ Next.js 16** - The React framework for production with App Router
-- **📘 TypeScript 5** - Type-safe JavaScript for better developer experience
-- **🎨 Tailwind CSS 4** - Utility-first CSS framework for rapid UI development
+## Quick Links
 
-### 🧩 UI Components & Styling
-- **🧩 shadcn/ui** - High-quality, accessible components built on Radix UI
-- **🎯 Lucide React** - Beautiful & consistent icon library
-- **🌈 Framer Motion** - Production-ready motion library for React
-- **🎨 Next Themes** - Perfect dark mode in 2 lines of code
+- Main playground: [/playground](./src/app/playground/page.tsx)
+- Demo page: [/demo](./src/app/demo/page.tsx)
+- Namespace catalog: [/ns/index.html](./public/ns/index.html)
 
-### 📋 Forms & Validation
-- **🎣 React Hook Form** - Performant forms with easy validation
-- **✅ Zod** - TypeScript-first schema validation
+Component docs and links:
+- source-rdf
+  - Playground: [/source-rdf](./src/app/source-rdf/page.tsx)
+  - Namespace page: [/ns/source-rdf.html](./public/ns/source-rdf.html)
+  - Namespace vocabulary: [/ns/source-rdf.ttl](./public/ns/source-rdf.ttl)
+- rdf-lens
+  - Playground: [/lens](./src/app/lens/page.tsx)
+  - Namespace page: [/ns/rdf-lens.html](./public/ns/rdf-lens.html)
+  - Namespace vocabulary: [/ns/rdf-lens.ttl](./public/ns/rdf-lens.ttl)
+- lens-display
+  - Playground: [/display](./src/app/display/page.tsx)
+  - Namespace page: [/ns/lens-display.html](./public/ns/lens-display.html)
+  - Namespace vocabulary: [/ns/lens-display.ttl](./public/ns/lens-display.ttl)
+- link-orchestration
+  - Playground: [/orchestration](./src/app/orchestration/page.tsx)
+  - Namespace catalog page: [/ns/index.html](./public/ns/index.html)
+  - Config schema examples: [/demo/link-orchestrator.config.json](./public/demo/link-orchestrator.config.json)
 
-### 🔄 State Management & Data Fetching
-- **🐻 Zustand** - Simple, scalable state management
-- **🔄 TanStack Query** - Powerful data synchronization for React
-- **🌐 Fetch** - Promise-based HTTP request
+## Architecture Overview
 
-### 🗄️ Database & Backend
-- **🗄️ Prisma** - Next-generation TypeScript ORM
-- **🔐 NextAuth.js** - Complete open-source authentication solution
+### High-level pipeline
 
-### 🎨 Advanced UI Features
-- **📊 TanStack Table** - Headless UI for building tables and datagrids
-- **🖱️ DND Kit** - Modern drag and drop toolkit for React
-- **📊 Recharts** - Redefined chart library built with React and D3
-- **🖼️ Sharp** - High performance image processing
+1. source-rdf fetches RDF and emits triplestore-ready.
+2. rdf-lens listens for triplestore-ready, loads shapes, extracts data, and emits shape-processed.
+3. lens-display listens for shape-processed and renders HTML.
+4. link-orchestration can automatically create and mount this full chain for matching links.
 
-### 🌍 Internationalization & Utilities
-- **🌍 Next Intl** - Internationalization library for Next.js
-- **📅 Date-fns** - Modern JavaScript date utility library
-- **🪝 ReactUse** - Collection of essential React hooks for modern development
+### Runtime flow
 
-## 🎯 Why This Scaffold?
+```mermaid
+flowchart LR
+  A[Host HTML / App] --> B[source-rdf]
+  B -->|triplestore-ready| C[rdf-lens]
+  C -->|shape-processed| D[lens-display]
 
-- **🏎️ Fast Development** - Pre-configured tooling and best practices
-- **🎨 Beautiful UI** - Complete shadcn/ui component library with advanced interactions
-- **🔒 Type Safety** - Full TypeScript configuration with Zod validation
-- **📱 Responsive** - Mobile-first design principles with smooth animations
-- **🗄️ Database Ready** - Prisma ORM configured for rapid backend development
-- **🔐 Auth Included** - NextAuth.js for secure authentication flows
-- **📊 Data Visualization** - Charts, tables, and drag-and-drop functionality
-- **🌍 i18n Ready** - Multi-language support with Next Intl
-- **🚀 Production Ready** - Optimized build and deployment settings
-- **🤖 AI-Friendly** - Structured codebase perfect for AI assistance
+  E[link-orchestration] --> F[Rule match on links]
+  F --> G[Create source-rdf + rdf-lens + lens-display]
+  G --> H[Replace/decorate matching link]
 
-## 🚀 Quick Start
+  I[public/ns/*.ttl vocabularies] --> B
+  I --> C
+  I --> D
+```
+
+### Repository architecture
+
+- Component runtime: [/src/rdf-webcomponents](./src/rdf-webcomponents)
+- Individual component implementations: [/src/rdf-webcomponents/components](./src/rdf-webcomponents/components)
+- Type contracts and events: [/src/rdf-webcomponents/types/index.ts](./src/rdf-webcomponents/types/index.ts)
+- Bundled browser outputs: [/public](./public)
+- Interactive docs/playgrounds (Next.js): [/src/app](./src/app)
+
+### Build architecture
+
+- Bundles are built with esbuild via build:webcomponents.
+- Next.js static export is built via build.
+- Output bundles:
+  - [/public/rdf-webcomponents.js](./public/rdf-webcomponents.js)
+  - [/public/source-rdf.js](./public/source-rdf.js)
+  - [/public/rdf-lens.js](./public/rdf-lens.js)
+  - [/public/lens-display.js](./public/lens-display.js)
+  - [/public/link-orchestration.js](./public/link-orchestration.js)
+
+## End-user Setup
+
+### Option A: all-in-one bundle
+
+```html
+<script type="module" src="/rdf-webcomponents.js"></script>
+```
+
+### Option B: per-component bundles
+
+```html
+<script type="module" src="/source-rdf.js"></script>
+<script type="module" src="/rdf-lens.js"></script>
+<script type="module" src="/lens-display.js"></script>
+<script type="module" src="/link-orchestration.js"></script>
+```
+
+### Minimal pipeline example
+
+```html
+<lens-display template="/demo/person-card.html">
+  <rdf-lens
+    config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "/demo/shapes.ttl" ;
+  lrdf:shapeClass <http://example.org/Person> ;
+  lrdf:multiple true .'
+  >
+    <source-rdf
+      config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:url "/demo/people.ttl" ;
+  srdf:strategy "file" .'
+    ></source-rdf>
+  </rdf-lens>
+</lens-display>
+```
+
+### Event wiring example
+
+```html
+<script>
+  document.addEventListener("triplestore-ready", (e) => console.log("adapter", e.detail));
+  document.addEventListener("shape-processed", (e) => console.log("lens", e.detail));
+  document.addEventListener("render-complete", (e) => console.log("display", e.detail));
+</script>
+```
+
+## Component Documentation
+
+## source-rdf
+
+Purpose:
+- Load RDF from file, SPARQL, or CBD strategy and expose parsed quads.
+
+Playground and namespace:
+- Playground: [/source-rdf](./src/app/source-rdf/page.tsx)
+- Namespace page: [/ns/source-rdf.html](./public/ns/source-rdf.html)
+- Vocabulary: [/ns/source-rdf.ttl](./public/ns/source-rdf.ttl)
+
+Composition:
+- Usually nested inside rdf-lens.
+- Can be used standalone if listening to triplestore-ready.
+
+Attributes:
+- url (string): optional override for config URL.
+- config (string): inline RDF config payload.
+
+Config vocabulary keys:
+- srdf:url (required unless url attribute is set)
+- srdf:format: turtle, n-triples, n-quads, rdf-xml, json-ld
+- srdf:strategy: file, sparql, cbd
+- srdf:subject
+- srdf:subjectQuery (must be DESCRIBE or CONSTRUCT for sparql)
+- srdf:subjectClass
+- srdf:depth
+- srdf:cache: none, memory, localStorage, indexedDB
+- srdf:cacheTtl
+- srdf:shared
+- srdf:headers (JSON object string)
+
+Public getters and methods:
+- quads
+- quadCount
+- loading
+- error
+- cacheKey
+- reload()
+- refresh()
+
+Events:
+- triplestore-loading
+- triplestore-ready with { quadCount, url, fromCache, duration }
+- triplestore-error with { message, phase, error }
+
+Example:
+
+```html
+<source-rdf
+  config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:url <https://dbpedia.org/sparql> ;
+  srdf:strategy "sparql" ;
+  srdf:subjectClass <http://dbpedia.org/ontology/Person> .'
+></source-rdf>
+```
+
+## rdf-lens
+
+Purpose:
+- Extract structured objects from RDF quads using shape definitions.
+
+Playground and namespace:
+- Playground: [/lens](./src/app/lens/page.tsx)
+- Namespace page: [/ns/rdf-lens.html](./public/ns/rdf-lens.html)
+- Vocabulary: [/ns/rdf-lens.ttl](./public/ns/rdf-lens.ttl)
+
+Composition:
+- Typically wraps source-rdf.
+- Emits extracted data for lens-display.
+
+Attributes:
+- config (string): inline RDF config payload.
+
+Config vocabulary keys:
+- lrdf:shapeFile (required unless lrdf:shapes is provided)
+- lrdf:shapeClass
+- lrdf:shapes
+- lrdf:strict
+- lrdf:multiple
+- lrdf:subject
+
+Public getters and methods:
+- data
+- loading
+- error
+- setQuads(quads)
+
+Events:
+- shape-loading
+- shapes-loaded with { count }
+- extraction-start
+- shape-processed with { data, shapeClass, count, duration }
+- shape-error with { message, phase, error }
+
+Example:
+
+```html
+<rdf-lens
+  config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "/demo/shapes.ttl" ;
+  lrdf:shapeClass <http://example.org/Person> ;
+  lrdf:multiple true .'
+>
+  <source-rdf url="/demo/people.ttl"></source-rdf>
+</rdf-lens>
+```
+
+## lens-display
+
+Purpose:
+- Render extracted data to HTML from template files (or default fallback template).
+
+Playground and namespace:
+- Playground: [/display](./src/app/display/page.tsx)
+- Namespace page: [/ns/lens-display.html](./public/ns/lens-display.html)
+- Vocabulary: [/ns/lens-display.ttl](./public/ns/lens-display.ttl)
+
+Composition:
+- Usually wraps rdf-lens.
+- Can also receive data programmatically using setData().
+
+Attributes and config:
+- template (string): template URL.
+- config (property, not attribute): inline RDF config string.
+- Inline config scripts can use script[data-lens-display-config="true"].
+
+Config vocabulary keys:
+- drdf:theme
+- drdf:class
+
+Template syntax supported:
+- {{field}}
+- ${data.field}
+- {{{field}}}
+- {{#field}}...{{/field}}
+- {{^field}}...{{/field}}
+- {{#each items}}...{{/each}}
+- {{@index}}
+- {{this}}
+- {{nested.field}}
+
+Public getters and methods:
+- data
+- loading
+- error
+- setData(data)
+- reloadTemplate()
+
+Events:
+- render-complete with { html, data, duration }
+- render-error with { message, phase, error }
+
+Example:
+
+```html
+<lens-display template="/demo/person-card.html">
+  <rdf-lens config="...">
+    <source-rdf config="..."></source-rdf>
+  </rdf-lens>
+</lens-display>
+```
+
+## link-orchestration
+
+Purpose:
+- Scan links and auto-apply complete RDF pipelines according to matching rules.
+
+Playground and namespace:
+- Playground: [/orchestration](./src/app/orchestration/page.tsx)
+- Namespace catalog page: [/ns/index.html](./public/ns/index.html)
+- JSON config example: [/demo/link-orchestrator.config.json](./public/demo/link-orchestrator.config.json)
+
+Note:
+- This component currently uses JSON rule config, not a dedicated TTL namespace page like the other three components.
+
+Usage modes:
+- Set config property from JavaScript.
+- Use inline script type="application/json" child.
+- Use config-src attribute for remote JSON.
+
+Observed attributes:
+- config-src
+- debounce-ms
+- max-concurrent-pipelines
+- allow-recursive
+
+Public methods:
+- loadConfig()
+- refresh()
+- rollbackAll()
+- disconnectObserver()
+
+Events:
+- orchestrator-scan-start
+- orchestrator-scan-complete
+- orchestrator-link-loading
+- orchestrator-link-ready
+- orchestrator-link-error
+- orchestrator-link-rollback
+
+Minimal example:
+
+```html
+<link-orchestration config-src="/demo/link-orchestrator.config.json"></link-orchestration>
+```
+
+Inline config example:
+
+```html
+<link-orchestration>
+  <script type="application/json">
+  {
+    "debounceMs": 120,
+    "maxConcurrentPipelines": 3,
+    "rules": [
+      {
+        "id": "people-links",
+        "match": { "css": "a[href*='people.ttl']", "contentType": "text" },
+        "adapter": { "strategy": "file" },
+        "lens": {
+          "shapeFile": "/demo/shapes.ttl",
+          "shapeClass": "http://example.org/Person",
+          "multiple": true
+        },
+        "display": { "template": "/demo/person-card.html" }
+      }
+    ]
+  }
+  </script>
+</link-orchestration>
+```
+
+## Full Composition Patterns
+
+### Standard explicit composition
+
+```html
+<lens-display template="/demo/person-card.html">
+  <rdf-lens config="...">
+    <source-rdf config="..."></source-rdf>
+  </rdf-lens>
+</lens-display>
+```
+
+### Automatic composition via orchestration
+
+```html
+<script type="module" src="/rdf-webcomponents.js"></script>
+<link-orchestration config-src="/demo/link-orchestrator.config.json"></link-orchestration>
+<a href="/demo/people.ttl">People dataset</a>
+```
+
+## Developer Setup
+
+### Prerequisites
+
+- Bun installed (recommended for this repo scripts).
+- Node.js compatible with Next.js 16 for local runtime.
+
+### Install
 
 ```bash
-# Install dependencies
 bun install
+```
 
-# Start development server
+### Run local development app
+
+```bash
 bun run dev
+```
 
-# Build static site + bundled webcomponents
+### Build web component bundles only
+
+```bash
+bun run build:webcomponents
+```
+
+### Build static export and bundles
+
+```bash
 bun run build
+```
 
-# Preview static export locally
+### Serve static output
+
+```bash
 bun start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see your application running.
-
-Live RDF demo route (real web components): [http://localhost:3000/demo](http://localhost:3000/demo)
-
-Build output is generated in `out/` and is ready for static hosting.
-
-## 🌐 GitHub Pages Deployment
-
-This project is configured for static export (`output: "export"`) and can be hosted on GitHub Pages.
+### Lint and test
 
 ```bash
-bun run build
+bun run lint
+bun run test
 ```
 
-Optional base path for GitHub project pages (repo name path):
+### Build output expectations
 
-- PowerShell: `$env:NEXT_PUBLIC_BASE_PATH="/your-repo"; bun run build`
-- CMD: `set NEXT_PUBLIC_BASE_PATH=/your-repo && bun run build`
-- Bash: `NEXT_PUBLIC_BASE_PATH=/your-repo bun run build`
+- Static site export in out.
+- Web component bundles in public.
 
-Deploy the contents of `out/` to GitHub Pages (for example via `gh-pages` branch or GitHub Actions artifact upload).
+## Project Map For Developers
 
-The build also bundles Web Components into static files in the site root:
+- Root app pages and docs routes: [/src/app](./src/app)
+- Main web components entry: [/src/rdf-webcomponents/index.ts](./src/rdf-webcomponents/index.ts)
+- Component files:
+  - [/src/rdf-webcomponents/components/source-rdf.ts](./src/rdf-webcomponents/components/source-rdf.ts)
+  - [/src/rdf-webcomponents/components/rdf-lens.ts](./src/rdf-webcomponents/components/rdf-lens.ts)
+  - [/src/rdf-webcomponents/components/lens-display.ts](./src/rdf-webcomponents/components/lens-display.ts)
+  - [/src/rdf-webcomponents/components/link-orchestration.ts](./src/rdf-webcomponents/components/link-orchestration.ts)
+- Config parsers:
+  - [/src/rdf-webcomponents/components/source-rdf-config.ts](./src/rdf-webcomponents/components/source-rdf-config.ts)
+  - [/src/rdf-webcomponents/components/rdf-lens-config.ts](./src/rdf-webcomponents/components/rdf-lens-config.ts)
+  - [/src/rdf-webcomponents/components/lens-display-config.ts](./src/rdf-webcomponents/components/lens-display-config.ts)
+- Demo assets and JSON configs: [/public/demo](./public/demo)
+- Namespace pages and TTL vocabularies: [/public/ns](./public/ns)
 
-- `rdf-webcomponents.js`
-- `rdf-adapter.js`
-- `rdf-lens.js`
-- `lens-display.js`
+## Troubleshooting
 
-## 🤖 AI-Assisted Development
+- If components do not render:
+  - Ensure the module script is loaded before custom element usage.
+  - Ensure CORS allows fetching your RDF and shape URLs.
+  - Check browser console for triplestore-error, shape-error, or render-error events.
+- If rdf-lens returns no results:
+  - Confirm shapeClass URI matches the data rdf:type values.
+  - Confirm shapeFile or shapes is set in config.
+- If link-orchestration does not match links:
+  - Verify rule ordering and first-match-wins behavior.
+  - Confirm css/xpath/urlPattern/urlRegex conditions are valid.
 
-This scaffold works well with modern AI coding assistants for:
+## License
 
-- **💻 Code Generation** - Generate components, pages, and features faster
-- **🎨 UI Development** - Build polished interfaces with guided iteration
-- **🔧 Bug Fixing** - Identify and resolve issues with contextual suggestions
-- **📝 Documentation** - Draft and refine project documentation
-- **🚀 Optimization** - Improve performance and maintainability
-
-## 📁 Project Structure
-
-```
-src/
-├── app/                 # Next.js App Router pages
-├── components/          # Reusable React components
-│   └── ui/             # shadcn/ui components
-├── hooks/              # Custom React hooks
-└── lib/                # Utility functions and configurations
-```
-
-## 🎨 Available Features & Components
-
-This scaffold includes a comprehensive set of modern web development tools:
-
-### 🧩 UI Components (shadcn/ui)
-- **Layout**: Card, Separator, Aspect Ratio, Resizable Panels
-- **Forms**: Input, Textarea, Select, Checkbox, Radio Group, Switch
-- **Feedback**: Alert, Toast (Sonner), Progress, Skeleton
-- **Navigation**: Breadcrumb, Menubar, Navigation Menu, Pagination
-- **Overlay**: Dialog, Sheet, Popover, Tooltip, Hover Card
-- **Data Display**: Badge, Avatar, Calendar
-
-### 📊 Advanced Data Features
-- **Tables**: Powerful data tables with sorting, filtering, pagination (TanStack Table)
-- **Charts**: Beautiful visualizations with Recharts
-- **Forms**: Type-safe forms with React Hook Form + Zod validation
-
-### 🎨 Interactive Features
-- **Animations**: Smooth micro-interactions with Framer Motion
-- **Drag & Drop**: Modern drag-and-drop functionality with DND Kit
-- **Theme Switching**: Built-in dark/light mode support
-
-### 🔐 Backend Integration
-- **Authentication**: Ready-to-use auth flows with NextAuth.js
-- **Database**: Type-safe database operations with Prisma
-- **API Client**: HTTP requests with Fetch + TanStack Query
-- **State Management**: Simple and scalable with Zustand
-
-### 🌍 Production Features
-- **Internationalization**: Multi-language support with Next Intl
-- **Image Optimization**: Automatic image processing with Sharp
-- **Type Safety**: End-to-end TypeScript with Zod validation
-- **Essential Hooks**: 100+ useful React hooks with ReactUse for common patterns
-
-## 🤝 Get Started
-
-1. **Clone this scaffold** to jumpstart your project
-2. **Choose your preferred AI coding assistant**
-3. **Start building** with intelligent code generation and assistance
-4. **Deploy with confidence** using the production-ready setup
-
----
+See repository license and project metadata for license details.
