@@ -1,0 +1,61 @@
+@base <https://cedricdcc.github.io/RDF-webcomponents/ns/> .
+@prefix : <https://cedricdcc.github.io/RDF-webcomponents/ns/#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<https://cedricdcc.github.io/RDF-webcomponents/ns/> a dcat:Catalog ;
+  rdfs:label "RDF Web Components Ontologies Catalog" ;
+  rdfs:comment "A comprehensive catalog of all ontologies and vocabularies used by the RDF Web Components project." ;
+  dcterms:title "RDF Web Components Namespace Collection" ;
+  dcterms:description "Centralized collection of configuration vocabularies for RDF web component configuration and integration." ;
+  dcterms:created "2024-01-01"^^xsd:date ;
+  dcterms:modified "2024-03-24"^^xsd:date ;
+  dcterms:publisher [ a foaf:Organization ;
+    foaf:name "RDF Web Components Project" ] ;
+  dcat:dataset <lens-display.ttl> ;
+  dcat:dataset <rdf-lens.ttl> ;
+  dcat:dataset <source-rdf.ttl> .
+
+<lens-display.ttl> a dcat:Dataset, owl:Ontology ;
+  rdfs:label "Lens Display Vocabulary" ;
+  rdfs:comment "Configuration vocabulary for the lens-display web component." ;
+  dcterms:title "lens-display Configuration Ontology" ;
+  dcterms:description "Defines configuration properties and classes for rendering hooks in the lens-display web component." ;
+  dcterms:identifier "lens-display" ;
+  owl:versionInfo "1.0.0" ;
+  dcat:distribution [ a dcat:Distribution ;
+    dcat:mediaType "text/turtle" ;
+    dcat:accessURL <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl> ] ;
+  dcat:theme "configuration"@en, "rendering"@en ;
+  dcterms:isPartOf <https://cedricdcc.github.io/RDF-webcomponents/ns/> .
+
+<rdf-lens.ttl> a dcat:Dataset, owl:Ontology ;
+  rdfs:label "RDF Lens Vocabulary" ;
+  rdfs:comment "Configuration vocabulary for the rdf-lens web component." ;
+  dcterms:title "rdf-lens Configuration Ontology" ;
+  dcterms:description "Defines configuration properties and classes for SHACL shape-based data extraction in the rdf-lens web component." ;
+  dcterms:identifier "rdf-lens" ;
+  owl:versionInfo "1.0.0" ;
+  dcat:distribution [ a dcat:Distribution ;
+    dcat:mediaType "text/turtle" ;
+    dcat:accessURL <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl> ] ;
+  dcat:theme "configuration"@en, "extraction"@en, "shacl"@en ;
+  dcterms:isPartOf <https://cedricdcc.github.io/RDF-webcomponents/ns/> .
+
+<source-rdf.ttl> a dcat:Dataset, owl:Ontology ;
+  rdfs:label "Source RDF Vocabulary" ;
+  rdfs:comment "Configuration vocabulary for the source-rdf web component." ;
+  dcterms:title "source-rdf Configuration Ontology" ;
+  dcterms:description "Defines configuration properties and classes for RDF data sourcing strategies (file, SPARQL endpoint, Concise Bounded Description) in the source-rdf web component." ;
+  dcterms:identifier "source-rdf" ;
+  owl:versionInfo "1.0.0" ;
+  dcat:distribution [ a dcat:Distribution ;
+    dcat:mediaType "text/turtle" ;
+    dcat:accessURL <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl> ] ;
+  dcat:theme "configuration"@en, "data-sourcing"@en, "sparql"@en, "cbd"@en ;
+  dcterms:isPartOf <https://cedricdcc.github.io/RDF-webcomponents/ns/> .

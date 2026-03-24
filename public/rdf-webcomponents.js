@@ -28110,7 +28110,11 @@ var TemplateEngine = class {
     });
     result = result.replace(/\$\{(?:data\.)?([^}]+)\}/g, (_2, path) => {
       const value = this.getNestedValue(data, path);
-      return this.escapeHtml(String(value ?? ""));
+      return this.escapeHtml(this.formatTemplateValue(value));
+    });
+    result = result.replace(/\{\{\{([^}]+)\}\}\}/g, (_2, path) => {
+      const value = this.getNestedValue(data, path.trim());
+      return String(value ?? "");
     });
     result = result.replace(/\{\{([^#/][^}]*)\}\}/g, (_2, path) => {
       const trimmedPath = path.trim();
@@ -28121,14 +28125,7 @@ var TemplateEngine = class {
       if (value === null || value === void 0) {
         return "";
       }
-      if (typeof value === "object") {
-        return JSON.stringify(value);
-      }
-      return this.escapeHtml(String(value));
-    });
-    result = result.replace(/\{\{\{([^}]+)\}\}\}/g, (_2, path) => {
-      const value = this.getNestedValue(data, path.trim());
-      return String(value ?? "");
+      return this.escapeHtml(this.formatTemplateValue(value));
     });
     return result;
   }
@@ -28151,6 +28148,36 @@ var TemplateEngine = class {
       }
     }
     return current;
+  }
+  formatTemplateValue(value) {
+    if (value === null || value === void 0) {
+      return "";
+    }
+    if (Array.isArray(value)) {
+      return value.map((entry) => this.formatTemplateValue(entry)).filter((entry) => entry.length > 0).join(", ");
+    }
+    if (typeof value === "object") {
+      if ("value" in value && value.value !== void 0 && value.value !== null) {
+        return String(value.value);
+      }
+      if ("id" in value && value.id !== void 0 && value.id !== null) {
+        return String(value.id);
+      }
+      return JSON.stringify(value);
+    }
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (Array.isArray(parsed)) {
+            return parsed.map((entry) => this.formatTemplateValue(entry)).filter((entry) => entry.length > 0).join(", ");
+          }
+        } catch {
+        }
+      }
+    }
+    return String(value);
   }
   /**
    * Escapes HTML special characters
@@ -28442,10 +28469,50 @@ var LensDisplay = class extends i4 {
       return item;
     }
     const prepared = { ...item };
+    if ("themes" in prepared) {
+      const themes = prepared.themes;
+      const themeList = this._normalizeToStringArray(themes);
+      if (themeList.length > 0) {
+        prepared.themesText = themeList.join(", ");
+        prepared.themesPillsHtml = themeList.map((theme) => `<span class="theme-tag">${this._escapeHtml(theme)}</span>`).join("");
+      }
+    }
     if (!prepared._properties) {
       prepared._properties = Object.entries(item).filter(([key]) => !key.startsWith("_")).map(([key, value]) => ({ "@key": key, "this": value }));
     }
     return prepared;
+  }
+  _normalizeToStringArray(value) {
+    if (value === null || value === void 0) {
+      return [];
+    }
+    if (Array.isArray(value)) {
+      return value.map((entry) => String(entry).trim()).filter((entry) => entry.length > 0);
+    }
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (Array.isArray(parsed)) {
+            return parsed.map((entry) => String(entry).trim()).filter((entry) => entry.length > 0);
+          }
+        } catch {
+        }
+      }
+      return trimmed.length > 0 ? [trimmed] : [];
+    }
+    return [String(value)];
+  }
+  _escapeHtml(value) {
+    const map = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    };
+    return value.replace(/[&<>"']/g, (char) => map[char]);
   }
   _templateExpectsItemsArray() {
     return /\{\{#each\s+items\}\}/.test(this._templateContent);

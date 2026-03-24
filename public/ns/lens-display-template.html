@@ -1,0 +1,33 @@
+<article class="component-card">
+  <header class="head">
+    <h1>{{label}}</h1>
+    <p>{{comment}}</p>
+  </header>
+
+  <section class="section">
+    <h2>Configuration Properties</h2>
+    <ul class="prop-list">
+      <li><code>drdf:theme</code> Theme suffix used as <code>rdf-theme-{theme}</code>.</li>
+      <li><code>drdf:class</code> Additional CSS class added to the container.</li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <h2>File</h2>
+    <a href="./lens-display.ttl" target="_blank" rel="noopener noreferrer">Open lens-display.ttl</a>
+  </section>
+</article>
+
+<style>
+  .component-card { max-width: 860px; margin: 2rem auto; background: #fff; border: 2px solid #dbe4ff; border-radius: 14px; box-shadow: 0 10px 26px rgba(30, 41, 59, 0.08); overflow: hidden; }
+  .head { padding: 1.4rem 1.4rem 1rem; background: linear-gradient(135deg, #c7d2fe 0%, #e0e7ff 100%); }
+  .head h1 { margin: 0; font-size: 1.6rem; color: #1f2a44; }
+  .head p { margin: 0.45rem 0 0; color: #334155; line-height: 1.5; }
+  .section { padding: 1rem 1.4rem 1.4rem; }
+  .section h2 { margin: 0 0 0.55rem; font-size: 1.05rem; color: #1f2a44; }
+  .prop-list { margin: 0; padding-left: 1.1rem; }
+  .prop-list li { margin: 0.45rem 0; color: #334155; }
+  code { background: #eef2ff; color: #3730a3; border: 1px solid #c7d2fe; border-radius: 6px; padding: 0.1rem 0.35rem; }
+  a { color: #1d4ed8; font-weight: 600; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+</style>
