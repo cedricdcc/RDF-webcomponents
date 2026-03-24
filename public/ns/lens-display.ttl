@@ -1,0 +1,24 @@
+@base <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .
+@prefix : <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl> a owl:Ontology ;
+  rdfs:label "lens-display vocabulary" ;
+  rdfs:comment "Vocabulary for configuring lens-display component rendering hooks." .
+
+:LensDisplayConfig a rdfs:Class ;
+  rdfs:label "Lens Display Config" ;
+  rdfs:comment "Configuration node consumed by <lens-display>." .
+
+:theme a rdf:Property ;
+  rdfs:domain :LensDisplayConfig ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Theme suffix used as rdf-theme-{theme} CSS class." .
+
+:class a rdf:Property ;
+  rdfs:domain :LensDisplayConfig ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Additional CSS class added to lens-display container." .

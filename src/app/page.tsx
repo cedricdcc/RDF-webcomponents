@@ -43,7 +43,7 @@ A powerful, framework-agnostic Web Component library for working with RDF data.
 
 ## Features
 
-- **<rdf-adapter>** - Fetch and parse RDF data from multiple sources
+- **<source-rdf>** - Fetch and parse RDF data from multiple sources
 - **<rdf-lens>** - Extract structured data using SHACL shapes
 - **<lens-display>** - Render data with HTML templates
 
@@ -53,14 +53,17 @@ A powerful, framework-agnostic Web Component library for working with RDF data.
 <script type="module" src="https://cdn.example.com/rdf-webcomponents.js"></script>
 
 <lens-display template="person-card.html">
-  <rdf-lens shape-file="shapes.ttl" shape-class="Person">
-    <rdf-adapter url="data.ttl"></rdf-adapter>
+  <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes.ttl" ;
+  lrdf:shapeClass "Person" .'>
+    <source-rdf url="data.ttl"></source-rdf>
   </rdf-lens>
 </lens-display>
 \`\`\`
 `,
   adapter: `
-# &lt;rdf-adapter&gt;
+# &lt;source-rdf&gt;
 
 Fetches and parses RDF data from various sources.
 
@@ -75,23 +78,30 @@ Fetches and parses RDF data from various sources.
 
 ## Attributes
 
-- **url** - URL to RDF data or SPARQL endpoint
-- **format** - RDF format (auto-detected if not specified)
-- **strategy** - Data source strategy (file, sparql, cbd, graph)
-- **subject** - Subject URI for CBD
-- **subject-class** - Class to discover instances
-- **cache** - Cache strategy (none, memory, localStorage, indexedDB)
-- **shared** - Use shared global cache
+- **url** - Optional source URL override
+- **config** - Inline RDF config using source-rdf vocabulary
+
+## RDF Config Properties
+
+- **srdf:url** - Source URL or SPARQL endpoint
+- **srdf:format** - Optional format hint
+- **srdf:strategy** - file, sparql, cbd
+- **srdf:subject / srdf:subjectClass / srdf:subjectQuery** - Strategy selectors
+- **srdf:depth** - CBD traversal depth
+- **srdf:cache / srdf:cacheTtl / srdf:shared** - Caching controls
+- **srdf:headers** - JSON object string for request headers
 
 ## Example
 
 \`\`\`html
-<rdf-adapter 
+<source-rdf 
   url="https://dbpedia.org/sparql"
-  strategy="sparql"
-  subject-class="dbo:Person"
-  cache="indexedDB"
-></rdf-adapter>
+  config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "sparql" ;
+  srdf:subjectClass <http://dbpedia.org/ontology/Person> ;
+  srdf:cache "indexedDB" .'
+></source-rdf>
 \`\`\`
 `,
   lens: `
@@ -101,11 +111,16 @@ Extracts structured data using SHACL shapes.
 
 ## Attributes
 
-- **shape-file** - URL to SHACL shapes file
-- **shape-class** - Target class to extract
-- **shapes** - Inline SHACL shapes (Turtle)
-- **multiple** - Extract all matching subjects
-- **validate** - Validate against shapes
+- **config** - Inline RDF config using rdf-lens vocabulary
+
+## RDF Config Properties
+
+- **lrdf:shapeFile** - URL to SHACL shapes file
+- **lrdf:shapeClass** - Target class to extract
+- **lrdf:shapes** - Inline SHACL shapes (Turtle)
+- **lrdf:multiple** - Extract all matching subjects
+- **lrdf:strict** - Fail extraction when a subject cannot be processed
+- **lrdf:subject** - Extract one specific subject URI
 
 ## SHACL Example
 
@@ -123,25 +138,47 @@ ex:PersonShape a sh:NodeShape ;
 
 \`\`\`html
 <rdf-lens 
-  shape-file="shapes.ttl" 
-  shape-class="Person"
-  multiple
+  config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes.ttl" ;
+  lrdf:shapeClass "Person" ;
+  lrdf:multiple true .'
 >
-  <rdf-adapter url="data.ttl"></rdf-adapter>
+  <source-rdf url="data.ttl"></source-rdf>
 </rdf-lens>
 \`\`\`
 `,
   display: `
 # &lt;lens-display&gt;
 
-Renders data using HTML templates.
+Renders extracted RDF data using HTML templates with Mustache syntax.
+
+## Attributes
+
+- **template** - URL to HTML template file (required)
+
+## RDF Config Properties
+
+Configuration is provided via the \`config\` property with RDF/Turtle format:
+
+- **drdf:theme** - CSS class hook suffix (adds \`rdf-theme-{value}\` class to container)
+- **drdf:class** - Additional CSS class to apply to the container
+
+Note: theme and class are CSS styling hooks only—customize appearance via CSS selectors targeting \`.rdf-theme-*\` classes.
 
 ## Template Syntax
 
-- **\${data.field}** - Value interpolation
-- **{{field}}** - Mustache-style
-- **{{#field}}** - Conditional
-- **{{#each items}}** - Loop
+Supports Mustache-style template syntax:
+
+- **{{field}}** - Output field value
+- **\${data.field}** - Alternative interpolation syntax
+- **{{{field}}}** - Output unescaped HTML
+- **{{#field}}...{{/field}}** - Conditional block
+- **{{^field}}...{{/field}}** - Inverse conditional
+- **{{#each items}}...{{/each}}** - Loop over array
+- **{{@index}}** - Current loop index
+- **{{this}}** - Current item in loop
+- **{{nested.field}}** - Access nested properties
 
 ## Example Template
 
@@ -149,19 +186,33 @@ Renders data using HTML templates.
 <article class="card">
   <h2>{{name}}</h2>
   {{#email}}
-  <a href="mailto:{{email}}">{{email}}</a>
+  <p>Email: <a href="mailto:{{email}}">{{email}}</a></p>
   {{/email}}
   {{#each friends}}
-  <span>{{name}}</span>
+  <div class="friend">{{name}}</div>
   {{/each}}
 </article>
 \`\`\`
 
-## Attributes
+## Example with RDF Config
 
-- **template** - URL to template file
-- **mode** - Display mode (single, list, grid, table)
-- **theme** - Theme identifier
+\`\`\`html
+<lens-display 
+  template="person-card.html"
+  data-config='@prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .
+[] a drdf:LensDisplayConfig ;
+  drdf:theme "dark" ;
+  drdf:class "compact" .'
+>
+  <rdf-lens config="...">
+    <source-rdf url="data.ttl"></source-rdf>
+  </rdf-lens>
+</lens-display>
+\`\`\`
+
+## Built-in Fallback
+
+If no template is provided, lens-display renders a generic key-value table from the extracted RDF data.
 `,
 };
 
@@ -218,6 +269,34 @@ const sampleTemplate = `<article class="rdf-card" style="border: 1px solid #e0e0
   {{#age}}<p style="margin: 0.25rem 0; color: #666;">Age: {{age}}</p>{{/age}}
   {{#email}}<p style="margin: 0.25rem 0;"><a href="mailto:{{email}}" style="color: #0066cc;">{{email}}</a></p>{{/email}}
 </article>`;
+
+const toTurtleString = (value: string) =>
+  `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`;
+
+const toIriOrString = (value: string) => {
+  const trimmed = value.trim();
+  if (/^https?:\/\//i.test(trimmed) || /^urn:/i.test(trimmed)) {
+    return `<${trimmed}>`;
+  }
+  return toTurtleString(trimmed);
+};
+
+const buildLensConfigRdf = (config: {
+  shapeFile: string;
+  shapeClass?: string;
+  multiple?: boolean;
+  subject?: string;
+}) => {
+  const triples: string[] = [`lrdf:shapeFile ${toIriOrString(config.shapeFile)}`];
+
+  if (config.shapeClass) triples.push(`lrdf:shapeClass ${toIriOrString(config.shapeClass)}`);
+  if (typeof config.multiple === 'boolean') triples.push(`lrdf:multiple ${config.multiple}`);
+  if (config.subject) triples.push(`lrdf:subject ${toIriOrString(config.subject)}`);
+
+  return `@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .\n\n[] a lrdf:RdfLensConfig ;\n  ${triples.join(
+    ' ;\n  '
+  )} .`;
+};
 
 export default function RDFWebComponentsDemo() {
   const [copied, setCopied] = useState<string | null>(null);
@@ -347,14 +426,14 @@ export default function RDFWebComponentsDemo() {
 
           {/* Component Cards */}
           <div className="grid md:grid-cols-3 gap-6">
-            <Link href="/adapter" className="block group">
+            <Link href="/source-rdf" className="block group">
               <Card className="hover:shadow-lg transition-all duration-300 hover:border-blue-400 dark:hover:border-blue-600 cursor-pointer h-full">
                 <CardHeader>
                   <div className="h-12 w-12 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                     <Database className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">rdf-adapter</CardTitle>
+                    <CardTitle className="text-lg group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">source-rdf</CardTitle>
                     <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-blue-500 transition-colors" />
                   </div>
                   <CardDescription>
@@ -434,7 +513,7 @@ export default function RDFWebComponentsDemo() {
                     <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-cyan-500 transition-colors" />
                   </div>
                   <CardDescription>
-                    Detect links and mount rdf-adapter, rdf-lens, and lens-display by rule
+                    Detect links and mount source-rdf, rdf-lens, and lens-display by rule
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -476,152 +555,6 @@ export default function RDFWebComponentsDemo() {
 
         <Separator className="my-8" />
 
-        {/* Main Content */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Documentation */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Documentation</CardTitle>
-                <CardDescription>
-                  Learn how to use RDF Web Components
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="mb-4">
-                    <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="adapter">rdf-adapter</TabsTrigger>
-                    <TabsTrigger value="lens">rdf-lens</TabsTrigger>
-                    <TabsTrigger value="display">lens-display</TabsTrigger>
-                  </TabsList>
-
-                  <ScrollArea className="h-[500px]">
-                    <div className="prose prose-sm dark:prose-invert max-w-none p-4">
-                      <ReactMarkdown
-                        components={{
-                          code({ className, children }) {
-                            const language = className?.replace('language-', '') ?? '';
-                            const isInline = !language;
-                            if (isInline) {
-                              return <code>{children}</code>;
-                            }
-                            return (
-                              <pre className="overflow-x-auto rounded-lg bg-slate-100 p-4 text-xs dark:bg-slate-800">
-                                <code className={className}>{children}</code>
-                              </pre>
-                            );
-                          },
-                        }}
-                      >
-                        {documentation[activeTab as keyof typeof documentation]}
-                      </ReactMarkdown>
-                    </div>
-                  </ScrollArea>
-                </Tabs>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Code Samples */}
-          <div className="space-y-6">
-            {/* Live Demo */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ChevronRight className="h-5 w-5 text-green-500" />
-                  Live Demo
-                </CardTitle>
-                <CardDescription>
-                  Data extraction in action
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[200px]">
-                  <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg overflow-x-auto">
-                    {demoOutput || 'Processing...'}
-                  </pre>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-
-            {/* SHACL Shapes */}
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">SHACL Shapes</CardTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => copyToClipboard(sampleShapes, 'shapes')}
-                >
-                  {copied === 'shapes' ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[150px]">
-                  <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg">
-                    {sampleShapes}
-                  </pre>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-
-            {/* Sample Data */}
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">RDF Data</CardTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => copyToClipboard(sampleData, 'data')}
-                >
-                  {copied === 'data' ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[150px]">
-                  <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg">
-                    {sampleData}
-                  </pre>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-
-            {/* Template */}
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Template</CardTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => copyToClipboard(sampleTemplate, 'template')}
-                >
-                  {copied === 'template' ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[100px]">
-                  <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg">
-                    {sampleTemplate}
-                  </pre>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
         <Separator className="my-8" />
 
         {/* Usage Examples */}
@@ -652,24 +585,39 @@ export default function RDFWebComponentsDemo() {
                 <p className="mb-2 text-xs font-semibold text-slate-600 dark:text-slate-400">Example snippet</p>
                 <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg overflow-x-auto">
 {`<lens-display template="card.html">
-  <rdf-lens shape-file="shapes.ttl" 
-            shape-class="dbo:Person" 
-            multiple>
-    <rdf-adapter 
+  <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes.ttl" ;
+  lrdf:shapeClass "dbo:Person" ;
+  lrdf:multiple true .'>
+    <source-rdf 
       url="https://dbpedia.org/sparql"
-      strategy="sparql"
-      subject-class="dbo:Person"
-      cache="indexedDB"
+      config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "sparql" ;
+  srdf:subjectClass <http://dbpedia.org/ontology/Person> ;
+  srdf:cache "indexedDB" .'
     />
   </rdf-lens>
+  <script type="text/turtle" data-lens-display-config="true">
+@prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .
+[] a drdf:LensDisplayConfig ;
+  drdf:class "card" .
+  </script>
 </lens-display>`}
                 </pre>
                 <p className="mb-2 mt-4 text-xs font-semibold text-slate-600 dark:text-slate-400">Live output</p>
                 <div className="rounded-lg border bg-white p-3">
                   {mounted && bundleLoaded ? (
-                    <lens-display template={templateUrl} mode="grid">
-                      <rdf-lens shape-file={shapeUrl} shape-class="http://example.org/Person" multiple>
-                        <rdf-adapter url={dataUrl} format="turtle" strategy="file"></rdf-adapter>
+                    <lens-display template={templateUrl}>
+                      <rdf-lens config={buildLensConfigRdf({ shapeFile: shapeUrl, shapeClass: 'http://example.org/Person', multiple: true })}>
+                        <source-rdf
+                          url={dataUrl}
+                          config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "file" ;
+  srdf:format "turtle" .'
+                        ></source-rdf>
                       </rdf-lens>
                     </lens-display>
                   ) : (
@@ -694,23 +642,40 @@ export default function RDFWebComponentsDemo() {
                 <p className="mb-2 text-xs font-semibold text-slate-600 dark:text-slate-400">Example snippet</p>
                 <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg overflow-x-auto">
 {`<lens-display template="card.html">
-  <rdf-lens shape-file="shapes.ttl" 
-            shape-class="Person">
-    <rdf-adapter 
+  <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes.ttl" ;
+  lrdf:shapeClass "Person" .'>
+    <source-rdf 
       url="data.ttl"
-      format="turtle"
-      cache="memory"
-      shared
+      config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "file" ;
+  srdf:format "turtle" ;
+  srdf:cache "memory" ;
+  srdf:shared true .'
     />
   </rdf-lens>
+  <script type="text/turtle" data-lens-display-config="true">
+@prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .
+[] a drdf:LensDisplayConfig ;
+  drdf:theme "modern" ;
+  drdf:class "compact" .
+  </script>
 </lens-display>`}
                 </pre>
                 <p className="mb-2 mt-4 text-xs font-semibold text-slate-600 dark:text-slate-400">Live output</p>
                 <div className="rounded-lg border bg-white p-3">
                   {mounted && bundleLoaded ? (
-                    <lens-display key="live-static" template={templateUrl} mode="grid">
-                      <rdf-lens shape-file={shapeUrl} shape-class="http://example.org/Person" multiple>
-                        <rdf-adapter url={dataUrl} format="turtle" strategy="file"></rdf-adapter>
+                    <lens-display key="live-static" template={templateUrl}>
+                      <rdf-lens config={buildLensConfigRdf({ shapeFile: shapeUrl, shapeClass: 'http://example.org/Person', multiple: true })}>
+                        <source-rdf
+                          url={dataUrl}
+                          config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "file" ;
+  srdf:format "turtle" .'
+                        ></source-rdf>
                       </rdf-lens>
                     </lens-display>
                   ) : (
@@ -735,33 +700,44 @@ export default function RDFWebComponentsDemo() {
                 <p className="mb-2 text-xs font-semibold text-slate-600 dark:text-slate-400">Example snippet</p>
                 <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg overflow-x-auto">
 {`<lens-display template="card.html">
-  <rdf-lens shape-file="shapes.ttl">
-    <rdf-adapter 
+  <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes.ttl" .'>
+    <source-rdf 
       url="https://dbpedia.org/sparql"
-      strategy="cbd"
-      subject="http://dbpedia.org/resource/Albert_Einstein"
-      depth="3"
+      config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "cbd" ;
+  srdf:subject <http://dbpedia.org/resource/Albert_Einstein> ;
+  srdf:depth 3 .'
     />
   </rdf-lens>
+  <script type="text/turtle" data-lens-display-config="true">
+@prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .
+[] a drdf:LensDisplayConfig ;
+  drdf:theme "dark" .
+  </script>
 </lens-display>`}
                 </pre>
                 <p className="mb-2 mt-4 text-xs font-semibold text-slate-600 dark:text-slate-400">Live output</p>
                 <div className="rounded-lg border bg-white p-3">
                   {mounted && bundleLoaded ? (
-                    <lens-display key="live-cbd" template={templateUrl} mode="grid">
-                      <rdf-lens
-                        shape-file={shapeUrl}
-                        shape-class="http://example.org/Person"
-                        subject="http://example.org/Alice"
-                        multiple
-                      >
-                        <rdf-adapter
+                    <lens-display key="live-cbd" template={templateUrl}>
+                      <rdf-lens config={buildLensConfigRdf({
+                        shapeFile: shapeUrl,
+                        shapeClass: 'http://example.org/Person',
+                        subject: 'http://example.org/Alice',
+                        multiple: true,
+                      })}>
+                        <source-rdf
                           url={dataUrl}
-                          format="turtle"
-                          strategy="cbd"
-                          subject="http://example.org/Alice"
-                          depth={1}
-                        ></rdf-adapter>
+                          config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "cbd" ;
+  srdf:format "turtle" ;
+  srdf:subject <http://example.org/Alice> ;
+  srdf:depth 1 .'
+                        ></source-rdf>
                       </rdf-lens>
                     </lens-display>
                   ) : (
@@ -785,34 +761,36 @@ export default function RDFWebComponentsDemo() {
               <CardContent>
                 <p className="mb-2 text-xs font-semibold text-slate-600 dark:text-slate-400">Example snippet</p>
                 <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg overflow-x-auto">
-{`<rdf-lens shape-class="Person">
-  <script type="text/turtle">
-    ex:PersonShape a sh:NodeShape ;
-      sh:targetClass ex:Person ;
-      sh:property [
-        sh:name "name" ;
-        sh:path ex:name ;
-        sh:datatype xsd:string ;
-      ] .
-  </script>
-  <rdf-adapter url="data.ttl"/>
+{`<rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeClass "Person" ;
+  lrdf:shapes "@prefix sh: <http://www.w3.org/ns/shacl#> . @prefix ex: <http://example.org/> . ex:PersonShape a sh:NodeShape ; sh:targetClass ex:Person ; sh:property [ sh:name \\\"name\\\" ; sh:path ex:name ; sh:datatype xsd:string ] ." .'>
+  <source-rdf url="data.ttl"/>
 </rdf-lens>`}
                 </pre>
                 <p className="mb-2 mt-4 text-xs font-semibold text-slate-600 dark:text-slate-400">Live output</p>
                 <div className="rounded-lg border bg-white p-3">
                   {mounted && bundleLoaded ? (
-                    <lens-display template={templateUrl} mode="grid">
-                      <rdf-lens shape-class="http://example.org/Person" multiple>
-                        <script type="text/turtle">
-                          {`@prefix sh: <http://www.w3.org/ns/shacl#> .
+                    <lens-display template={templateUrl}>
+                      <rdf-lens config={`@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeClass <http://example.org/Person> ;
+  lrdf:multiple true ;
+  lrdf:shapes ${toTurtleString(`@prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix ex: <http://example.org/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 ex:PersonShape a sh:NodeShape ;
   sh:targetClass ex:Person ;
-  sh:property [ sh:name "name" ; sh:path ex:name ; sh:datatype xsd:string ] .`}
-                        </script>
-                        <rdf-adapter url={dataUrl} format="turtle"></rdf-adapter>
+  sh:property [ sh:name "name" ; sh:path ex:name ; sh:datatype xsd:string ] .`)} .`}>
+                        <source-rdf
+                          url={dataUrl}
+                          config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "file" ;
+  srdf:format "turtle" .'
+                        ></source-rdf>
                       </rdf-lens>
                     </lens-display>
                   ) : (
@@ -861,7 +839,7 @@ ex:PersonShape a sh:NodeShape ;
                     <div className="text-slate-400">▲ quads</div>
                   </div>
                   <div className="border border-blue-300 dark:border-blue-700 rounded-lg p-4">
-                    <h4 className="font-bold text-blue-600 dark:text-blue-400 mb-2">rdf-adapter</h4>
+                    <h4 className="font-bold text-blue-600 dark:text-blue-400 mb-2">source-rdf</h4>
                     <p className="text-slate-600 dark:text-slate-400 mb-2">RDF Processing Pipeline</p>
                     <ul className="text-xs text-slate-500 space-y-1">
                       <li>• Fetch: HTTP, SPARQL endpoints</li>

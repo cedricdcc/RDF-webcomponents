@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, Layers, Info } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, Layers, Info, Copy, Download, Check } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -228,8 +229,7 @@ const ex6Html = iframeBase(
           "multiple": true
         },
         "display": {
-          "template": "${withBasePath('/demo/person-card.html')}",
-          "mode": "grid"
+          "template": "${withBasePath('/demo/person-card.html')}"
         },
         "decorators": { "enabled": true, "icons": { "loading": "⏳", "ready": "🔍", "error": "⚠" } }
       }
@@ -285,7 +285,7 @@ const ex8Html = iframeBase(
           "shapeClass": "http://example.org/Book",
           "multiple": true
         },
-        "display": { "template": "${withBasePath('/demo/book-card.html')}", "mode": "grid" },
+        "display": { "template": "${withBasePath('/demo/book-card.html')}" },
         "decorators": { "enabled": true, "icons": { "loading": "⏳", "ready": "📚", "error": "⚠" } }
       },
       {
@@ -300,7 +300,7 @@ const ex8Html = iframeBase(
           "shapeClass": "http://example.org/Organisation",
           "multiple": true
         },
-        "display": { "template": "${withBasePath('/demo/org-card.html')}", "mode": "grid" },
+        "display": { "template": "${withBasePath('/demo/org-card.html')}" },
         "decorators": { "enabled": true, "icons": { "loading": "⏳", "ready": "🏢", "error": "⚠" } }
       },
       {
@@ -309,7 +309,7 @@ const ex8Html = iframeBase(
         "match": { "css": "a[href$='.ttl']", "contentType": "text" },
         "adapter": { "strategy": "file" },
         "lens": { "shapeFile": "${withBasePath('/demo/shapes.ttl')}", "shapeClass": "http://example.org/Person", "multiple": true },
-        "display": { "template": "${withBasePath('/demo/person-card.html')}", "mode": "grid" }
+        "display": { "template": "${withBasePath('/demo/person-card.html')}" }
       }
     ]
   }
@@ -345,7 +345,7 @@ const ex9Html = iframeBase(
           "shapeClass": "http://example.org/Book",
           "multiple": true
         },
-        "display": { "template": "${withBasePath('/demo/book-card.html')}", "mode": "grid" },
+        "display": { "template": "${withBasePath('/demo/book-card.html')}" },
         "decorators": { "enabled": true, "icons": { "loading": "⏳", "ready": "📚", "error": "⚠" } }
       }
     ]
@@ -634,7 +634,7 @@ const examples: Example[] = [
         "shapeClass": "http://example.org/Book",
         "multiple": true
       },
-      "display": { "template": "/demo/book-card.html", "mode": "grid" }
+      "display": { "template": "/demo/book-card.html" }
     }
   ]
 }`,
@@ -645,6 +645,59 @@ const examples: Example[] = [
 // Component
 // ---------------------------------------------------------------------------
 function ExampleCard({ example }: { example: Example }) {
+  const [copied, setCopied] = useState(false);
+
+  const generateCompleteHtml = () => {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${example.title}</title>
+  <script type="module" src="${BUNDLE}"><\/script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 16px; font-family: ui-sans-serif, system-ui, sans-serif; background: #f8fafc; color: #0f172a; }
+    .demo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
+    .person-card, .book-card, .org-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; background: white; }
+    .person-card h3, .book-card h3, .org-card h3 { margin: 0 0 0.5rem; }
+    a { color: #0e7490; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <link-orchestration>
+    <script type="application/json">
+    ${JSON.stringify(JSON.parse(example.configCode), null, 2)}
+    <\/script>
+    
+    <h1>${example.title}</h1>
+    <p>${example.description}</p>
+    
+    <!-- Example data link -->
+    <a href="/demo/people.ttl">📊 Load Data</a>
+  </link-orchestration>
+</body>
+</html>`;
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(generateCompleteHtml());
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleDownload = () => {
+    const html = generateCompleteHtml();
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${example.id}-example.html`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-3">
@@ -672,9 +725,10 @@ function ExampleCard({ example }: { example: Example }) {
         </div>
 
         <Tabs defaultValue="demo" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="demo">Live Demo</TabsTrigger>
-            <TabsTrigger value="html">HTML Code</TabsTrigger>
+            <TabsTrigger value="complete">Complete HTML</TabsTrigger>
+            <TabsTrigger value="html">Iframe HTML</TabsTrigger>
             <TabsTrigger value="rules">Orchestrator Rules</TabsTrigger>
             <TabsTrigger value="lens">RDF-Lens Config</TabsTrigger>
             <TabsTrigger value="template">Template</TabsTrigger>
@@ -690,7 +744,52 @@ function ExampleCard({ example }: { example: Example }) {
             />
           </TabsContent>
 
+          <TabsContent value="complete" className="mt-3">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                  Complete Standalone HTML File
+                </p>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCopy}
+                    className="h-8 px-2 text-xs gap-1.5"
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="h-3.5 w-3.5" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3.5 w-3.5" />
+                        Copy
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleDownload}
+                    className="h-8 px-2 text-xs gap-1.5"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    Download
+                  </Button>
+                </div>
+              </div>
+              <pre className="text-xs rounded-md border bg-slate-900 text-slate-100 dark:bg-slate-950 p-3 overflow-x-auto whitespace-pre-wrap max-h-[500px] overflow-y-auto">
+                {generateCompleteHtml()}
+              </pre>
+            </div>
+          </TabsContent>
+
           <TabsContent value="html" className="mt-3">
+            <p className="mb-2 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+              Iframe HTML (Full Document Rendered Above)
+            </p>
             <pre className="text-xs rounded-md border bg-slate-900 text-slate-100 dark:bg-slate-950 p-3 overflow-x-auto whitespace-pre-wrap">
               {example.iframeHtml}
             </pre>

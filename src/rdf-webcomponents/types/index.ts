@@ -50,8 +50,7 @@ export type RdfFormat =
 export type DataSourceStrategy = 
   | 'file'      // Static RDF file
   | 'sparql'    // SPARQL endpoint
-  | 'cbd'       // Concise Bounded Description
-  | 'graph';    // Named graph dump
+  | 'cbd';      // Concise Bounded Description
 
 // ============================================================================
 // Worker Message Protocol
@@ -142,8 +141,6 @@ export interface FetchRequestPayload {
   subject?: string;
   /** Depth for CBD traversal */
   depth?: number;
-  /** Named graph to query */
-  graph?: string;
   /** Custom headers for the request */
   headers?: Record<string, string>;
 }
@@ -308,8 +305,6 @@ export interface ExecuteLensRequestPayload {
   subject?: string;
   /** Whether to extract all matching subjects */
   multiple?: boolean;
-  /** Whether to validate against shapes */
-  validate?: boolean;
   /** Shape cache key */
   shapeCacheKey?: string;
 }
@@ -328,8 +323,6 @@ export interface ExecuteLensResponsePayload {
   shapeClass: string;
   /** Time taken to execute (ms) */
   duration: number;
-  /** Any validation errors */
-  validationErrors?: string[];
 }
 
 // ============================================================================
@@ -460,69 +453,23 @@ export function serializeTerm(term: Term): SerializedTerm {
 // ============================================================================
 
 /**
- * Properties for the rdf-adapter component
+ * Properties for the source-rdf component
  */
-export interface RdfAdapterProps {
+export interface SourceRdfProps {
   // Data source
-  /** URL to RDF data or SPARQL endpoint */
-  url: string;
-  
-  // Format options
-  /** RDF format (auto-detected if not specified) */
-  format?: RdfFormat;
-  
-  // SPARQL options
-  /** Data source strategy */
-  strategy?: DataSourceStrategy;
-  /** Subject URI for CBD or direct lookup */
-  subject?: string;
-  /** Custom SPARQL query for subject discovery */
-  subjectQuery?: string;
-  /** Class URI to discover instances */
-  subjectClass?: string;
-  /** Depth for CBD traversal */
-  depth?: number;
-  /** Named graph to query */
-  graph?: string;
-  
-  // Caching options
-  /** Cache strategy */
-  cache?: 'none' | 'memory' | 'localStorage' | 'indexedDB';
-  /** Cache time-to-live in seconds */
-  cacheTtl?: number;
-  /** Whether to use shared global cache */
-  shared?: boolean;
-  
-  // Request options
-  /** Custom HTTP headers */
-  headers?: Record<string, string>;
+  /** Optional URL to RDF data or SPARQL endpoint (overrides srdf:url in config). */
+  url?: string;
+
+  /** Inline RDF config content in the source-rdf vocabulary. */
+  config?: string;
 }
 
 /**
  * Properties for the rdf-lens component
  */
 export interface RdfLensProps {
-  // Shape definition
-  /** URL to SHACL shapes file */
-  shapeFile?: string;
-  /** Target class URI to extract */
-  shapeClass?: string;
-  
-  // Inline shapes
-  /** Inline SHACL shapes (Turtle format) */
-  shapes?: string;
-  
-  // Processing options
-  /** Whether to validate against shapes */
-  validate?: boolean;
-  /** Whether to throw on validation errors */
-  strict?: boolean;
-  
-  // Multiple results
-  /** Whether to extract all matching subjects */
-  multiple?: boolean;
-  /** Specific subject URI to extract */
-  subject?: string;
+  /** Inline RDF config content in the rdf-lens vocabulary. */
+  config?: string;
 }
 
 /**
@@ -532,16 +479,11 @@ export interface LensDisplayProps {
   // Template
   /** URL to template file */
   template?: string;
+
+  /** Inline RDF config content in the lens-display vocabulary (property use). */
+  config?: string;
   
-  // Display options
-  /** Display mode */
-  mode?: 'single' | 'list' | 'grid' | 'table';
-  
-  // Styling
-  /** Theme identifier */
-  theme?: string;
-  /** CSS class to apply */
-  class?: string;
+  // Styling configured through config RDF
 }
 
 // ============================================================================
@@ -595,7 +537,7 @@ export interface ErrorEvent {
   /** Error message */
   message: string;
   /** Error phase */
-  phase: 'fetch' | 'parse' | 'shape' | 'extract' | 'render';
+  phase: 'fetch' | 'parse' | 'shape' | 'extract' | 'render' | 'config';
   /** Original error */
   error?: Error;
 }

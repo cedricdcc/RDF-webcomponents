@@ -4,7 +4,7 @@
  * 
  * A collection of Web Components for working with RDF data:
  * 
- * - `<rdf-adapter>` - Fetches and parses RDF data from various sources
+ * - `<source-rdf>` - Fetches and parses RDF data from various sources
  * - `<rdf-lens>` - Extracts structured data using SHACL shapes
  * - `<lens-display>` - Renders data using HTML templates
  * - `<link-orchestration>` - Scans links and mounts RDF pipeline by rule
@@ -18,8 +18,11 @@
  * </head>
  * <body>
  *   <lens-display template="person-card.html">
- *     <rdf-lens shape-file="shapes.ttl" shape-class="Person">
- *       <rdf-adapter url="data.ttl"></rdf-adapter>
+ *     <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+ * [] a lrdf:RdfLensConfig ;
+ *   lrdf:shapeFile "shapes.ttl" ;
+ *   lrdf:shapeClass "Person" .'>
+ *       <source-rdf url="data.ttl"></source-rdf>
  *     </rdf-lens>
  *   </lens-display>
  * </body>
@@ -29,12 +32,18 @@
  * @example SPARQL Endpoint
  * ```html
  * <lens-display template="card.html">
- *   <rdf-lens shape-file="shapes.ttl" shape-class="Person" multiple>
- *     <rdf-adapter 
+ *   <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+ * [] a lrdf:RdfLensConfig ;
+ *   lrdf:shapeFile "shapes.ttl" ;
+ *   lrdf:shapeClass "Person" ;
+ *   lrdf:multiple true .'>
+ *     <source-rdf 
  *       url="https://dbpedia.org/sparql"
- *       strategy="sparql"
- *       subject-class="dbo:Person"
- *     ></rdf-adapter>
+ *       config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+ * [] a srdf:SourceRdfConfig ;
+ *   srdf:strategy "sparql" ;
+ *   srdf:subjectClass <http://dbpedia.org/ontology/Person> .'
+ *     ></source-rdf>
  *   </rdf-lens>
  * </lens-display>
  * ```
@@ -46,7 +55,7 @@
 // Component Exports
 // ============================================================================
 
-export { RdfAdapter } from './components/rdf-adapter';
+export { SourceRdf } from './components/source-rdf';
 export { RdfLens } from './components/rdf-lens';
 export { LensDisplay } from './components/lens-display';
 export { LinkOrchestration } from './components/link-orchestration';
@@ -56,7 +65,7 @@ export { LinkOrchestration } from './components/link-orchestration';
 // ============================================================================
 
 export type {
-  RdfAdapterProps,
+  SourceRdfProps,
   RdfLensProps,
   LensDisplayProps,
   RdfFormat,
@@ -90,7 +99,7 @@ export { SparqlClient } from './core/worker/sparql';
 // Log registration
 if (typeof window !== 'undefined') {
   console.log('[RDF WebComponents] Components registered:', {
-    'rdf-adapter': customElements.get('rdf-adapter') ? '✓' : '✗',
+    'source-rdf': customElements.get('source-rdf') ? '✓' : '✗',
     'rdf-lens': customElements.get('rdf-lens') ? '✓' : '✗',
     'lens-display': customElements.get('lens-display') ? '✓' : '✗',
     'link-orchestration': customElements.get('link-orchestration') ? '✓' : '✗',

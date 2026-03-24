@@ -56,8 +56,7 @@ const bodyExample = `<link-orchestration>
           "shapes": "@prefix sh: <http://www.w3.org/ns/shacl#> . ..."
         },
         "display": {
-          "templateInline": "<span class='person'>{{name}}</span>",
-          "mode": "single"
+          "templateInline": "<span class='person'>{{name}}</span>"
         },
         "decorators": {
           "enabled": true,
@@ -135,8 +134,7 @@ const bodyIframeHtml = `<!DOCTYPE html>
               "multiple": true
             },
             "display": {
-              "template": "${withBasePath('/demo/person-card.html')}",
-              "mode": "grid"
+              "template": "${withBasePath('/demo/person-card.html')}"
             },
             "decorators": {
               "enabled": true,
@@ -185,7 +183,6 @@ export default function LinkOrchestrationDocsPage() {
           },
           display: {
             template: withBasePath('/demo/person-card.html'),
-            mode: 'grid',
           },
           decorators: {
             enabled: true,
@@ -238,7 +235,6 @@ export default function LinkOrchestrationDocsPage() {
           },
           display: {
             template: withBasePath('/demo/person-card.html'),
-            mode: 'grid',
           },
           decorators: {
             enabled: true,

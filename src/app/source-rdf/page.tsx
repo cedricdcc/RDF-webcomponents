@@ -21,24 +21,27 @@ const formats = [
 
 const strategies = [
   { name: 'file', description: 'Load static RDF files from URLs' },
-  { name: 'sparql', description: 'Query SPARQL endpoints for data' },
+  { name: 'sparql', description: 'Run SPARQL DESCRIBE/CONSTRUCT query strategies' },
   { name: 'cbd', description: 'Extract Concise Bounded Description' },
-  { name: 'graph', description: 'Load entire named graphs' },
 ];
 
 const attributes = [
-  { name: 'url', type: 'string', required: true, description: 'URL to RDF data or SPARQL endpoint' },
-  { name: 'format', type: 'string', default: 'auto', description: 'RDF format (auto-detected if not specified)' },
-  { name: 'strategy', type: 'string', default: 'file', description: 'Data source strategy' },
-  { name: 'subject', type: 'string', description: 'Subject URI for CBD or direct lookup' },
-  { name: 'subject-query', type: 'string', description: 'SPARQL query to discover subjects' },
-  { name: 'subject-class', type: 'string', description: 'Class URI to discover instances' },
-  { name: 'depth', type: 'number', default: '2', description: 'CBD traversal depth' },
-  { name: 'graph', type: 'string', description: 'Named graph to query' },
-  { name: 'cache', type: 'string', default: 'memory', description: 'Cache strategy (none, memory, localStorage, indexedDB)' },
-  { name: 'cache-ttl', type: 'number', default: '3600', description: 'Cache TTL in seconds' },
-  { name: 'shared', type: 'boolean', default: 'false', description: 'Use shared global cache' },
-  { name: 'headers', type: 'string', description: 'Custom HTTP headers (JSON string)' },
+  { name: 'url', type: 'string', required: false, description: 'Optional data URL override (takes precedence over srdf:url in config).' },
+  { name: 'config', type: 'string', required: false, description: 'Inline RDF config in source-rdf vocabulary (Turtle, JSON-LD, RDF/XML, N-Triples, N-Quads).' },
+];
+
+const configProperties = [
+  { name: 'srdf:url', type: 'IRI or string', required: true, description: 'Source URL or SPARQL endpoint URL.' },
+  { name: 'srdf:format', type: 'string', required: false, description: 'RDF format hint: turtle, json-ld, rdf-xml, n-triples, n-quads.' },
+  { name: 'srdf:strategy', type: 'string', required: false, description: 'Strategy: file, sparql, cbd. Defaults to file.' },
+  { name: 'srdf:subject', type: 'IRI or string', required: false, description: 'Subject selector (required by cbd, optional for sparql).' },
+  { name: 'srdf:subjectQuery', type: 'string', required: false, description: 'SPARQL DESCRIBE/CONSTRUCT query returning triples.' },
+  { name: 'srdf:subjectClass', type: 'IRI or string', required: false, description: 'Class selector for sparql strategy.' },
+  { name: 'srdf:depth', type: 'integer', required: false, description: 'CBD depth. Default: 2.' },
+  { name: 'srdf:cache', type: 'string', required: false, description: 'Cache strategy: none, memory, localStorage, indexedDB.' },
+  { name: 'srdf:cacheTtl', type: 'integer', required: false, description: 'Cache TTL in seconds.' },
+  { name: 'srdf:shared', type: 'boolean', required: false, description: 'Whether to use shared cache.' },
+  { name: 'srdf:headers', type: 'string', required: false, description: 'JSON object string for HTTP headers.' },
 ];
 
 const events = [
@@ -48,47 +51,56 @@ const events = [
 ];
 
 const examples = {
-  static: `<!-- Load a static Turtle file -->
-<rdf-adapter 
-  url="https://example.org/data.ttl"
-  format="turtle"
-  cache="indexedDB"
-  shared
-></rdf-adapter>`,
+  static: `<!-- Load a static Turtle file with inline RDF config -->
+<source-rdf config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:url <https://example.org/data.ttl> ;
+  srdf:format "turtle" ;
+  srdf:cache "indexedDB" ;
+  srdf:shared true .'></source-rdf>`,
 
   sparql: `<!-- Query SPARQL endpoint for all instances of a class -->
-<rdf-adapter 
-  url="https://dbpedia.org/sparql"
-  strategy="sparql"
-  subject-class="dbo:Person"
-  cache="memory"
-  cache-ttl="300"
-></rdf-adapter>`,
+<source-rdf config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:url <https://dbpedia.org/sparql> ;
+  srdf:strategy "sparql" ;
+  srdf:subjectClass <http://dbpedia.org/ontology/Person> ;
+  srdf:cache "memory" ;
+  srdf:cacheTtl 300 .'></source-rdf>`,
 
   cbd: `<!-- Extract CBD for a specific subject -->
-<rdf-adapter 
-  url="https://dbpedia.org/sparql"
-  strategy="cbd"
-  subject="http://dbpedia.org/resource/Albert_Einstein"
-  depth="3"
-  cache="localStorage"
-></rdf-adapter>`,
+<source-rdf config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:url <https://dbpedia.org/sparql> ;
+  srdf:strategy "cbd" ;
+  srdf:subject <http://dbpedia.org/resource/Albert_Einstein> ;
+  srdf:depth 3 .'></source-rdf>`,
 
-  query: `<!-- Use custom SPARQL query for subject discovery -->
-<rdf-adapter 
-  url="https://query.wikidata.org/sparql"
-  strategy="sparql"
-  subject-query="SELECT ?s WHERE { ?s wdt:P31 wd:Q5 . ?s wdt:P27 wd:Q30 } LIMIT 100"
-></rdf-adapter>`,
+  query: `<!-- Use custom SPARQL CONSTRUCT query returning triples -->
+<source-rdf config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:url <https://query.wikidata.org/sparql> ;
+  srdf:strategy "sparql" ;
+  srdf:subjectQuery "CONSTRUCT { ?s ?p ?o } WHERE { ?s wdt:P31 wd:Q5 . ?s ?p ?o } LIMIT 50" .'></source-rdf>`,
 
-  headers: `<!-- Custom headers for authentication -->
-<rdf-adapter 
-  url="https://protected.example.org/data.ttl"
-  headers='{"Authorization": "Bearer token123"}'
-></rdf-adapter>`,
+  config: `<!-- Config from inline script instead of config attribute -->
+<source-rdf>
+  <script type="text/turtle">
+    @prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+    [] a srdf:SourceRdfConfig ;
+      srdf:url <https://example.org/data.ttl> ;
+      srdf:strategy "file" .
+  </script>
+</source-rdf>`,
+
+  headers: `<!-- Use RDF config headers for authenticated requests -->
+<source-rdf config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:url <https://protected.example.org/data.ttl> ;
+  srdf:headers "{\\"Authorization\\":\\"Bearer token123\\"}" .'></source-rdf>`,
 };
 
-export default function RdfAdapterDocs() {
+export default function SourceRdfDocs() {
   const [copied, setCopied] = useState<string | null>(null);
 
   const copyToClipboard = (text: string, id: string) => {
@@ -114,7 +126,7 @@ export default function RdfAdapterDocs() {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-                  &lt;rdf-adapter&gt;
+                  &lt;source-rdf&gt;
                 </h1>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                   RDF Data Fetching Component
@@ -152,14 +164,16 @@ export default function RdfAdapterDocs() {
               <CardHeader>
                 <CardTitle>Overview</CardTitle>
                 <CardDescription>
-                  The rdf-adapter component fetches and parses RDF data from various sources
+                  The source-rdf component fetches and parses RDF data from various sources
                 </CardDescription>
               </CardHeader>
               <CardContent className="prose dark:prose-invert max-w-none">
                 <p>
-                  <code>&lt;rdf-adapter&gt;</code> is the foundation of the RDF Web Components stack. 
+                  <code>&lt;source-rdf&gt;</code> is the foundation of the RDF Web Components stack. 
                   It handles fetching RDF data from URLs or SPARQL endpoints and parsing it into a 
-                  triplestore that can be consumed by child components.
+                  triplestore that can be consumed by child components. The public element API is intentionally small:
+                  only <code>url</code> and <code>config</code> attributes are supported, while strategy-specific options
+                  live inside RDF config.
                 </p>
                 <h3 className="text-lg font-semibold mt-6">Key Features</h3>
                 <ul className="list-disc list-inside space-y-1">
@@ -242,6 +256,29 @@ export default function RdfAdapterDocs() {
                     </tbody>
                   </table>
                 </div>
+                <div className="mt-6 overflow-x-auto">
+                  <h4 className="mb-2 font-medium">RDF Config Properties</h4>
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-2 font-medium">Property</th>
+                        <th className="text-left py-2 font-medium">Type</th>
+                        <th className="text-left py-2 font-medium">Required</th>
+                        <th className="text-left py-2 font-medium">Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {configProperties.map(prop => (
+                        <tr key={prop.name} className="border-b">
+                          <td className="py-2"><code className="text-blue-600">{prop.name}</code></td>
+                          <td className="py-2 text-slate-600">{prop.type}</td>
+                          <td className="py-2 text-slate-500">{prop.required ? 'yes' : 'no'}</td>
+                          <td className="py-2 text-slate-600">{prop.description}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </CardContent>
             </Card>
 
@@ -277,6 +314,7 @@ export default function RdfAdapterDocs() {
                     <TabsTrigger value="sparql">SPARQL</TabsTrigger>
                     <TabsTrigger value="cbd">CBD</TabsTrigger>
                     <TabsTrigger value="query">Custom Query</TabsTrigger>
+                    <TabsTrigger value="config">RDF Config</TabsTrigger>
                     <TabsTrigger value="headers">Headers</TabsTrigger>
                   </TabsList>
 
@@ -310,7 +348,7 @@ export default function RdfAdapterDocs() {
                 <ScrollArea className="h-[300px]">
                   <pre className="text-sm bg-slate-900 text-slate-100 p-4 rounded-lg">
 {`// Get component reference
-const adapter = document.querySelector('rdf-adapter');
+const adapter = document.querySelector('source-rdf');
 
 // Access properties
 console.log(adapter.quads);      // SerializedQuad[]

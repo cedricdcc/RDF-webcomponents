@@ -269,7 +269,6 @@ export class SparqlClient {
       subjectQuery?: string;
       subjectClass?: string;
       depth?: number;
-      graph?: string;
       limit?: number;
     } = {}
   ): Promise<Quad[]> {
@@ -285,9 +284,6 @@ export class SparqlClient {
           subject: options.subject,
           depth: options.depth ?? 2,
         });
-        
-      case 'graph':
-        return this.extractGraph(options.graph);
         
       case 'file':
       default:
@@ -362,23 +358,6 @@ export class SparqlClient {
     lines.push(`}`);
     
     return lines.join('\n');
-  }
-
-  /**
-   * Extracts all triples from a named graph
-   */
-  async extractGraph(graphUri?: string): Promise<Quad[]> {
-    const graphClause = graphUri ? `FROM <${graphUri}>` : '';
-    const query = `
-      CONSTRUCT { ?s ?p ?o }
-      WHERE {
-        ${graphClause}
-        ?s ?p ?o .
-      }
-      LIMIT ${this.config.limit}
-    `;
-    
-    return this.executeConstruct(query);
   }
 
   // ========================================================================

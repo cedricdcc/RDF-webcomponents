@@ -1,26 +1,16 @@
 import type { DetailedHTMLProps, HTMLAttributes } from "react";
 
-type RdfAdapterProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
+type SourceRdfProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
   url?: string;
-  format?: string;
-  strategy?: string;
-  cache?: string;
-  subject?: string;
-  "subject-query"?: string;
-  "subject-class"?: string;
-  depth?: number;
+  config?: string;
 };
 
 type RdfLensProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
-  "shape-file"?: string;
-  "shape-class"?: string;
-  multiple?: boolean;
-  subject?: string;
+  config?: string;
 };
 
 type LensDisplayProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
   template?: string;
-  mode?: string;
 };
 
 type LinkOrchestrationProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
@@ -33,7 +23,7 @@ type LinkOrchestrationProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTM
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      "rdf-adapter": RdfAdapterProps;
+      "source-rdf": SourceRdfProps;
       "rdf-lens": RdfLensProps;
       "lens-display": LensDisplayProps;
       "link-orchestration": LinkOrchestrationProps;
@@ -44,7 +34,7 @@ declare global {
 declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
-      "rdf-adapter": RdfAdapterProps;
+      "source-rdf": SourceRdfProps;
       "rdf-lens": RdfLensProps;
       "lens-display": LensDisplayProps;
       "link-orchestration": LinkOrchestrationProps;

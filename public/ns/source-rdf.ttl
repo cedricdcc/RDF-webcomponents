@@ -1,0 +1,69 @@
+@base <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+@prefix : <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl> a owl:Ontology ;
+  rdfs:label "source-rdf vocabulary" ;
+  rdfs:comment "Vocabulary for configuring the source-rdf web component." .
+
+:SourceRdfConfig a rdfs:Class ;
+  rdfs:label "Source RDF Config" ;
+  rdfs:comment "Configuration node consumed by <source-rdf>." .
+
+:strategy a rdf:Property ;
+  rdfs:domain :SourceRdfConfig ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Allowed values: file, sparql, cbd." .
+
+:url a rdf:Property ;
+  rdfs:domain :SourceRdfConfig ;
+  rdfs:range xsd:anyURI ;
+  rdfs:comment "Source URL or SPARQL endpoint URL." .
+
+:format a rdf:Property ;
+  rdfs:domain :SourceRdfConfig ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Optional RDF format hint." .
+
+:subject a rdf:Property ;
+  rdfs:domain :SourceRdfConfig ;
+  rdfs:range xsd:anyURI ;
+  rdfs:comment "Required for cbd; optional selector for sparql." .
+
+:subjectQuery a rdf:Property ;
+  rdfs:domain :SourceRdfConfig ;
+  rdfs:range xsd:string ;
+  rdfs:comment "SPARQL DESCRIBE/CONSTRUCT query returning triples." .
+
+:subjectClass a rdf:Property ;
+  rdfs:domain :SourceRdfConfig ;
+  rdfs:range xsd:anyURI ;
+  rdfs:comment "Class URI selector for sparql strategy." .
+
+:depth a rdf:Property ;
+  rdfs:domain :SourceRdfConfig ;
+  rdfs:range xsd:integer ;
+  rdfs:comment "Traversal depth for cbd strategy." .
+
+:cache a rdf:Property ;
+  rdfs:domain :SourceRdfConfig ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Allowed values: none, memory, localStorage, indexedDB." .
+
+:cacheTtl a rdf:Property ;
+  rdfs:domain :SourceRdfConfig ;
+  rdfs:range xsd:integer ;
+  rdfs:comment "Cache TTL in seconds." .
+
+:shared a rdf:Property ;
+  rdfs:domain :SourceRdfConfig ;
+  rdfs:range xsd:boolean ;
+  rdfs:comment "Whether to use shared cache." .
+
+:headers a rdf:Property ;
+  rdfs:domain :SourceRdfConfig ;
+  rdfs:range xsd:string ;
+  rdfs:comment "JSON object string for HTTP headers." .

@@ -1,0 +1,47 @@
+@base <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+@prefix : <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl> a owl:Ontology ;
+  rdfs:label "rdf-lens vocabulary" ;
+  rdfs:comment "Vocabulary for configuring the rdf-lens web component." .
+
+:RdfLensConfig a rdfs:Class ;
+  rdfs:label "RDF Lens Config" ;
+  rdfs:comment "Configuration node consumed by <rdf-lens>." .
+
+:shapeFile a rdf:Property ;
+  rdfs:domain :RdfLensConfig ;
+  rdfs:range xsd:anyURI ;
+  rdfs:comment "URL to a SHACL shapes document." .
+
+:shapeClass a rdf:Property ;
+  rdfs:domain :RdfLensConfig ;
+  rdfs:range xsd:anyURI ;
+  rdfs:comment "Target class URI to extract." .
+
+:shapes a rdf:Property ;
+  rdfs:domain :RdfLensConfig ;
+  rdfs:range xsd:string ;
+  rdfs:comment "Inline SHACL shapes in Turtle serialization." .
+
+:strict a rdf:Property ;
+  rdfs:domain :RdfLensConfig ;
+  rdfs:range xsd:boolean ;
+  rdfs:comment "When true, extraction errors fail the component." .
+
+:multiple a rdf:Property ;
+  rdfs:domain :RdfLensConfig ;
+  rdfs:range xsd:boolean ;
+  rdfs:comment "When true, extract all matching subjects." .
+
+:subject a rdf:Property ;
+  rdfs:domain :RdfLensConfig ;
+  rdfs:range xsd:anyURI ;
+  rdfs:comment "Specific subject URI to extract." .
+
+:validate a rdf:Property ;
+  rdfs:comment "Deprecated and intentionally unsupported in this vocabulary." .

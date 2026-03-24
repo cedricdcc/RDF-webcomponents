@@ -1,0 +1,5 @@
+@prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .
+
+[] a drdf:LensDisplayConfig ;
+  drdf:theme "dark" ;
+  drdf:class "compact" .

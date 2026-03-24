@@ -123,21 +123,104 @@ export default function DemoPage() {
   const [remoteDataUrl, setRemoteDataUrl] = useState(withBasePath("/demo/people.ttl"));
   const [dataFormat, setDataFormat] = useState("turtle");
   const [dataStrategy, setDataStrategy] = useState("file");
+  const [sparqlSelectorMode, setSparqlSelectorMode] = useState<"subjectClass" | "subject" | "subjectQuery">("subjectClass");
+  const [subjectValue, setSubjectValue] = useState("");
   const [subjectClass, setSubjectClass] = useState("");
   const [subjectQuery, setSubjectQuery] = useState("");
+  const [cbdDepth, setCbdDepth] = useState("2");
+  const [sourceCardTab, setSourceCardTab] = useState<"guided" | "ttl">("guided");
   const [rdfInput, setRdfInput] = useState(DEMO_DATA);
 
   const [shapeClass, setShapeClass] = useState("http://example.org/Person");
   const [multiple, setMultiple] = useState(true);
   const [shaclInput, setShaclInput] = useState(DEMO_SHAPES);
 
-  const [displayMode, setDisplayMode] = useState("grid");
   const [templateInput, setTemplateInput] = useState(DEMO_TEMPLATE);
 
   const adapterRef = useRef<HTMLElement | null>(null);
   const lensRef = useRef<HTMLElement | null>(null);
   const displayRef = useRef<HTMLElement | null>(null);
   const urlsRef = useRef<string[]>([]);
+
+  const toTurtleString = (value: string) =>
+    `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n")}"`;
+
+  const toIriOrString = (value: string) => {
+    const trimmed = value.trim();
+    if (/^https?:\/\//i.test(trimmed) || /^urn:/i.test(trimmed)) {
+      return `<${trimmed}>`;
+    }
+    return toTurtleString(trimmed);
+  };
+
+  const buildSourceConfigRdf = (sourceUrl: string) => {
+    const triples: string[] = [
+      `srdf:url ${toIriOrString(sourceUrl)}`,
+      `srdf:strategy ${toTurtleString(dataStrategy)}`,
+    ];
+
+    if (dataFormat) {
+      triples.push(`srdf:format ${toTurtleString(dataFormat)}`);
+    }
+
+    if (dataStrategy === "sparql") {
+      if (sparqlSelectorMode === "subjectClass" && subjectClass.trim()) {
+        triples.push(`srdf:subjectClass ${toIriOrString(subjectClass)}`);
+      }
+      if (sparqlSelectorMode === "subject" && subjectValue.trim()) {
+        triples.push(`srdf:subject ${toIriOrString(subjectValue)}`);
+      }
+      if (sparqlSelectorMode === "subjectQuery" && subjectQuery.trim()) {
+        triples.push(`srdf:subjectQuery ${toTurtleString(subjectQuery.trim())}`);
+      }
+    }
+
+    if (dataStrategy === "cbd") {
+      if (subjectValue.trim()) {
+        triples.push(`srdf:subject ${toIriOrString(subjectValue)}`);
+      }
+      const parsedDepth = Number(cbdDepth);
+      if (Number.isFinite(parsedDepth) && parsedDepth > 0) {
+        triples.push(`srdf:depth ${Math.floor(parsedDepth)}`);
+      }
+    }
+
+    return `@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .\n\n[] a srdf:SourceRdfConfig ;\n  ${triples.join(
+      ' ;\n  '
+    )} .`;
+  };
+
+  const buildLensConfigRdf = (shapeUrl: string) => {
+    const triples: string[] = [
+      `lrdf:shapeFile ${toIriOrString(shapeUrl)}`,
+      `lrdf:shapeClass ${toIriOrString(shapeClass)}`,
+      `lrdf:multiple ${multiple}`,
+    ];
+
+    return `@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .\n\n[] a lrdf:RdfLensConfig ;\n  ${triples.join(
+      ' ;\n  '
+    )} .`;
+  };
+
+  const previewSourceUrl = useMemo(() => {
+    if (useRemoteData) {
+      return remoteDataUrl.trim() || "https://example.org/data.ttl";
+    }
+    return "urn:playground:inline-data";
+  }, [useRemoteData, remoteDataUrl]);
+
+  const sourceConfigRdf = useMemo(() => {
+    return buildSourceConfigRdf(previewSourceUrl);
+  }, [
+    previewSourceUrl,
+    dataFormat,
+    dataStrategy,
+    sparqlSelectorMode,
+    subjectClass,
+    subjectValue,
+    subjectQuery,
+    cbdDepth,
+  ]);
 
   const bundleUrl = useMemo(
     () => `${withBasePath("/rdf-webcomponents.js")}?v=${WEB_COMPONENTS_VERSION}`,
@@ -184,13 +267,16 @@ export default function DemoPage() {
     setRemoteDataUrl(withBasePath("/demo/people.ttl"));
     setDataFormat("turtle");
     setDataStrategy("file");
+    setSparqlSelectorMode("subjectClass");
+    setSubjectValue("");
     setSubjectClass("");
     setSubjectQuery("");
+    setCbdDepth("2");
+    setSourceCardTab("guided");
     setRdfInput(DEMO_DATA);
     setShapeClass("http://example.org/Person");
     setMultiple(true);
     setShaclInput(DEMO_SHAPES);
-    setDisplayMode("grid");
     setTemplateInput(DEMO_TEMPLATE);
   };
 
@@ -219,17 +305,17 @@ export default function DemoPage() {
     const onAdapterReady = (event: Event) => {
       const detail = (event as CustomEvent).detail;
       setAdapterStatus("ready");
-      pushEvent("rdf-adapter: triplestore-ready", detail);
+      pushEvent("source-rdf: triplestore-ready", detail);
     };
     const onAdapterLoading = (event: Event) => {
       const detail = (event as CustomEvent).detail;
       setAdapterStatus("loading");
-      pushEvent("rdf-adapter: triplestore-loading", detail);
+      pushEvent("source-rdf: triplestore-loading", detail);
     };
     const onAdapterError = (event: Event) => {
       const detail = (event as CustomEvent).detail;
       setAdapterStatus("error");
-      pushEvent("rdf-adapter: triplestore-error", detail);
+      pushEvent("source-rdf: triplestore-error", detail);
     };
 
     const onShapesLoaded = (event: Event) => {
@@ -298,11 +384,11 @@ export default function DemoPage() {
           <h1 className="text-3xl font-bold">RDF Playground</h1>
           <p className="max-w-3xl text-sm text-slate-600">
             Edit RDF input, build your own SHACL shape, and tune the rendering template. This page is split into
-            three sections that map directly to <strong>rdf-adapter</strong>, <strong>rdf-lens</strong>, and
+            three sections that map directly to <strong>source-rdf</strong>, <strong>rdf-lens</strong>, and
             <strong> lens-display</strong>.
           </p>
           <div className="flex flex-wrap gap-4 text-xs text-slate-600">
-            <Link className="underline" href="/adapter">rdf-adapter docs</Link>
+            <Link className="underline" href="/source-rdf">source-rdf docs</Link>
             <Link className="underline" href="/lens">rdf-lens docs</Link>
             <Link className="underline" href="/display">lens-display docs</Link>
             <Link className="underline" href="/orchestration">link-orchestration docs</Link>
@@ -341,9 +427,10 @@ export default function DemoPage() {
 
         <div className="grid gap-6 lg:grid-cols-3">
           <section className="rounded-xl border bg-white p-4 space-y-3">
-            <h2 className="text-lg font-semibold">1. rdf-adapter</h2>
+            <h2 className="text-lg font-semibold">1. source-rdf</h2>
             <p className="text-xs text-slate-600">
-              Loads RDF from inline text or a remote URL/endpoint. Use remote mode when you want to query a SPARQL endpoint.
+              Strategy-driven builder for source-rdf config. Pick a strategy first, then provide only the variables required
+              for that strategy.
             </p>
             <label className="flex items-center gap-2 text-sm">
               <input
@@ -372,52 +459,143 @@ export default function DemoPage() {
                 />
               </label>
             )}
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <label className="space-y-1">
-                <span className="font-medium">format</span>
-                <select
-                  className="w-full rounded-md border px-2 py-1.5"
-                  value={dataFormat}
-                  onChange={(e) => setDataFormat(e.target.value)}
+            <div className="rounded-md border p-2">
+              <div className="mb-2 flex gap-2 text-xs">
+                <button
+                  type="button"
+                  className={`rounded px-2 py-1 ${sourceCardTab === "guided" ? "bg-slate-900 text-white" : "border"}`}
+                  onClick={() => setSourceCardTab("guided")}
                 >
-                  <option value="turtle">turtle</option>
-                  <option value="jsonld">jsonld</option>
-                  <option value="rdfxml">rdfxml</option>
-                  <option value="ntriples">ntriples</option>
-                </select>
-              </label>
-              <label className="space-y-1">
-                <span className="font-medium">strategy</span>
-                <select
-                  className="w-full rounded-md border px-2 py-1.5"
-                  value={dataStrategy}
-                  onChange={(e) => setDataStrategy(e.target.value)}
+                  Guided Inputs
+                </button>
+                <button
+                  type="button"
+                  className={`rounded px-2 py-1 ${sourceCardTab === "ttl" ? "bg-slate-900 text-white" : "border"}`}
+                  onClick={() => setSourceCardTab("ttl")}
                 >
-                  <option value="file">file</option>
-                  <option value="sparql">sparql</option>
-                  <option value="cbd">cbd</option>
-                  <option value="graph">graph</option>
-                </select>
-              </label>
+                  Generated TTL Config
+                </button>
+              </div>
+
+              {sourceCardTab === "guided" ? (
+                <div className="space-y-2">
+                  <label className="block space-y-1 text-sm">
+                    <span className="font-medium">1) strategy</span>
+                    <select
+                      className="w-full rounded-md border px-2 py-1.5"
+                      value={dataStrategy}
+                      onChange={(e) => setDataStrategy(e.target.value)}
+                    >
+                      <option value="file">file</option>
+                      <option value="sparql">sparql</option>
+                      <option value="cbd">cbd</option>
+                    </select>
+                  </label>
+
+                  <label className="block space-y-1 text-sm">
+                    <span className="font-medium">2) format</span>
+                    <select
+                      className="w-full rounded-md border px-2 py-1.5"
+                      value={dataFormat}
+                      onChange={(e) => setDataFormat(e.target.value)}
+                    >
+                      <option value="turtle">turtle</option>
+                      <option value="json-ld">json-ld</option>
+                      <option value="rdf-xml">rdf-xml</option>
+                      <option value="n-triples">n-triples</option>
+                    </select>
+                  </label>
+
+                  {dataStrategy === "sparql" ? (
+                    <>
+                      <label className="block space-y-1 text-sm">
+                        <span className="font-medium">3) sparql selector mode</span>
+                        <select
+                          className="w-full rounded-md border px-2 py-1.5"
+                          value={sparqlSelectorMode}
+                          onChange={(e) => setSparqlSelectorMode(e.target.value as "subjectClass" | "subject" | "subjectQuery")}
+                        >
+                          <option value="subjectClass">subjectClass</option>
+                          <option value="subject">subject</option>
+                          <option value="subjectQuery">subjectQuery</option>
+                        </select>
+                      </label>
+
+                      {sparqlSelectorMode === "subjectClass" ? (
+                        <label className="block space-y-1 text-sm">
+                          <span className="font-medium">4) subjectClass (required)</span>
+                          <input
+                            className="w-full rounded-md border px-2 py-1.5"
+                            placeholder="http://example.org/Person"
+                            value={subjectClass}
+                            onChange={(e) => setSubjectClass(e.target.value)}
+                          />
+                        </label>
+                      ) : null}
+
+                      {sparqlSelectorMode === "subject" ? (
+                        <label className="block space-y-1 text-sm">
+                          <span className="font-medium">4) subject (required)</span>
+                          <input
+                            className="w-full rounded-md border px-2 py-1.5"
+                            placeholder="http://example.org/Alice"
+                            value={subjectValue}
+                            onChange={(e) => setSubjectValue(e.target.value)}
+                          />
+                        </label>
+                      ) : null}
+
+                      {sparqlSelectorMode === "subjectQuery" ? (
+                        <label className="block space-y-1 text-sm">
+                          <span className="font-medium">4) subjectQuery (required)</span>
+                          <textarea
+                            className="h-24 w-full rounded-md border p-2 font-mono text-xs"
+                            placeholder="CONSTRUCT { ?s ?p ?o } WHERE { ?s a <http://example.org/Person> . ?s ?p ?o } LIMIT 20"
+                            value={subjectQuery}
+                            onChange={(e) => setSubjectQuery(e.target.value)}
+                          />
+                        </label>
+                      ) : null}
+                    </>
+                  ) : null}
+
+                  {dataStrategy === "cbd" ? (
+                    <>
+                      <label className="block space-y-1 text-sm">
+                        <span className="font-medium">3) subject (required)</span>
+                        <input
+                          className="w-full rounded-md border px-2 py-1.5"
+                          placeholder="http://example.org/Alice"
+                          value={subjectValue}
+                          onChange={(e) => setSubjectValue(e.target.value)}
+                        />
+                      </label>
+                      <label className="block space-y-1 text-sm">
+                        <span className="font-medium">4) depth</span>
+                        <input
+                          className="w-full rounded-md border px-2 py-1.5"
+                          type="number"
+                          min={1}
+                          value={cbdDepth}
+                          onChange={(e) => setCbdDepth(e.target.value)}
+                        />
+                      </label>
+                    </>
+                  ) : null}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-xs text-slate-600">
+                    TTL config built from your current selections.
+                  </p>
+                  <textarea
+                    readOnly
+                    className="h-72 w-full rounded-md border bg-slate-50 p-2 font-mono text-xs"
+                    value={sourceConfigRdf}
+                  />
+                </div>
+              )}
             </div>
-            <label className="block space-y-1 text-sm">
-              <span className="font-medium">subject-class (optional)</span>
-              <input
-                className="w-full rounded-md border px-2 py-1.5"
-                placeholder="http://example.org/Person"
-                value={subjectClass}
-                onChange={(e) => setSubjectClass(e.target.value)}
-              />
-            </label>
-            <label className="block space-y-1 text-sm">
-              <span className="font-medium">subject-query (optional)</span>
-              <textarea
-                className="h-20 w-full rounded-md border p-2 font-mono text-xs"
-                placeholder="SELECT ?s WHERE { ?s a <http://example.org/Person> } LIMIT 20"
-                value={subjectQuery}
-                onChange={(e) => setSubjectQuery(e.target.value)}
-              />
-            </label>
             <p className="text-xs text-slate-500">Status: {adapterStatus}</p>
           </section>
 
@@ -427,7 +605,7 @@ export default function DemoPage() {
               Define SHACL in Turtle and extract structured objects from your RDF graph.
             </p>
             <label className="block space-y-1 text-sm">
-              <span className="font-medium">shape-class</span>
+              <span className="font-medium">lrdf:shapeClass</span>
               <input
                 className="w-full rounded-md border px-2 py-1.5"
                 value={shapeClass}
@@ -463,19 +641,6 @@ export default function DemoPage() {
               <code>{"{{#each items}}"}</code> blocks.
             </p>
             <label className="block space-y-1 text-sm">
-              <span className="font-medium">mode</span>
-              <select
-                className="w-full rounded-md border px-2 py-1.5"
-                value={displayMode}
-                onChange={(e) => setDisplayMode(e.target.value)}
-              >
-                <option value="single">single</option>
-                <option value="list">list</option>
-                <option value="grid">grid</option>
-                <option value="table">table</option>
-              </select>
-            </label>
-            <label className="block space-y-1 text-sm">
               <span className="font-medium">Template content (HTML + mustache tags)</span>
               <textarea
                 className="h-72 w-full rounded-md border p-2 font-mono text-xs"
@@ -491,7 +656,7 @@ export default function DemoPage() {
           <section className="rounded-xl border bg-white p-4">
             <h2 className="text-lg font-semibold">Live Render</h2>
             <p className="mb-3 text-xs text-slate-600">
-              This is the real web component chain: <code>rdf-adapter</code> -&gt; <code>rdf-lens</code> -&gt; <code>lens-display</code>.
+              This is the real web component chain: <code>source-rdf</code> -&gt; <code>rdf-lens</code> -&gt; <code>lens-display</code>.
             </p>
             <div className="min-h-40 rounded-md border bg-slate-50 p-3">
               {mounted && bundleLoaded && runtime ? (
@@ -501,29 +666,21 @@ export default function DemoPage() {
                   }}
                   key={`display-${runtime.key}`}
                   template={runtime.templateUrl}
-                  mode={displayMode}
                 >
                   <rdf-lens
                     ref={(node) => {
                       lensRef.current = node;
                     }}
                     key={`lens-${runtime.key}`}
-                    shape-file={runtime.shapeUrl}
-                    shape-class={shapeClass}
-                    multiple={multiple}
+                    config={buildLensConfigRdf(runtime.shapeUrl)}
                   >
-                    <rdf-adapter
+                    <source-rdf
                       ref={(node) => {
                         adapterRef.current = node;
                       }}
                       key={`adapter-${runtime.key}`}
-                      url={runtime.dataUrl}
-                      format={dataFormat}
-                      strategy={dataStrategy}
-                      cache="none"
-                      subject-class={subjectClass || undefined}
-                      subject-query={subjectQuery || undefined}
-                    ></rdf-adapter>
+                      config={buildSourceConfigRdf(runtime.dataUrl)}
+                    ></source-rdf>
                   </rdf-lens>
                 </lens-display>
               ) : (

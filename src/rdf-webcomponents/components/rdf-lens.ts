@@ -4,16 +4,18 @@
  * 
  * <rdf-lens> processes RDF data using SHACL shapes and rdf-lens.
  * It extracts structured data from the triplestore provided by
- * a child <rdf-adapter> component.
+ * a child <source-rdf> component.
  * 
  * @example
  * ```html
- * <rdf-lens 
- *   shape-file="shapes.ttl"
- *   shape-class="Person"
- *   multiple
+ * <rdf-lens
+ *   config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+ * [] a lrdf:RdfLensConfig ;
+ *   lrdf:shapeFile "shapes.ttl" ;
+ *   lrdf:shapeClass <http://example.org/Person> ;
+ *   lrdf:multiple true .'
  * >
- *   <rdf-adapter url="data.ttl"></rdf-adapter>
+ *   <source-rdf url="data.ttl"></source-rdf>
  * </rdf-lens>
  * ```
  */
@@ -25,8 +27,14 @@ import type {
   SerializedQuad,
   ShapeProcessedEvent,
   ErrorEvent as RdfErrorEvent,
+  RdfFormat,
 } from '../types';
 import { MessageType } from '../types';
+import {
+  type RdfLensConfig,
+  parseRdfLensConfigRdf,
+  validateRdfLensConfig,
+} from './rdf-lens-config';
 
 // ============================================================================
 // Component Definition
@@ -36,7 +44,7 @@ import { MessageType } from '../types';
  * RDF Lens Web Component
  * 
  * Uses SHACL shapes to extract structured data from RDF triplestores.
- * Works with <rdf-adapter> as a child component.
+ * Works with <source-rdf> as a child component.
  */
 @customElement('rdf-lens')
 export class RdfLens extends LitElement implements RdfLensProps {
@@ -87,33 +95,9 @@ export class RdfLens extends LitElement implements RdfLensProps {
   // Properties
   // ===========================================================================
 
-  /** URL to SHACL shapes file */
-  @property({ type: String, attribute: 'shape-file' })
-  shapeFile?: string;
-
-  /** Target class URI to extract */
-  @property({ type: String, attribute: 'shape-class' })
-  shapeClass?: string;
-
-  /** Inline SHACL shapes (Turtle format) */
-  @property({ type: String })
-  shapes?: string;
-
-  /** Whether to validate against shapes */
-  @property({ type: Boolean, reflect: true })
-  validate?: boolean = false;
-
-  /** Whether to throw on validation errors */
-  @property({ type: Boolean, reflect: true })
-  strict?: boolean = false;
-
-  /** Whether to extract all matching subjects */
-  @property({ type: Boolean, reflect: true })
-  multiple?: boolean = false;
-
-  /** Specific subject URI to extract */
+  /** Inline RDF config content in the rdf-lens vocabulary. */
   @property({ type: String, reflect: true })
-  subject?: string;
+  config = '';
 
   // ===========================================================================
   // Internal State
@@ -125,6 +109,7 @@ export class RdfLens extends LitElement implements RdfLensProps {
   private _loading = false;
   private _error: string | null = null;
   private _shapesLoaded = false;
+  private _resolvedConfig: RdfLensConfig = {};
 
   // ===========================================================================
   // Public API
@@ -159,16 +144,8 @@ export class RdfLens extends LitElement implements RdfLensProps {
 
   protected override async firstUpdated(changedProperties: PropertyValues): Promise<void> {
     super.firstUpdated(changedProperties);
-    
-    // Load shapes if shape-file is provided
-    if (this.shapeFile) {
-      await this._loadShapes();
-    } else if (this.shapes) {
-      await this._parseInlineShapes();
-    } else {
-      await this._parseInlineScriptShapes();
-    }
-    
+
+    await this._refreshConfiguration();
   }
 
   override connectedCallback(): void {
@@ -179,35 +156,9 @@ export class RdfLens extends LitElement implements RdfLensProps {
 
   protected override updated(changedProperties: PropertyValues): void {
     super.updated(changedProperties);
-    
-    // Re-load shapes if shape file changes
-    if (changedProperties.has('shapeFile') && this.shapeFile) {
-      this._loadShapes();
-    }
-    
-    // Re-parse inline shapes
-    if (changedProperties.has('shapes') && this.shapes) {
-      this._parseInlineShapes();
-    }
 
-    // If no explicit shape source is provided, retry reading inline script shapes.
-    if (
-      !this.shapeFile &&
-      !this.shapes &&
-      !this._shapesLoaded
-    ) {
-      this._parseInlineScriptShapes();
-    }
-    
-    // Re-extract data if extraction options change
-    if (
-      changedProperties.has('shapeClass') ||
-      changedProperties.has('multiple') ||
-      changedProperties.has('subject')
-    ) {
-      if (this._quads.length > 0 && this._shapesLoaded) {
-        this._extractData();
-      }
+    if (changedProperties.has('config')) {
+      void this._refreshConfiguration();
     }
   }
 
@@ -247,22 +198,20 @@ export class RdfLens extends LitElement implements RdfLensProps {
   // Private Methods
   // ===========================================================================
 
-  private async _loadShapes(): Promise<void> {
-    if (!this.shapeFile) return;
-    
+  private async _loadShapes(shapeFile: string): Promise<void> {
     this._loading = true;
     this._error = null;
     this._emitEvent('shape-loading', { phase: 'fetch' });
     
     try {
-      const response = await fetch(this.shapeFile);
+      const response = await fetch(shapeFile);
       
       if (!response.ok) {
         throw new Error(`Failed to fetch shapes: ${response.status} ${response.statusText}`);
       }
       
       const content = await response.text();
-      await this._parseShapesContent(content, this.shapeFile);
+      await this._parseShapesContent(content, shapeFile);
       
     } catch (error) {
       this._loading = false;
@@ -279,13 +228,11 @@ export class RdfLens extends LitElement implements RdfLensProps {
     }
   }
 
-  private async _parseInlineShapes(): Promise<void> {
-    if (!this.shapes) return;
-    
+  private async _parseInlineShapes(shapes: string): Promise<void> {
     this._loading = true;
     
     try {
-      await this._parseShapesContent(this.shapes, 'inline');
+      await this._parseShapesContent(shapes, 'inline');
     } catch (error) {
       this._loading = false;
       this._error = error instanceof Error ? error.message : String(error);
@@ -298,27 +245,70 @@ export class RdfLens extends LitElement implements RdfLensProps {
     }
   }
 
-  private async _parseInlineScriptShapes(): Promise<void> {
-    const script = this.querySelector('script[type="text/turtle"]');
-    const content = script?.textContent?.trim();
-    if (!content) {
-      return;
-    }
-
-    this._loading = true;
-
+  private async _refreshConfiguration(): Promise<void> {
     try {
-      await this._parseShapesContent(content, 'inline-script');
+      const resolvedConfig = await this._resolveConfig();
+      const warnings = [...resolvedConfig.warnings, ...validateRdfLensConfig(resolvedConfig.config)];
+
+      for (const warning of warnings) {
+        console.warn(`[rdf-lens] ${warning}`);
+      }
+
+      this._resolvedConfig = resolvedConfig.config;
+      this._shapeQuads = [];
+      this._shapesLoaded = false;
+
+      if (this._resolvedConfig.shapeFile) {
+        await this._loadShapes(this._resolvedConfig.shapeFile);
+      } else if (this._resolvedConfig.shapes) {
+        await this._parseInlineShapes(this._resolvedConfig.shapes);
+      }
     } catch (error) {
       this._loading = false;
       this._error = error instanceof Error ? error.message : String(error);
       this._emitEvent('shape-error', {
         message: this._error,
-        phase: 'shape',
+        phase: 'config',
         error: error instanceof Error ? error : undefined,
       });
       this.requestUpdate();
     }
+  }
+
+  private async _resolveConfig(): Promise<{
+    config: RdfLensConfig;
+    warnings: string[];
+    providedKeys: Set<string>;
+  }> {
+    if (this.config && this.config.trim()) {
+      return parseRdfLensConfigRdf(this.config, undefined, 'inline-config-attribute');
+    }
+
+    const inline = this._readInlineConfigScript();
+    if (inline) {
+      return parseRdfLensConfigRdf(inline.content, inline.format, 'inline-config-script');
+    }
+
+    throw new Error('rdf-lens requires a config RDF payload.');
+  }
+
+  private _readInlineConfigScript(): { content: string; format?: RdfFormat } | null {
+    const script = this.querySelector('script[data-rdf-lens-config="true"][type]');
+    if (!script || !script.textContent?.trim()) {
+      return null;
+    }
+
+    const type = script.getAttribute('type')?.toLowerCase() ?? '';
+    const content = script.textContent;
+
+    if (type.includes('ld+json')) return { content, format: 'json-ld' };
+    if (type.includes('rdf+xml')) return { content, format: 'rdf-xml' };
+    if (type.includes('n-triples')) return { content, format: 'n-triples' };
+    if (type.includes('n-quads')) return { content, format: 'n-quads' };
+    if (type.includes('turtle') || type.includes('ttl')) return { content, format: 'turtle' };
+    if (type.includes('html')) return { content, format: 'rdfa' };
+
+    return { content };
   }
 
   private async _parseShapesContent(content: string, baseUrl: string): Promise<void> {
@@ -452,11 +442,11 @@ export class RdfLens extends LitElement implements RdfLensProps {
 
     // Find subjects to process
     let subjects: string[] = [];
-    const targetType = this.shapeClass;
+    const targetType = this._resolvedConfig.shapeClass;
     console.log('[rdf-lens] target shapeClass:', targetType);
-    
-    if (this.subject) {
-      subjects = [this.subject];
+
+    if (this._resolvedConfig.subject) {
+      subjects = [this._resolvedConfig.subject];
     } else if (targetType) {
       // Find all subjects of the target type
       const typePredicate = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
@@ -494,8 +484,8 @@ export class RdfLens extends LitElement implements RdfLensProps {
     
     // Execute lens
     const results: unknown[] = [];
-    const subjectsToProcess = this.multiple ? subjects : subjects.slice(0, 1);
-    console.log(`[rdf-lens] executing lens for ${subjectsToProcess.length} subject(s) (multiple=${this.multiple})`);
+    const subjectsToProcess = this._resolvedConfig.multiple ? subjects : subjects.slice(0, 1);
+    console.log(`[rdf-lens] executing lens for ${subjectsToProcess.length} subject(s) (multiple=${this._resolvedConfig.multiple})`);
 
     for (const subjectUri of subjectsToProcess) {
       try {
@@ -506,7 +496,7 @@ export class RdfLens extends LitElement implements RdfLensProps {
         console.log(`[rdf-lens] extracted subject ${subjectUri}:`, result);
         results.push(result);
       } catch (error) {
-        if (this.strict) {
+        if (this._resolvedConfig.strict) {
           throw error;
         }
         console.warn(`[rdf-lens] failed to extract ${subjectUri}:`, error);
@@ -515,7 +505,7 @@ export class RdfLens extends LitElement implements RdfLensProps {
 
     console.log(`[rdf-lens] extraction complete: ${results.length} results, emitting shape-processed`);
     return {
-      data: this.multiple ? results : results[0],
+      data: this._resolvedConfig.multiple ? results : results[0],
       count: results.length,
       shapeClass: lensKey,
     };

@@ -4,16 +4,8 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __esm = (fn, res) => function __init() {
-  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-};
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
-};
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
 };
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
@@ -33,13 +25,12 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __decorateClass = (decorators, target, key, kind) => {
   var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
-  for (var i6 = decorators.length - 1, decorator; i6 >= 0; i6--)
-    if (decorator = decorators[i6])
+  for (var i5 = decorators.length - 1, decorator; i5 >= 0; i5--)
+    if (decorator = decorators[i5])
       result = (kind ? decorator(target, key, result) : decorator(result)) || result;
   if (kind && result) __defProp(target, key, result);
   return result;
 };
-var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // node_modules/base64-js/index.js
 var require_base64_js = __commonJS({
@@ -52,11 +43,11 @@ var require_base64_js = __commonJS({
     var revLookup = [];
     var Arr = typeof Uint8Array !== "undefined" ? Uint8Array : Array;
     var code = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    for (i6 = 0, len = code.length; i6 < len; ++i6) {
-      lookup[i6] = code[i6];
-      revLookup[code.charCodeAt(i6)] = i6;
+    for (i5 = 0, len = code.length; i5 < len; ++i5) {
+      lookup[i5] = code[i5];
+      revLookup[code.charCodeAt(i5)] = i5;
     }
-    var i6;
+    var i5;
     var len;
     revLookup["-".charCodeAt(0)] = 62;
     revLookup["_".charCodeAt(0)] = 63;
@@ -87,19 +78,19 @@ var require_base64_js = __commonJS({
       var arr = new Arr(_byteLength(b64, validLen, placeHoldersLen));
       var curByte = 0;
       var len2 = placeHoldersLen > 0 ? validLen - 4 : validLen;
-      var i7;
-      for (i7 = 0; i7 < len2; i7 += 4) {
-        tmp = revLookup[b64.charCodeAt(i7)] << 18 | revLookup[b64.charCodeAt(i7 + 1)] << 12 | revLookup[b64.charCodeAt(i7 + 2)] << 6 | revLookup[b64.charCodeAt(i7 + 3)];
+      var i6;
+      for (i6 = 0; i6 < len2; i6 += 4) {
+        tmp = revLookup[b64.charCodeAt(i6)] << 18 | revLookup[b64.charCodeAt(i6 + 1)] << 12 | revLookup[b64.charCodeAt(i6 + 2)] << 6 | revLookup[b64.charCodeAt(i6 + 3)];
         arr[curByte++] = tmp >> 16 & 255;
         arr[curByte++] = tmp >> 8 & 255;
         arr[curByte++] = tmp & 255;
       }
       if (placeHoldersLen === 2) {
-        tmp = revLookup[b64.charCodeAt(i7)] << 2 | revLookup[b64.charCodeAt(i7 + 1)] >> 4;
+        tmp = revLookup[b64.charCodeAt(i6)] << 2 | revLookup[b64.charCodeAt(i6 + 1)] >> 4;
         arr[curByte++] = tmp & 255;
       }
       if (placeHoldersLen === 1) {
-        tmp = revLookup[b64.charCodeAt(i7)] << 10 | revLookup[b64.charCodeAt(i7 + 1)] << 4 | revLookup[b64.charCodeAt(i7 + 2)] >> 2;
+        tmp = revLookup[b64.charCodeAt(i6)] << 10 | revLookup[b64.charCodeAt(i6 + 1)] << 4 | revLookup[b64.charCodeAt(i6 + 2)] >> 2;
         arr[curByte++] = tmp >> 8 & 255;
         arr[curByte++] = tmp & 255;
       }
@@ -111,8 +102,8 @@ var require_base64_js = __commonJS({
     function encodeChunk(uint8, start, end) {
       var tmp;
       var output = [];
-      for (var i7 = start; i7 < end; i7 += 3) {
-        tmp = (uint8[i7] << 16 & 16711680) + (uint8[i7 + 1] << 8 & 65280) + (uint8[i7 + 2] & 255);
+      for (var i6 = start; i6 < end; i6 += 3) {
+        tmp = (uint8[i6] << 16 & 16711680) + (uint8[i6 + 1] << 8 & 65280) + (uint8[i6 + 2] & 255);
         output.push(tripletToBase64(tmp));
       }
       return output.join("");
@@ -123,8 +114,8 @@ var require_base64_js = __commonJS({
       var extraBytes = len2 % 3;
       var parts = [];
       var maxChunkLength = 16383;
-      for (var i7 = 0, len22 = len2 - extraBytes; i7 < len22; i7 += maxChunkLength) {
-        parts.push(encodeChunk(uint8, i7, i7 + maxChunkLength > len22 ? len22 : i7 + maxChunkLength));
+      for (var i6 = 0, len22 = len2 - extraBytes; i6 < len22; i6 += maxChunkLength) {
+        parts.push(encodeChunk(uint8, i6, i6 + maxChunkLength > len22 ? len22 : i6 + maxChunkLength));
       }
       if (extraBytes === 1) {
         tmp = uint8[len2 - 1];
@@ -147,81 +138,81 @@ var require_ieee754 = __commonJS({
   "node_modules/ieee754/index.js"(exports) {
     "use strict";
     exports.read = function(buffer, offset, isLE, mLen, nBytes) {
-      var e8, m2;
+      var e5, m2;
       var eLen = nBytes * 8 - mLen - 1;
       var eMax = (1 << eLen) - 1;
       var eBias = eMax >> 1;
       var nBits = -7;
-      var i6 = isLE ? nBytes - 1 : 0;
+      var i5 = isLE ? nBytes - 1 : 0;
       var d3 = isLE ? -1 : 1;
-      var s4 = buffer[offset + i6];
-      i6 += d3;
-      e8 = s4 & (1 << -nBits) - 1;
+      var s4 = buffer[offset + i5];
+      i5 += d3;
+      e5 = s4 & (1 << -nBits) - 1;
       s4 >>= -nBits;
       nBits += eLen;
-      for (; nBits > 0; e8 = e8 * 256 + buffer[offset + i6], i6 += d3, nBits -= 8) {
+      for (; nBits > 0; e5 = e5 * 256 + buffer[offset + i5], i5 += d3, nBits -= 8) {
       }
-      m2 = e8 & (1 << -nBits) - 1;
-      e8 >>= -nBits;
+      m2 = e5 & (1 << -nBits) - 1;
+      e5 >>= -nBits;
       nBits += mLen;
-      for (; nBits > 0; m2 = m2 * 256 + buffer[offset + i6], i6 += d3, nBits -= 8) {
+      for (; nBits > 0; m2 = m2 * 256 + buffer[offset + i5], i5 += d3, nBits -= 8) {
       }
-      if (e8 === 0) {
-        e8 = 1 - eBias;
-      } else if (e8 === eMax) {
+      if (e5 === 0) {
+        e5 = 1 - eBias;
+      } else if (e5 === eMax) {
         return m2 ? NaN : (s4 ? -1 : 1) * Infinity;
       } else {
         m2 = m2 + Math.pow(2, mLen);
-        e8 = e8 - eBias;
+        e5 = e5 - eBias;
       }
-      return (s4 ? -1 : 1) * m2 * Math.pow(2, e8 - mLen);
+      return (s4 ? -1 : 1) * m2 * Math.pow(2, e5 - mLen);
     };
     exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
-      var e8, m2, c4;
+      var e5, m2, c4;
       var eLen = nBytes * 8 - mLen - 1;
       var eMax = (1 << eLen) - 1;
       var eBias = eMax >> 1;
       var rt = mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0;
-      var i6 = isLE ? 0 : nBytes - 1;
+      var i5 = isLE ? 0 : nBytes - 1;
       var d3 = isLE ? 1 : -1;
       var s4 = value < 0 || value === 0 && 1 / value < 0 ? 1 : 0;
       value = Math.abs(value);
       if (isNaN(value) || value === Infinity) {
         m2 = isNaN(value) ? 1 : 0;
-        e8 = eMax;
+        e5 = eMax;
       } else {
-        e8 = Math.floor(Math.log(value) / Math.LN2);
-        if (value * (c4 = Math.pow(2, -e8)) < 1) {
-          e8--;
+        e5 = Math.floor(Math.log(value) / Math.LN2);
+        if (value * (c4 = Math.pow(2, -e5)) < 1) {
+          e5--;
           c4 *= 2;
         }
-        if (e8 + eBias >= 1) {
+        if (e5 + eBias >= 1) {
           value += rt / c4;
         } else {
           value += rt * Math.pow(2, 1 - eBias);
         }
         if (value * c4 >= 2) {
-          e8++;
+          e5++;
           c4 /= 2;
         }
-        if (e8 + eBias >= eMax) {
+        if (e5 + eBias >= eMax) {
           m2 = 0;
-          e8 = eMax;
-        } else if (e8 + eBias >= 1) {
+          e5 = eMax;
+        } else if (e5 + eBias >= 1) {
           m2 = (value * c4 - 1) * Math.pow(2, mLen);
-          e8 = e8 + eBias;
+          e5 = e5 + eBias;
         } else {
           m2 = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
-          e8 = 0;
+          e5 = 0;
         }
       }
-      for (; mLen >= 8; buffer[offset + i6] = m2 & 255, i6 += d3, m2 /= 256, mLen -= 8) {
+      for (; mLen >= 8; buffer[offset + i5] = m2 & 255, i5 += d3, m2 /= 256, mLen -= 8) {
       }
-      e8 = e8 << mLen | m2;
+      e5 = e5 << mLen | m2;
       eLen += mLen;
-      for (; eLen > 0; buffer[offset + i6] = e8 & 255, i6 += d3, e8 /= 256, eLen -= 8) {
+      for (; eLen > 0; buffer[offset + i5] = e5 & 255, i5 += d3, e5 /= 256, eLen -= 8) {
       }
-      buffer[offset + i6 - d3] |= s4 * 128;
+      buffer[offset + i5 - d3] |= s4 * 128;
     };
   }
 });
@@ -253,7 +244,7 @@ var require_buffer = __commonJS({
         Object.setPrototypeOf(proto, Uint8Array.prototype);
         Object.setPrototypeOf(arr, proto);
         return arr.foo() === 42;
-      } catch (e8) {
+      } catch (e5) {
         return false;
       }
     }
@@ -380,8 +371,8 @@ var require_buffer = __commonJS({
     function fromArrayLike(array) {
       const length = array.length < 0 ? 0 : checked(array.length) | 0;
       const buf = createBuffer(length);
-      for (let i6 = 0; i6 < length; i6 += 1) {
-        buf[i6] = array[i6] & 255;
+      for (let i5 = 0; i5 < length; i5 += 1) {
+        buf[i5] = array[i5] & 255;
       }
       return buf;
     }
@@ -456,10 +447,10 @@ var require_buffer = __commonJS({
       if (a3 === b3) return 0;
       let x2 = a3.length;
       let y3 = b3.length;
-      for (let i6 = 0, len = Math.min(x2, y3); i6 < len; ++i6) {
-        if (a3[i6] !== b3[i6]) {
-          x2 = a3[i6];
-          y3 = b3[i6];
+      for (let i5 = 0, len = Math.min(x2, y3); i5 < len; ++i5) {
+        if (a3[i5] !== b3[i5]) {
+          x2 = a3[i5];
+          y3 = b3[i5];
           break;
         }
       }
@@ -492,17 +483,17 @@ var require_buffer = __commonJS({
       if (list.length === 0) {
         return Buffer3.alloc(0);
       }
-      let i6;
+      let i5;
       if (length === void 0) {
         length = 0;
-        for (i6 = 0; i6 < list.length; ++i6) {
-          length += list[i6].length;
+        for (i5 = 0; i5 < list.length; ++i5) {
+          length += list[i5].length;
         }
       }
       const buffer = Buffer3.allocUnsafe(length);
       let pos = 0;
-      for (i6 = 0; i6 < list.length; ++i6) {
-        let buf = list[i6];
+      for (i5 = 0; i5 < list.length; ++i5) {
+        let buf = list[i5];
         if (isInstance(buf, Uint8Array)) {
           if (pos + buf.length > buffer.length) {
             if (!Buffer3.isBuffer(buf)) buf = Buffer3.from(buf);
@@ -615,17 +606,17 @@ var require_buffer = __commonJS({
     }
     Buffer3.prototype._isBuffer = true;
     function swap(b3, n5, m2) {
-      const i6 = b3[n5];
+      const i5 = b3[n5];
       b3[n5] = b3[m2];
-      b3[m2] = i6;
+      b3[m2] = i5;
     }
     Buffer3.prototype.swap16 = function swap16() {
       const len = this.length;
       if (len % 2 !== 0) {
         throw new RangeError("Buffer size must be a multiple of 16-bits");
       }
-      for (let i6 = 0; i6 < len; i6 += 2) {
-        swap(this, i6, i6 + 1);
+      for (let i5 = 0; i5 < len; i5 += 2) {
+        swap(this, i5, i5 + 1);
       }
       return this;
     };
@@ -634,9 +625,9 @@ var require_buffer = __commonJS({
       if (len % 4 !== 0) {
         throw new RangeError("Buffer size must be a multiple of 32-bits");
       }
-      for (let i6 = 0; i6 < len; i6 += 4) {
-        swap(this, i6, i6 + 3);
-        swap(this, i6 + 1, i6 + 2);
+      for (let i5 = 0; i5 < len; i5 += 4) {
+        swap(this, i5, i5 + 3);
+        swap(this, i5 + 1, i5 + 2);
       }
       return this;
     };
@@ -645,11 +636,11 @@ var require_buffer = __commonJS({
       if (len % 8 !== 0) {
         throw new RangeError("Buffer size must be a multiple of 64-bits");
       }
-      for (let i6 = 0; i6 < len; i6 += 8) {
-        swap(this, i6, i6 + 7);
-        swap(this, i6 + 1, i6 + 6);
-        swap(this, i6 + 2, i6 + 5);
-        swap(this, i6 + 3, i6 + 4);
+      for (let i5 = 0; i5 < len; i5 += 8) {
+        swap(this, i5, i5 + 7);
+        swap(this, i5 + 1, i5 + 6);
+        swap(this, i5 + 2, i5 + 5);
+        swap(this, i5 + 3, i5 + 4);
       }
       return this;
     };
@@ -718,10 +709,10 @@ var require_buffer = __commonJS({
       const len = Math.min(x2, y3);
       const thisCopy = this.slice(thisStart, thisEnd);
       const targetCopy = target.slice(start, end);
-      for (let i6 = 0; i6 < len; ++i6) {
-        if (thisCopy[i6] !== targetCopy[i6]) {
-          x2 = thisCopy[i6];
-          y3 = targetCopy[i6];
+      for (let i5 = 0; i5 < len; ++i5) {
+        if (thisCopy[i5] !== targetCopy[i5]) {
+          x2 = thisCopy[i5];
+          y3 = targetCopy[i5];
           break;
         }
       }
@@ -788,36 +779,36 @@ var require_buffer = __commonJS({
           byteOffset /= 2;
         }
       }
-      function read(buf, i7) {
+      function read(buf, i6) {
         if (indexSize === 1) {
-          return buf[i7];
+          return buf[i6];
         } else {
-          return buf.readUInt16BE(i7 * indexSize);
+          return buf.readUInt16BE(i6 * indexSize);
         }
       }
-      let i6;
+      let i5;
       if (dir) {
         let foundIndex = -1;
-        for (i6 = byteOffset; i6 < arrLength; i6++) {
-          if (read(arr, i6) === read(val, foundIndex === -1 ? 0 : i6 - foundIndex)) {
-            if (foundIndex === -1) foundIndex = i6;
-            if (i6 - foundIndex + 1 === valLength) return foundIndex * indexSize;
+        for (i5 = byteOffset; i5 < arrLength; i5++) {
+          if (read(arr, i5) === read(val, foundIndex === -1 ? 0 : i5 - foundIndex)) {
+            if (foundIndex === -1) foundIndex = i5;
+            if (i5 - foundIndex + 1 === valLength) return foundIndex * indexSize;
           } else {
-            if (foundIndex !== -1) i6 -= i6 - foundIndex;
+            if (foundIndex !== -1) i5 -= i5 - foundIndex;
             foundIndex = -1;
           }
         }
       } else {
         if (byteOffset + valLength > arrLength) byteOffset = arrLength - valLength;
-        for (i6 = byteOffset; i6 >= 0; i6--) {
+        for (i5 = byteOffset; i5 >= 0; i5--) {
           let found = true;
           for (let j = 0; j < valLength; j++) {
-            if (read(arr, i6 + j) !== read(val, j)) {
+            if (read(arr, i5 + j) !== read(val, j)) {
               found = false;
               break;
             }
           }
-          if (found) return i6;
+          if (found) return i5;
         }
       }
       return -1;
@@ -846,13 +837,13 @@ var require_buffer = __commonJS({
       if (length > strLen / 2) {
         length = strLen / 2;
       }
-      let i6;
-      for (i6 = 0; i6 < length; ++i6) {
-        const parsed = parseInt(string.substr(i6 * 2, 2), 16);
-        if (numberIsNaN(parsed)) return i6;
-        buf[offset + i6] = parsed;
+      let i5;
+      for (i5 = 0; i5 < length; ++i5) {
+        const parsed = parseInt(string.substr(i5 * 2, 2), 16);
+        if (numberIsNaN(parsed)) return i5;
+        buf[offset + i5] = parsed;
       }
-      return i6;
+      return i5;
     }
     function utf8Write(buf, string, offset, length) {
       return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length);
@@ -937,12 +928,12 @@ var require_buffer = __commonJS({
     function utf8Slice(buf, start, end) {
       end = Math.min(buf.length, end);
       const res = [];
-      let i6 = start;
-      while (i6 < end) {
-        const firstByte = buf[i6];
+      let i5 = start;
+      while (i5 < end) {
+        const firstByte = buf[i5];
         let codePoint = null;
         let bytesPerSequence = firstByte > 239 ? 4 : firstByte > 223 ? 3 : firstByte > 191 ? 2 : 1;
-        if (i6 + bytesPerSequence <= end) {
+        if (i5 + bytesPerSequence <= end) {
           let secondByte, thirdByte, fourthByte, tempCodePoint;
           switch (bytesPerSequence) {
             case 1:
@@ -951,7 +942,7 @@ var require_buffer = __commonJS({
               }
               break;
             case 2:
-              secondByte = buf[i6 + 1];
+              secondByte = buf[i5 + 1];
               if ((secondByte & 192) === 128) {
                 tempCodePoint = (firstByte & 31) << 6 | secondByte & 63;
                 if (tempCodePoint > 127) {
@@ -960,8 +951,8 @@ var require_buffer = __commonJS({
               }
               break;
             case 3:
-              secondByte = buf[i6 + 1];
-              thirdByte = buf[i6 + 2];
+              secondByte = buf[i5 + 1];
+              thirdByte = buf[i5 + 2];
               if ((secondByte & 192) === 128 && (thirdByte & 192) === 128) {
                 tempCodePoint = (firstByte & 15) << 12 | (secondByte & 63) << 6 | thirdByte & 63;
                 if (tempCodePoint > 2047 && (tempCodePoint < 55296 || tempCodePoint > 57343)) {
@@ -970,9 +961,9 @@ var require_buffer = __commonJS({
               }
               break;
             case 4:
-              secondByte = buf[i6 + 1];
-              thirdByte = buf[i6 + 2];
-              fourthByte = buf[i6 + 3];
+              secondByte = buf[i5 + 1];
+              thirdByte = buf[i5 + 2];
+              fourthByte = buf[i5 + 3];
               if ((secondByte & 192) === 128 && (thirdByte & 192) === 128 && (fourthByte & 192) === 128) {
                 tempCodePoint = (firstByte & 15) << 18 | (secondByte & 63) << 12 | (thirdByte & 63) << 6 | fourthByte & 63;
                 if (tempCodePoint > 65535 && tempCodePoint < 1114112) {
@@ -990,7 +981,7 @@ var require_buffer = __commonJS({
           codePoint = 56320 | codePoint & 1023;
         }
         res.push(codePoint);
-        i6 += bytesPerSequence;
+        i5 += bytesPerSequence;
       }
       return decodeCodePointsArray(res);
     }
@@ -1001,11 +992,11 @@ var require_buffer = __commonJS({
         return String.fromCharCode.apply(String, codePoints);
       }
       let res = "";
-      let i6 = 0;
-      while (i6 < len) {
+      let i5 = 0;
+      while (i5 < len) {
         res += String.fromCharCode.apply(
           String,
-          codePoints.slice(i6, i6 += MAX_ARGUMENTS_LENGTH)
+          codePoints.slice(i5, i5 += MAX_ARGUMENTS_LENGTH)
         );
       }
       return res;
@@ -1013,16 +1004,16 @@ var require_buffer = __commonJS({
     function asciiSlice(buf, start, end) {
       let ret = "";
       end = Math.min(buf.length, end);
-      for (let i6 = start; i6 < end; ++i6) {
-        ret += String.fromCharCode(buf[i6] & 127);
+      for (let i5 = start; i5 < end; ++i5) {
+        ret += String.fromCharCode(buf[i5] & 127);
       }
       return ret;
     }
     function latin1Slice(buf, start, end) {
       let ret = "";
       end = Math.min(buf.length, end);
-      for (let i6 = start; i6 < end; ++i6) {
-        ret += String.fromCharCode(buf[i6]);
+      for (let i5 = start; i5 < end; ++i5) {
+        ret += String.fromCharCode(buf[i5]);
       }
       return ret;
     }
@@ -1031,16 +1022,16 @@ var require_buffer = __commonJS({
       if (!start || start < 0) start = 0;
       if (!end || end < 0 || end > len) end = len;
       let out = "";
-      for (let i6 = start; i6 < end; ++i6) {
-        out += hexSliceLookupTable[buf[i6]];
+      for (let i5 = start; i5 < end; ++i5) {
+        out += hexSliceLookupTable[buf[i5]];
       }
       return out;
     }
     function utf16leSlice(buf, start, end) {
       const bytes = buf.slice(start, end);
       let res = "";
-      for (let i6 = 0; i6 < bytes.length - 1; i6 += 2) {
-        res += String.fromCharCode(bytes[i6] + bytes[i6 + 1] * 256);
+      for (let i5 = 0; i5 < bytes.length - 1; i5 += 2) {
+        res += String.fromCharCode(bytes[i5] + bytes[i5 + 1] * 256);
       }
       return res;
     }
@@ -1075,9 +1066,9 @@ var require_buffer = __commonJS({
       if (!noAssert) checkOffset(offset, byteLength2, this.length);
       let val = this[offset];
       let mul = 1;
-      let i6 = 0;
-      while (++i6 < byteLength2 && (mul *= 256)) {
-        val += this[offset + i6] * mul;
+      let i5 = 0;
+      while (++i5 < byteLength2 && (mul *= 256)) {
+        val += this[offset + i5] * mul;
       }
       return val;
     };
@@ -1149,9 +1140,9 @@ var require_buffer = __commonJS({
       if (!noAssert) checkOffset(offset, byteLength2, this.length);
       let val = this[offset];
       let mul = 1;
-      let i6 = 0;
-      while (++i6 < byteLength2 && (mul *= 256)) {
-        val += this[offset + i6] * mul;
+      let i5 = 0;
+      while (++i5 < byteLength2 && (mul *= 256)) {
+        val += this[offset + i5] * mul;
       }
       mul *= 128;
       if (val >= mul) val -= Math.pow(2, 8 * byteLength2);
@@ -1161,11 +1152,11 @@ var require_buffer = __commonJS({
       offset = offset >>> 0;
       byteLength2 = byteLength2 >>> 0;
       if (!noAssert) checkOffset(offset, byteLength2, this.length);
-      let i6 = byteLength2;
+      let i5 = byteLength2;
       let mul = 1;
-      let val = this[offset + --i6];
-      while (i6 > 0 && (mul *= 256)) {
-        val += this[offset + --i6] * mul;
+      let val = this[offset + --i5];
+      while (i5 > 0 && (mul *= 256)) {
+        val += this[offset + --i5] * mul;
       }
       mul *= 128;
       if (val >= mul) val -= Math.pow(2, 8 * byteLength2);
@@ -1256,10 +1247,10 @@ var require_buffer = __commonJS({
         checkInt(this, value, offset, byteLength2, maxBytes, 0);
       }
       let mul = 1;
-      let i6 = 0;
+      let i5 = 0;
       this[offset] = value & 255;
-      while (++i6 < byteLength2 && (mul *= 256)) {
-        this[offset + i6] = value / mul & 255;
+      while (++i5 < byteLength2 && (mul *= 256)) {
+        this[offset + i5] = value / mul & 255;
       }
       return offset + byteLength2;
     };
@@ -1271,11 +1262,11 @@ var require_buffer = __commonJS({
         const maxBytes = Math.pow(2, 8 * byteLength2) - 1;
         checkInt(this, value, offset, byteLength2, maxBytes, 0);
       }
-      let i6 = byteLength2 - 1;
+      let i5 = byteLength2 - 1;
       let mul = 1;
-      this[offset + i6] = value & 255;
-      while (--i6 >= 0 && (mul *= 256)) {
-        this[offset + i6] = value / mul & 255;
+      this[offset + i5] = value & 255;
+      while (--i5 >= 0 && (mul *= 256)) {
+        this[offset + i5] = value / mul & 255;
       }
       return offset + byteLength2;
     };
@@ -1375,15 +1366,15 @@ var require_buffer = __commonJS({
         const limit = Math.pow(2, 8 * byteLength2 - 1);
         checkInt(this, value, offset, byteLength2, limit - 1, -limit);
       }
-      let i6 = 0;
+      let i5 = 0;
       let mul = 1;
       let sub = 0;
       this[offset] = value & 255;
-      while (++i6 < byteLength2 && (mul *= 256)) {
-        if (value < 0 && sub === 0 && this[offset + i6 - 1] !== 0) {
+      while (++i5 < byteLength2 && (mul *= 256)) {
+        if (value < 0 && sub === 0 && this[offset + i5 - 1] !== 0) {
           sub = 1;
         }
-        this[offset + i6] = (value / mul >> 0) - sub & 255;
+        this[offset + i5] = (value / mul >> 0) - sub & 255;
       }
       return offset + byteLength2;
     };
@@ -1394,15 +1385,15 @@ var require_buffer = __commonJS({
         const limit = Math.pow(2, 8 * byteLength2 - 1);
         checkInt(this, value, offset, byteLength2, limit - 1, -limit);
       }
-      let i6 = byteLength2 - 1;
+      let i5 = byteLength2 - 1;
       let mul = 1;
       let sub = 0;
-      this[offset + i6] = value & 255;
-      while (--i6 >= 0 && (mul *= 256)) {
-        if (value < 0 && sub === 0 && this[offset + i6 + 1] !== 0) {
+      this[offset + i5] = value & 255;
+      while (--i5 >= 0 && (mul *= 256)) {
+        if (value < 0 && sub === 0 && this[offset + i5 + 1] !== 0) {
           sub = 1;
         }
-        this[offset + i6] = (value / mul >> 0) - sub & 255;
+        this[offset + i5] = (value / mul >> 0) - sub & 255;
       }
       return offset + byteLength2;
     };
@@ -1557,10 +1548,10 @@ var require_buffer = __commonJS({
       start = start >>> 0;
       end = end === void 0 ? this.length : end >>> 0;
       if (!val) val = 0;
-      let i6;
+      let i5;
       if (typeof val === "number") {
-        for (i6 = start; i6 < end; ++i6) {
-          this[i6] = val;
+        for (i5 = start; i5 < end; ++i5) {
+          this[i5] = val;
         }
       } else {
         const bytes = Buffer3.isBuffer(val) ? val : Buffer3.from(val, encoding);
@@ -1568,8 +1559,8 @@ var require_buffer = __commonJS({
         if (len === 0) {
           throw new TypeError('The value "' + val + '" is invalid for argument "value"');
         }
-        for (i6 = 0; i6 < end - start; ++i6) {
-          this[i6 + start] = bytes[i6 % len];
+        for (i5 = 0; i5 < end - start; ++i5) {
+          this[i5 + start] = bytes[i5 % len];
         }
       }
       return this;
@@ -1642,12 +1633,12 @@ var require_buffer = __commonJS({
     );
     function addNumericalSeparator(val) {
       let res = "";
-      let i6 = val.length;
+      let i5 = val.length;
       const start = val[0] === "-" ? 1 : 0;
-      for (; i6 >= start + 4; i6 -= 3) {
-        res = `_${val.slice(i6 - 3, i6)}${res}`;
+      for (; i5 >= start + 4; i5 -= 3) {
+        res = `_${val.slice(i5 - 3, i5)}${res}`;
       }
-      return `${val.slice(0, i6)}${res}`;
+      return `${val.slice(0, i5)}${res}`;
     }
     function checkBounds(buf, offset, byteLength2) {
       validateNumber(offset, "offset");
@@ -1707,14 +1698,14 @@ var require_buffer = __commonJS({
       const length = string.length;
       let leadSurrogate = null;
       const bytes = [];
-      for (let i6 = 0; i6 < length; ++i6) {
-        codePoint = string.charCodeAt(i6);
+      for (let i5 = 0; i5 < length; ++i5) {
+        codePoint = string.charCodeAt(i5);
         if (codePoint > 55295 && codePoint < 57344) {
           if (!leadSurrogate) {
             if (codePoint > 56319) {
               if ((units -= 3) > -1) bytes.push(239, 191, 189);
               continue;
-            } else if (i6 + 1 === length) {
+            } else if (i5 + 1 === length) {
               if ((units -= 3) > -1) bytes.push(239, 191, 189);
               continue;
             }
@@ -1763,17 +1754,17 @@ var require_buffer = __commonJS({
     }
     function asciiToBytes(str) {
       const byteArray = [];
-      for (let i6 = 0; i6 < str.length; ++i6) {
-        byteArray.push(str.charCodeAt(i6) & 255);
+      for (let i5 = 0; i5 < str.length; ++i5) {
+        byteArray.push(str.charCodeAt(i5) & 255);
       }
       return byteArray;
     }
     function utf16leToBytes(str, units) {
       let c4, hi, lo;
       const byteArray = [];
-      for (let i6 = 0; i6 < str.length; ++i6) {
+      for (let i5 = 0; i5 < str.length; ++i5) {
         if ((units -= 2) < 0) break;
-        c4 = str.charCodeAt(i6);
+        c4 = str.charCodeAt(i5);
         hi = c4 >> 8;
         lo = c4 % 256;
         byteArray.push(lo);
@@ -1785,12 +1776,12 @@ var require_buffer = __commonJS({
       return base64.toByteArray(base64clean(str));
     }
     function blitBuffer(src, dst, offset, length) {
-      let i6;
-      for (i6 = 0; i6 < length; ++i6) {
-        if (i6 + offset >= dst.length || i6 >= src.length) break;
-        dst[i6 + offset] = src[i6];
+      let i5;
+      for (i5 = 0; i5 < length; ++i5) {
+        if (i5 + offset >= dst.length || i5 >= src.length) break;
+        dst[i5 + offset] = src[i5];
       }
-      return i6;
+      return i5;
     }
     function isInstance(obj, type) {
       return obj instanceof type || obj != null && obj.constructor != null && obj.constructor.name != null && obj.constructor.name === type.name;
@@ -1801,10 +1792,10 @@ var require_buffer = __commonJS({
     var hexSliceLookupTable = (function() {
       const alphabet = "0123456789abcdef";
       const table = new Array(256);
-      for (let i6 = 0; i6 < 16; ++i6) {
-        const i16 = i6 * 16;
+      for (let i5 = 0; i5 < 16; ++i5) {
+        const i16 = i5 * 16;
         for (let j = 0; j < 16; ++j) {
-          table[i16 + j] = alphabet[i6] + alphabet[j];
+          table[i16 + j] = alphabet[i5] + alphabet[j];
         }
       }
       return table;
@@ -1818,2387 +1809,6 @@ var require_buffer = __commonJS({
   }
 });
 
-// node_modules/n3/src/IRIs.js
-var RDF, XSD, SWAP, IRIs_default;
-var init_IRIs = __esm({
-  "node_modules/n3/src/IRIs.js"() {
-    "use strict";
-    RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-    XSD = "http://www.w3.org/2001/XMLSchema#";
-    SWAP = "http://www.w3.org/2000/10/swap/";
-    IRIs_default = {
-      xsd: {
-        decimal: `${XSD}decimal`,
-        boolean: `${XSD}boolean`,
-        double: `${XSD}double`,
-        integer: `${XSD}integer`,
-        string: `${XSD}string`
-      },
-      rdf: {
-        type: `${RDF}type`,
-        nil: `${RDF}nil`,
-        first: `${RDF}first`,
-        rest: `${RDF}rest`,
-        langString: `${RDF}langString`,
-        dirLangString: `${RDF}dirLangString`,
-        reifies: `${RDF}reifies`
-      },
-      owl: {
-        sameAs: "http://www.w3.org/2002/07/owl#sameAs"
-      },
-      r: {
-        forSome: `${SWAP}reify#forSome`,
-        forAll: `${SWAP}reify#forAll`
-      },
-      log: {
-        implies: `${SWAP}log#implies`,
-        isImpliedBy: `${SWAP}log#isImpliedBy`
-      }
-    };
-  }
-});
-
-// node_modules/n3/src/N3Lexer.js
-var import_buffer, xsd, escapeSequence, escapeReplacements, illegalIriChars, lineModeRegExps, invalidRegExp, N3Lexer;
-var init_N3Lexer = __esm({
-  "node_modules/n3/src/N3Lexer.js"() {
-    "use strict";
-    import_buffer = __toESM(require_buffer());
-    init_IRIs();
-    ({ xsd } = IRIs_default);
-    escapeSequence = /\\u([a-fA-F0-9]{4})|\\U([a-fA-F0-9]{8})|\\([^])/g;
-    escapeReplacements = {
-      "\\": "\\",
-      "'": "'",
-      '"': '"',
-      "n": "\n",
-      "r": "\r",
-      "t": "	",
-      "f": "\f",
-      "b": "\b",
-      "_": "_",
-      "~": "~",
-      ".": ".",
-      "-": "-",
-      "!": "!",
-      "$": "$",
-      "&": "&",
-      "(": "(",
-      ")": ")",
-      "*": "*",
-      "+": "+",
-      ",": ",",
-      ";": ";",
-      "=": "=",
-      "/": "/",
-      "?": "?",
-      "#": "#",
-      "@": "@",
-      "%": "%"
-    };
-    illegalIriChars = /[\x00-\x20<>\\"\{\}\|\^\`]/;
-    lineModeRegExps = {
-      _iri: true,
-      _unescapedIri: true,
-      _simpleQuotedString: true,
-      _langcode: true,
-      _dircode: true,
-      _blank: true,
-      _newline: true,
-      _comment: true,
-      _whitespace: true,
-      _endOfFile: true
-    };
-    invalidRegExp = /$0^/;
-    N3Lexer = class {
-      constructor(options) {
-        this._iri = /^<((?:[^ <>{}\\]|\\[uU])+)>[ \t]*/;
-        this._unescapedIri = /^<([^\x00-\x20<>\\"\{\}\|\^\`]*)>[ \t]*/;
-        this._simpleQuotedString = /^"([^"\\\r\n]*)"(?=[^"])/;
-        this._simpleApostropheString = /^'([^'\\\r\n]*)'(?=[^'])/;
-        this._langcode = /^@([a-z]+(?:-[a-z0-9]+)*)(?=[^a-z0-9])/i;
-        this._dircode = /^--(ltr)|(rtl)/;
-        this._prefix = /^((?:[A-Za-z\xc0-\xd6\xd8-\xf6\xf8-\u02ff\u0370-\u037d\u037f-\u1fff\u200c\u200d\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff])(?:\.?[\-0-9A-Z_a-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c\u200d\u203f\u2040\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff])*)?:(?=[#\s<])/;
-        this._prefixed = /^((?:[A-Za-z\xc0-\xd6\xd8-\xf6\xf8-\u02ff\u0370-\u037d\u037f-\u1fff\u200c\u200d\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff])(?:\.?[\-0-9A-Z_a-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c\u200d\u203f\u2040\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff])*)?:((?:(?:[0-:A-Z_a-z\xc0-\xd6\xd8-\xf6\xf8-\u02ff\u0370-\u037d\u037f-\u1fff\u200c\u200d\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff]|%[0-9a-fA-F]{2}|\\[!#-\/;=?\-@_~])(?:(?:[\.\-0-:A-Z_a-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c\u200d\u203f\u2040\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff]|%[0-9a-fA-F]{2}|\\[!#-\/;=?\-@_~])*(?:[\-0-:A-Z_a-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c\u200d\u203f\u2040\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff]|%[0-9a-fA-F]{2}|\\[!#-\/;=?\-@_~]))?)?)(?:[ \t]+|(?=\.?[,;!\^\s#()\[\]\{\}"'<>]))/;
-        this._variable = /^\?(?:(?:[A-Z_a-z\xc0-\xd6\xd8-\xf6\xf8-\u02ff\u0370-\u037d\u037f-\u1fff\u200c\u200d\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff])(?:[\-0-:A-Z_a-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c\u200d\u203f\u2040\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff])*)(?=[.,;!\^\s#()\[\]\{\}"'<>])/;
-        this._blank = /^_:((?:[0-9A-Z_a-z\xc0-\xd6\xd8-\xf6\xf8-\u02ff\u0370-\u037d\u037f-\u1fff\u200c\u200d\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff])(?:\.?[\-0-9A-Z_a-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c\u200d\u203f\u2040\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff])*)(?:[ \t]+|(?=\.?[,;:\s#()\[\]\{\}"'<>]))/;
-        this._number = /^[\-+]?(?:(\d+\.\d*|\.?\d+)[eE][\-+]?|\d*(\.)?)\d+(?=\.?[,;:\s#()\[\]\{\}"'<>])/;
-        this._boolean = /^(?:true|false)(?=[.,;\s#()\[\]\{\}"'<>])/;
-        this._atKeyword = /^@[a-z]+(?=[\s#<:])/i;
-        this._keyword = /^(?:PREFIX|BASE|VERSION|GRAPH)(?=[\s#<])/i;
-        this._shortPredicates = /^a(?=[\s#()\[\]\{\}"'<>])/;
-        this._newline = /^[ \t]*(?:#[^\n\r]*)?(?:\r\n|\n|\r)[ \t]*/;
-        this._comment = /#([^\n\r]*)/;
-        this._whitespace = /^[ \t]+/;
-        this._endOfFile = /^(?:#[^\n\r]*)?$/;
-        options = options || {};
-        this._isImpliedBy = options.isImpliedBy;
-        if (this._lineMode = !!options.lineMode) {
-          this._n3Mode = false;
-          for (const key in this) {
-            if (!(key in lineModeRegExps) && this[key] instanceof RegExp)
-              this[key] = invalidRegExp;
-          }
-        } else {
-          this._n3Mode = options.n3 !== false;
-        }
-        this.comments = !!options.comments;
-        this._literalClosingPos = 0;
-      }
-      // ## Private methods
-      // ### `_tokenizeToEnd` tokenizes as for as possible, emitting tokens through the callback
-      _tokenizeToEnd(callback, inputFinished) {
-        let input = this._input;
-        let currentLineLength = input.length;
-        while (true) {
-          let whiteSpaceMatch, comment;
-          while (whiteSpaceMatch = this._newline.exec(input)) {
-            if (this.comments && (comment = this._comment.exec(whiteSpaceMatch[0])))
-              emitToken("comment", comment[1], "", this._line, whiteSpaceMatch[0].length);
-            input = input.substr(whiteSpaceMatch[0].length, input.length);
-            currentLineLength = input.length;
-            this._line++;
-          }
-          if (!whiteSpaceMatch && (whiteSpaceMatch = this._whitespace.exec(input)))
-            input = input.substr(whiteSpaceMatch[0].length, input.length);
-          if (this._endOfFile.test(input)) {
-            if (inputFinished) {
-              if (this.comments && (comment = this._comment.exec(input)))
-                emitToken("comment", comment[1], "", this._line, input.length);
-              input = null;
-              emitToken("eof", "", "", this._line, 0);
-            }
-            return this._input = input;
-          }
-          const line = this._line, firstChar = input[0];
-          let type = "", value = "", prefix2 = "", match2 = null, matchLength = 0, inconclusive = false;
-          switch (firstChar) {
-            case "^":
-              if (input.length < 3)
-                break;
-              else if (input[1] === "^") {
-                this._previousMarker = "^^";
-                input = input.substr(2);
-                if (input[0] !== "<") {
-                  inconclusive = true;
-                  break;
-                }
-              } else {
-                if (this._n3Mode) {
-                  matchLength = 1;
-                  type = "^";
-                }
-                break;
-              }
-            // Fall through in case the type is an IRI
-            case "<":
-              if (match2 = this._unescapedIri.exec(input))
-                type = "IRI", value = match2[1];
-              else if (match2 = this._iri.exec(input)) {
-                value = this._unescape(match2[1]);
-                if (value === null || illegalIriChars.test(value))
-                  return reportSyntaxError(this);
-                type = "IRI";
-              } else if (input.length > 2 && input[1] === "<" && input[2] === "(")
-                type = "<<(", matchLength = 3;
-              else if (!this._lineMode && input.length > (inputFinished ? 1 : 2) && input[1] === "<")
-                type = "<<", matchLength = 2;
-              else if (this._n3Mode && input.length > 1 && input[1] === "=") {
-                matchLength = 2;
-                if (this._isImpliedBy) type = "abbreviation", value = "<";
-                else type = "inverse", value = ">";
-              }
-              break;
-            case ">":
-              if (input.length > 1 && input[1] === ">")
-                type = ">>", matchLength = 2;
-              break;
-            case "_":
-              if ((match2 = this._blank.exec(input)) || inputFinished && (match2 = this._blank.exec(`${input} `)))
-                type = "blank", prefix2 = "_", value = match2[1];
-              break;
-            case '"':
-              if (match2 = this._simpleQuotedString.exec(input))
-                value = match2[1];
-              else {
-                ({ value, matchLength } = this._parseLiteral(input));
-                if (value === null)
-                  return reportSyntaxError(this);
-              }
-              if (match2 !== null || matchLength !== 0) {
-                type = "literal";
-                this._literalClosingPos = 0;
-              }
-              break;
-            case "'":
-              if (!this._lineMode) {
-                if (match2 = this._simpleApostropheString.exec(input))
-                  value = match2[1];
-                else {
-                  ({ value, matchLength } = this._parseLiteral(input));
-                  if (value === null)
-                    return reportSyntaxError(this);
-                }
-                if (match2 !== null || matchLength !== 0) {
-                  type = "literal";
-                  this._literalClosingPos = 0;
-                }
-              }
-              break;
-            case "?":
-              if (this._n3Mode && (match2 = this._variable.exec(input)))
-                type = "var", value = match2[0];
-              break;
-            case "@":
-              if (this._previousMarker === "literal" && (match2 = this._langcode.exec(input)) && match2[1] !== "version")
-                type = "langcode", value = match2[1];
-              else if (match2 = this._atKeyword.exec(input))
-                type = match2[0];
-              break;
-            case ".":
-              if (input.length === 1 ? inputFinished : input[1] < "0" || input[1] > "9") {
-                type = ".";
-                matchLength = 1;
-                break;
-              }
-            // Fall through to numerical case (could be a decimal dot)
-            case "0":
-            case "1":
-            case "2":
-            case "3":
-            case "4":
-            case "5":
-            case "6":
-            case "7":
-            case "8":
-            case "9":
-            case "+":
-            case "-":
-              if (input[1] === "-") {
-                if (this._previousMarker === "langcode" && (match2 = this._dircode.exec(input)))
-                  type = "dircode", matchLength = 2, value = match2[1] || match2[2], matchLength = value.length + 2;
-                break;
-              }
-              if (match2 = this._number.exec(input) || inputFinished && (match2 = this._number.exec(`${input} `))) {
-                type = "literal", value = match2[0];
-                prefix2 = typeof match2[1] === "string" ? xsd.double : typeof match2[2] === "string" ? xsd.decimal : xsd.integer;
-              }
-              break;
-            case "B":
-            case "b":
-            case "p":
-            case "P":
-            case "G":
-            case "g":
-            case "V":
-            case "v":
-              if (match2 = this._keyword.exec(input))
-                type = match2[0].toUpperCase();
-              else
-                inconclusive = true;
-              break;
-            case "f":
-            case "t":
-              if (match2 = this._boolean.exec(input))
-                type = "literal", value = match2[0], prefix2 = xsd.boolean;
-              else
-                inconclusive = true;
-              break;
-            case "a":
-              if (match2 = this._shortPredicates.exec(input))
-                type = "abbreviation", value = "a";
-              else
-                inconclusive = true;
-              break;
-            case "=":
-              if (this._n3Mode && input.length > 1) {
-                type = "abbreviation";
-                if (input[1] !== ">")
-                  matchLength = 1, value = "=";
-                else
-                  matchLength = 2, value = ">";
-              }
-              break;
-            case "!":
-              if (!this._n3Mode)
-                break;
-            case ")":
-              if (!inputFinished && (input.length === 1 || input.length === 2 && input[1] === ">")) {
-                break;
-              }
-              if (input.length > 2 && input[1] === ">" && input[2] === ">") {
-                type = ")>>", matchLength = 3;
-                break;
-              }
-            case ",":
-            case ";":
-            case "[":
-            case "]":
-            case "(":
-            case "}":
-            case "~":
-              if (!this._lineMode) {
-                matchLength = 1;
-                type = firstChar;
-              }
-              break;
-            case "{":
-              if (!this._lineMode && input.length >= 2) {
-                if (input[1] === "|")
-                  type = "{|", matchLength = 2;
-                else
-                  type = firstChar, matchLength = 1;
-              }
-              break;
-            case "|":
-              if (input.length >= 2 && input[1] === "}")
-                type = "|}", matchLength = 2;
-              break;
-            default:
-              inconclusive = true;
-          }
-          if (inconclusive) {
-            if ((this._previousMarker === "@prefix" || this._previousMarker === "PREFIX") && (match2 = this._prefix.exec(input)))
-              type = "prefix", value = match2[1] || "";
-            else if ((match2 = this._prefixed.exec(input)) || inputFinished && (match2 = this._prefixed.exec(`${input} `)))
-              type = "prefixed", prefix2 = match2[1] || "", value = this._unescape(match2[2]);
-          }
-          if (this._previousMarker === "^^") {
-            switch (type) {
-              case "prefixed":
-                type = "type";
-                break;
-              case "IRI":
-                type = "typeIRI";
-                break;
-              default:
-                type = "";
-            }
-          }
-          if (!type) {
-            if (inputFinished || !/^'''|^"""/.test(input) && /\n|\r/.test(input))
-              return reportSyntaxError(this);
-            else
-              return this._input = input;
-          }
-          const length = matchLength || match2[0].length;
-          const token = emitToken(type, value, prefix2, line, length);
-          this.previousToken = token;
-          this._previousMarker = type;
-          input = input.substr(length, input.length);
-        }
-        function emitToken(type, value, prefix2, line, length) {
-          const start = input ? currentLineLength - input.length : currentLineLength;
-          const end = start + length;
-          const token = { type, value, prefix: prefix2, line, start, end };
-          callback(null, token);
-          return token;
-        }
-        function reportSyntaxError(self2) {
-          callback(self2._syntaxError(/^\S*/.exec(input)[0]));
-        }
-      }
-      // ### `_unescape` replaces N3 escape codes by their corresponding characters
-      _unescape(item) {
-        let invalid = false;
-        const replaced = item.replace(escapeSequence, (sequence, unicode4, unicode8, escapedChar) => {
-          if (typeof unicode4 === "string")
-            return String.fromCharCode(Number.parseInt(unicode4, 16));
-          if (typeof unicode8 === "string") {
-            let charCode = Number.parseInt(unicode8, 16);
-            return charCode <= 65535 ? String.fromCharCode(Number.parseInt(unicode8, 16)) : String.fromCharCode(55296 + ((charCode -= 65536) >> 10), 56320 + (charCode & 1023));
-          }
-          if (escapedChar in escapeReplacements)
-            return escapeReplacements[escapedChar];
-          invalid = true;
-          return "";
-        });
-        return invalid ? null : replaced;
-      }
-      // ### `_parseLiteral` parses a literal into an unescaped value
-      _parseLiteral(input) {
-        if (input.length >= 3) {
-          const opening = input.match(/^(?:"""|"|'''|'|)/)[0];
-          const openingLength = opening.length;
-          let closingPos = Math.max(this._literalClosingPos, openingLength);
-          while ((closingPos = input.indexOf(opening, closingPos)) > 0) {
-            let backslashCount = 0;
-            while (input[closingPos - backslashCount - 1] === "\\")
-              backslashCount++;
-            if (backslashCount % 2 === 0) {
-              const raw = input.substring(openingLength, closingPos);
-              const lines = raw.split(/\r\n|\r|\n/).length - 1;
-              const matchLength = closingPos + openingLength;
-              if (openingLength === 1 && lines !== 0 || openingLength === 3 && this._lineMode)
-                break;
-              this._line += lines;
-              return { value: this._unescape(raw), matchLength };
-            }
-            closingPos++;
-          }
-          this._literalClosingPos = input.length - openingLength + 1;
-        }
-        return { value: "", matchLength: 0 };
-      }
-      // ### `_syntaxError` creates a syntax error for the given issue
-      _syntaxError(issue) {
-        this._input = null;
-        const err = new Error(`Unexpected "${issue}" on line ${this._line}.`);
-        err.context = {
-          token: void 0,
-          line: this._line,
-          previousToken: this.previousToken
-        };
-        return err;
-      }
-      // ### Strips off any starting UTF BOM mark.
-      _readStartingBom(input) {
-        return input.startsWith("\uFEFF") ? input.substr(1) : input;
-      }
-      // ## Public methods
-      // ### `tokenize` starts the transformation of an N3 document into an array of tokens.
-      // The input can be a string or a stream.
-      tokenize(input, callback) {
-        this._line = 1;
-        if (typeof input === "string") {
-          this._input = this._readStartingBom(input);
-          if (typeof callback === "function")
-            queueMicrotask(() => this._tokenizeToEnd(callback, true));
-          else {
-            const tokens = [];
-            let error;
-            this._tokenizeToEnd((e8, t5) => e8 ? error = e8 : tokens.push(t5), true);
-            if (error) throw error;
-            return tokens;
-          }
-        } else {
-          this._pendingBuffer = null;
-          if (typeof input.setEncoding === "function")
-            input.setEncoding("utf8");
-          input.on("data", (data) => {
-            if (this._input !== null && data.length !== 0) {
-              if (this._pendingBuffer) {
-                data = import_buffer.Buffer.concat([this._pendingBuffer, data]);
-                this._pendingBuffer = null;
-              }
-              if (data[data.length - 1] & 128) {
-                this._pendingBuffer = data;
-              } else {
-                if (typeof this._input === "undefined")
-                  this._input = this._readStartingBom(typeof data === "string" ? data : data.toString());
-                else
-                  this._input += data;
-                this._tokenizeToEnd(callback, false);
-              }
-            }
-          });
-          input.on("end", () => {
-            if (typeof this._input === "string")
-              this._tokenizeToEnd(callback, true);
-          });
-          input.on("error", callback);
-        }
-      }
-    };
-  }
-});
-
-// node_modules/n3/src/N3DataFactory.js
-function termFromId(id, factory3, nested) {
-  factory3 = factory3 || DataFactory;
-  if (!id)
-    return factory3.defaultGraph();
-  switch (id[0]) {
-    case "?":
-      return factory3.variable(id.substr(1));
-    case "_":
-      return factory3.blankNode(id.substr(2));
-    case '"':
-      if (factory3 === DataFactory)
-        return new Literal(id);
-      if (id[id.length - 1] === '"')
-        return factory3.literal(id.substr(1, id.length - 2));
-      const endPos = id.lastIndexOf('"', id.length - 1);
-      let languageOrDatatype;
-      if (id[endPos + 1] === "@") {
-        languageOrDatatype = id.substr(endPos + 2);
-        const dashDashIndex = languageOrDatatype.lastIndexOf("--");
-        if (dashDashIndex > 0 && dashDashIndex < languageOrDatatype.length) {
-          languageOrDatatype = {
-            language: languageOrDatatype.substr(0, dashDashIndex),
-            direction: languageOrDatatype.substr(dashDashIndex + 2)
-          };
-        }
-      } else {
-        languageOrDatatype = factory3.namedNode(id.substr(endPos + 3));
-      }
-      return factory3.literal(
-        id.substr(1, endPos - 1),
-        languageOrDatatype
-      );
-    case "[":
-      id = JSON.parse(id);
-      break;
-    default:
-      if (!nested || !Array.isArray(id)) {
-        return factory3.namedNode(id);
-      }
-  }
-  return factory3.quad(
-    termFromId(id[0], factory3, true),
-    termFromId(id[1], factory3, true),
-    termFromId(id[2], factory3, true),
-    id[3] && termFromId(id[3], factory3, true)
-  );
-}
-function termToId(term, nested) {
-  if (typeof term === "string")
-    return term;
-  if (term instanceof Term && term.termType !== "Quad")
-    return term.id;
-  if (!term)
-    return DEFAULTGRAPH.id;
-  switch (term.termType) {
-    case "NamedNode":
-      return term.value;
-    case "BlankNode":
-      return `_:${term.value}`;
-    case "Variable":
-      return `?${term.value}`;
-    case "DefaultGraph":
-      return "";
-    case "Literal":
-      return `"${term.value}"${term.language ? `@${term.language}${term.direction ? `--${term.direction}` : ""}` : term.datatype && term.datatype.value !== xsd2.string ? `^^${term.datatype.value}` : ""}`;
-    case "Quad":
-      const res = [
-        termToId(term.subject, true),
-        termToId(term.predicate, true),
-        termToId(term.object, true)
-      ];
-      if (term.graph && term.graph.termType !== "DefaultGraph") {
-        res.push(termToId(term.graph, true));
-      }
-      return nested ? res : JSON.stringify(res);
-    default:
-      throw new Error(`Unexpected termType: ${term.termType}`);
-  }
-}
-function namedNode(iri) {
-  return new NamedNode(iri);
-}
-function blankNode(name) {
-  return new BlankNode(name || `n3-${_blankNodeCounter++}`);
-}
-function literal(value, languageOrDataType) {
-  if (typeof languageOrDataType === "string")
-    return new Literal(`"${value}"@${languageOrDataType.toLowerCase()}`);
-  if (languageOrDataType !== void 0 && !("termType" in languageOrDataType)) {
-    return new Literal(`"${value}"@${languageOrDataType.language.toLowerCase()}${languageOrDataType.direction ? `--${languageOrDataType.direction.toLowerCase()}` : ""}`);
-  }
-  let datatype = languageOrDataType ? languageOrDataType.value : "";
-  if (datatype === "") {
-    if (typeof value === "boolean")
-      datatype = xsd2.boolean;
-    else if (typeof value === "number") {
-      if (Number.isFinite(value))
-        datatype = Number.isInteger(value) ? xsd2.integer : xsd2.double;
-      else {
-        datatype = xsd2.double;
-        if (!Number.isNaN(value))
-          value = value > 0 ? "INF" : "-INF";
-      }
-    }
-  }
-  return datatype === "" || datatype === xsd2.string ? new Literal(`"${value}"`) : new Literal(`"${value}"^^${datatype}`);
-}
-function variable(name) {
-  return new Variable(name);
-}
-function defaultGraph() {
-  return DEFAULTGRAPH;
-}
-function quad(subject2, predicate2, object2, graph) {
-  return new Quad(subject2, predicate2, object2, graph);
-}
-function fromTerm(term) {
-  if (term instanceof Term)
-    return term;
-  switch (term.termType) {
-    case "NamedNode":
-      return namedNode(term.value);
-    case "BlankNode":
-      return blankNode(term.value);
-    case "Variable":
-      return variable(term.value);
-    case "DefaultGraph":
-      return DEFAULTGRAPH;
-    case "Literal":
-      return literal(term.value, term.language || term.datatype);
-    case "Quad":
-      return fromQuad(term);
-    default:
-      throw new Error(`Unexpected termType: ${term.termType}`);
-  }
-}
-function fromQuad(inQuad) {
-  if (inQuad instanceof Quad)
-    return inQuad;
-  if (inQuad.termType !== "Quad")
-    throw new Error(`Unexpected termType: ${inQuad.termType}`);
-  return quad(fromTerm(inQuad.subject), fromTerm(inQuad.predicate), fromTerm(inQuad.object), fromTerm(inQuad.graph));
-}
-var rdf, xsd2, DEFAULTGRAPH, _blankNodeCounter, DataFactory, N3DataFactory_default, Term, NamedNode, Literal, BlankNode, Variable, DefaultGraph, Quad;
-var init_N3DataFactory = __esm({
-  "node_modules/n3/src/N3DataFactory.js"() {
-    "use strict";
-    init_IRIs();
-    ({ rdf, xsd: xsd2 } = IRIs_default);
-    _blankNodeCounter = 0;
-    DataFactory = {
-      namedNode,
-      blankNode,
-      variable,
-      literal,
-      defaultGraph,
-      quad,
-      triple: quad,
-      fromTerm,
-      fromQuad
-    };
-    N3DataFactory_default = DataFactory;
-    Term = class _Term {
-      constructor(id) {
-        this.id = id;
-      }
-      // ### The value of this term
-      get value() {
-        return this.id;
-      }
-      // ### Returns whether this object represents the same term as the other
-      equals(other) {
-        if (other instanceof _Term)
-          return this.id === other.id;
-        return !!other && this.termType === other.termType && this.value === other.value;
-      }
-      // ### Implement hashCode for Immutable.js, since we implement `equals`
-      // https://immutable-js.com/docs/v4.0.0/ValueObject/#hashCode()
-      hashCode() {
-        return 0;
-      }
-      // ### Returns a plain object representation of this term
-      toJSON() {
-        return {
-          termType: this.termType,
-          value: this.value
-        };
-      }
-    };
-    NamedNode = class extends Term {
-      // ### The term type of this term
-      get termType() {
-        return "NamedNode";
-      }
-    };
-    Literal = class _Literal extends Term {
-      // ### The term type of this term
-      get termType() {
-        return "Literal";
-      }
-      // ### The text value of this literal
-      get value() {
-        return this.id.substring(1, this.id.lastIndexOf('"'));
-      }
-      // ### The language of this literal
-      get language() {
-        const id = this.id;
-        let atPos = id.lastIndexOf('"') + 1;
-        const dirPos = id.lastIndexOf("--");
-        return atPos < id.length && id[atPos++] === "@" ? (dirPos > atPos ? id.substr(0, dirPos) : id).substr(atPos).toLowerCase() : "";
-      }
-      // ### The direction of this literal
-      get direction() {
-        const id = this.id;
-        const endPos = id.lastIndexOf('"');
-        const dirPos = id.lastIndexOf("--");
-        return dirPos > endPos && dirPos + 2 < id.length ? id.substr(dirPos + 2).toLowerCase() : "";
-      }
-      // ### The datatype IRI of this literal
-      get datatype() {
-        return new NamedNode(this.datatypeString);
-      }
-      // ### The datatype string of this literal
-      get datatypeString() {
-        const id = this.id, dtPos = id.lastIndexOf('"') + 1;
-        const char = dtPos < id.length ? id[dtPos] : "";
-        return char === "^" ? id.substr(dtPos + 2) : (
-          // If "@" follows, return rdf:langString or rdf:dirLangString; xsd:string otherwise
-          char !== "@" ? xsd2.string : id.indexOf("--", dtPos) > 0 ? rdf.dirLangString : rdf.langString
-        );
-      }
-      // ### Returns whether this object represents the same term as the other
-      equals(other) {
-        if (other instanceof _Literal)
-          return this.id === other.id;
-        return !!other && !!other.datatype && this.termType === other.termType && this.value === other.value && this.language === other.language && (this.direction === other.direction || this.direction === "" && !other.direction) && this.datatype.value === other.datatype.value;
-      }
-      toJSON() {
-        return {
-          termType: this.termType,
-          value: this.value,
-          language: this.language,
-          direction: this.direction,
-          datatype: { termType: "NamedNode", value: this.datatypeString }
-        };
-      }
-    };
-    BlankNode = class extends Term {
-      constructor(name) {
-        super(`_:${name}`);
-      }
-      // ### The term type of this term
-      get termType() {
-        return "BlankNode";
-      }
-      // ### The name of this blank node
-      get value() {
-        return this.id.substr(2);
-      }
-    };
-    Variable = class extends Term {
-      constructor(name) {
-        super(`?${name}`);
-      }
-      // ### The term type of this term
-      get termType() {
-        return "Variable";
-      }
-      // ### The name of this variable
-      get value() {
-        return this.id.substr(1);
-      }
-    };
-    DefaultGraph = class extends Term {
-      constructor() {
-        super("");
-        return DEFAULTGRAPH || this;
-      }
-      // ### The term type of this term
-      get termType() {
-        return "DefaultGraph";
-      }
-      // ### Returns whether this object represents the same term as the other
-      equals(other) {
-        return this === other || !!other && this.termType === other.termType;
-      }
-    };
-    DEFAULTGRAPH = new DefaultGraph();
-    Quad = class extends Term {
-      constructor(subject2, predicate2, object2, graph) {
-        super("");
-        this._subject = subject2;
-        this._predicate = predicate2;
-        this._object = object2;
-        this._graph = graph || DEFAULTGRAPH;
-      }
-      // ### The term type of this term
-      get termType() {
-        return "Quad";
-      }
-      get subject() {
-        return this._subject;
-      }
-      get predicate() {
-        return this._predicate;
-      }
-      get object() {
-        return this._object;
-      }
-      get graph() {
-        return this._graph;
-      }
-      // ### Returns a plain object representation of this quad
-      toJSON() {
-        return {
-          termType: this.termType,
-          subject: this._subject.toJSON(),
-          predicate: this._predicate.toJSON(),
-          object: this._object.toJSON(),
-          graph: this._graph.toJSON()
-        };
-      }
-      // ### Returns whether this object represents the same quad as the other
-      equals(other) {
-        return !!other && this._subject.equals(other.subject) && this._predicate.equals(other.predicate) && this._object.equals(other.object) && this._graph.equals(other.graph);
-      }
-    };
-  }
-});
-
-// node_modules/n3/src/N3Parser.js
-function noop() {
-}
-function initDataFactory(parser, factory3) {
-  parser._factory = factory3;
-  parser.DEFAULTGRAPH = factory3.defaultGraph();
-  parser.RDF_FIRST = factory3.namedNode(IRIs_default.rdf.first);
-  parser.RDF_REST = factory3.namedNode(IRIs_default.rdf.rest);
-  parser.RDF_NIL = factory3.namedNode(IRIs_default.rdf.nil);
-  parser.RDF_REIFIES = factory3.namedNode(IRIs_default.rdf.reifies);
-  parser.N3_FORALL = factory3.namedNode(IRIs_default.r.forAll);
-  parser.N3_FORSOME = factory3.namedNode(IRIs_default.r.forSome);
-  parser.ABBREVIATIONS = {
-    "a": factory3.namedNode(IRIs_default.rdf.type),
-    "=": factory3.namedNode(IRIs_default.owl.sameAs),
-    ">": factory3.namedNode(IRIs_default.log.implies),
-    "<": factory3.namedNode(IRIs_default.log.isImpliedBy)
-  };
-  parser.QUANTIFIERS_GRAPH = factory3.namedNode("urn:n3:quantifiers");
-}
-var blankNodePrefix, N3Parser;
-var init_N3Parser = __esm({
-  "node_modules/n3/src/N3Parser.js"() {
-    "use strict";
-    init_N3Lexer();
-    init_N3DataFactory();
-    init_IRIs();
-    blankNodePrefix = 0;
-    N3Parser = class _N3Parser {
-      constructor(options) {
-        this._contextStack = [];
-        this._graph = null;
-        options = options || {};
-        this._setBase(options.baseIRI);
-        options.factory && initDataFactory(this, options.factory);
-        const format = typeof options.format === "string" ? options.format.match(/\w*$/)[0].toLowerCase() : "", isTurtle = /turtle/.test(format), isTriG = /trig/.test(format), isNTriples = /triple/.test(format), isNQuads = /quad/.test(format), isN3 = this._n3Mode = /n3/.test(format), isLineMode = isNTriples || isNQuads;
-        if (!(this._supportsNamedGraphs = !(isTurtle || isN3)))
-          this._readPredicateOrNamedGraph = this._readPredicate;
-        this._supportsQuads = !(isTurtle || isTriG || isNTriples || isN3);
-        this._isImpliedBy = options.isImpliedBy;
-        if (isLineMode)
-          this._resolveRelativeIRI = (iri) => {
-            return null;
-          };
-        this._blankNodePrefix = typeof options.blankNodePrefix !== "string" ? "" : options.blankNodePrefix.replace(/^(?!_:)/, "_:");
-        this._lexer = options.lexer || new N3Lexer({ lineMode: isLineMode, n3: isN3, isImpliedBy: this._isImpliedBy });
-        this._explicitQuantifiers = !!options.explicitQuantifiers;
-        this._parseUnsupportedVersions = !!options.parseUnsupportedVersions;
-        this._version = options.version;
-      }
-      // ## Static class methods
-      // ### `_resetBlankNodePrefix` restarts blank node prefix identification
-      static _resetBlankNodePrefix() {
-        blankNodePrefix = 0;
-      }
-      // ## Private methods
-      // ### `_setBase` sets the base IRI to resolve relative IRIs
-      _setBase(baseIRI) {
-        if (!baseIRI) {
-          this._base = "";
-          this._basePath = "";
-        } else {
-          const fragmentPos = baseIRI.indexOf("#");
-          if (fragmentPos >= 0)
-            baseIRI = baseIRI.substr(0, fragmentPos);
-          this._base = baseIRI;
-          this._basePath = baseIRI.indexOf("/") < 0 ? baseIRI : baseIRI.replace(/[^\/?]*(?:\?.*)?$/, "");
-          baseIRI = baseIRI.match(/^(?:([a-z][a-z0-9+.-]*:))?(?:\/\/[^\/]*)?/i);
-          this._baseRoot = baseIRI[0];
-          this._baseScheme = baseIRI[1];
-        }
-      }
-      // ### `_saveContext` stores the current parsing context
-      // when entering a new scope (list, blank node, formula)
-      _saveContext(type, graph, subject2, predicate2, object2) {
-        const n3Mode = this._n3Mode;
-        this._contextStack.push({
-          type,
-          subject: subject2,
-          predicate: predicate2,
-          object: object2,
-          graph,
-          inverse: n3Mode ? this._inversePredicate : false,
-          blankPrefix: n3Mode ? this._prefixes._ : "",
-          quantified: n3Mode ? this._quantified : null
-        });
-        if (n3Mode) {
-          this._inversePredicate = false;
-          this._prefixes._ = this._graph ? `${this._graph.value}.` : ".";
-          this._quantified = Object.create(this._quantified);
-        }
-      }
-      // ### `_restoreContext` restores the parent context
-      // when leaving a scope (list, blank node, formula)
-      _restoreContext(type, token) {
-        const context = this._contextStack.pop();
-        if (!context || context.type !== type)
-          return this._error(`Unexpected ${token.type}`, token);
-        this._subject = context.subject;
-        this._predicate = context.predicate;
-        this._object = context.object;
-        this._graph = context.graph;
-        if (this._n3Mode) {
-          this._inversePredicate = context.inverse;
-          this._prefixes._ = context.blankPrefix;
-          this._quantified = context.quantified;
-        }
-      }
-      // ### `_readBeforeTopContext` is called once only at the start of parsing.
-      _readBeforeTopContext(token) {
-        if (this._version && !this._isValidVersion(this._version))
-          return this._error(`Detected unsupported version as media type parameter: "${this._version}"`, token);
-        return this._readInTopContext(token);
-      }
-      // ### `_readInTopContext` reads a token when in the top context
-      _readInTopContext(token) {
-        switch (token.type) {
-          // If an EOF token arrives in the top context, signal that we're done
-          case "eof":
-            if (this._graph !== null)
-              return this._error("Unclosed graph", token);
-            delete this._prefixes._;
-            return this._callback(null, null, this._prefixes);
-          // It could be a prefix declaration
-          case "PREFIX":
-            this._sparqlStyle = true;
-          case "@prefix":
-            return this._readPrefix;
-          // It could be a base declaration
-          case "BASE":
-            this._sparqlStyle = true;
-          case "@base":
-            return this._readBaseIRI;
-          // It could be a version declaration
-          case "VERSION":
-            this._sparqlStyle = true;
-          case "@version":
-            return this._readVersion;
-          // It could be a graph
-          case "{":
-            if (this._supportsNamedGraphs) {
-              this._graph = "";
-              this._subject = null;
-              return this._readSubject;
-            }
-          case "GRAPH":
-            if (this._supportsNamedGraphs)
-              return this._readNamedGraphLabel;
-          // Otherwise, the next token must be a subject
-          default:
-            return this._readSubject(token);
-        }
-      }
-      // ### `_readEntity` reads an IRI, prefixed name, blank node, or variable
-      _readEntity(token, quantifier) {
-        let value;
-        switch (token.type) {
-          // Read a relative or absolute IRI
-          case "IRI":
-          case "typeIRI":
-            const iri = this._resolveIRI(token.value);
-            if (iri === null)
-              return this._error("Invalid IRI", token);
-            value = this._factory.namedNode(iri);
-            break;
-          // Read a prefixed name
-          case "type":
-          case "prefixed":
-            const prefix2 = this._prefixes[token.prefix];
-            if (prefix2 === void 0)
-              return this._error(`Undefined prefix "${token.prefix}:"`, token);
-            value = this._factory.namedNode(prefix2 + token.value);
-            break;
-          // Read a blank node
-          case "blank":
-            value = this._factory.blankNode(this._prefixes[token.prefix] + token.value);
-            break;
-          // Read a variable
-          case "var":
-            value = this._factory.variable(token.value.substr(1));
-            break;
-          // Everything else is not an entity
-          default:
-            return this._error(`Expected entity but got ${token.type}`, token);
-        }
-        if (!quantifier && this._n3Mode && value.id in this._quantified)
-          value = this._quantified[value.id];
-        return value;
-      }
-      // ### `_readSubject` reads a quad's subject
-      _readSubject(token) {
-        this._predicate = null;
-        switch (token.type) {
-          case "[":
-            this._saveContext(
-              "blank",
-              this._graph,
-              this._subject = this._factory.blankNode(),
-              null,
-              null
-            );
-            return this._readBlankNodeHead;
-          case "(":
-            const stack = this._contextStack, parent = stack.length && stack[stack.length - 1];
-            if (parent.type === "<<") {
-              return this._error("Unexpected list in reified triple", token);
-            }
-            this._saveContext("list", this._graph, this.RDF_NIL, null, null);
-            this._subject = null;
-            return this._readListItem;
-          case "{":
-            if (!this._n3Mode)
-              return this._error("Unexpected graph", token);
-            this._saveContext(
-              "formula",
-              this._graph,
-              this._graph = this._factory.blankNode(),
-              null,
-              null
-            );
-            return this._readSubject;
-          case "}":
-            return this._readPunctuation(token);
-          case "@forSome":
-            if (!this._n3Mode)
-              return this._error('Unexpected "@forSome"', token);
-            this._subject = null;
-            this._predicate = this.N3_FORSOME;
-            this._quantifier = "blankNode";
-            return this._readQuantifierList;
-          case "@forAll":
-            if (!this._n3Mode)
-              return this._error('Unexpected "@forAll"', token);
-            this._subject = null;
-            this._predicate = this.N3_FORALL;
-            this._quantifier = "variable";
-            return this._readQuantifierList;
-          case "literal":
-            if (!this._n3Mode)
-              return this._error("Unexpected literal", token);
-            if (token.prefix.length === 0) {
-              this._literalValue = token.value;
-              return this._completeSubjectLiteral;
-            } else
-              this._subject = this._factory.literal(token.value, this._factory.namedNode(token.prefix));
-            break;
-          case "<<(":
-            if (!this._n3Mode)
-              return this._error("Disallowed triple term as subject", token);
-            this._saveContext("<<(", this._graph, null, null, null);
-            this._graph = null;
-            return this._readSubject;
-          case "<<":
-            this._saveContext("<<", this._graph, null, null, null);
-            this._graph = null;
-            return this._readSubject;
-          default:
-            if ((this._subject = this._readEntity(token)) === void 0)
-              return;
-            if (this._n3Mode)
-              return this._getPathReader(this._readPredicateOrNamedGraph);
-        }
-        return this._readPredicateOrNamedGraph;
-      }
-      // ### `_readPredicate` reads a quad's predicate
-      _readPredicate(token) {
-        const type = token.type;
-        switch (type) {
-          case "inverse":
-            this._inversePredicate = true;
-          case "abbreviation":
-            this._predicate = this.ABBREVIATIONS[token.value];
-            break;
-          case ".":
-          case "]":
-          case "}":
-          case "|}":
-            if (this._predicate === null)
-              return this._error(`Unexpected ${type}`, token);
-            this._subject = null;
-            return type === "]" ? this._readBlankNodeTail(token) : this._readPunctuation(token);
-          case ";":
-            return this._predicate !== null ? this._readPredicate : this._error("Expected predicate but got ;", token);
-          case "[":
-            if (this._n3Mode) {
-              this._saveContext(
-                "blank",
-                this._graph,
-                this._subject,
-                this._subject = this._factory.blankNode(),
-                null
-              );
-              return this._readBlankNodeHead;
-            }
-          case "blank":
-            if (!this._n3Mode)
-              return this._error("Disallowed blank node as predicate", token);
-          default:
-            if ((this._predicate = this._readEntity(token)) === void 0)
-              return;
-        }
-        this._validAnnotation = true;
-        return this._readObject;
-      }
-      // ### `_readObject` reads a quad's object
-      _readObject(token) {
-        switch (token.type) {
-          case "literal":
-            if (token.prefix.length === 0) {
-              this._literalValue = token.value;
-              return this._readDataTypeOrLang;
-            } else
-              this._object = this._factory.literal(token.value, this._factory.namedNode(token.prefix));
-            break;
-          case "[":
-            this._saveContext(
-              "blank",
-              this._graph,
-              this._subject,
-              this._predicate,
-              this._subject = this._factory.blankNode()
-            );
-            return this._readBlankNodeHead;
-          case "(":
-            const stack = this._contextStack, parent = stack.length && stack[stack.length - 1];
-            if (parent.type === "<<") {
-              return this._error("Unexpected list in reified triple", token);
-            }
-            this._saveContext("list", this._graph, this._subject, this._predicate, this.RDF_NIL);
-            this._subject = null;
-            return this._readListItem;
-          case "{":
-            if (!this._n3Mode)
-              return this._error("Unexpected graph", token);
-            this._saveContext(
-              "formula",
-              this._graph,
-              this._subject,
-              this._predicate,
-              this._graph = this._factory.blankNode()
-            );
-            return this._readSubject;
-          case "<<(":
-            this._saveContext("<<(", this._graph, this._subject, this._predicate, null);
-            this._graph = null;
-            return this._readSubject;
-          case "<<":
-            this._saveContext("<<", this._graph, this._subject, this._predicate, null);
-            this._graph = null;
-            return this._readSubject;
-          default:
-            if ((this._object = this._readEntity(token)) === void 0)
-              return;
-            if (this._n3Mode)
-              return this._getPathReader(this._getContextEndReader());
-        }
-        return this._getContextEndReader();
-      }
-      // ### `_readPredicateOrNamedGraph` reads a quad's predicate, or a named graph
-      _readPredicateOrNamedGraph(token) {
-        return token.type === "{" ? this._readGraph(token) : this._readPredicate(token);
-      }
-      // ### `_readGraph` reads a graph
-      _readGraph(token) {
-        if (token.type !== "{")
-          return this._error(`Expected graph but got ${token.type}`, token);
-        this._graph = this._subject, this._subject = null;
-        return this._readSubject;
-      }
-      // ### `_readBlankNodeHead` reads the head of a blank node
-      _readBlankNodeHead(token) {
-        if (token.type === "]") {
-          this._subject = null;
-          return this._readBlankNodeTail(token);
-        } else {
-          const stack = this._contextStack, parentParent = stack.length > 1 && stack[stack.length - 2];
-          if (parentParent.type === "<<") {
-            return this._error("Unexpected compound blank node expression in reified triple", token);
-          }
-          this._predicate = null;
-          return this._readPredicate(token);
-        }
-      }
-      // ### `_readBlankNodeTail` reads the end of a blank node
-      _readBlankNodeTail(token) {
-        if (token.type !== "]")
-          return this._readBlankNodePunctuation(token);
-        if (this._subject !== null)
-          this._emit(this._subject, this._predicate, this._object, this._graph);
-        const empty2 = this._predicate === null;
-        this._restoreContext("blank", token);
-        if (this._object !== null)
-          return this._getContextEndReader();
-        else if (this._predicate !== null)
-          return this._readObject;
-        else
-          return empty2 ? this._readPredicateOrNamedGraph : this._readPredicateAfterBlank;
-      }
-      // ### `_readPredicateAfterBlank` reads a predicate after an anonymous blank node
-      _readPredicateAfterBlank(token) {
-        switch (token.type) {
-          case ".":
-          case "}":
-            this._subject = null;
-            return this._readPunctuation(token);
-          default:
-            return this._readPredicate(token);
-        }
-      }
-      // ### `_readListItem` reads items from a list
-      _readListItem(token) {
-        let item = null, list = null, next = this._readListItem;
-        const previousList = this._subject, stack = this._contextStack, parent = stack[stack.length - 1];
-        switch (token.type) {
-          case "[":
-            this._saveContext(
-              "blank",
-              this._graph,
-              list = this._factory.blankNode(),
-              this.RDF_FIRST,
-              this._subject = item = this._factory.blankNode()
-            );
-            next = this._readBlankNodeHead;
-            break;
-          case "(":
-            this._saveContext(
-              "list",
-              this._graph,
-              list = this._factory.blankNode(),
-              this.RDF_FIRST,
-              this.RDF_NIL
-            );
-            this._subject = null;
-            break;
-          case ")":
-            this._restoreContext("list", token);
-            if (stack.length !== 0 && stack[stack.length - 1].type === "list")
-              this._emit(this._subject, this._predicate, this._object, this._graph);
-            if (this._predicate === null) {
-              next = this._readPredicate;
-              if (this._subject === this.RDF_NIL)
-                return next;
-            } else {
-              next = this._getContextEndReader();
-              if (this._object === this.RDF_NIL)
-                return next;
-            }
-            list = this.RDF_NIL;
-            break;
-          case "literal":
-            if (token.prefix.length === 0) {
-              this._literalValue = token.value;
-              next = this._readListItemDataTypeOrLang;
-            } else {
-              item = this._factory.literal(token.value, this._factory.namedNode(token.prefix));
-              next = this._getContextEndReader();
-            }
-            break;
-          case "{":
-            if (!this._n3Mode)
-              return this._error("Unexpected graph", token);
-            this._saveContext(
-              "formula",
-              this._graph,
-              this._subject,
-              this._predicate,
-              this._graph = this._factory.blankNode()
-            );
-            return this._readSubject;
-          case "<<":
-            this._saveContext("<<", this._graph, null, null, null);
-            this._graph = null;
-            next = this._readSubject;
-            break;
-          default:
-            if ((item = this._readEntity(token)) === void 0)
-              return;
-        }
-        if (list === null)
-          this._subject = list = this._factory.blankNode();
-        if (token.type === "<<")
-          stack[stack.length - 1].subject = this._subject;
-        if (previousList === null) {
-          if (parent.predicate === null)
-            parent.subject = list;
-          else
-            parent.object = list;
-        } else {
-          this._emit(previousList, this.RDF_REST, list, this._graph);
-        }
-        if (item !== null) {
-          if (this._n3Mode && (token.type === "IRI" || token.type === "prefixed")) {
-            this._saveContext("item", this._graph, list, this.RDF_FIRST, item);
-            this._subject = item, this._predicate = null;
-            return this._getPathReader(this._readListItem);
-          }
-          this._emit(list, this.RDF_FIRST, item, this._graph);
-        }
-        return next;
-      }
-      // ### `_readDataTypeOrLang` reads an _optional_ datatype or language
-      _readDataTypeOrLang(token) {
-        return this._completeObjectLiteral(token, false);
-      }
-      // ### `_readListItemDataTypeOrLang` reads an _optional_ datatype or language in a list
-      _readListItemDataTypeOrLang(token) {
-        return this._completeObjectLiteral(token, true);
-      }
-      // ### `_completeLiteral` completes a literal with an optional datatype or language
-      _completeLiteral(token, component) {
-        let literal3 = this._factory.literal(this._literalValue);
-        let readCb;
-        switch (token.type) {
-          // Create a datatyped literal
-          case "type":
-          case "typeIRI":
-            const datatype = this._readEntity(token);
-            if (datatype === void 0) return;
-            if (datatype.value === IRIs_default.rdf.langString || datatype.value === IRIs_default.rdf.dirLangString) {
-              return this._error("Detected illegal (directional) languaged-tagged string with explicit datatype", token);
-            }
-            literal3 = this._factory.literal(this._literalValue, datatype);
-            token = null;
-            break;
-          // Create a language-tagged string
-          case "langcode":
-            if (token.value.split("-").some((t5) => t5.length > 8))
-              return this._error("Detected language tag with subtag longer than 8 characters", token);
-            literal3 = this._factory.literal(this._literalValue, token.value);
-            this._literalLanguage = token.value;
-            token = null;
-            readCb = this._readDirCode.bind(this, component);
-            break;
-        }
-        return { token, literal: literal3, readCb };
-      }
-      _readDirCode(component, listItem, token) {
-        if (token.type === "dircode") {
-          const term = this._factory.literal(this._literalValue, { language: this._literalLanguage, direction: token.value });
-          if (component === "subject")
-            this._subject = term;
-          else
-            this._object = term;
-          this._literalLanguage = void 0;
-          token = null;
-        }
-        if (component === "subject")
-          return token === null ? this._readPredicateOrNamedGraph : this._readPredicateOrNamedGraph(token);
-        return this._completeObjectLiteralPost(token, listItem);
-      }
-      // Completes a literal in subject position
-      _completeSubjectLiteral(token) {
-        const completed = this._completeLiteral(token, "subject");
-        this._subject = completed.literal;
-        if (completed.readCb)
-          return completed.readCb.bind(this, false);
-        return this._readPredicateOrNamedGraph;
-      }
-      // Completes a literal in object position
-      _completeObjectLiteral(token, listItem) {
-        const completed = this._completeLiteral(token, "object");
-        if (!completed)
-          return;
-        this._object = completed.literal;
-        if (completed.readCb)
-          return completed.readCb.bind(this, listItem);
-        return this._completeObjectLiteralPost(completed.token, listItem);
-      }
-      _completeObjectLiteralPost(token, listItem) {
-        if (listItem)
-          this._emit(this._subject, this.RDF_FIRST, this._object, this._graph);
-        if (token === null)
-          return this._getContextEndReader();
-        else {
-          this._readCallback = this._getContextEndReader();
-          return this._readCallback(token);
-        }
-      }
-      // ### `_readFormulaTail` reads the end of a formula
-      _readFormulaTail(token) {
-        if (token.type !== "}")
-          return this._readPunctuation(token);
-        if (this._subject !== null)
-          this._emit(this._subject, this._predicate, this._object, this._graph);
-        this._restoreContext("formula", token);
-        return this._object === null ? this._readPredicate : this._getContextEndReader();
-      }
-      // ### `_readPunctuation` reads punctuation between quads or quad parts
-      _readPunctuation(token) {
-        let next, graph = this._graph, startingAnnotation = false;
-        const subject2 = this._subject, inversePredicate = this._inversePredicate;
-        switch (token.type) {
-          // A closing brace ends a graph
-          case "}":
-            if (this._graph === null)
-              return this._error("Unexpected graph closing", token);
-            if (this._n3Mode)
-              return this._readFormulaTail(token);
-            this._graph = null;
-          // A dot just ends the statement, without sharing anything with the next
-          case ".":
-            this._subject = null;
-            this._tripleTerm = null;
-            next = this._contextStack.length ? this._readSubject : this._readInTopContext;
-            if (inversePredicate) this._inversePredicate = false;
-            break;
-          // Semicolon means the subject is shared; predicate and object are different
-          case ";":
-            next = this._readPredicate;
-            break;
-          // Comma means both the subject and predicate are shared; the object is different
-          case ",":
-            next = this._readObject;
-            break;
-          // ~ is allowed in the annotation syntax
-          case "~":
-            next = this._readReifierInAnnotation;
-            startingAnnotation = true;
-            break;
-          // {| means that the current triple is annotated with predicate-object pairs.
-          case "{|":
-            this._subject = this._readTripleTerm();
-            this._validAnnotation = false;
-            startingAnnotation = true;
-            next = this._readPredicate;
-            break;
-          // |} means that the current reified triple in annotation syntax is finalized.
-          case "|}":
-            if (!this._annotation)
-              return this._error("Unexpected annotation syntax closing", token);
-            if (!this._validAnnotation)
-              return this._error("Annotation block can not be empty", token);
-            this._subject = null;
-            this._annotation = false;
-            next = this._readPunctuation;
-            break;
-          default:
-            if (this._supportsQuads && this._graph === null && (graph = this._readEntity(token)) !== void 0) {
-              next = this._readQuadPunctuation;
-              break;
-            }
-            return this._error(`Expected punctuation to follow "${this._object.id}"`, token);
-        }
-        if (subject2 !== null && (!startingAnnotation || startingAnnotation && !this._annotation)) {
-          const predicate2 = this._predicate, object2 = this._object;
-          if (!inversePredicate)
-            this._emit(subject2, predicate2, object2, graph);
-          else
-            this._emit(object2, predicate2, subject2, graph);
-        }
-        if (startingAnnotation) {
-          this._annotation = true;
-        }
-        return next;
-      }
-      // ### `_readBlankNodePunctuation` reads punctuation in a blank node
-      _readBlankNodePunctuation(token) {
-        let next;
-        switch (token.type) {
-          // Semicolon means the subject is shared; predicate and object are different
-          case ";":
-            next = this._readPredicate;
-            break;
-          // Comma means both the subject and predicate are shared; the object is different
-          case ",":
-            next = this._readObject;
-            break;
-          default:
-            return this._error(`Expected punctuation to follow "${this._object.id}"`, token);
-        }
-        this._emit(this._subject, this._predicate, this._object, this._graph);
-        return next;
-      }
-      // ### `_readQuadPunctuation` reads punctuation after a quad
-      _readQuadPunctuation(token) {
-        if (token.type !== ".")
-          return this._error("Expected dot to follow quad", token);
-        return this._readInTopContext;
-      }
-      // ### `_readPrefix` reads the prefix of a prefix declaration
-      _readPrefix(token) {
-        if (token.type !== "prefix")
-          return this._error("Expected prefix to follow @prefix", token);
-        this._prefix = token.value;
-        return this._readPrefixIRI;
-      }
-      // ### `_readPrefixIRI` reads the IRI of a prefix declaration
-      _readPrefixIRI(token) {
-        if (token.type !== "IRI")
-          return this._error(`Expected IRI to follow prefix "${this._prefix}:"`, token);
-        const prefixNode = this._readEntity(token);
-        this._prefixes[this._prefix] = prefixNode.value;
-        this._prefixCallback(this._prefix, prefixNode);
-        return this._readDeclarationPunctuation;
-      }
-      // ### `_readBaseIRI` reads the IRI of a base declaration
-      _readBaseIRI(token) {
-        const iri = token.type === "IRI" && this._resolveIRI(token.value);
-        if (!iri)
-          return this._error("Expected valid IRI to follow base declaration", token);
-        this._setBase(iri);
-        return this._readDeclarationPunctuation;
-      }
-      // ### `_isValidVersion` checks if the given version is valid for this parser to handle.
-      _isValidVersion(version) {
-        return this._parseUnsupportedVersions || _N3Parser.SUPPORTED_VERSIONS.includes(version);
-      }
-      // ### `_readVersion` reads version string declaration
-      _readVersion(token) {
-        if (token.type !== "literal")
-          return this._error("Expected literal to follow version declaration", token);
-        if (token.end - token.start !== token.value.length + 2)
-          return this._error("Version declarations must use single quotes", token);
-        this._versionCallback(token.value);
-        if (!this._isValidVersion(token.value))
-          return this._error(`Detected unsupported version: "${token.value}"`, token);
-        return this._readDeclarationPunctuation;
-      }
-      // ### `_readNamedGraphLabel` reads the label of a named graph
-      _readNamedGraphLabel(token) {
-        switch (token.type) {
-          case "IRI":
-          case "blank":
-          case "prefixed":
-            return this._readSubject(token), this._readGraph;
-          case "[":
-            return this._readNamedGraphBlankLabel;
-          default:
-            return this._error("Invalid graph label", token);
-        }
-      }
-      // ### `_readNamedGraphLabel` reads a blank node label of a named graph
-      _readNamedGraphBlankLabel(token) {
-        if (token.type !== "]")
-          return this._error("Invalid graph label", token);
-        this._subject = this._factory.blankNode();
-        return this._readGraph;
-      }
-      // ### `_readDeclarationPunctuation` reads the punctuation of a declaration
-      _readDeclarationPunctuation(token) {
-        if (this._sparqlStyle) {
-          this._sparqlStyle = false;
-          return this._readInTopContext(token);
-        }
-        if (token.type !== ".")
-          return this._error("Expected declaration to end with a dot", token);
-        return this._readInTopContext;
-      }
-      // Reads a list of quantified symbols from a @forSome or @forAll statement
-      _readQuantifierList(token) {
-        let entity;
-        switch (token.type) {
-          case "IRI":
-          case "prefixed":
-            if ((entity = this._readEntity(token, true)) !== void 0)
-              break;
-          default:
-            return this._error(`Unexpected ${token.type}`, token);
-        }
-        if (!this._explicitQuantifiers)
-          this._quantified[entity.id] = this._factory[this._quantifier](this._factory.blankNode().value);
-        else {
-          if (this._subject === null)
-            this._emit(
-              this._graph || this.DEFAULTGRAPH,
-              this._predicate,
-              this._subject = this._factory.blankNode(),
-              this.QUANTIFIERS_GRAPH
-            );
-          else
-            this._emit(
-              this._subject,
-              this.RDF_REST,
-              this._subject = this._factory.blankNode(),
-              this.QUANTIFIERS_GRAPH
-            );
-          this._emit(this._subject, this.RDF_FIRST, entity, this.QUANTIFIERS_GRAPH);
-        }
-        return this._readQuantifierPunctuation;
-      }
-      // Reads punctuation from a @forSome or @forAll statement
-      _readQuantifierPunctuation(token) {
-        if (token.type === ",")
-          return this._readQuantifierList;
-        else {
-          if (this._explicitQuantifiers) {
-            this._emit(this._subject, this.RDF_REST, this.RDF_NIL, this.QUANTIFIERS_GRAPH);
-            this._subject = null;
-          }
-          this._readCallback = this._getContextEndReader();
-          return this._readCallback(token);
-        }
-      }
-      // ### `_getPathReader` reads a potential path and then resumes with the given function
-      _getPathReader(afterPath) {
-        this._afterPath = afterPath;
-        return this._readPath;
-      }
-      // ### `_readPath` reads a potential path
-      _readPath(token) {
-        switch (token.type) {
-          // Forward path
-          case "!":
-            return this._readForwardPath;
-          // Backward path
-          case "^":
-            return this._readBackwardPath;
-          // Not a path; resume reading where we left off
-          default:
-            const stack = this._contextStack, parent = stack.length && stack[stack.length - 1];
-            if (parent && parent.type === "item") {
-              const item = this._subject;
-              this._restoreContext("item", token);
-              this._emit(this._subject, this.RDF_FIRST, item, this._graph);
-            }
-            return this._afterPath(token);
-        }
-      }
-      // ### `_readForwardPath` reads a '!' path
-      _readForwardPath(token) {
-        let subject2, predicate2;
-        const object2 = this._factory.blankNode();
-        if ((predicate2 = this._readEntity(token)) === void 0)
-          return;
-        if (this._predicate === null)
-          subject2 = this._subject, this._subject = object2;
-        else
-          subject2 = this._object, this._object = object2;
-        this._emit(subject2, predicate2, object2, this._graph);
-        return this._readPath;
-      }
-      // ### `_readBackwardPath` reads a '^' path
-      _readBackwardPath(token) {
-        const subject2 = this._factory.blankNode();
-        let predicate2, object2;
-        if ((predicate2 = this._readEntity(token)) === void 0)
-          return;
-        if (this._predicate === null)
-          object2 = this._subject, this._subject = subject2;
-        else
-          object2 = this._object, this._object = subject2;
-        this._emit(subject2, predicate2, object2, this._graph);
-        return this._readPath;
-      }
-      // ### `_readTripleTermTail` reads the end of a triple term
-      _readTripleTermTail(token) {
-        if (token.type !== ")>>")
-          return this._error(`Expected )>> but got ${token.type}`, token);
-        const quad3 = this._factory.quad(
-          this._subject,
-          this._predicate,
-          this._object,
-          this._graph || this.DEFAULTGRAPH
-        );
-        this._restoreContext("<<(", token);
-        if (this._subject === null) {
-          this._subject = quad3;
-          return this._readPredicate;
-        } else {
-          this._object = quad3;
-          return this._getContextEndReader();
-        }
-      }
-      // ### `_readReifiedTripleTailOrReifier` reads a reifier or the end of a nested reified triple
-      _readReifiedTripleTailOrReifier(token) {
-        if (token.type === "~") {
-          return this._readReifier;
-        }
-        return this._readReifiedTripleTail(token);
-      }
-      // ### `_readReifiedTripleTail` reads the end of a nested reified triple
-      _readReifiedTripleTail(token) {
-        if (token.type !== ">>")
-          return this._error(`Expected >> but got ${token.type}`, token);
-        this._tripleTerm = null;
-        const reifier = this._readTripleTerm();
-        this._restoreContext("<<", token);
-        const stack = this._contextStack, parent = stack.length && stack[stack.length - 1];
-        if (parent && parent.type === "list") {
-          this._emit(this._subject, this.RDF_FIRST, reifier, this._graph);
-          return this._getContextEndReader();
-        } else if (this._subject === null) {
-          this._subject = reifier;
-          return this._readPredicateOrReifierTripleEnd;
-        } else {
-          this._object = reifier;
-          return this._getContextEndReader();
-        }
-      }
-      _readPredicateOrReifierTripleEnd(token) {
-        if (token.type === ".") {
-          this._subject = null;
-          return this._readPunctuation(token);
-        }
-        return this._readPredicate(token);
-      }
-      // ### `_readReifier` reads the triple term identifier after a tilde when in a reifying triple.
-      _readReifier(token) {
-        this._reifier = this._readEntity(token);
-        return this._readReifiedTripleTail;
-      }
-      // ### `_readReifier` reads the optional triple term identifier after a tilde when in annotation syntax.
-      _readReifierInAnnotation(token) {
-        if (token.type === "IRI" || token.type === "typeIRI" || token.type === "type" || token.type === "prefixed" || token.type === "blank" || token.type === "var") {
-          this._reifier = this._readEntity(token);
-          return this._readPunctuation;
-        }
-        this._readTripleTerm();
-        this._subject = null;
-        return this._readPunctuation(token);
-      }
-      _readTripleTerm() {
-        const stack = this._contextStack, parent = stack.length && stack[stack.length - 1];
-        const parentGraph = parent ? parent.graph : void 0;
-        const reifier = this._reifier || this._factory.blankNode();
-        this._reifier = null;
-        this._tripleTerm = this._tripleTerm || this._factory.quad(this._subject, this._predicate, this._object);
-        this._emit(reifier, this.RDF_REIFIES, this._tripleTerm, parentGraph || this.DEFAULTGRAPH);
-        return reifier;
-      }
-      // ### `_getContextEndReader` gets the next reader function at the end of a context
-      _getContextEndReader() {
-        const contextStack = this._contextStack;
-        if (!contextStack.length)
-          return this._readPunctuation;
-        switch (contextStack[contextStack.length - 1].type) {
-          case "blank":
-            return this._readBlankNodeTail;
-          case "list":
-            return this._readListItem;
-          case "formula":
-            return this._readFormulaTail;
-          case "<<(":
-            return this._readTripleTermTail;
-          case "<<":
-            return this._readReifiedTripleTailOrReifier;
-        }
-      }
-      // ### `_emit` sends a quad through the callback
-      _emit(subject2, predicate2, object2, graph) {
-        this._callback(null, this._factory.quad(subject2, predicate2, object2, graph || this.DEFAULTGRAPH));
-      }
-      // ### `_error` emits an error message through the callback
-      _error(message, token) {
-        const err = new Error(`${message} on line ${token.line}.`);
-        err.context = {
-          token,
-          line: token.line,
-          previousToken: this._lexer.previousToken
-        };
-        this._callback(err);
-        this._callback = noop;
-      }
-      // ### `_resolveIRI` resolves an IRI against the base path
-      _resolveIRI(iri) {
-        return /^[a-z][a-z0-9+.-]*:/i.test(iri) ? iri : this._resolveRelativeIRI(iri);
-      }
-      // ### `_resolveRelativeIRI` resolves an IRI against the base path,
-      // assuming that a base path has been set and that the IRI is indeed relative
-      _resolveRelativeIRI(iri) {
-        if (!iri.length)
-          return this._base;
-        switch (iri[0]) {
-          // Resolve relative fragment IRIs against the base IRI
-          case "#":
-            return this._base + iri;
-          // Resolve relative query string IRIs by replacing the query string
-          case "?":
-            return this._base.replace(/(?:\?.*)?$/, iri);
-          // Resolve root-relative IRIs at the root of the base IRI
-          case "/":
-            return (iri[1] === "/" ? this._baseScheme : this._baseRoot) + this._removeDotSegments(iri);
-          // Resolve all other IRIs at the base IRI's path
-          default:
-            return /^[^/:]*:/.test(iri) ? null : this._removeDotSegments(this._basePath + iri);
-        }
-      }
-      // ### `_removeDotSegments` resolves './' and '../' path segments in an IRI as per RFC3986
-      _removeDotSegments(iri) {
-        if (!/(^|\/)\.\.?($|[/#?])/.test(iri))
-          return iri;
-        const length = iri.length;
-        let result = "", i6 = -1, pathStart = -1, segmentStart = 0, next = "/";
-        while (i6 < length) {
-          switch (next) {
-            // The path starts with the first slash after the authority
-            case ":":
-              if (pathStart < 0) {
-                if (iri[++i6] === "/" && iri[++i6] === "/")
-                  while ((pathStart = i6 + 1) < length && iri[pathStart] !== "/")
-                    i6 = pathStart;
-              }
-              break;
-            // Don't modify a query string or fragment
-            case "?":
-            case "#":
-              i6 = length;
-              break;
-            // Handle '/.' or '/..' path segments
-            case "/":
-              if (iri[i6 + 1] === ".") {
-                next = iri[++i6 + 1];
-                switch (next) {
-                  // Remove a '/.' segment
-                  case "/":
-                    result += iri.substring(segmentStart, i6 - 1);
-                    segmentStart = i6 + 1;
-                    break;
-                  // Remove a trailing '/.' segment
-                  case void 0:
-                  case "?":
-                  case "#":
-                    return result + iri.substring(segmentStart, i6) + iri.substr(i6 + 1);
-                  // Remove a '/..' segment
-                  case ".":
-                    next = iri[++i6 + 1];
-                    if (next === void 0 || next === "/" || next === "?" || next === "#") {
-                      result += iri.substring(segmentStart, i6 - 2);
-                      if ((segmentStart = result.lastIndexOf("/")) >= pathStart)
-                        result = result.substr(0, segmentStart);
-                      if (next !== "/")
-                        return `${result}/${iri.substr(i6 + 1)}`;
-                      segmentStart = i6 + 1;
-                    }
-                }
-              }
-          }
-          next = iri[++i6];
-        }
-        return result + iri.substring(segmentStart);
-      }
-      // ## Public methods
-      // ### `parse` parses the N3 input and emits each parsed quad through the onQuad callback.
-      parse(input, quadCallback, prefixCallback, versionCallback) {
-        let onQuad, onPrefix, onComment, onVersion;
-        if (quadCallback && (quadCallback.onQuad || quadCallback.onPrefix || quadCallback.onComment || quadCallback.onVersion)) {
-          onQuad = quadCallback.onQuad;
-          onPrefix = quadCallback.onPrefix;
-          onComment = quadCallback.onComment;
-          onVersion = quadCallback.onVersion;
-        } else {
-          onQuad = quadCallback;
-          onPrefix = prefixCallback;
-          onVersion = versionCallback;
-        }
-        this._readCallback = this._readBeforeTopContext;
-        this._sparqlStyle = false;
-        this._prefixes = /* @__PURE__ */ Object.create(null);
-        this._prefixes._ = this._blankNodePrefix ? this._blankNodePrefix.substr(2) : `b${blankNodePrefix++}_`;
-        this._prefixCallback = onPrefix || noop;
-        this._versionCallback = onVersion || noop;
-        this._inversePredicate = false;
-        this._quantified = /* @__PURE__ */ Object.create(null);
-        if (!onQuad) {
-          const quads = [];
-          let error;
-          this._callback = (e8, t5) => {
-            e8 ? error = e8 : t5 && quads.push(t5);
-          };
-          this._lexer.tokenize(input).every((token) => {
-            return this._readCallback = this._readCallback(token);
-          });
-          if (error) throw error;
-          return quads;
-        }
-        let processNextToken = (error, token) => {
-          if (error !== null)
-            this._callback(error), this._callback = noop;
-          else if (this._readCallback)
-            this._readCallback = this._readCallback(token);
-        };
-        if (onComment) {
-          this._lexer.comments = true;
-          processNextToken = (error, token) => {
-            if (error !== null)
-              this._callback(error), this._callback = noop;
-            else if (this._readCallback) {
-              if (token.type === "comment")
-                onComment(token.value);
-              else
-                this._readCallback = this._readCallback(token);
-            }
-          };
-        }
-        this._callback = onQuad;
-        this._lexer.tokenize(input, processNextToken);
-      }
-    };
-    N3Parser.SUPPORTED_VERSIONS = [
-      "1.2",
-      "1.2-basic",
-      "1.1"
-    ];
-    initDataFactory(N3Parser.prototype, N3DataFactory_default);
-  }
-});
-
-// node_modules/n3/src/N3Util.js
-var N3Util_exports = {};
-__export(N3Util_exports, {
-  inDefaultGraph: () => inDefaultGraph,
-  isBlankNode: () => isBlankNode,
-  isDefaultGraph: () => isDefaultGraph,
-  isLiteral: () => isLiteral,
-  isNamedNode: () => isNamedNode,
-  isQuad: () => isQuad,
-  isVariable: () => isVariable,
-  prefix: () => prefix,
-  prefixes: () => prefixes
-});
-function isNamedNode(term) {
-  return !!term && term.termType === "NamedNode";
-}
-function isBlankNode(term) {
-  return !!term && term.termType === "BlankNode";
-}
-function isLiteral(term) {
-  return !!term && term.termType === "Literal";
-}
-function isVariable(term) {
-  return !!term && term.termType === "Variable";
-}
-function isQuad(term) {
-  return !!term && term.termType === "Quad";
-}
-function isDefaultGraph(term) {
-  return !!term && term.termType === "DefaultGraph";
-}
-function inDefaultGraph(quad3) {
-  return isDefaultGraph(quad3.graph);
-}
-function prefix(iri, factory3) {
-  return prefixes({ "": iri.value || iri }, factory3)("");
-}
-function prefixes(defaultPrefixes, factory3) {
-  const prefixes2 = /* @__PURE__ */ Object.create(null);
-  for (const prefix2 in defaultPrefixes)
-    processPrefix(prefix2, defaultPrefixes[prefix2]);
-  factory3 = factory3 || N3DataFactory_default;
-  function processPrefix(prefix2, iri) {
-    if (typeof iri === "string") {
-      const cache = /* @__PURE__ */ Object.create(null);
-      prefixes2[prefix2] = (local) => {
-        return cache[local] || (cache[local] = factory3.namedNode(iri + local));
-      };
-    } else if (!(prefix2 in prefixes2)) {
-      throw new Error(`Unknown prefix: ${prefix2}`);
-    }
-    return prefixes2[prefix2];
-  }
-  return processPrefix;
-}
-var init_N3Util = __esm({
-  "node_modules/n3/src/N3Util.js"() {
-    "use strict";
-    init_N3DataFactory();
-  }
-});
-
-// node_modules/n3/src/Util.js
-function escapeRegex(regex) {
-  return regex.replace(/[\]\/\(\)\*\+\?\.\\\$]/g, "\\$&");
-}
-var init_Util = __esm({
-  "node_modules/n3/src/Util.js"() {
-    "use strict";
-  }
-});
-
-// node_modules/n3/src/BaseIRI.js
-var BASE_UNSUPPORTED, SUFFIX_SUPPORTED, CURRENT, PARENT, QUERY, FRAGMENT, BaseIRI;
-var init_BaseIRI = __esm({
-  "node_modules/n3/src/BaseIRI.js"() {
-    "use strict";
-    init_Util();
-    BASE_UNSUPPORTED = /^:?[^:?#]*(?:[?#]|$)|^file:|^[^:]*:\/*[^?#]+?\/(?:\.\.?(?:\/|$)|\/)/i;
-    SUFFIX_SUPPORTED = /^(?:(?:[^/?#]{3,}|\.?[^/?#.]\.?)(?:\/[^/?#]{3,}|\.?[^/?#.]\.?)*\/?)?(?:[?#]|$)/;
-    CURRENT = "./";
-    PARENT = "../";
-    QUERY = "?";
-    FRAGMENT = "#";
-    BaseIRI = class _BaseIRI {
-      constructor(base) {
-        this.base = base;
-        this._baseLength = 0;
-        this._baseMatcher = null;
-        this._pathReplacements = new Array(base.length + 1);
-      }
-      static supports(base) {
-        return !BASE_UNSUPPORTED.test(base);
-      }
-      _getBaseMatcher() {
-        if (this._baseMatcher)
-          return this._baseMatcher;
-        if (!_BaseIRI.supports(this.base))
-          return this._baseMatcher = /.^/;
-        const scheme = /^[^:]*:\/*/.exec(this.base)[0];
-        const regexHead = ["^", escapeRegex(scheme)];
-        const regexTail = [];
-        const segments = [], segmenter = /[^/?#]*([/?#])/y;
-        let segment, query = 0, fragment = 0, last = segmenter.lastIndex = scheme.length;
-        while (!query && !fragment && (segment = segmenter.exec(this.base))) {
-          if (segment[1] === FRAGMENT)
-            fragment = segmenter.lastIndex - 1;
-          else {
-            regexHead.push(escapeRegex(segment[0]), "(?:");
-            regexTail.push(")?");
-            if (segment[1] !== QUERY)
-              segments.push(last = segmenter.lastIndex);
-            else {
-              query = last = segmenter.lastIndex;
-              fragment = this.base.indexOf(FRAGMENT, query);
-              this._pathReplacements[query] = QUERY;
-            }
-          }
-        }
-        for (let i6 = 0; i6 < segments.length; i6++)
-          this._pathReplacements[segments[i6]] = PARENT.repeat(segments.length - i6 - 1);
-        this._pathReplacements[segments[segments.length - 1]] = CURRENT;
-        this._baseLength = fragment > 0 ? fragment : this.base.length;
-        regexHead.push(
-          escapeRegex(this.base.substring(last, this._baseLength)),
-          query ? "(?:#|$)" : "(?:[?#]|$)"
-        );
-        return this._baseMatcher = new RegExp([...regexHead, ...regexTail].join(""));
-      }
-      toRelative(iri) {
-        const match2 = this._getBaseMatcher().exec(iri);
-        if (!match2)
-          return iri;
-        const length = match2[0].length;
-        if (length === this._baseLength && length === iri.length)
-          return "";
-        const parentPath = this._pathReplacements[length];
-        if (parentPath) {
-          const suffix = iri.substring(length);
-          if (parentPath !== QUERY && !SUFFIX_SUPPORTED.test(suffix))
-            return iri;
-          if (parentPath === CURRENT && /^[^?#]/.test(suffix))
-            return suffix;
-          return parentPath + suffix;
-        }
-        return iri.substring(length - 1);
-      }
-    };
-  }
-});
-
-// node_modules/n3/src/N3Writer.js
-function characterReplacer(character) {
-  let result = escapedCharacters[character];
-  if (result === void 0) {
-    if (character.length === 1) {
-      result = character.charCodeAt(0).toString(16);
-      result = "\\u0000".substr(0, 6 - result.length) + result;
-    } else {
-      result = ((character.charCodeAt(0) - 55296) * 1024 + character.charCodeAt(1) + 9216).toString(16);
-      result = "\\U00000000".substr(0, 10 - result.length) + result;
-    }
-  }
-  return result;
-}
-var DEFAULTGRAPH2, rdf2, xsd3, escape, escapeAll, escapedCharacters, SerializedTerm, N3Writer;
-var init_N3Writer = __esm({
-  "node_modules/n3/src/N3Writer.js"() {
-    "use strict";
-    init_IRIs();
-    init_N3DataFactory();
-    init_N3Util();
-    init_BaseIRI();
-    init_Util();
-    DEFAULTGRAPH2 = N3DataFactory_default.defaultGraph();
-    ({ rdf: rdf2, xsd: xsd3 } = IRIs_default);
-    escape = /["\\\t\n\r\b\f\u0000-\u0019\ud800-\udbff]/;
-    escapeAll = /["\\\t\n\r\b\f\u0000-\u0019]|[\ud800-\udbff][\udc00-\udfff]/g;
-    escapedCharacters = {
-      "\\": "\\\\",
-      '"': '\\"',
-      "	": "\\t",
-      "\n": "\\n",
-      "\r": "\\r",
-      "\b": "\\b",
-      "\f": "\\f"
-    };
-    SerializedTerm = class extends Term {
-      // Pretty-printed nodes are not equal to any other node
-      // (e.g., [] does not equal [])
-      equals(other) {
-        return other === this;
-      }
-    };
-    N3Writer = class {
-      constructor(outputStream, options) {
-        this._prefixRegex = /$0^/;
-        if (outputStream && typeof outputStream.write !== "function")
-          options = outputStream, outputStream = null;
-        options = options || {};
-        this._lists = options.lists;
-        if (!outputStream) {
-          let output = "";
-          this._outputStream = {
-            write(chunk, encoding, done) {
-              output += chunk;
-              done && done();
-            },
-            end: (done) => {
-              done && done(null, output);
-            }
-          };
-          this._endStream = true;
-        } else {
-          this._outputStream = outputStream;
-          this._endStream = options.end === void 0 ? true : !!options.end;
-        }
-        this._subject = null;
-        if (!/triple|quad/i.test(options.format)) {
-          this._lineMode = false;
-          this._graph = DEFAULTGRAPH2;
-          this._prefixIRIs = /* @__PURE__ */ Object.create(null);
-          options.prefixes && this.addPrefixes(options.prefixes);
-          if (options.baseIRI) {
-            this._baseIri = new BaseIRI(options.baseIRI);
-          }
-        } else {
-          this._lineMode = true;
-          this._writeQuad = this._writeQuadLine;
-        }
-      }
-      // ## Private methods
-      // ### Whether the current graph is the default graph
-      get _inDefaultGraph() {
-        return DEFAULTGRAPH2.equals(this._graph);
-      }
-      // ### `_write` writes the argument to the output stream
-      _write(string, callback) {
-        this._outputStream.write(string, "utf8", callback);
-      }
-      // ### `_writeQuad` writes the quad to the output stream
-      _writeQuad(subject2, predicate2, object2, graph, done) {
-        try {
-          if (!graph.equals(this._graph)) {
-            this._write((this._subject === null ? "" : this._inDefaultGraph ? ".\n" : "\n}\n") + (DEFAULTGRAPH2.equals(graph) ? "" : `${this._encodeIriOrBlank(graph)} {
-`));
-            this._graph = graph;
-            this._subject = null;
-          }
-          if (subject2.equals(this._subject)) {
-            if (predicate2.equals(this._predicate))
-              this._write(`, ${this._encodeObject(object2)}`, done);
-            else
-              this._write(`;
-    ${this._encodePredicate(this._predicate = predicate2)} ${this._encodeObject(object2)}`, done);
-          } else
-            this._write(`${(this._subject === null ? "" : ".\n") + this._encodeSubject(this._subject = subject2)} ${this._encodePredicate(this._predicate = predicate2)} ${this._encodeObject(object2)}`, done);
-        } catch (error) {
-          done && done(error);
-        }
-      }
-      // ### `_writeQuadLine` writes the quad to the output stream as a single line
-      _writeQuadLine(subject2, predicate2, object2, graph, done) {
-        delete this._prefixMatch;
-        this._write(this.quadToString(subject2, predicate2, object2, graph), done);
-      }
-      // ### `quadToString` serializes a quad as a string
-      quadToString(subject2, predicate2, object2, graph) {
-        return `${this._encodeSubject(subject2)} ${this._encodeIriOrBlank(predicate2)} ${this._encodeObject(object2)}${graph && graph.value ? ` ${this._encodeIriOrBlank(graph)} .
-` : " .\n"}`;
-      }
-      // ### `quadsToString` serializes an array of quads as a string
-      quadsToString(quads) {
-        let quadsString = "";
-        for (const quad3 of quads)
-          quadsString += this.quadToString(quad3.subject, quad3.predicate, quad3.object, quad3.graph);
-        return quadsString;
-      }
-      // ### `_encodeSubject` represents a subject
-      _encodeSubject(entity) {
-        return entity.termType === "Quad" ? this._encodeQuad(entity) : this._encodeIriOrBlank(entity);
-      }
-      // ### `_encodeIriOrBlank` represents an IRI or blank node
-      _encodeIriOrBlank(entity) {
-        if (entity.termType !== "NamedNode") {
-          if (this._lists && entity.value in this._lists)
-            entity = this.list(this._lists[entity.value]);
-          return "id" in entity ? entity.id : `_:${entity.value}`;
-        }
-        let iri = entity.value;
-        if (this._baseIri) {
-          iri = this._baseIri.toRelative(iri);
-        }
-        if (escape.test(iri))
-          iri = iri.replace(escapeAll, characterReplacer);
-        const prefixMatch = this._prefixRegex.exec(iri);
-        return !prefixMatch ? `<${iri}>` : !prefixMatch[1] ? iri : this._prefixIRIs[prefixMatch[1]] + prefixMatch[2];
-      }
-      // ### `_encodeLiteral` represents a literal
-      _encodeLiteral(literal3) {
-        let value = literal3.value;
-        if (escape.test(value))
-          value = value.replace(escapeAll, characterReplacer);
-        const direction = literal3.direction ? `--${literal3.direction}` : "";
-        if (literal3.language)
-          return `"${value}"@${literal3.language}${direction}`;
-        if (this._lineMode) {
-          if (literal3.datatype.value === xsd3.string)
-            return `"${value}"`;
-        } else {
-          switch (literal3.datatype.value) {
-            case xsd3.string:
-              return `"${value}"`;
-            case xsd3.boolean:
-              if (value === "true" || value === "false")
-                return value;
-              break;
-            case xsd3.integer:
-              if (/^[+-]?\d+$/.test(value))
-                return value;
-              break;
-            case xsd3.decimal:
-              if (/^[+-]?\d*\.\d+$/.test(value))
-                return value;
-              break;
-            case xsd3.double:
-              if (/^[+-]?(?:\d+\.\d*|\.?\d+)[eE][+-]?\d+$/.test(value))
-                return value;
-              break;
-          }
-        }
-        return `"${value}"^^${this._encodeIriOrBlank(literal3.datatype)}`;
-      }
-      // ### `_encodePredicate` represents a predicate
-      _encodePredicate(predicate2) {
-        return predicate2.value === rdf2.type ? "a" : this._encodeIriOrBlank(predicate2);
-      }
-      // ### `_encodeObject` represents an object
-      _encodeObject(object2) {
-        switch (object2.termType) {
-          case "Quad":
-            return this._encodeQuad(object2);
-          case "Literal":
-            return this._encodeLiteral(object2);
-          default:
-            return this._encodeIriOrBlank(object2);
-        }
-      }
-      // ### `_encodeQuad` encodes an RDF-star quad
-      _encodeQuad({ subject: subject2, predicate: predicate2, object: object2, graph }) {
-        return `<<(${this._encodeSubject(subject2)} ${this._encodePredicate(predicate2)} ${this._encodeObject(object2)}${isDefaultGraph(graph) ? "" : ` ${this._encodeIriOrBlank(graph)}`})>>`;
-      }
-      // ### `_blockedWrite` replaces `_write` after the writer has been closed
-      _blockedWrite() {
-        throw new Error("Cannot write because the writer has been closed.");
-      }
-      // ### `addQuad` adds the quad to the output stream
-      addQuad(subject2, predicate2, object2, graph, done) {
-        if (object2 === void 0)
-          this._writeQuad(subject2.subject, subject2.predicate, subject2.object, subject2.graph, predicate2);
-        else if (typeof graph === "function")
-          this._writeQuad(subject2, predicate2, object2, DEFAULTGRAPH2, graph);
-        else
-          this._writeQuad(subject2, predicate2, object2, graph || DEFAULTGRAPH2, done);
-      }
-      // ### `addQuads` adds the quads to the output stream
-      addQuads(quads) {
-        for (let i6 = 0; i6 < quads.length; i6++)
-          this.addQuad(quads[i6]);
-      }
-      // ### `addPrefix` adds the prefix to the output stream
-      addPrefix(prefix2, iri, done) {
-        const prefixes2 = {};
-        prefixes2[prefix2] = iri;
-        this.addPrefixes(prefixes2, done);
-      }
-      // ### `addPrefixes` adds the prefixes to the output stream
-      addPrefixes(prefixes2, done) {
-        if (!this._prefixIRIs)
-          return done && done();
-        let hasPrefixes = false;
-        for (let prefix2 in prefixes2) {
-          let iri = prefixes2[prefix2];
-          if (typeof iri !== "string")
-            iri = iri.value;
-          hasPrefixes = true;
-          if (this._subject !== null) {
-            this._write(this._inDefaultGraph ? ".\n" : "\n}\n");
-            this._subject = null, this._graph = "";
-          }
-          this._prefixIRIs[iri] = prefix2 += ":";
-          this._write(`@prefix ${prefix2} <${iri}>.
-`);
-        }
-        if (hasPrefixes) {
-          let IRIlist = "", prefixList = "";
-          for (const prefixIRI in this._prefixIRIs) {
-            IRIlist += IRIlist ? `|${prefixIRI}` : prefixIRI;
-            prefixList += (prefixList ? "|" : "") + this._prefixIRIs[prefixIRI];
-          }
-          IRIlist = escapeRegex(IRIlist, /[\]\/\(\)\*\+\?\.\\\$]/g, "\\$&");
-          this._prefixRegex = new RegExp(`^(?:${prefixList})[^/]*$|^(${IRIlist})([_a-zA-Z0-9][\\-_a-zA-Z0-9]*)$`);
-        }
-        this._write(hasPrefixes ? "\n" : "", done);
-      }
-      // ### `blank` creates a blank node with the given content
-      blank(predicate2, object2) {
-        let children = predicate2, child, length;
-        if (predicate2 === void 0)
-          children = [];
-        else if (predicate2.termType)
-          children = [{ predicate: predicate2, object: object2 }];
-        else if (!("length" in predicate2))
-          children = [predicate2];
-        switch (length = children.length) {
-          // Generate an empty blank node
-          case 0:
-            return new SerializedTerm("[]");
-          // Generate a non-nested one-triple blank node
-          case 1:
-            child = children[0];
-            if (!(child.object instanceof SerializedTerm))
-              return new SerializedTerm(`[ ${this._encodePredicate(child.predicate)} ${this._encodeObject(child.object)} ]`);
-          // Generate a multi-triple or nested blank node
-          default:
-            let contents = "[";
-            for (let i6 = 0; i6 < length; i6++) {
-              child = children[i6];
-              if (child.predicate.equals(predicate2))
-                contents += `, ${this._encodeObject(child.object)}`;
-              else {
-                contents += `${(i6 ? ";\n  " : "\n  ") + this._encodePredicate(child.predicate)} ${this._encodeObject(child.object)}`;
-                predicate2 = child.predicate;
-              }
-            }
-            return new SerializedTerm(`${contents}
-]`);
-        }
-      }
-      // ### `list` creates a list node with the given content
-      list(elements) {
-        const length = elements && elements.length || 0, contents = new Array(length);
-        for (let i6 = 0; i6 < length; i6++)
-          contents[i6] = this._encodeObject(elements[i6]);
-        return new SerializedTerm(`(${contents.join(" ")})`);
-      }
-      // ### `end` signals the end of the output stream
-      end(done) {
-        if (this._subject !== null) {
-          this._write(this._inDefaultGraph ? ".\n" : "\n}\n");
-          this._subject = null;
-        }
-        this._write = this._blockedWrite;
-        let singleDone = done && ((error, result) => {
-          singleDone = null, done(error, result);
-        });
-        if (this._endStream) {
-          try {
-            return this._outputStream.end(singleDone);
-          } catch (error) {
-          }
-        }
-        singleDone && singleDone();
-      }
-    };
-  }
-});
-
 // node_modules/readable-stream/lib/ours/primordials.js
 var require_primordials = __commonJS({
   "node_modules/readable-stream/lib/ours/primordials.js"(exports, module) {
@@ -4209,8 +1819,8 @@ var require_primordials = __commonJS({
           throw new TypeError(`Expected input to be an Array, got ${typeof errors}`);
         }
         let message = "";
-        for (let i6 = 0; i6 < errors.length; i6++) {
-          message += `    ${errors[i6].stack}
+        for (let i5 = 0; i5 < errors.length; i5++) {
+          message += `    ${errors[i5].stack}
 `;
         }
         super(message);
@@ -4401,12 +2011,12 @@ var require_errors = __commonJS({
     }
     function addNumericalSeparator(val) {
       let res = "";
-      let i6 = val.length;
+      let i5 = val.length;
       const start = val[0] === "-" ? 1 : 0;
-      for (; i6 >= start + 4; i6 -= 3) {
-        res = `_${val.slice(i6 - 3, i6)}${res}`;
+      for (; i5 >= start + 4; i5 -= 3) {
+        res = `_${val.slice(i5 - 3, i5)}${res}`;
       }
-      return `${val.slice(0, i6)}${res}`;
+      return `${val.slice(0, i5)}${res}`;
     }
     function getMessage(key, msg, args) {
       if (typeof msg === "function") {
@@ -4693,13 +2303,13 @@ var require_errors = __commonJS({
 var require_browser = __commonJS({
   "node_modules/abort-controller/browser.js"(exports, module) {
     "use strict";
-    var { AbortController: AbortController2, AbortSignal } = typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : (
+    var { AbortController, AbortSignal } = typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : (
       /* otherwise */
       void 0
     );
-    module.exports = AbortController2;
+    module.exports = AbortController;
     module.exports.AbortSignal = AbortSignal;
-    module.exports.default = AbortController2;
+    module.exports.default = AbortController;
   }
 });
 
@@ -4780,7 +2390,7 @@ var require_events = __commonJS({
     };
     EventEmitter.prototype.emit = function emit(type) {
       var args = [];
-      for (var i6 = 1; i6 < arguments.length; i6++) args.push(arguments[i6]);
+      for (var i5 = 1; i5 < arguments.length; i5++) args.push(arguments[i5]);
       var doError = type === "error";
       var events = this._events;
       if (events !== void 0)
@@ -4806,8 +2416,8 @@ var require_events = __commonJS({
       } else {
         var len = handler.length;
         var listeners = arrayClone(handler, len);
-        for (var i6 = 0; i6 < len; ++i6)
-          ReflectApply(listeners[i6], this, args);
+        for (var i5 = 0; i5 < len; ++i5)
+          ReflectApply(listeners[i5], this, args);
       }
       return true;
     };
@@ -4889,7 +2499,7 @@ var require_events = __commonJS({
       return this;
     };
     EventEmitter.prototype.removeListener = function removeListener(type, listener) {
-      var list, events, position, i6, originalListener;
+      var list, events, position, i5, originalListener;
       checkListener(listener);
       events = this._events;
       if (events === void 0)
@@ -4907,10 +2517,10 @@ var require_events = __commonJS({
         }
       } else if (typeof list !== "function") {
         position = -1;
-        for (i6 = list.length - 1; i6 >= 0; i6--) {
-          if (list[i6] === listener || list[i6].listener === listener) {
-            originalListener = list[i6].listener;
-            position = i6;
+        for (i5 = list.length - 1; i5 >= 0; i5--) {
+          if (list[i5] === listener || list[i5].listener === listener) {
+            originalListener = list[i5].listener;
+            position = i5;
             break;
           }
         }
@@ -4930,7 +2540,7 @@ var require_events = __commonJS({
     };
     EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
     EventEmitter.prototype.removeAllListeners = function removeAllListeners(type) {
-      var listeners, events, i6;
+      var listeners, events, i5;
       events = this._events;
       if (events === void 0)
         return this;
@@ -4949,8 +2559,8 @@ var require_events = __commonJS({
       if (arguments.length === 0) {
         var keys = Object.keys(events);
         var key;
-        for (i6 = 0; i6 < keys.length; ++i6) {
-          key = keys[i6];
+        for (i5 = 0; i5 < keys.length; ++i5) {
+          key = keys[i5];
           if (key === "removeListener") continue;
           this.removeAllListeners(key);
         }
@@ -4963,8 +2573,8 @@ var require_events = __commonJS({
       if (typeof listeners === "function") {
         this.removeListener(type, listeners);
       } else if (listeners !== void 0) {
-        for (i6 = listeners.length - 1; i6 >= 0; i6--) {
-          this.removeListener(type, listeners[i6]);
+        for (i5 = listeners.length - 1; i5 >= 0; i5--) {
+          this.removeListener(type, listeners[i5]);
         }
       }
       return this;
@@ -5011,8 +2621,8 @@ var require_events = __commonJS({
     };
     function arrayClone(arr, n5) {
       var copy = new Array(n5);
-      for (var i6 = 0; i6 < n5; ++i6)
-        copy[i6] = arr[i6];
+      for (var i5 = 0; i5 < n5; ++i5)
+        copy[i5] = arr[i5];
       return copy;
     }
     function spliceOne(list, index) {
@@ -5022,8 +2632,8 @@ var require_events = __commonJS({
     }
     function unwrapListeners(arr) {
       var ret = new Array(arr.length);
-      for (var i6 = 0; i6 < ret.length; ++i6) {
-        ret[i6] = arr[i6].listener || arr[i6];
+      for (var i5 = 0; i5 < ret.length; ++i5) {
+        ret[i5] = arr[i5].listener || arr[i5];
       }
       return ret;
     }
@@ -5083,12 +2693,12 @@ var require_util = __commonJS({
     } = require_errors();
     var { kResistStopPropagation, AggregateError, SymbolDispose } = require_primordials();
     var AbortSignal = globalThis.AbortSignal || require_browser().AbortSignal;
-    var AbortController2 = globalThis.AbortController || require_browser().AbortController;
+    var AbortController = globalThis.AbortController || require_browser().AbortController;
     var AsyncFunction = Object.getPrototypeOf(async function() {
     }).constructor;
-    var Blob2 = globalThis.Blob || bufferModule.Blob;
-    var isBlob = typeof Blob2 !== "undefined" ? function isBlob2(b3) {
-      return b3 instanceof Blob2;
+    var Blob = globalThis.Blob || bufferModule.Blob;
+    var isBlob = typeof Blob !== "undefined" ? function isBlob2(b3) {
+      return b3 instanceof Blob;
     } : function isBlob2(b3) {
       return false;
     };
@@ -5187,7 +2797,7 @@ var require_util = __commonJS({
         if (signals.length === 1) {
           return signals[0];
         }
-        const ac = new AbortController2();
+        const ac = new AbortController();
         const abort = () => ac.abort();
         signals.forEach((signal) => {
           validateAbortSignal(signal, "signals");
@@ -5341,21 +2951,21 @@ var require_validators = __commonJS({
     });
     function validateStringArray(value, name) {
       validateArray(value, name);
-      for (let i6 = 0; i6 < value.length; i6++) {
-        validateString(value[i6], `${name}[${i6}]`);
+      for (let i5 = 0; i5 < value.length; i5++) {
+        validateString(value[i5], `${name}[${i5}]`);
       }
     }
     function validateBooleanArray(value, name) {
       validateArray(value, name);
-      for (let i6 = 0; i6 < value.length; i6++) {
-        validateBoolean(value[i6], `${name}[${i6}]`);
+      for (let i5 = 0; i5 < value.length; i5++) {
+        validateBoolean(value[i5], `${name}[${i5}]`);
       }
     }
     function validateAbortSignalArray(value, name) {
       validateArray(value, name);
-      for (let i6 = 0; i6 < value.length; i6++) {
-        const signal = value[i6];
-        const indexedName = `${name}[${i6}]`;
+      for (let i5 = 0; i5 < value.length; i5++) {
+        const signal = value[i5];
+        const indexedName = `${name}[${i5}]`;
         if (signal == null) {
           throw new ERR_INVALID_ARG_TYPE(indexedName, "AbortSignal", signal);
         }
@@ -5428,11 +3038,11 @@ var require_validators = __commonJS({
         if (hintsLength === 0) {
           return result;
         }
-        for (let i6 = 0; i6 < hintsLength; i6++) {
-          const link = hints[i6];
+        for (let i5 = 0; i5 < hintsLength; i5++) {
+          const link = hints[i5];
           validateLinkHeaderFormat(link, "hints");
           result += link;
-          if (i6 !== hintsLength - 1) {
+          if (i5 !== hintsLength - 1) {
             result += ", ";
           }
         }
@@ -5479,7 +3089,7 @@ var require_validators = __commonJS({
 var require_browser2 = __commonJS({
   "node_modules/process/browser.js"(exports, module) {
     "use strict";
-    var process2 = module.exports = {};
+    var process = module.exports = {};
     var cachedSetTimeout;
     var cachedClearTimeout;
     function defaultSetTimout() {
@@ -5495,7 +3105,7 @@ var require_browser2 = __commonJS({
         } else {
           cachedSetTimeout = defaultSetTimout;
         }
-      } catch (e8) {
+      } catch (e5) {
         cachedSetTimeout = defaultSetTimout;
       }
       try {
@@ -5504,7 +3114,7 @@ var require_browser2 = __commonJS({
         } else {
           cachedClearTimeout = defaultClearTimeout;
         }
-      } catch (e8) {
+      } catch (e5) {
         cachedClearTimeout = defaultClearTimeout;
       }
     })();
@@ -5518,10 +3128,10 @@ var require_browser2 = __commonJS({
       }
       try {
         return cachedSetTimeout(fun, 0);
-      } catch (e8) {
+      } catch (e5) {
         try {
           return cachedSetTimeout.call(null, fun, 0);
-        } catch (e9) {
+        } catch (e6) {
           return cachedSetTimeout.call(this, fun, 0);
         }
       }
@@ -5536,10 +3146,10 @@ var require_browser2 = __commonJS({
       }
       try {
         return cachedClearTimeout(marker);
-      } catch (e8) {
+      } catch (e5) {
         try {
           return cachedClearTimeout.call(null, marker);
-        } catch (e9) {
+        } catch (e6) {
           return cachedClearTimeout.call(this, marker);
         }
       }
@@ -5584,11 +3194,11 @@ var require_browser2 = __commonJS({
       draining = false;
       runClearTimeout(timeout);
     }
-    process2.nextTick = function(fun) {
+    process.nextTick = function(fun) {
       var args = new Array(arguments.length - 1);
       if (arguments.length > 1) {
-        for (var i6 = 1; i6 < arguments.length; i6++) {
-          args[i6 - 1] = arguments[i6];
+        for (var i5 = 1; i5 < arguments.length; i5++) {
+          args[i5 - 1] = arguments[i5];
         }
       }
       queue.push(new Item(fun, args));
@@ -5603,36 +3213,36 @@ var require_browser2 = __commonJS({
     Item.prototype.run = function() {
       this.fun.apply(null, this.array);
     };
-    process2.title = "browser";
-    process2.browser = true;
-    process2.env = {};
-    process2.argv = [];
-    process2.version = "";
-    process2.versions = {};
+    process.title = "browser";
+    process.browser = true;
+    process.env = {};
+    process.argv = [];
+    process.version = "";
+    process.versions = {};
     function noop2() {
     }
-    process2.on = noop2;
-    process2.addListener = noop2;
-    process2.once = noop2;
-    process2.off = noop2;
-    process2.removeListener = noop2;
-    process2.removeAllListeners = noop2;
-    process2.emit = noop2;
-    process2.prependListener = noop2;
-    process2.prependOnceListener = noop2;
-    process2.listeners = function(name) {
+    process.on = noop2;
+    process.addListener = noop2;
+    process.once = noop2;
+    process.off = noop2;
+    process.removeListener = noop2;
+    process.removeAllListeners = noop2;
+    process.emit = noop2;
+    process.prependListener = noop2;
+    process.prependOnceListener = noop2;
+    process.listeners = function(name) {
       return [];
     };
-    process2.binding = function(name) {
+    process.binding = function(name) {
       throw new Error("process.binding is not supported");
     };
-    process2.cwd = function() {
+    process.cwd = function() {
       return "/";
     };
-    process2.chdir = function(dir) {
+    process.chdir = function(dir) {
       throw new Error("process.chdir is not supported");
     };
-    process2.umask = function() {
+    process.umask = function() {
       return 0;
     };
   }
@@ -5851,7 +3461,7 @@ var require_utils = __commonJS({
 var require_end_of_stream = __commonJS({
   "node_modules/readable-stream/lib/internal/streams/end-of-stream.js"(exports, module) {
     "use strict";
-    var process2 = require_browser2();
+    var process = require_browser2();
     var { AbortError, codes } = require_errors();
     var { ERR_INVALID_ARG_TYPE, ERR_STREAM_PREMATURE_CLOSE } = codes;
     var { kEmptyObject, once } = require_util();
@@ -5987,17 +3597,17 @@ var require_end_of_stream = __commonJS({
       }
       stream.on("close", onclose);
       if (closed) {
-        process2.nextTick(onclose);
+        process.nextTick(onclose);
       } else if (wState !== null && wState !== void 0 && wState.errorEmitted || rState !== null && rState !== void 0 && rState.errorEmitted) {
         if (!willEmitClose) {
-          process2.nextTick(onclosed);
+          process.nextTick(onclosed);
         }
       } else if (!readable && (!willEmitClose || isReadable(stream)) && (writableFinished || isWritable(stream) === false)) {
-        process2.nextTick(onclosed);
+        process.nextTick(onclosed);
       } else if (!writable && (!willEmitClose || isWritable(stream)) && (readableFinished || isReadable(stream) === false)) {
-        process2.nextTick(onclosed);
+        process.nextTick(onclosed);
       } else if (rState && stream.req && stream.aborted) {
-        process2.nextTick(onclosed);
+        process.nextTick(onclosed);
       }
       const cleanup = () => {
         callback = nop;
@@ -6025,7 +3635,7 @@ var require_end_of_stream = __commonJS({
           );
         };
         if (options.signal.aborted) {
-          process2.nextTick(abort);
+          process.nextTick(abort);
         } else {
           addAbortListener = addAbortListener || require_util().addAbortListener;
           const disposable = addAbortListener(options.signal, abort);
@@ -6052,7 +3662,7 @@ var require_end_of_stream = __commonJS({
           );
         };
         if (options.signal.aborted) {
-          process2.nextTick(abort);
+          process.nextTick(abort);
         } else {
           addAbortListener = addAbortListener || require_util().addAbortListener;
           const disposable = addAbortListener(options.signal, abort);
@@ -6065,7 +3675,7 @@ var require_end_of_stream = __commonJS({
       }
       const resolverFn = (...args) => {
         if (!isAborted) {
-          process2.nextTick(() => callback.apply(stream, args));
+          process.nextTick(() => callback.apply(stream, args));
         }
       };
       PromisePrototypeThen(stream[kIsClosedPromise].promise, resolverFn, resolverFn);
@@ -6103,7 +3713,7 @@ var require_end_of_stream = __commonJS({
 var require_destroy = __commonJS({
   "node_modules/readable-stream/lib/internal/streams/destroy.js"(exports, module) {
     "use strict";
-    var process2 = require_browser2();
+    var process = require_browser2();
     var {
       aggregateTwoErrors,
       codes: { ERR_MULTIPLE_CALLBACK },
@@ -6113,33 +3723,33 @@ var require_destroy = __commonJS({
     var { kIsDestroyed, isDestroyed, isFinished, isServerRequest } = require_utils();
     var kDestroy = Symbol2("kDestroy");
     var kConstruct = Symbol2("kConstruct");
-    function checkError(err, w2, r6) {
+    function checkError(err, w2, r5) {
       if (err) {
         err.stack;
         if (w2 && !w2.errored) {
           w2.errored = err;
         }
-        if (r6 && !r6.errored) {
-          r6.errored = err;
+        if (r5 && !r5.errored) {
+          r5.errored = err;
         }
       }
     }
     function destroy(err, cb) {
-      const r6 = this._readableState;
+      const r5 = this._readableState;
       const w2 = this._writableState;
-      const s4 = w2 || r6;
-      if (w2 !== null && w2 !== void 0 && w2.destroyed || r6 !== null && r6 !== void 0 && r6.destroyed) {
+      const s4 = w2 || r5;
+      if (w2 !== null && w2 !== void 0 && w2.destroyed || r5 !== null && r5 !== void 0 && r5.destroyed) {
         if (typeof cb === "function") {
           cb();
         }
         return this;
       }
-      checkError(err, w2, r6);
+      checkError(err, w2, r5);
       if (w2) {
         w2.destroyed = true;
       }
-      if (r6) {
-        r6.destroyed = true;
+      if (r5) {
+        r5.destroyed = true;
       }
       if (!s4.constructed) {
         this.once(kDestroy, function(er) {
@@ -6157,22 +3767,22 @@ var require_destroy = __commonJS({
           return;
         }
         called = true;
-        const r6 = self2._readableState;
+        const r5 = self2._readableState;
         const w2 = self2._writableState;
-        checkError(err2, w2, r6);
+        checkError(err2, w2, r5);
         if (w2) {
           w2.closed = true;
         }
-        if (r6) {
-          r6.closed = true;
+        if (r5) {
+          r5.closed = true;
         }
         if (typeof cb === "function") {
           cb(err2);
         }
         if (err2) {
-          process2.nextTick(emitErrorCloseNT, self2, err2);
+          process.nextTick(emitErrorCloseNT, self2, err2);
         } else {
-          process2.nextTick(emitCloseNT, self2);
+          process.nextTick(emitCloseNT, self2);
         }
       }
       try {
@@ -6186,45 +3796,45 @@ var require_destroy = __commonJS({
       emitCloseNT(self2);
     }
     function emitCloseNT(self2) {
-      const r6 = self2._readableState;
+      const r5 = self2._readableState;
       const w2 = self2._writableState;
       if (w2) {
         w2.closeEmitted = true;
       }
-      if (r6) {
-        r6.closeEmitted = true;
+      if (r5) {
+        r5.closeEmitted = true;
       }
-      if (w2 !== null && w2 !== void 0 && w2.emitClose || r6 !== null && r6 !== void 0 && r6.emitClose) {
+      if (w2 !== null && w2 !== void 0 && w2.emitClose || r5 !== null && r5 !== void 0 && r5.emitClose) {
         self2.emit("close");
       }
     }
     function emitErrorNT(self2, err) {
-      const r6 = self2._readableState;
+      const r5 = self2._readableState;
       const w2 = self2._writableState;
-      if (w2 !== null && w2 !== void 0 && w2.errorEmitted || r6 !== null && r6 !== void 0 && r6.errorEmitted) {
+      if (w2 !== null && w2 !== void 0 && w2.errorEmitted || r5 !== null && r5 !== void 0 && r5.errorEmitted) {
         return;
       }
       if (w2) {
         w2.errorEmitted = true;
       }
-      if (r6) {
-        r6.errorEmitted = true;
+      if (r5) {
+        r5.errorEmitted = true;
       }
       self2.emit("error", err);
     }
     function undestroy() {
-      const r6 = this._readableState;
+      const r5 = this._readableState;
       const w2 = this._writableState;
-      if (r6) {
-        r6.constructed = true;
-        r6.closed = false;
-        r6.closeEmitted = false;
-        r6.destroyed = false;
-        r6.errored = null;
-        r6.errorEmitted = false;
-        r6.reading = false;
-        r6.ended = r6.readable === false;
-        r6.endEmitted = r6.readable === false;
+      if (r5) {
+        r5.constructed = true;
+        r5.closed = false;
+        r5.closeEmitted = false;
+        r5.destroyed = false;
+        r5.errored = null;
+        r5.errorEmitted = false;
+        r5.reading = false;
+        r5.ended = r5.readable === false;
+        r5.endEmitted = r5.readable === false;
       }
       if (w2) {
         w2.constructed = true;
@@ -6241,23 +3851,23 @@ var require_destroy = __commonJS({
       }
     }
     function errorOrDestroy(stream, err, sync) {
-      const r6 = stream._readableState;
+      const r5 = stream._readableState;
       const w2 = stream._writableState;
-      if (w2 !== null && w2 !== void 0 && w2.destroyed || r6 !== null && r6 !== void 0 && r6.destroyed) {
+      if (w2 !== null && w2 !== void 0 && w2.destroyed || r5 !== null && r5 !== void 0 && r5.destroyed) {
         return this;
       }
-      if (r6 !== null && r6 !== void 0 && r6.autoDestroy || w2 !== null && w2 !== void 0 && w2.autoDestroy)
+      if (r5 !== null && r5 !== void 0 && r5.autoDestroy || w2 !== null && w2 !== void 0 && w2.autoDestroy)
         stream.destroy(err);
       else if (err) {
         err.stack;
         if (w2 && !w2.errored) {
           w2.errored = err;
         }
-        if (r6 && !r6.errored) {
-          r6.errored = err;
+        if (r5 && !r5.errored) {
+          r5.errored = err;
         }
         if (sync) {
-          process2.nextTick(emitErrorNT, stream, err);
+          process.nextTick(emitErrorNT, stream, err);
         } else {
           emitErrorNT(stream, err);
         }
@@ -6267,10 +3877,10 @@ var require_destroy = __commonJS({
       if (typeof stream._construct !== "function") {
         return;
       }
-      const r6 = stream._readableState;
+      const r5 = stream._readableState;
       const w2 = stream._writableState;
-      if (r6) {
-        r6.constructed = false;
+      if (r5) {
+        r5.constructed = false;
       }
       if (w2) {
         w2.constructed = false;
@@ -6279,7 +3889,7 @@ var require_destroy = __commonJS({
       if (stream.listenerCount(kConstruct) > 1) {
         return;
       }
-      process2.nextTick(constructNT, stream);
+      process.nextTick(constructNT, stream);
     }
     function constructNT(stream) {
       let called = false;
@@ -6289,11 +3899,11 @@ var require_destroy = __commonJS({
           return;
         }
         called = true;
-        const r6 = stream._readableState;
+        const r5 = stream._readableState;
         const w2 = stream._writableState;
-        const s4 = w2 || r6;
-        if (r6) {
-          r6.constructed = true;
+        const s4 = w2 || r5;
+        if (r5) {
+          r5.constructed = true;
         }
         if (w2) {
           w2.constructed = true;
@@ -6303,15 +3913,15 @@ var require_destroy = __commonJS({
         } else if (err) {
           errorOrDestroy(stream, err, true);
         } else {
-          process2.nextTick(emitConstructNT, stream);
+          process.nextTick(emitConstructNT, stream);
         }
       }
       try {
         stream._construct((err) => {
-          process2.nextTick(onConstruct, err);
+          process.nextTick(onConstruct, err);
         });
       } catch (err) {
-        process2.nextTick(onConstruct, err);
+        process.nextTick(onConstruct, err);
       }
     }
     function emitConstructNT(stream) {
@@ -6325,7 +3935,7 @@ var require_destroy = __commonJS({
     }
     function emitErrorCloseLegacy(stream, err) {
       stream.emit("error", err);
-      process2.nextTick(emitCloseLegacy, stream);
+      process.nextTick(emitCloseLegacy, stream);
     }
     function destroyer(stream, err) {
       if (!stream || isDestroyed(stream)) {
@@ -6346,9 +3956,9 @@ var require_destroy = __commonJS({
       } else if (typeof stream.close === "function") {
         stream.close();
       } else if (err) {
-        process2.nextTick(emitErrorCloseLegacy, stream, err);
+        process.nextTick(emitErrorCloseLegacy, stream, err);
       } else {
-        process2.nextTick(emitCloseLegacy, stream);
+        process.nextTick(emitCloseLegacy, stream);
       }
       if (!stream.destroyed) {
         stream[kIsDestroyed] = true;
@@ -6548,10 +4158,10 @@ var require_buffer_list = __commonJS({
         if (this.length === 0) return Buffer3.alloc(0);
         const ret = Buffer3.allocUnsafe(n5 >>> 0);
         let p3 = this.head;
-        let i6 = 0;
+        let i5 = 0;
         while (p3) {
-          TypedArrayPrototypeSet(ret, p3.data, i6);
-          i6 += p3.data.length;
+          TypedArrayPrototypeSet(ret, p3.data, i5);
+          i5 += p3.data.length;
           p3 = p3.next;
         }
         return ret;
@@ -6835,18 +4445,18 @@ var require_string_decoder = __commonJS({
     }
     StringDecoder.prototype.write = function(buf) {
       if (buf.length === 0) return "";
-      var r6;
-      var i6;
+      var r5;
+      var i5;
       if (this.lastNeed) {
-        r6 = this.fillLast(buf);
-        if (r6 === void 0) return "";
-        i6 = this.lastNeed;
+        r5 = this.fillLast(buf);
+        if (r5 === void 0) return "";
+        i5 = this.lastNeed;
         this.lastNeed = 0;
       } else {
-        i6 = 0;
+        i5 = 0;
       }
-      if (i6 < buf.length) return r6 ? r6 + this.text(buf, i6) : this.text(buf, i6);
-      return r6 || "";
+      if (i5 < buf.length) return r5 ? r5 + this.text(buf, i5) : this.text(buf, i5);
+      return r5 || "";
     };
     StringDecoder.prototype.end = utf8End;
     StringDecoder.prototype.text = utf8Text;
@@ -6865,21 +4475,21 @@ var require_string_decoder = __commonJS({
       else if (byte >> 3 === 30) return 4;
       return byte >> 6 === 2 ? -1 : -2;
     }
-    function utf8CheckIncomplete(self2, buf, i6) {
+    function utf8CheckIncomplete(self2, buf, i5) {
       var j = buf.length - 1;
-      if (j < i6) return 0;
+      if (j < i5) return 0;
       var nb = utf8CheckByte(buf[j]);
       if (nb >= 0) {
         if (nb > 0) self2.lastNeed = nb - 1;
         return nb;
       }
-      if (--j < i6 || nb === -2) return 0;
+      if (--j < i5 || nb === -2) return 0;
       nb = utf8CheckByte(buf[j]);
       if (nb >= 0) {
         if (nb > 0) self2.lastNeed = nb - 2;
         return nb;
       }
-      if (--j < i6 || nb === -2) return 0;
+      if (--j < i5 || nb === -2) return 0;
       nb = utf8CheckByte(buf[j]);
       if (nb >= 0) {
         if (nb > 0) {
@@ -6910,8 +4520,8 @@ var require_string_decoder = __commonJS({
     }
     function utf8FillLast(buf) {
       var p3 = this.lastTotal - this.lastNeed;
-      var r6 = utf8CheckExtraBytes(this, buf, p3);
-      if (r6 !== void 0) return r6;
+      var r5 = utf8CheckExtraBytes(this, buf, p3);
+      if (r5 !== void 0) return r5;
       if (this.lastNeed <= buf.length) {
         buf.copy(this.lastChar, p3, 0, this.lastNeed);
         return this.lastChar.toString(this.encoding, 0, this.lastTotal);
@@ -6919,50 +4529,50 @@ var require_string_decoder = __commonJS({
       buf.copy(this.lastChar, p3, 0, buf.length);
       this.lastNeed -= buf.length;
     }
-    function utf8Text(buf, i6) {
-      var total = utf8CheckIncomplete(this, buf, i6);
-      if (!this.lastNeed) return buf.toString("utf8", i6);
+    function utf8Text(buf, i5) {
+      var total = utf8CheckIncomplete(this, buf, i5);
+      if (!this.lastNeed) return buf.toString("utf8", i5);
       this.lastTotal = total;
       var end = buf.length - (total - this.lastNeed);
       buf.copy(this.lastChar, 0, end);
-      return buf.toString("utf8", i6, end);
+      return buf.toString("utf8", i5, end);
     }
     function utf8End(buf) {
-      var r6 = buf && buf.length ? this.write(buf) : "";
-      if (this.lastNeed) return r6 + "\uFFFD";
-      return r6;
+      var r5 = buf && buf.length ? this.write(buf) : "";
+      if (this.lastNeed) return r5 + "\uFFFD";
+      return r5;
     }
-    function utf16Text(buf, i6) {
-      if ((buf.length - i6) % 2 === 0) {
-        var r6 = buf.toString("utf16le", i6);
-        if (r6) {
-          var c4 = r6.charCodeAt(r6.length - 1);
+    function utf16Text(buf, i5) {
+      if ((buf.length - i5) % 2 === 0) {
+        var r5 = buf.toString("utf16le", i5);
+        if (r5) {
+          var c4 = r5.charCodeAt(r5.length - 1);
           if (c4 >= 55296 && c4 <= 56319) {
             this.lastNeed = 2;
             this.lastTotal = 4;
             this.lastChar[0] = buf[buf.length - 2];
             this.lastChar[1] = buf[buf.length - 1];
-            return r6.slice(0, -1);
+            return r5.slice(0, -1);
           }
         }
-        return r6;
+        return r5;
       }
       this.lastNeed = 1;
       this.lastTotal = 2;
       this.lastChar[0] = buf[buf.length - 1];
-      return buf.toString("utf16le", i6, buf.length - 1);
+      return buf.toString("utf16le", i5, buf.length - 1);
     }
     function utf16End(buf) {
-      var r6 = buf && buf.length ? this.write(buf) : "";
+      var r5 = buf && buf.length ? this.write(buf) : "";
       if (this.lastNeed) {
         var end = this.lastTotal - this.lastNeed;
-        return r6 + this.lastChar.toString("utf16le", 0, end);
+        return r5 + this.lastChar.toString("utf16le", 0, end);
       }
-      return r6;
+      return r5;
     }
-    function base64Text(buf, i6) {
-      var n5 = (buf.length - i6) % 3;
-      if (n5 === 0) return buf.toString("base64", i6);
+    function base64Text(buf, i5) {
+      var n5 = (buf.length - i5) % 3;
+      if (n5 === 0) return buf.toString("base64", i5);
       this.lastNeed = 3 - n5;
       this.lastTotal = 3;
       if (n5 === 1) {
@@ -6971,12 +4581,12 @@ var require_string_decoder = __commonJS({
         this.lastChar[0] = buf[buf.length - 2];
         this.lastChar[1] = buf[buf.length - 1];
       }
-      return buf.toString("base64", i6, buf.length - n5);
+      return buf.toString("base64", i5, buf.length - n5);
     }
     function base64End(buf) {
-      var r6 = buf && buf.length ? this.write(buf) : "";
-      if (this.lastNeed) return r6 + this.lastChar.toString("base64", 0, 3 - this.lastNeed);
-      return r6;
+      var r5 = buf && buf.length ? this.write(buf) : "";
+      if (this.lastNeed) return r5 + this.lastChar.toString("base64", 0, 3 - this.lastNeed);
+      return r5;
     }
     function simpleWrite(buf) {
       return buf.toString(this.encoding);
@@ -6991,14 +4601,14 @@ var require_string_decoder = __commonJS({
 var require_from = __commonJS({
   "node_modules/readable-stream/lib/internal/streams/from.js"(exports, module) {
     "use strict";
-    var process2 = require_browser2();
+    var process = require_browser2();
     var { PromisePrototypeThen, SymbolAsyncIterator, SymbolIterator } = require_primordials();
     var { Buffer: Buffer3 } = require_buffer();
     var { ERR_INVALID_ARG_TYPE, ERR_STREAM_NULL_VALUES } = require_errors().codes;
-    function from(Readable2, iterable, opts) {
+    function from(Readable, iterable, opts) {
       let iterator;
       if (typeof iterable === "string" || iterable instanceof Buffer3) {
-        return new Readable2({
+        return new Readable({
           objectMode: true,
           ...opts,
           read() {
@@ -7017,7 +4627,7 @@ var require_from = __commonJS({
       } else {
         throw new ERR_INVALID_ARG_TYPE("iterable", ["Iterable"], iterable);
       }
-      const readable = new Readable2({
+      const readable = new Readable({
         objectMode: true,
         highWaterMark: 1,
         // TODO(ronag): What options should be allowed?
@@ -7033,9 +4643,9 @@ var require_from = __commonJS({
       readable._destroy = function(error, cb) {
         PromisePrototypeThen(
           close(error),
-          () => process2.nextTick(cb, error),
+          () => process.nextTick(cb, error),
           // nextTick is here in case cb throws
-          (e8) => process2.nextTick(cb, e8 || error)
+          (e5) => process.nextTick(cb, e5 || error)
         );
       };
       async function close(error) {
@@ -7086,7 +4696,7 @@ var require_from = __commonJS({
 var require_readable = __commonJS({
   "node_modules/readable-stream/lib/internal/streams/readable.js"(exports, module) {
     "use strict";
-    var process2 = require_browser2();
+    var process = require_browser2();
     var {
       ArrayPrototypeIndexOf,
       NumberIsInteger,
@@ -7101,8 +4711,8 @@ var require_readable = __commonJS({
       SymbolAsyncIterator,
       Symbol: Symbol2
     } = require_primordials();
-    module.exports = Readable2;
-    Readable2.ReadableState = ReadableState;
+    module.exports = Readable;
+    Readable.ReadableState = ReadableState;
     var { EventEmitter: EE } = require_events();
     var { Stream, prependListener } = require_legacy();
     var { Buffer: Buffer3 } = require_buffer();
@@ -7129,8 +4739,8 @@ var require_readable = __commonJS({
     var kPaused = Symbol2("kPaused");
     var { StringDecoder } = require_string_decoder();
     var from = require_from();
-    ObjectSetPrototypeOf(Readable2.prototype, Stream.prototype);
-    ObjectSetPrototypeOf(Readable2, Stream);
+    ObjectSetPrototypeOf(Readable.prototype, Stream.prototype);
+    ObjectSetPrototypeOf(Readable, Stream);
     var nop = () => {
     };
     var { errorOrDestroy } = destroyImpl;
@@ -7225,8 +4835,8 @@ var require_readable = __commonJS({
         this.encoding = options.encoding;
       }
     }
-    function Readable2(options) {
-      if (!(this instanceof Readable2)) return new Readable2(options);
+    function Readable(options) {
+      if (!(this instanceof Readable)) return new Readable(options);
       const isDuplex = this instanceof require_duplex();
       this._readableState = new ReadableState(options, this, isDuplex);
       if (options) {
@@ -7242,15 +4852,15 @@ var require_readable = __commonJS({
         }
       });
     }
-    Readable2.prototype.destroy = destroyImpl.destroy;
-    Readable2.prototype._undestroy = destroyImpl.undestroy;
-    Readable2.prototype._destroy = function(err, cb) {
+    Readable.prototype.destroy = destroyImpl.destroy;
+    Readable.prototype._undestroy = destroyImpl.undestroy;
+    Readable.prototype._destroy = function(err, cb) {
       cb(err);
     };
-    Readable2.prototype[EE.captureRejectionSymbol] = function(err) {
+    Readable.prototype[EE.captureRejectionSymbol] = function(err) {
       this.destroy(err);
     };
-    Readable2.prototype[SymbolAsyncDispose] = function() {
+    Readable.prototype[SymbolAsyncDispose] = function() {
       let error;
       if (!this.destroyed) {
         error = this.readableEnded ? null : new AbortError();
@@ -7258,10 +4868,10 @@ var require_readable = __commonJS({
       }
       return new Promise2((resolve, reject) => eos(this, (err) => err && err !== error ? reject(err) : resolve(null)));
     };
-    Readable2.prototype.push = function(chunk, encoding) {
+    Readable.prototype.push = function(chunk, encoding) {
       return readableAddChunk(this, chunk, encoding, false);
     };
-    Readable2.prototype.unshift = function(chunk, encoding) {
+    Readable.prototype.unshift = function(chunk, encoding) {
       return readableAddChunk(this, chunk, encoding, true);
     };
     function readableAddChunk(stream, chunk, encoding, addToFront) {
@@ -7335,11 +4945,11 @@ var require_readable = __commonJS({
       }
       maybeReadMore(stream, state);
     }
-    Readable2.prototype.isPaused = function() {
+    Readable.prototype.isPaused = function() {
       const state = this._readableState;
       return state[kPaused] === true || state.flowing === false;
     };
-    Readable2.prototype.setEncoding = function(enc) {
+    Readable.prototype.setEncoding = function(enc) {
       const decoder = new StringDecoder(enc);
       this._readableState.decoder = decoder;
       this._readableState.encoding = this._readableState.decoder.encoding;
@@ -7378,7 +4988,7 @@ var require_readable = __commonJS({
       if (n5 <= state.length) return n5;
       return state.ended ? state.length : 0;
     }
-    Readable2.prototype.read = function(n5) {
+    Readable.prototype.read = function(n5) {
       debug("read", n5);
       if (n5 === void 0) {
         n5 = NaN;
@@ -7471,7 +5081,7 @@ var require_readable = __commonJS({
       if (!state.emittedReadable) {
         debug("emitReadable", state.flowing);
         state.emittedReadable = true;
-        process2.nextTick(emitReadable_, stream);
+        process.nextTick(emitReadable_, stream);
       }
     }
     function emitReadable_(stream) {
@@ -7487,7 +5097,7 @@ var require_readable = __commonJS({
     function maybeReadMore(stream, state) {
       if (!state.readingMore && state.constructed) {
         state.readingMore = true;
-        process2.nextTick(maybeReadMore_, stream, state);
+        process.nextTick(maybeReadMore_, stream, state);
       }
     }
     function maybeReadMore_(stream, state) {
@@ -7500,10 +5110,10 @@ var require_readable = __commonJS({
       }
       state.readingMore = false;
     }
-    Readable2.prototype._read = function(n5) {
+    Readable.prototype._read = function(n5) {
       throw new ERR_METHOD_NOT_IMPLEMENTED("_read()");
     };
-    Readable2.prototype.pipe = function(dest, pipeOpts) {
+    Readable.prototype.pipe = function(dest, pipeOpts) {
       const src = this;
       const state = this._readableState;
       if (state.pipes.length === 1) {
@@ -7514,9 +5124,9 @@ var require_readable = __commonJS({
       }
       state.pipes.push(dest);
       debug("pipe count=%d opts=%j", state.pipes.length, pipeOpts);
-      const doEnd = (!pipeOpts || pipeOpts.end !== false) && dest !== process2.stdout && dest !== process2.stderr;
+      const doEnd = (!pipeOpts || pipeOpts.end !== false) && dest !== process.stdout && dest !== process.stderr;
       const endFn = doEnd ? onend : unpipe;
-      if (state.endEmitted) process2.nextTick(endFn);
+      if (state.endEmitted) process.nextTick(endFn);
       else src.once("end", endFn);
       dest.on("unpipe", onunpipe);
       function onunpipe(readable, unpipeInfo) {
@@ -7628,7 +5238,7 @@ var require_readable = __commonJS({
         }
       };
     }
-    Readable2.prototype.unpipe = function(dest) {
+    Readable.prototype.unpipe = function(dest) {
       const state = this._readableState;
       const unpipeInfo = {
         hasUnpiped: false
@@ -7638,8 +5248,8 @@ var require_readable = __commonJS({
         const dests = state.pipes;
         state.pipes = [];
         this.pause();
-        for (let i6 = 0; i6 < dests.length; i6++)
-          dests[i6].emit("unpipe", this, {
+        for (let i5 = 0; i5 < dests.length; i5++)
+          dests[i5].emit("unpipe", this, {
             hasUnpiped: false
           });
         return this;
@@ -7651,7 +5261,7 @@ var require_readable = __commonJS({
       dest.emit("unpipe", this, unpipeInfo);
       return this;
     };
-    Readable2.prototype.on = function(ev, fn) {
+    Readable.prototype.on = function(ev, fn) {
       const res = Stream.prototype.on.call(this, ev, fn);
       const state = this._readableState;
       if (ev === "data") {
@@ -7666,25 +5276,25 @@ var require_readable = __commonJS({
           if (state.length) {
             emitReadable(this);
           } else if (!state.reading) {
-            process2.nextTick(nReadingNextTick, this);
+            process.nextTick(nReadingNextTick, this);
           }
         }
       }
       return res;
     };
-    Readable2.prototype.addListener = Readable2.prototype.on;
-    Readable2.prototype.removeListener = function(ev, fn) {
+    Readable.prototype.addListener = Readable.prototype.on;
+    Readable.prototype.removeListener = function(ev, fn) {
       const res = Stream.prototype.removeListener.call(this, ev, fn);
       if (ev === "readable") {
-        process2.nextTick(updateReadableListening, this);
+        process.nextTick(updateReadableListening, this);
       }
       return res;
     };
-    Readable2.prototype.off = Readable2.prototype.removeListener;
-    Readable2.prototype.removeAllListeners = function(ev) {
+    Readable.prototype.off = Readable.prototype.removeListener;
+    Readable.prototype.removeAllListeners = function(ev) {
       const res = Stream.prototype.removeAllListeners.apply(this, arguments);
       if (ev === "readable" || ev === void 0) {
-        process2.nextTick(updateReadableListening, this);
+        process.nextTick(updateReadableListening, this);
       }
       return res;
     };
@@ -7703,7 +5313,7 @@ var require_readable = __commonJS({
       debug("readable nexttick read 0");
       self2.read(0);
     }
-    Readable2.prototype.resume = function() {
+    Readable.prototype.resume = function() {
       const state = this._readableState;
       if (!state.flowing) {
         debug("resume");
@@ -7716,7 +5326,7 @@ var require_readable = __commonJS({
     function resume(stream, state) {
       if (!state.resumeScheduled) {
         state.resumeScheduled = true;
-        process2.nextTick(resume_, stream, state);
+        process.nextTick(resume_, stream, state);
       }
     }
     function resume_(stream, state) {
@@ -7729,7 +5339,7 @@ var require_readable = __commonJS({
       flow(stream);
       if (state.flowing && !state.reading) stream.read(0);
     }
-    Readable2.prototype.pause = function() {
+    Readable.prototype.pause = function() {
       debug("call pause flowing=%j", this._readableState.flowing);
       if (this._readableState.flowing !== false) {
         debug("pause");
@@ -7744,7 +5354,7 @@ var require_readable = __commonJS({
       debug("flow", state.flowing);
       while (state.flowing && stream.read() !== null) ;
     }
-    Readable2.prototype.wrap = function(stream) {
+    Readable.prototype.wrap = function(stream) {
       let paused = false;
       stream.on("data", (chunk) => {
         if (!this.push(chunk) && stream.pause) {
@@ -7772,17 +5382,17 @@ var require_readable = __commonJS({
       };
       const streamKeys = ObjectKeys(stream);
       for (let j = 1; j < streamKeys.length; j++) {
-        const i6 = streamKeys[j];
-        if (this[i6] === void 0 && typeof stream[i6] === "function") {
-          this[i6] = stream[i6].bind(stream);
+        const i5 = streamKeys[j];
+        if (this[i5] === void 0 && typeof stream[i5] === "function") {
+          this[i5] = stream[i5].bind(stream);
         }
       }
       return this;
     };
-    Readable2.prototype[SymbolAsyncIterator] = function() {
+    Readable.prototype[SymbolAsyncIterator] = function() {
       return streamToAsyncIterator(this);
     };
-    Readable2.prototype.iterator = function(options) {
+    Readable.prototype.iterator = function(options) {
       if (options !== void 0) {
         validateObject(options, "options");
       }
@@ -7790,7 +5400,7 @@ var require_readable = __commonJS({
     };
     function streamToAsyncIterator(stream, options) {
       if (typeof stream.read !== "function") {
-        stream = Readable2.wrap(stream, {
+        stream = Readable.wrap(stream, {
           objectMode: true
         });
       }
@@ -7846,12 +5456,12 @@ var require_readable = __commonJS({
         }
       }
     }
-    ObjectDefineProperties(Readable2.prototype, {
+    ObjectDefineProperties(Readable.prototype, {
       readable: {
         __proto__: null,
         get() {
-          const r6 = this._readableState;
-          return !!r6 && r6.readable !== false && !r6.destroyed && !r6.errorEmitted && !r6.endEmitted;
+          const r5 = this._readableState;
+          return !!r5 && r5.readable !== false && !r5.destroyed && !r5.errorEmitted && !r5.endEmitted;
         },
         set(val) {
           if (this._readableState) {
@@ -7973,7 +5583,7 @@ var require_readable = __commonJS({
         }
       }
     });
-    Readable2._fromList = fromList;
+    Readable._fromList = fromList;
     function fromList(n5, state) {
       if (state.length === 0) return null;
       let ret;
@@ -7993,7 +5603,7 @@ var require_readable = __commonJS({
       debug("endReadable", state.endEmitted);
       if (!state.endEmitted) {
         state.ended = true;
-        process2.nextTick(endReadableNT, state, stream);
+        process.nextTick(endReadableNT, state, stream);
       }
     }
     function endReadableNT(state, stream) {
@@ -8002,7 +5612,7 @@ var require_readable = __commonJS({
         state.endEmitted = true;
         stream.emit("end");
         if (stream.writable && stream.allowHalfOpen === false) {
-          process2.nextTick(endWritableNT, stream);
+          process.nextTick(endWritableNT, stream);
         } else if (state.autoDestroy) {
           const wState = stream._writableState;
           const autoDestroy = !wState || wState.autoDestroy && // We don't expect the writable to ever 'finish'
@@ -8020,23 +5630,23 @@ var require_readable = __commonJS({
         stream.end();
       }
     }
-    Readable2.from = function(iterable, opts) {
-      return from(Readable2, iterable, opts);
+    Readable.from = function(iterable, opts) {
+      return from(Readable, iterable, opts);
     };
     var webStreamsAdapters;
     function lazyWebStreams() {
       if (webStreamsAdapters === void 0) webStreamsAdapters = {};
       return webStreamsAdapters;
     }
-    Readable2.fromWeb = function(readableStream, options) {
+    Readable.fromWeb = function(readableStream, options) {
       return lazyWebStreams().newStreamReadableFromReadableStream(readableStream, options);
     };
-    Readable2.toWeb = function(streamReadable, options) {
+    Readable.toWeb = function(streamReadable, options) {
       return lazyWebStreams().newReadableStreamFromStreamReadable(streamReadable, options);
     };
-    Readable2.wrap = function(src, options) {
+    Readable.wrap = function(src, options) {
       var _ref, _src$readableObjectMo;
-      return new Readable2({
+      return new Readable({
         objectMode: (_ref = (_src$readableObjectMo = src.readableObjectMode) !== null && _src$readableObjectMo !== void 0 ? _src$readableObjectMo : src.objectMode) !== null && _ref !== void 0 ? _ref : true,
         ...options,
         destroy(err, callback) {
@@ -8052,7 +5662,7 @@ var require_readable = __commonJS({
 var require_writable = __commonJS({
   "node_modules/readable-stream/lib/internal/streams/writable.js"(exports, module) {
     "use strict";
-    var process2 = require_browser2();
+    var process = require_browser2();
     var {
       ArrayPrototypeSlice,
       Error: Error2,
@@ -8162,10 +5772,10 @@ var require_writable = __commonJS({
     }
     ObjectDefineProperty(Writable, SymbolHasInstance, {
       __proto__: null,
-      value: function(object2) {
-        if (FunctionPrototypeSymbolHasInstance(this, object2)) return true;
+      value: function(object) {
+        if (FunctionPrototypeSymbolHasInstance(this, object)) return true;
         if (this !== Writable) return false;
-        return object2 && object2._writableState instanceof WritableState;
+        return object && object._writableState instanceof WritableState;
       }
     });
     Writable.prototype.pipe = function() {
@@ -8205,7 +5815,7 @@ var require_writable = __commonJS({
         err = new ERR_STREAM_DESTROYED("write");
       }
       if (err) {
-        process2.nextTick(cb, err);
+        process.nextTick(cb, err);
         errorOrDestroy(stream, err, true);
         return err;
       }
@@ -8295,7 +5905,7 @@ var require_writable = __commonJS({
           stream._readableState.errored = er;
         }
         if (sync) {
-          process2.nextTick(onwriteError, stream, state, er, cb);
+          process.nextTick(onwriteError, stream, state, er, cb);
         } else {
           onwriteError(stream, state, er, cb);
         }
@@ -8313,7 +5923,7 @@ var require_writable = __commonJS({
               stream,
               state
             };
-            process2.nextTick(afterWriteTick, state.afterWriteTickInfo);
+            process.nextTick(afterWriteTick, state.afterWriteTickInfo);
           }
         } else {
           afterWrite(stream, state, 1, cb);
@@ -8353,9 +5963,9 @@ var require_writable = __commonJS({
         );
       }
       const onfinishCallbacks = state[kOnFinished].splice(0);
-      for (let i6 = 0; i6 < onfinishCallbacks.length; i6++) {
+      for (let i5 = 0; i5 < onfinishCallbacks.length; i5++) {
         var _state$errored2;
-        onfinishCallbacks[i6](
+        onfinishCallbacks[i5](
           (_state$errored2 = state.errored) !== null && _state$errored2 !== void 0 ? _state$errored2 : new ERR_STREAM_DESTROYED("end")
         );
       }
@@ -8370,33 +5980,33 @@ var require_writable = __commonJS({
       if (!bufferedLength) {
         return;
       }
-      let i6 = bufferedIndex;
+      let i5 = bufferedIndex;
       state.bufferProcessing = true;
       if (bufferedLength > 1 && stream._writev) {
         state.pendingcb -= bufferedLength - 1;
         const callback = state.allNoop ? nop : (err) => {
-          for (let n5 = i6; n5 < buffered.length; ++n5) {
+          for (let n5 = i5; n5 < buffered.length; ++n5) {
             buffered[n5].callback(err);
           }
         };
-        const chunks = state.allNoop && i6 === 0 ? buffered : ArrayPrototypeSlice(buffered, i6);
+        const chunks = state.allNoop && i5 === 0 ? buffered : ArrayPrototypeSlice(buffered, i5);
         chunks.allBuffers = state.allBuffers;
         doWrite(stream, state, true, state.length, chunks, "", callback);
         resetBuffer(state);
       } else {
         do {
-          const { chunk, encoding, callback } = buffered[i6];
-          buffered[i6++] = null;
+          const { chunk, encoding, callback } = buffered[i5];
+          buffered[i5++] = null;
           const len = objectMode ? 1 : chunk.length;
           doWrite(stream, state, false, len, chunk, encoding, callback);
-        } while (i6 < buffered.length && !state.writing);
-        if (i6 === buffered.length) {
+        } while (i5 < buffered.length && !state.writing);
+        if (i5 === buffered.length) {
           resetBuffer(state);
-        } else if (i6 > 256) {
-          buffered.splice(0, i6);
+        } else if (i5 > 256) {
+          buffered.splice(0, i5);
           state.bufferedIndex = 0;
         } else {
-          state.bufferedIndex = i6;
+          state.bufferedIndex = i5;
         }
       }
       state.bufferProcessing = false;
@@ -8450,7 +6060,7 @@ var require_writable = __commonJS({
       }
       if (typeof cb === "function") {
         if (err || state.finished) {
-          process2.nextTick(cb, err);
+          process.nextTick(cb, err);
         } else {
           state[kOnFinished].push(cb);
         }
@@ -8471,15 +6081,15 @@ var require_writable = __commonJS({
         state.pendingcb--;
         if (err) {
           const onfinishCallbacks = state[kOnFinished].splice(0);
-          for (let i6 = 0; i6 < onfinishCallbacks.length; i6++) {
-            onfinishCallbacks[i6](err);
+          for (let i5 = 0; i5 < onfinishCallbacks.length; i5++) {
+            onfinishCallbacks[i5](err);
           }
           errorOrDestroy(stream, err, state.sync);
         } else if (needFinish(state)) {
           state.prefinished = true;
           stream.emit("prefinish");
           state.pendingcb++;
-          process2.nextTick(finish, stream, state);
+          process.nextTick(finish, stream, state);
         }
       }
       state.sync = true;
@@ -8508,7 +6118,7 @@ var require_writable = __commonJS({
         if (state.pendingcb === 0) {
           if (sync) {
             state.pendingcb++;
-            process2.nextTick(
+            process.nextTick(
               (stream2, state2) => {
                 if (needFinish(state2)) {
                   finish(stream2, state2);
@@ -8530,8 +6140,8 @@ var require_writable = __commonJS({
       state.pendingcb--;
       state.finished = true;
       const onfinishCallbacks = state[kOnFinished].splice(0);
-      for (let i6 = 0; i6 < onfinishCallbacks.length; i6++) {
-        onfinishCallbacks[i6]();
+      for (let i5 = 0; i5 < onfinishCallbacks.length; i5++) {
+        onfinishCallbacks[i5]();
       }
       stream.emit("finish");
       if (state.autoDestroy) {
@@ -8643,7 +6253,7 @@ var require_writable = __commonJS({
     Writable.prototype.destroy = function(err, cb) {
       const state = this._writableState;
       if (!state.destroyed && (state.bufferedIndex < state.buffered.length || state[kOnFinished].length)) {
-        process2.nextTick(errorBuffer, state);
+        process.nextTick(errorBuffer, state);
       }
       destroy.call(this, err, cb);
       return this;
@@ -8673,7 +6283,7 @@ var require_writable = __commonJS({
 var require_duplexify = __commonJS({
   "node_modules/readable-stream/lib/internal/streams/duplexify.js"(exports, module) {
     "use strict";
-    var process2 = require_browser2();
+    var process = require_browser2();
     var bufferModule = require_buffer();
     var {
       isReadable,
@@ -8693,17 +6303,17 @@ var require_duplexify = __commonJS({
     } = require_errors();
     var { destroyer } = require_destroy();
     var Duplex = require_duplex();
-    var Readable2 = require_readable();
+    var Readable = require_readable();
     var Writable = require_writable();
     var { createDeferredPromise } = require_util();
     var from = require_from();
-    var Blob2 = globalThis.Blob || bufferModule.Blob;
-    var isBlob = typeof Blob2 !== "undefined" ? function isBlob2(b3) {
-      return b3 instanceof Blob2;
+    var Blob = globalThis.Blob || bufferModule.Blob;
+    var isBlob = typeof Blob !== "undefined" ? function isBlob2(b3) {
+      return b3 instanceof Blob;
     } : function isBlob2(b3) {
       return false;
     };
-    var AbortController2 = globalThis.AbortController || require_browser().AbortController;
+    var AbortController = globalThis.AbortController || require_browser().AbortController;
     var { FunctionPrototypeCall } = require_primordials();
     var Duplexify = class extends Duplex {
       constructor(options) {
@@ -8743,7 +6353,7 @@ var require_duplexify = __commonJS({
       }
       if (isReadableStream(body)) {
         return _duplexify({
-          readable: Readable2.fromWeb(body)
+          readable: Readable.fromWeb(body)
         });
       }
       if (isWritableStream(body)) {
@@ -8786,9 +6396,9 @@ var require_duplexify = __commonJS({
               final(async () => {
                 try {
                   await promise;
-                  process2.nextTick(cb, null);
+                  process.nextTick(cb, null);
                 } catch (err) {
-                  process2.nextTick(cb, err);
+                  process.nextTick(cb, err);
                 }
               });
             },
@@ -8859,7 +6469,7 @@ var require_duplexify = __commonJS({
     };
     function fromAsyncGen(fn) {
       let { promise, resolve } = createDeferredPromise();
-      const ac = new AbortController2();
+      const ac = new AbortController();
       const signal = ac.signal;
       const value = fn(
         (async function* () {
@@ -8867,7 +6477,7 @@ var require_duplexify = __commonJS({
             const _promise = promise;
             promise = null;
             const { chunk, done, cb } = await _promise;
-            process2.nextTick(cb);
+            process.nextTick(cb);
             if (done) return;
             if (signal.aborted)
               throw new AbortError(void 0, {
@@ -8907,9 +6517,9 @@ var require_duplexify = __commonJS({
       };
     }
     function _duplexify(pair) {
-      const r6 = pair.readable && typeof pair.readable.read !== "function" ? Readable2.wrap(pair.readable) : pair.readable;
+      const r5 = pair.readable && typeof pair.readable.read !== "function" ? Readable.wrap(pair.readable) : pair.readable;
       const w2 = pair.writable;
-      let readable = !!isReadable(r6);
+      let readable = !!isReadable(r5);
       let writable = !!isWritable(w2);
       let ondrain;
       let onfinish;
@@ -8927,7 +6537,7 @@ var require_duplexify = __commonJS({
       }
       d3 = new Duplexify({
         // TODO (ronag): highWaterMark?
-        readableObjectMode: !!(r6 !== null && r6 !== void 0 && r6.readableObjectMode),
+        readableObjectMode: !!(r5 !== null && r5 !== void 0 && r5.readableObjectMode),
         writableObjectMode: !!(w2 !== null && w2 !== void 0 && w2.writableObjectMode),
         readable,
         writable
@@ -8936,7 +6546,7 @@ var require_duplexify = __commonJS({
         eos(w2, (err) => {
           writable = false;
           if (err) {
-            destroyer(r6, err);
+            destroyer(r5, err);
           }
           onfinished(err);
         });
@@ -8967,26 +6577,26 @@ var require_duplexify = __commonJS({
         });
       }
       if (readable) {
-        eos(r6, (err) => {
+        eos(r5, (err) => {
           readable = false;
           if (err) {
-            destroyer(r6, err);
+            destroyer(r5, err);
           }
           onfinished(err);
         });
-        r6.on("readable", function() {
+        r5.on("readable", function() {
           if (onreadable) {
             const cb = onreadable;
             onreadable = null;
             cb();
           }
         });
-        r6.on("end", function() {
+        r5.on("end", function() {
           d3.push(null);
         });
         d3._read = function() {
           while (true) {
-            const buf = r6.read();
+            const buf = r5.read();
             if (buf === null) {
               onreadable = d3._read;
               return;
@@ -9009,7 +6619,7 @@ var require_duplexify = __commonJS({
         } else {
           onclose = callback;
           destroyer(w2, err);
-          destroyer(r6, err);
+          destroyer(r5, err);
         }
       };
       return d3;
@@ -9028,20 +6638,20 @@ var require_duplex = __commonJS({
       ObjectSetPrototypeOf
     } = require_primordials();
     module.exports = Duplex;
-    var Readable2 = require_readable();
+    var Readable = require_readable();
     var Writable = require_writable();
-    ObjectSetPrototypeOf(Duplex.prototype, Readable2.prototype);
-    ObjectSetPrototypeOf(Duplex, Readable2);
+    ObjectSetPrototypeOf(Duplex.prototype, Readable.prototype);
+    ObjectSetPrototypeOf(Duplex, Readable);
     {
       const keys = ObjectKeys(Writable.prototype);
-      for (let i6 = 0; i6 < keys.length; i6++) {
-        const method = keys[i6];
+      for (let i5 = 0; i5 < keys.length; i5++) {
+        const method = keys[i5];
         if (!Duplex.prototype[method]) Duplex.prototype[method] = Writable.prototype[method];
       }
     }
     function Duplex(options) {
       if (!(this instanceof Duplex)) return new Duplex(options);
-      Readable2.call(this, options);
+      Readable.call(this, options);
       Writable.call(this, options);
       if (options) {
         this.allowHalfOpen = options.allowHalfOpen !== false;
@@ -9139,15 +6749,15 @@ var require_transform = __commonJS({
   "node_modules/readable-stream/lib/internal/streams/transform.js"(exports, module) {
     "use strict";
     var { ObjectSetPrototypeOf, Symbol: Symbol2 } = require_primordials();
-    module.exports = Transform3;
+    module.exports = Transform;
     var { ERR_METHOD_NOT_IMPLEMENTED } = require_errors().codes;
     var Duplex = require_duplex();
     var { getHighWaterMark } = require_state();
-    ObjectSetPrototypeOf(Transform3.prototype, Duplex.prototype);
-    ObjectSetPrototypeOf(Transform3, Duplex);
+    ObjectSetPrototypeOf(Transform.prototype, Duplex.prototype);
+    ObjectSetPrototypeOf(Transform, Duplex);
     var kCallback = Symbol2("kCallback");
-    function Transform3(options) {
-      if (!(this instanceof Transform3)) return new Transform3(options);
+    function Transform(options) {
+      if (!(this instanceof Transform)) return new Transform(options);
       const readableHighWaterMark = options ? getHighWaterMark(this, options, "readableHighWaterMark", true) : null;
       if (readableHighWaterMark === 0) {
         options = {
@@ -9201,11 +6811,11 @@ var require_transform = __commonJS({
         final.call(this);
       }
     }
-    Transform3.prototype._final = final;
-    Transform3.prototype._transform = function(chunk, encoding, callback) {
+    Transform.prototype._final = final;
+    Transform.prototype._transform = function(chunk, encoding, callback) {
       throw new ERR_METHOD_NOT_IMPLEMENTED("_transform()");
     };
-    Transform3.prototype._write = function(chunk, encoding, callback) {
+    Transform.prototype._write = function(chunk, encoding, callback) {
       const rState = this._readableState;
       const wState = this._writableState;
       const length = rState.length;
@@ -9226,7 +6836,7 @@ var require_transform = __commonJS({
         }
       });
     };
-    Transform3.prototype._read = function() {
+    Transform.prototype._read = function() {
       if (this[kCallback]) {
         const callback = this[kCallback];
         this[kCallback] = null;
@@ -9242,12 +6852,12 @@ var require_passthrough = __commonJS({
     "use strict";
     var { ObjectSetPrototypeOf } = require_primordials();
     module.exports = PassThrough;
-    var Transform3 = require_transform();
-    ObjectSetPrototypeOf(PassThrough.prototype, Transform3.prototype);
-    ObjectSetPrototypeOf(PassThrough, Transform3);
+    var Transform = require_transform();
+    ObjectSetPrototypeOf(PassThrough.prototype, Transform.prototype);
+    ObjectSetPrototypeOf(PassThrough, Transform);
     function PassThrough(options) {
       if (!(this instanceof PassThrough)) return new PassThrough(options);
-      Transform3.call(this, options);
+      Transform.call(this, options);
     }
     PassThrough.prototype._transform = function(chunk, encoding, cb) {
       cb(null, chunk);
@@ -9259,7 +6869,7 @@ var require_passthrough = __commonJS({
 var require_pipeline = __commonJS({
   "node_modules/readable-stream/lib/internal/streams/pipeline.js"(exports, module) {
     "use strict";
-    var process2 = require_browser2();
+    var process = require_browser2();
     var { ArrayIsArray, Promise: Promise2, SymbolAsyncIterator, SymbolDispose } = require_primordials();
     var eos = require_end_of_stream();
     var { once } = require_util();
@@ -9287,9 +6897,9 @@ var require_pipeline = __commonJS({
       isReadableStream,
       isReadableFinished
     } = require_utils();
-    var AbortController2 = globalThis.AbortController || require_browser().AbortController;
+    var AbortController = globalThis.AbortController || require_browser().AbortController;
     var PassThrough;
-    var Readable2;
+    var Readable;
     var addAbortListener;
     function destroyer(stream, reading, writing) {
       let finished = false;
@@ -9328,10 +6938,10 @@ var require_pipeline = __commonJS({
       throw new ERR_INVALID_ARG_TYPE("val", ["Readable", "Iterable", "AsyncIterable"], val);
     }
     async function* fromReadable(val) {
-      if (!Readable2) {
-        Readable2 = require_readable();
+      if (!Readable) {
+        Readable = require_readable();
       }
-      yield* Readable2.prototype[SymbolAsyncIterator].call(val);
+      yield* Readable.prototype[SymbolAsyncIterator].call(val);
     }
     async function pumpToNode(iterable, writable, finish, { end }) {
       let error;
@@ -9423,7 +7033,7 @@ var require_pipeline = __commonJS({
       if (streams.length < 2) {
         throw new ERR_MISSING_ARGS("streams");
       }
-      const ac = new AbortController2();
+      const ac = new AbortController();
       const signal = ac.signal;
       const outerSignal = opts === null || opts === void 0 ? void 0 : opts.signal;
       const lastStreamCleanup = [];
@@ -9461,16 +7071,16 @@ var require_pipeline = __commonJS({
           if (!error) {
             lastStreamCleanup.forEach((fn) => fn());
           }
-          process2.nextTick(callback, error, value);
+          process.nextTick(callback, error, value);
         }
       }
       let ret;
-      for (let i6 = 0; i6 < streams.length; i6++) {
-        const stream = streams[i6];
-        const reading = i6 < streams.length - 1;
-        const writing = i6 > 0;
+      for (let i5 = 0; i5 < streams.length; i5++) {
+        const stream = streams[i5];
+        const reading = i5 < streams.length - 1;
+        const writing = i5 > 0;
         const end = reading || (opts === null || opts === void 0 ? void 0 : opts.end) !== false;
-        const isLastStream = i6 === streams.length - 1;
+        const isLastStream = i5 === streams.length - 1;
         if (isNodeStream(stream)) {
           let onError2 = function(err) {
             if (err && err.name !== "AbortError" && err.code !== "ERR_STREAM_PREMATURE_CLOSE") {
@@ -9492,7 +7102,7 @@ var require_pipeline = __commonJS({
             });
           }
         }
-        if (i6 === 0) {
+        if (i5 === 0) {
           if (typeof stream === "function") {
             ret = stream({
               signal
@@ -9517,7 +7127,7 @@ var require_pipeline = __commonJS({
           });
           if (reading) {
             if (!isIterable(ret, true)) {
-              throw new ERR_INVALID_RETURN_VALUE("AsyncIterable", `transform[${i6 - 1}]`, ret);
+              throw new ERR_INVALID_RETURN_VALUE("AsyncIterable", `transform[${i5 - 1}]`, ret);
             }
           } else {
             var _ret2;
@@ -9540,11 +7150,11 @@ var require_pipeline = __commonJS({
                   if (end) {
                     pt.end();
                   }
-                  process2.nextTick(finish);
+                  process.nextTick(finish);
                 },
                 (err) => {
                   pt.destroy(err);
-                  process2.nextTick(finish, err);
+                  process.nextTick(finish, err);
                 }
               );
             } else if (isIterable(ret, true)) {
@@ -9625,7 +7235,7 @@ var require_pipeline = __commonJS({
         }
       }
       if (signal !== null && signal !== void 0 && signal.aborted || outerSignal !== null && outerSignal !== void 0 && outerSignal.aborted) {
-        process2.nextTick(abort);
+        process.nextTick(abort);
       }
       return ret;
     }
@@ -9646,7 +7256,7 @@ var require_pipeline = __commonJS({
         };
         var endFn = endFn2;
         if (isReadableFinished(src)) {
-          process2.nextTick(endFn2);
+          process.nextTick(endFn2);
         } else {
           src.once("end", endFn2);
         }
@@ -9881,7 +7491,7 @@ var require_compose = __commonJS({
 var require_operators = __commonJS({
   "node_modules/readable-stream/lib/internal/streams/operators.js"(exports, module) {
     "use strict";
-    var AbortController2 = globalThis.AbortController || require_browser().AbortController;
+    var AbortController = globalThis.AbortController || require_browser().AbortController;
     var {
       codes: { ERR_INVALID_ARG_VALUE, ERR_INVALID_ARG_TYPE, ERR_MISSING_ARGS, ERR_OUT_OF_RANGE },
       AbortError
@@ -10139,7 +7749,7 @@ var require_operators = __commonJS({
         await finished(this.destroy(err));
         throw err;
       }
-      const ac = new AbortController2();
+      const ac = new AbortController();
       const signal = ac.signal;
       if (options !== null && options !== void 0 && options.signal) {
         const opts = {
@@ -10479,1395 +8089,6 @@ var require_browser3 = __commonJS({
   }
 });
 
-// node_modules/n3/src/N3Store.js
-function merge(target, source, depth = 4) {
-  if (depth === 0)
-    return Object.assign(target, source);
-  for (const key in source)
-    target[key] = merge(target[key] || /* @__PURE__ */ Object.create(null), source[key], depth - 1);
-  return target;
-}
-function intersect(s1, s22, depth = 4) {
-  let target = false;
-  for (const key in s1) {
-    if (key in s22) {
-      const intersection = depth === 0 ? null : intersect(s1[key], s22[key], depth - 1);
-      if (intersection !== false) {
-        target = target || /* @__PURE__ */ Object.create(null);
-        target[key] = intersection;
-      } else if (depth === 3) {
-        return false;
-      }
-    }
-  }
-  return target;
-}
-function difference(s1, s22, depth = 4) {
-  let target = false;
-  for (const key in s1) {
-    if (!(key in s22)) {
-      target = target || /* @__PURE__ */ Object.create(null);
-      target[key] = depth === 0 ? null : merge({}, s1[key], depth - 1);
-    } else if (depth !== 0) {
-      const diff = difference(s1[key], s22[key], depth - 1);
-      if (diff !== false) {
-        target = target || /* @__PURE__ */ Object.create(null);
-        target[key] = diff;
-      } else if (depth === 3) {
-        return false;
-      }
-    }
-  }
-  return target;
-}
-function indexMatch(index, ids, depth = 0) {
-  const ind = ids[depth];
-  if (ind && !(ind in index))
-    return false;
-  let target = false;
-  for (const key in ind ? { [ind]: index[ind] } : index) {
-    const result = depth === 2 ? null : indexMatch(index[key], ids, depth + 1);
-    if (result !== false) {
-      target = target || /* @__PURE__ */ Object.create(null);
-      target[key] = result;
-    }
-  }
-  return target;
-}
-var import_readable_stream, ITERATOR, N3EntityIndex, N3Store, DatasetCoreAndReadableStream;
-var init_N3Store = __esm({
-  "node_modules/n3/src/N3Store.js"() {
-    "use strict";
-    import_readable_stream = __toESM(require_browser3());
-    init_N3DataFactory();
-    init_IRIs();
-    init_N3Util();
-    init_N3Writer();
-    ITERATOR = /* @__PURE__ */ Symbol("iter");
-    N3EntityIndex = class {
-      constructor(options = {}) {
-        this._id = 1;
-        this._ids = /* @__PURE__ */ Object.create(null);
-        this._ids[""] = 1;
-        this._entities = /* @__PURE__ */ Object.create(null);
-        this._entities[1] = "";
-        this._blankNodeIndex = 0;
-        this._factory = options.factory || N3DataFactory_default;
-      }
-      _termFromId(id) {
-        if (id[0] === ".") {
-          const entities = this._entities;
-          const terms = id.split(".");
-          const q = this._factory.quad(
-            this._termFromId(entities[terms[1]]),
-            this._termFromId(entities[terms[2]]),
-            this._termFromId(entities[terms[3]]),
-            terms[4] && this._termFromId(entities[terms[4]])
-          );
-          return q;
-        }
-        return termFromId(id, this._factory);
-      }
-      _termToNumericId(term) {
-        if (term.termType === "Quad") {
-          const s4 = this._termToNumericId(term.subject), p3 = this._termToNumericId(term.predicate), o7 = this._termToNumericId(term.object);
-          let g2;
-          return s4 && p3 && o7 && (isDefaultGraph(term.graph) || (g2 = this._termToNumericId(term.graph))) && this._ids[g2 ? `.${s4}.${p3}.${o7}.${g2}` : `.${s4}.${p3}.${o7}`];
-        }
-        return this._ids[termToId(term)];
-      }
-      _termToNewNumericId(term) {
-        const str = term && term.termType === "Quad" ? `.${this._termToNewNumericId(term.subject)}.${this._termToNewNumericId(term.predicate)}.${this._termToNewNumericId(term.object)}${isDefaultGraph(term.graph) ? "" : `.${this._termToNewNumericId(term.graph)}`}` : termToId(term);
-        return this._ids[str] || (this._ids[this._entities[++this._id] = str] = this._id);
-      }
-      createBlankNode(suggestedName) {
-        let name, index;
-        if (suggestedName) {
-          name = suggestedName = `_:${suggestedName}`, index = 1;
-          while (this._ids[name])
-            name = suggestedName + index++;
-        } else {
-          do {
-            name = `_:b${this._blankNodeIndex++}`;
-          } while (this._ids[name]);
-        }
-        this._ids[name] = ++this._id;
-        this._entities[this._id] = name;
-        return this._factory.blankNode(name.substr(2));
-      }
-    };
-    N3Store = class _N3Store {
-      constructor(quads, options) {
-        this._size = 0;
-        this._graphs = /* @__PURE__ */ Object.create(null);
-        if (!options && quads && !quads[0] && !(typeof quads.match === "function"))
-          options = quads, quads = null;
-        options = options || {};
-        this._factory = options.factory || N3DataFactory_default;
-        this._entityIndex = options.entityIndex || new N3EntityIndex({ factory: this._factory });
-        this._entities = this._entityIndex._entities;
-        this._termFromId = this._entityIndex._termFromId.bind(this._entityIndex);
-        this._termToNumericId = this._entityIndex._termToNumericId.bind(this._entityIndex);
-        this._termToNewNumericId = this._entityIndex._termToNewNumericId.bind(this._entityIndex);
-        if (quads)
-          this.addAll(quads);
-      }
-      // ## Public properties
-      // ### `size` returns the number of quads in the store
-      get size() {
-        let size = this._size;
-        if (size !== null)
-          return size;
-        size = 0;
-        const graphs = this._graphs;
-        let subjects2, subject2;
-        for (const graphKey in graphs)
-          for (const subjectKey in subjects2 = graphs[graphKey].subjects)
-            for (const predicateKey in subject2 = subjects2[subjectKey])
-              size += Object.keys(subject2[predicateKey]).length;
-        return this._size = size;
-      }
-      // ## Private methods
-      // ### `_addToIndex` adds a quad to a three-layered index.
-      // Returns if the index has changed, if the entry did not already exist.
-      _addToIndex(index0, key0, key1, key2) {
-        const index1 = index0[key0] || (index0[key0] = {});
-        const index2 = index1[key1] || (index1[key1] = {});
-        const existed = key2 in index2;
-        if (!existed)
-          index2[key2] = null;
-        return !existed;
-      }
-      // ### `_removeFromIndex` removes a quad from a three-layered index
-      _removeFromIndex(index0, key0, key1, key2) {
-        const index1 = index0[key0], index2 = index1[key1];
-        delete index2[key2];
-        for (const key in index2) return;
-        delete index1[key1];
-        for (const key in index1) return;
-        delete index0[key0];
-      }
-      // ### `_findInIndex` finds a set of quads in a three-layered index.
-      // The index base is `index0` and the keys at each level are `key0`, `key1`, and `key2`.
-      // Any of these keys can be undefined, which is interpreted as a wildcard.
-      // `name0`, `name1`, and `name2` are the names of the keys at each level,
-      // used when reconstructing the resulting quad
-      // (for instance: _subject_, _predicate_, and _object_).
-      // Finally, `graphId` will be the graph of the created quads.
-      *_findInIndex(index0, key0, key1, key2, name0, name1, name2, graphId) {
-        let tmp, index1, index2;
-        const entityKeys = this._entities;
-        const graph = this._termFromId(entityKeys[graphId]);
-        const parts = { subject: null, predicate: null, object: null };
-        if (key0) (tmp = index0, index0 = {})[key0] = tmp[key0];
-        for (const value0 in index0) {
-          if (index1 = index0[value0]) {
-            parts[name0] = this._termFromId(entityKeys[value0]);
-            if (key1) (tmp = index1, index1 = {})[key1] = tmp[key1];
-            for (const value1 in index1) {
-              if (index2 = index1[value1]) {
-                parts[name1] = this._termFromId(entityKeys[value1]);
-                const values = key2 ? key2 in index2 ? [key2] : [] : Object.keys(index2);
-                for (let l3 = 0; l3 < values.length; l3++) {
-                  parts[name2] = this._termFromId(entityKeys[values[l3]]);
-                  yield this._factory.quad(parts.subject, parts.predicate, parts.object, graph);
-                }
-              }
-            }
-          }
-        }
-      }
-      // ### `_loop` executes the callback on all keys of index 0
-      _loop(index0, callback) {
-        for (const key0 in index0)
-          callback(key0);
-      }
-      // ### `_loopByKey0` executes the callback on all keys of a certain entry in index 0
-      _loopByKey0(index0, key0, callback) {
-        let index1, key1;
-        if (index1 = index0[key0]) {
-          for (key1 in index1)
-            callback(key1);
-        }
-      }
-      // ### `_loopByKey1` executes the callback on given keys of all entries in index 0
-      _loopByKey1(index0, key1, callback) {
-        let key0, index1;
-        for (key0 in index0) {
-          index1 = index0[key0];
-          if (index1[key1])
-            callback(key0);
-        }
-      }
-      // ### `_loopBy2Keys` executes the callback on given keys of certain entries in index 2
-      _loopBy2Keys(index0, key0, key1, callback) {
-        let index1, index2, key2;
-        if ((index1 = index0[key0]) && (index2 = index1[key1])) {
-          for (key2 in index2)
-            callback(key2);
-        }
-      }
-      // ### `_countInIndex` counts matching quads in a three-layered index.
-      // The index base is `index0` and the keys at each level are `key0`, `key1`, and `key2`.
-      // Any of these keys can be undefined, which is interpreted as a wildcard.
-      _countInIndex(index0, key0, key1, key2) {
-        let count = 0, tmp, index1, index2;
-        if (key0) (tmp = index0, index0 = {})[key0] = tmp[key0];
-        for (const value0 in index0) {
-          if (index1 = index0[value0]) {
-            if (key1) (tmp = index1, index1 = {})[key1] = tmp[key1];
-            for (const value1 in index1) {
-              if (index2 = index1[value1]) {
-                if (key2) key2 in index2 && count++;
-                else count += Object.keys(index2).length;
-              }
-            }
-          }
-        }
-        return count;
-      }
-      // ### `_getGraphs` returns an array with the given graph,
-      // or all graphs if the argument is null or undefined.
-      _getGraphs(graph) {
-        graph = graph === "" ? 1 : graph && (this._termToNumericId(graph) || -1);
-        return typeof graph !== "number" ? this._graphs : { [graph]: this._graphs[graph] };
-      }
-      // ### `_uniqueEntities` returns a function that accepts an entity ID
-      // and passes the corresponding entity to callback if it hasn't occurred before.
-      _uniqueEntities(callback) {
-        const uniqueIds = /* @__PURE__ */ Object.create(null);
-        return (id) => {
-          if (!(id in uniqueIds)) {
-            uniqueIds[id] = true;
-            callback(this._termFromId(this._entities[id], this._factory));
-          }
-        };
-      }
-      // ## Public methods
-      // ### `add` adds the specified quad to the dataset.
-      // Returns the dataset instance it was called on.
-      // Existing quads, as defined in Quad.equals, will be ignored.
-      add(quad3) {
-        this.addQuad(quad3);
-        return this;
-      }
-      // ### `addQuad` adds a new quad to the store.
-      // Returns if the quad index has changed, if the quad did not already exist.
-      addQuad(subject2, predicate2, object2, graph) {
-        if (!predicate2)
-          graph = subject2.graph, object2 = subject2.object, predicate2 = subject2.predicate, subject2 = subject2.subject;
-        graph = graph ? this._termToNewNumericId(graph) : 1;
-        let graphItem = this._graphs[graph];
-        if (!graphItem) {
-          graphItem = this._graphs[graph] = { subjects: {}, predicates: {}, objects: {} };
-          Object.freeze(graphItem);
-        }
-        subject2 = this._termToNewNumericId(subject2);
-        predicate2 = this._termToNewNumericId(predicate2);
-        object2 = this._termToNewNumericId(object2);
-        if (!this._addToIndex(graphItem.subjects, subject2, predicate2, object2))
-          return false;
-        this._addToIndex(graphItem.predicates, predicate2, object2, subject2);
-        this._addToIndex(graphItem.objects, object2, subject2, predicate2);
-        this._size = null;
-        return true;
-      }
-      // ### `addQuads` adds multiple quads to the store
-      addQuads(quads) {
-        for (let i6 = 0; i6 < quads.length; i6++)
-          this.addQuad(quads[i6]);
-      }
-      // ### `delete` removes the specified quad from the dataset.
-      // Returns the dataset instance it was called on.
-      delete(quad3) {
-        this.removeQuad(quad3);
-        return this;
-      }
-      // ### `has` determines whether a dataset includes a certain quad or quad pattern.
-      has(subjectOrQuad, predicate2, object2, graph) {
-        if (subjectOrQuad && subjectOrQuad.subject)
-          ({ subject: subjectOrQuad, predicate: predicate2, object: object2, graph } = subjectOrQuad);
-        return !this.readQuads(subjectOrQuad, predicate2, object2, graph).next().done;
-      }
-      // ### `import` adds a stream of quads to the store
-      import(stream) {
-        stream.on("data", (quad3) => {
-          this.addQuad(quad3);
-        });
-        return stream;
-      }
-      // ### `removeQuad` removes a quad from the store if it exists
-      removeQuad(subject2, predicate2, object2, graph) {
-        if (!predicate2)
-          ({ subject: subject2, predicate: predicate2, object: object2, graph } = subject2);
-        graph = graph ? this._termToNumericId(graph) : 1;
-        const graphs = this._graphs;
-        let graphItem, subjects2, predicates;
-        if (!(subject2 = subject2 && this._termToNumericId(subject2)) || !(predicate2 = predicate2 && this._termToNumericId(predicate2)) || !(object2 = object2 && this._termToNumericId(object2)) || !(graphItem = graphs[graph]) || !(subjects2 = graphItem.subjects[subject2]) || !(predicates = subjects2[predicate2]) || !(object2 in predicates))
-          return false;
-        this._removeFromIndex(graphItem.subjects, subject2, predicate2, object2);
-        this._removeFromIndex(graphItem.predicates, predicate2, object2, subject2);
-        this._removeFromIndex(graphItem.objects, object2, subject2, predicate2);
-        if (this._size !== null) this._size--;
-        for (subject2 in graphItem.subjects) return true;
-        delete graphs[graph];
-        return true;
-      }
-      // ### `removeQuads` removes multiple quads from the store
-      removeQuads(quads) {
-        for (let i6 = 0; i6 < quads.length; i6++)
-          this.removeQuad(quads[i6]);
-      }
-      // ### `remove` removes a stream of quads from the store
-      remove(stream) {
-        stream.on("data", (quad3) => {
-          this.removeQuad(quad3);
-        });
-        return stream;
-      }
-      // ### `removeMatches` removes all matching quads from the store
-      // Setting any field to `undefined` or `null` indicates a wildcard.
-      removeMatches(subject2, predicate2, object2, graph) {
-        const stream = new import_readable_stream.Readable({ objectMode: true });
-        const iterable = this.readQuads(subject2, predicate2, object2, graph);
-        stream._read = (size) => {
-          while (--size >= 0) {
-            const { done, value } = iterable.next();
-            if (done) {
-              stream.push(null);
-              return;
-            }
-            stream.push(value);
-          }
-        };
-        return this.remove(stream);
-      }
-      // ### `deleteGraph` removes all triples with the given graph from the store
-      deleteGraph(graph) {
-        return this.removeMatches(null, null, null, graph);
-      }
-      // ### `getQuads` returns an array of quads matching a pattern.
-      // Setting any field to `undefined` or `null` indicates a wildcard.
-      getQuads(subject2, predicate2, object2, graph) {
-        return [...this.readQuads(subject2, predicate2, object2, graph)];
-      }
-      /**
-       * `readQuads` returns a generator of quads matching a pattern.
-       * Setting any field to `undefined` or `null` indicates a wildcard.
-       * @deprecated Use `match` instead.
-       */
-      *readQuads(subject2, predicate2, object2, graph) {
-        const graphs = this._getGraphs(graph);
-        let content, subjectId, predicateId, objectId;
-        if (subject2 && !(subjectId = this._termToNumericId(subject2)) || predicate2 && !(predicateId = this._termToNumericId(predicate2)) || object2 && !(objectId = this._termToNumericId(object2)))
-          return;
-        for (const graphId in graphs) {
-          if (content = graphs[graphId]) {
-            if (subjectId) {
-              if (objectId)
-                yield* this._findInIndex(
-                  content.objects,
-                  objectId,
-                  subjectId,
-                  predicateId,
-                  "object",
-                  "subject",
-                  "predicate",
-                  graphId
-                );
-              else
-                yield* this._findInIndex(
-                  content.subjects,
-                  subjectId,
-                  predicateId,
-                  null,
-                  "subject",
-                  "predicate",
-                  "object",
-                  graphId
-                );
-            } else if (predicateId)
-              yield* this._findInIndex(
-                content.predicates,
-                predicateId,
-                objectId,
-                null,
-                "predicate",
-                "object",
-                "subject",
-                graphId
-              );
-            else if (objectId)
-              yield* this._findInIndex(
-                content.objects,
-                objectId,
-                null,
-                null,
-                "object",
-                "subject",
-                "predicate",
-                graphId
-              );
-            else
-              yield* this._findInIndex(
-                content.subjects,
-                null,
-                null,
-                null,
-                "subject",
-                "predicate",
-                "object",
-                graphId
-              );
-          }
-        }
-      }
-      // ### `match` returns a new dataset that is comprised of all quads in the current instance matching the given arguments.
-      // The logic described in Quad Matching is applied for each quad in this dataset to check if it should be included in the output dataset.
-      // Note: This method always returns a new DatasetCore, even if that dataset contains no quads.
-      // Note: Since a DatasetCore is an unordered set, the order of the quads within the returned sequence is arbitrary.
-      // Setting any field to `undefined` or `null` indicates a wildcard.
-      // For backwards compatibility, the object return also implements the Readable stream interface.
-      match(subject2, predicate2, object2, graph) {
-        return new DatasetCoreAndReadableStream(this, subject2, predicate2, object2, graph, { entityIndex: this._entityIndex });
-      }
-      // ### `countQuads` returns the number of quads matching a pattern.
-      // Setting any field to `undefined` or `null` indicates a wildcard.
-      countQuads(subject2, predicate2, object2, graph) {
-        const graphs = this._getGraphs(graph);
-        let count = 0, content, subjectId, predicateId, objectId;
-        if (subject2 && !(subjectId = this._termToNumericId(subject2)) || predicate2 && !(predicateId = this._termToNumericId(predicate2)) || object2 && !(objectId = this._termToNumericId(object2)))
-          return 0;
-        for (const graphId in graphs) {
-          if (content = graphs[graphId]) {
-            if (subject2) {
-              if (object2)
-                count += this._countInIndex(content.objects, objectId, subjectId, predicateId);
-              else
-                count += this._countInIndex(content.subjects, subjectId, predicateId, objectId);
-            } else if (predicate2) {
-              count += this._countInIndex(content.predicates, predicateId, objectId, subjectId);
-            } else {
-              count += this._countInIndex(content.objects, objectId, subjectId, predicateId);
-            }
-          }
-        }
-        return count;
-      }
-      // ### `forEach` executes the callback on all quads.
-      // Setting any field to `undefined` or `null` indicates a wildcard.
-      forEach(callback, subject2, predicate2, object2, graph) {
-        this.some((quad3) => {
-          callback(quad3, this);
-          return false;
-        }, subject2, predicate2, object2, graph);
-      }
-      // ### `every` executes the callback on all quads,
-      // and returns `true` if it returns truthy for all them.
-      // Setting any field to `undefined` or `null` indicates a wildcard.
-      every(callback, subject2, predicate2, object2, graph) {
-        return !this.some((quad3) => !callback(quad3, this), subject2, predicate2, object2, graph);
-      }
-      // ### `some` executes the callback on all quads,
-      // and returns `true` if it returns truthy for any of them.
-      // Setting any field to `undefined` or `null` indicates a wildcard.
-      some(callback, subject2, predicate2, object2, graph) {
-        for (const quad3 of this.readQuads(subject2, predicate2, object2, graph))
-          if (callback(quad3, this))
-            return true;
-        return false;
-      }
-      // ### `getSubjects` returns all subjects that match the pattern.
-      // Setting any field to `undefined` or `null` indicates a wildcard.
-      getSubjects(predicate2, object2, graph) {
-        const results = [];
-        this.forSubjects((s4) => {
-          results.push(s4);
-        }, predicate2, object2, graph);
-        return results;
-      }
-      // ### `forSubjects` executes the callback on all subjects that match the pattern.
-      // Setting any field to `undefined` or `null` indicates a wildcard.
-      forSubjects(callback, predicate2, object2, graph) {
-        const graphs = this._getGraphs(graph);
-        let content, predicateId, objectId;
-        callback = this._uniqueEntities(callback);
-        if (predicate2 && !(predicateId = this._termToNumericId(predicate2)) || object2 && !(objectId = this._termToNumericId(object2)))
-          return;
-        for (graph in graphs) {
-          if (content = graphs[graph]) {
-            if (predicateId) {
-              if (objectId)
-                this._loopBy2Keys(content.predicates, predicateId, objectId, callback);
-              else
-                this._loopByKey1(content.subjects, predicateId, callback);
-            } else if (objectId)
-              this._loopByKey0(content.objects, objectId, callback);
-            else
-              this._loop(content.subjects, callback);
-          }
-        }
-      }
-      // ### `getPredicates` returns all predicates that match the pattern.
-      // Setting any field to `undefined` or `null` indicates a wildcard.
-      getPredicates(subject2, object2, graph) {
-        const results = [];
-        this.forPredicates((p3) => {
-          results.push(p3);
-        }, subject2, object2, graph);
-        return results;
-      }
-      // ### `forPredicates` executes the callback on all predicates that match the pattern.
-      // Setting any field to `undefined` or `null` indicates a wildcard.
-      forPredicates(callback, subject2, object2, graph) {
-        const graphs = this._getGraphs(graph);
-        let content, subjectId, objectId;
-        callback = this._uniqueEntities(callback);
-        if (subject2 && !(subjectId = this._termToNumericId(subject2)) || object2 && !(objectId = this._termToNumericId(object2)))
-          return;
-        for (graph in graphs) {
-          if (content = graphs[graph]) {
-            if (subjectId) {
-              if (objectId)
-                this._loopBy2Keys(content.objects, objectId, subjectId, callback);
-              else
-                this._loopByKey0(content.subjects, subjectId, callback);
-            } else if (objectId)
-              this._loopByKey1(content.predicates, objectId, callback);
-            else
-              this._loop(content.predicates, callback);
-          }
-        }
-      }
-      // ### `getObjects` returns all objects that match the pattern.
-      // Setting any field to `undefined` or `null` indicates a wildcard.
-      getObjects(subject2, predicate2, graph) {
-        const results = [];
-        this.forObjects((o7) => {
-          results.push(o7);
-        }, subject2, predicate2, graph);
-        return results;
-      }
-      // ### `forObjects` executes the callback on all objects that match the pattern.
-      // Setting any field to `undefined` or `null` indicates a wildcard.
-      forObjects(callback, subject2, predicate2, graph) {
-        const graphs = this._getGraphs(graph);
-        let content, subjectId, predicateId;
-        callback = this._uniqueEntities(callback);
-        if (subject2 && !(subjectId = this._termToNumericId(subject2)) || predicate2 && !(predicateId = this._termToNumericId(predicate2)))
-          return;
-        for (graph in graphs) {
-          if (content = graphs[graph]) {
-            if (subjectId) {
-              if (predicateId)
-                this._loopBy2Keys(content.subjects, subjectId, predicateId, callback);
-              else
-                this._loopByKey1(content.objects, subjectId, callback);
-            } else if (predicateId)
-              this._loopByKey0(content.predicates, predicateId, callback);
-            else
-              this._loop(content.objects, callback);
-          }
-        }
-      }
-      // ### `getGraphs` returns all graphs that match the pattern.
-      // Setting any field to `undefined` or `null` indicates a wildcard.
-      getGraphs(subject2, predicate2, object2) {
-        const results = [];
-        this.forGraphs((g2) => {
-          results.push(g2);
-        }, subject2, predicate2, object2);
-        return results;
-      }
-      // ### `forGraphs` executes the callback on all graphs that match the pattern.
-      // Setting any field to `undefined` or `null` indicates a wildcard.
-      forGraphs(callback, subject2, predicate2, object2) {
-        for (const graph in this._graphs) {
-          this.some((quad3) => {
-            callback(quad3.graph);
-            return true;
-          }, subject2, predicate2, object2, this._termFromId(this._entities[graph]));
-        }
-      }
-      // ### `createBlankNode` creates a new blank node, returning its name
-      createBlankNode(suggestedName) {
-        return this._entityIndex.createBlankNode(suggestedName);
-      }
-      // ### `extractLists` finds and removes all list triples
-      // and returns the items per list.
-      extractLists({ remove = false, ignoreErrors = false } = {}) {
-        const lists = {};
-        const onError = ignoreErrors ? (() => true) : ((node, message) => {
-          throw new Error(`${node.value} ${message}`);
-        });
-        const tails = this.getQuads(null, IRIs_default.rdf.rest, IRIs_default.rdf.nil, null);
-        const toRemove = remove ? [...tails] : [];
-        tails.forEach((tailQuad) => {
-          const items = [];
-          let malformed = false;
-          let head;
-          let headPos;
-          const graph = tailQuad.graph;
-          let current = tailQuad.subject;
-          while (current && !malformed) {
-            const objectQuads = this.getQuads(null, null, current, null);
-            const subjectQuads = this.getQuads(current, null, null, null);
-            let quad3, first = null, rest = null, parent = null;
-            for (let i6 = 0; i6 < subjectQuads.length && !malformed; i6++) {
-              quad3 = subjectQuads[i6];
-              if (!quad3.graph.equals(graph))
-                malformed = onError(current, "not confined to single graph");
-              else if (head)
-                malformed = onError(current, "has non-list arcs out");
-              else if (quad3.predicate.value === IRIs_default.rdf.first) {
-                if (first)
-                  malformed = onError(current, "has multiple rdf:first arcs");
-                else
-                  toRemove.push(first = quad3);
-              } else if (quad3.predicate.value === IRIs_default.rdf.rest) {
-                if (rest)
-                  malformed = onError(current, "has multiple rdf:rest arcs");
-                else
-                  toRemove.push(rest = quad3);
-              } else if (objectQuads.length)
-                malformed = onError(current, "can't be subject and object");
-              else {
-                head = quad3;
-                headPos = "subject";
-              }
-            }
-            for (let i6 = 0; i6 < objectQuads.length && !malformed; ++i6) {
-              quad3 = objectQuads[i6];
-              if (head)
-                malformed = onError(current, "can't have coreferences");
-              else if (quad3.predicate.value === IRIs_default.rdf.rest) {
-                if (parent)
-                  malformed = onError(current, "has incoming rdf:rest arcs");
-                else
-                  parent = quad3;
-              } else {
-                head = quad3;
-                headPos = "object";
-              }
-            }
-            if (!first)
-              malformed = onError(current, "has no list head");
-            else
-              items.unshift(first.object);
-            current = parent && parent.subject;
-          }
-          if (malformed)
-            remove = false;
-          else if (head)
-            lists[head[headPos].value] = items;
-        });
-        if (remove)
-          this.removeQuads(toRemove);
-        return lists;
-      }
-      /**
-       * Returns `true` if the current dataset is a superset of the given dataset; in other words, returns `true` if
-       * the given dataset is a subset of, i.e., is contained within, the current dataset.
-       *
-       * Blank Nodes will be normalized.
-       */
-      addAll(quads) {
-        if (quads instanceof DatasetCoreAndReadableStream)
-          quads = quads.filtered;
-        if (Array.isArray(quads))
-          this.addQuads(quads);
-        else if (quads instanceof _N3Store && quads._entityIndex === this._entityIndex) {
-          if (quads._size !== 0) {
-            this._graphs = merge(this._graphs, quads._graphs);
-            this._size = null;
-          }
-        } else {
-          for (const quad3 of quads)
-            this.add(quad3);
-        }
-        return this;
-      }
-      /**
-       * Returns `true` if the current dataset is a superset of the given dataset; in other words, returns `true` if
-       * the given dataset is a subset of, i.e., is contained within, the current dataset.
-       *
-       * Blank Nodes will be normalized.
-       */
-      contains(other) {
-        if (other instanceof DatasetCoreAndReadableStream)
-          other = other.filtered;
-        if (other === this)
-          return true;
-        if (!(other instanceof _N3Store) || this._entityIndex !== other._entityIndex)
-          return other.every((quad3) => this.has(quad3));
-        const g1 = this._graphs, g2 = other._graphs;
-        let s1, s22, p1, p22, o1;
-        for (const graph in g2) {
-          if (!(s1 = g1[graph])) return false;
-          s1 = s1.subjects;
-          for (const subject2 in s22 = g2[graph].subjects) {
-            if (!(p1 = s1[subject2])) return false;
-            for (const predicate2 in p22 = s22[subject2]) {
-              if (!(o1 = p1[predicate2])) return false;
-              for (const object2 in p22[predicate2])
-                if (!(object2 in o1)) return false;
-            }
-          }
-        }
-        return true;
-      }
-      /**
-       * This method removes the quads in the current dataset that match the given arguments.
-       *
-       * The logic described in {@link https://rdf.js.org/dataset-spec/#quad-matching|Quad Matching} is applied for each
-       * quad in this dataset, to select the quads which will be deleted.
-       *
-       * @param subject   The optional exact subject to match.
-       * @param predicate The optional exact predicate to match.
-       * @param object    The optional exact object to match.
-       * @param graph     The optional exact graph to match.
-       */
-      deleteMatches(subject2, predicate2, object2, graph) {
-        for (const quad3 of this.match(subject2, predicate2, object2, graph))
-          this.removeQuad(quad3);
-        return this;
-      }
-      /**
-       * Returns a new dataset that contains all quads from the current dataset that are not included in the given dataset.
-       */
-      difference(other) {
-        if (other && other instanceof DatasetCoreAndReadableStream)
-          other = other.filtered;
-        if (other === this)
-          return new _N3Store({ entityIndex: this._entityIndex });
-        if (other instanceof _N3Store && other._entityIndex === this._entityIndex) {
-          const store = new _N3Store({ entityIndex: this._entityIndex });
-          const graphs = difference(this._graphs, other._graphs);
-          if (graphs) {
-            store._graphs = graphs;
-            store._size = null;
-          }
-          return store;
-        }
-        return this.filter((quad3) => !other.has(quad3));
-      }
-      /**
-       * Returns true if the current dataset contains the same graph structure as the given dataset.
-       *
-       * Blank Nodes will be normalized.
-       */
-      equals(other) {
-        if (other instanceof DatasetCoreAndReadableStream)
-          other = other.filtered;
-        return other === this || this.size === other.size && this.contains(other);
-      }
-      /**
-       * Creates a new dataset with all the quads that pass the test implemented by the provided `iteratee`.
-       *
-       * This method is aligned with Array.prototype.filter() in ECMAScript-262.
-       */
-      filter(iteratee) {
-        const store = new _N3Store({ entityIndex: this._entityIndex });
-        for (const quad3 of this)
-          if (iteratee(quad3, this))
-            store.add(quad3);
-        return store;
-      }
-      /**
-       * Returns a new dataset containing all quads from the current dataset that are also included in the given dataset.
-       */
-      intersection(other) {
-        if (other instanceof DatasetCoreAndReadableStream)
-          other = other.filtered;
-        if (other === this) {
-          const store = new _N3Store({ entityIndex: this._entityIndex });
-          store._graphs = merge(/* @__PURE__ */ Object.create(null), this._graphs);
-          store._size = this._size;
-          return store;
-        } else if (other instanceof _N3Store && this._entityIndex === other._entityIndex) {
-          const store = new _N3Store({ entityIndex: this._entityIndex });
-          const graphs = intersect(other._graphs, this._graphs);
-          if (graphs) {
-            store._graphs = graphs;
-            store._size = null;
-          }
-          return store;
-        }
-        return this.filter((quad3) => other.has(quad3));
-      }
-      /**
-       * Returns a new dataset containing all quads returned by applying `iteratee` to each quad in the current dataset.
-       */
-      map(iteratee) {
-        const store = new _N3Store({ entityIndex: this._entityIndex });
-        for (const quad3 of this)
-          store.add(iteratee(quad3, this));
-        return store;
-      }
-      /**
-       * This method calls the `iteratee` method on each `quad` of the `Dataset`. The first time the `iteratee` method
-       * is called, the `accumulator` value is the `initialValue`, or, if not given, equals the first quad of the `Dataset`.
-       * The return value of each call to the `iteratee` method is used as the `accumulator` value for the next call.
-       *
-       * This method returns the return value of the last `iteratee` call.
-       *
-       * This method is aligned with `Array.prototype.reduce()` in ECMAScript-262.
-       */
-      reduce(callback, initialValue) {
-        const iter = this.readQuads();
-        let accumulator = initialValue === void 0 ? iter.next().value : initialValue;
-        for (const quad3 of iter)
-          accumulator = callback(accumulator, quad3, this);
-        return accumulator;
-      }
-      /**
-       * Returns the set of quads within the dataset as a host-language-native sequence, for example an `Array` in
-       * ECMAScript-262.
-       *
-       * Since a `Dataset` is an unordered set, the order of the quads within the returned sequence is arbitrary.
-       */
-      toArray() {
-        return this.getQuads();
-      }
-      /**
-       * Returns an N-Quads string representation of the dataset, preprocessed with the
-       * {@link https://json-ld.github.io/normalization/spec/|RDF Dataset Normalization} algorithm.
-       */
-      toCanonical() {
-        throw new Error("not implemented");
-      }
-      /**
-       * Returns a stream that contains all quads of the dataset.
-       */
-      toStream() {
-        return this.match();
-      }
-      /**
-       * Returns an N-Quads string representation of the dataset.
-       *
-       * No prior normalization is required, therefore the results for the same quads may vary depending on the `Dataset`
-       * implementation.
-       */
-      toString() {
-        return new N3Writer().quadsToString(this);
-      }
-      /**
-       * Returns a new `Dataset` that is a concatenation of this dataset and the quads given as an argument.
-       */
-      union(quads) {
-        const store = new _N3Store({ entityIndex: this._entityIndex });
-        store._graphs = merge(/* @__PURE__ */ Object.create(null), this._graphs);
-        store._size = this._size;
-        store.addAll(quads);
-        return store;
-      }
-      // ### Store is an iterable.
-      // Can be used where iterables are expected: for...of loops, array spread operator,
-      // `yield*`, and destructuring assignment (order is not guaranteed).
-      *[Symbol.iterator]() {
-        yield* this.readQuads();
-      }
-    };
-    DatasetCoreAndReadableStream = class _DatasetCoreAndReadableStream extends import_readable_stream.Readable {
-      constructor(n3Store, subject2, predicate2, object2, graph, options) {
-        super({ objectMode: true });
-        Object.assign(this, { n3Store, subject: subject2, predicate: predicate2, object: object2, graph, options });
-      }
-      get filtered() {
-        if (!this._filtered) {
-          const { n3Store, graph, object: object2, predicate: predicate2, subject: subject2 } = this;
-          const newStore = this._filtered = new N3Store({ factory: n3Store._factory, entityIndex: this.options.entityIndex });
-          let subjectId, predicateId, objectId;
-          if (subject2 && !(subjectId = newStore._termToNumericId(subject2)) || predicate2 && !(predicateId = newStore._termToNumericId(predicate2)) || object2 && !(objectId = newStore._termToNumericId(object2)))
-            return newStore;
-          const graphs = n3Store._getGraphs(graph);
-          for (const graphKey in graphs) {
-            let subjects2, predicates, objects, content;
-            if (content = graphs[graphKey]) {
-              if (!subjectId && predicateId) {
-                if (predicates = indexMatch(content.predicates, [predicateId, objectId, subjectId])) {
-                  subjects2 = indexMatch(content.subjects, [subjectId, predicateId, objectId]);
-                  objects = indexMatch(content.objects, [objectId, subjectId, predicateId]);
-                }
-              } else if (objectId) {
-                if (objects = indexMatch(content.objects, [objectId, subjectId, predicateId])) {
-                  subjects2 = indexMatch(content.subjects, [subjectId, predicateId, objectId]);
-                  predicates = indexMatch(content.predicates, [predicateId, objectId, subjectId]);
-                }
-              } else if (subjects2 = indexMatch(content.subjects, [subjectId, predicateId, objectId])) {
-                predicates = indexMatch(content.predicates, [predicateId, objectId, subjectId]);
-                objects = indexMatch(content.objects, [objectId, subjectId, predicateId]);
-              }
-              if (subjects2)
-                newStore._graphs[graphKey] = { subjects: subjects2, predicates, objects };
-            }
-          }
-          newStore._size = null;
-        }
-        return this._filtered;
-      }
-      get size() {
-        return this.filtered.size;
-      }
-      _read(size) {
-        if (size > 0 && !this[ITERATOR])
-          this[ITERATOR] = this[Symbol.iterator]();
-        const iterable = this[ITERATOR];
-        while (--size >= 0) {
-          const { done, value } = iterable.next();
-          if (done) {
-            this.push(null);
-            return;
-          }
-          this.push(value);
-        }
-      }
-      addAll(quads) {
-        return this.filtered.addAll(quads);
-      }
-      contains(other) {
-        return this.filtered.contains(other);
-      }
-      deleteMatches(subject2, predicate2, object2, graph) {
-        return this.filtered.deleteMatches(subject2, predicate2, object2, graph);
-      }
-      difference(other) {
-        return this.filtered.difference(other);
-      }
-      equals(other) {
-        return this.filtered.equals(other);
-      }
-      every(callback, subject2, predicate2, object2, graph) {
-        return this.filtered.every(callback, subject2, predicate2, object2, graph);
-      }
-      filter(iteratee) {
-        return this.filtered.filter(iteratee);
-      }
-      forEach(callback, subject2, predicate2, object2, graph) {
-        return this.filtered.forEach(callback, subject2, predicate2, object2, graph);
-      }
-      import(stream) {
-        return this.filtered.import(stream);
-      }
-      intersection(other) {
-        return this.filtered.intersection(other);
-      }
-      map(iteratee) {
-        return this.filtered.map(iteratee);
-      }
-      some(callback, subject2, predicate2, object2, graph) {
-        return this.filtered.some(callback, subject2, predicate2, object2, graph);
-      }
-      toCanonical() {
-        return this.filtered.toCanonical();
-      }
-      toStream() {
-        return this._filtered ? this._filtered.toStream() : this.n3Store.match(this.subject, this.predicate, this.object, this.graph);
-      }
-      union(quads) {
-        return this._filtered ? this._filtered.union(quads) : this.n3Store.match(this.subject, this.predicate, this.object, this.graph).addAll(quads);
-      }
-      toArray() {
-        return this._filtered ? this._filtered.toArray() : this.n3Store.getQuads(this.subject, this.predicate, this.object, this.graph);
-      }
-      reduce(callback, initialValue) {
-        return this.filtered.reduce(callback, initialValue);
-      }
-      toString() {
-        return new N3Writer().quadsToString(this);
-      }
-      add(quad3) {
-        return this.filtered.add(quad3);
-      }
-      delete(quad3) {
-        return this.filtered.delete(quad3);
-      }
-      has(quad3) {
-        return this.filtered.has(quad3);
-      }
-      match(subject2, predicate2, object2, graph) {
-        return new _DatasetCoreAndReadableStream(this.filtered, subject2, predicate2, object2, graph, this.options);
-      }
-      *[Symbol.iterator]() {
-        yield* this._filtered || this.n3Store.readQuads(this.subject, this.predicate, this.object, this.graph);
-      }
-    };
-  }
-});
-
-// node_modules/n3/src/N3StoreFactory.js
-var N3DatasetCoreFactory;
-var init_N3StoreFactory = __esm({
-  "node_modules/n3/src/N3StoreFactory.js"() {
-    "use strict";
-    init_N3Store();
-    N3DatasetCoreFactory = class {
-      dataset(quads) {
-        return new N3Store(quads);
-      }
-    };
-  }
-});
-
-// node_modules/n3/src/N3Reasoner.js
-function getRulesFromDataset(dataset) {
-  const rules = [];
-  for (const { subject: subject2, object: object2 } of dataset.match(null, N3DataFactory_default.namedNode("http://www.w3.org/2000/10/swap/log#implies"), null, N3DataFactory_default.defaultGraph())) {
-    const premise = [...dataset.match(null, null, null, subject2)];
-    const conclusion = [...dataset.match(null, null, null, object2)];
-    rules.push({ premise, conclusion });
-  }
-  return rules;
-}
-function getIndex({ subject: subject2, predicate: predicate2, object: object2 }, set) {
-  const s4 = subject2.value || set.has(subject2) || (set.add(subject2), false);
-  const p3 = predicate2.value || set.has(predicate2) || (set.add(predicate2), false);
-  const o7 = object2.value || set.has(object2) || (set.add(object2), false);
-  return !s4 && p3 ? { content: "predicates", value: [predicate2, object2, subject2] } : o7 ? { content: "objects", value: [object2, subject2, predicate2] } : { content: "subjects", value: [subject2, predicate2, object2] };
-}
-function termEq(t1, t22) {
-  if (t1.value === null) {
-    t1.value = t22.value;
-  }
-  return t1.value === t22.value;
-}
-var N3Reasoner;
-var init_N3Reasoner = __esm({
-  "node_modules/n3/src/N3Reasoner.js"() {
-    "use strict";
-    init_N3DataFactory();
-    N3Reasoner = class {
-      constructor(store) {
-        this._store = store;
-      }
-      _add(subject2, predicate2, object2, graphItem, cb) {
-        if (!this._store._addToIndex(graphItem.subjects, subject2, predicate2, object2)) return;
-        this._store._addToIndex(graphItem.predicates, predicate2, object2, subject2);
-        this._store._addToIndex(graphItem.objects, object2, subject2, predicate2);
-        cb();
-      }
-      // eslint-disable-next-line no-warning-comments
-      _evaluatePremise(rule, content, cb, i6 = 0) {
-        let v1, v2, value, index1, index2;
-        const [val0, val1, val2] = rule.premise[i6].value, index = content[rule.premise[i6].content];
-        const v0 = !(value = val0.value);
-        for (value in v0 ? index : { [value]: index[value] }) {
-          if (index1 = index[value]) {
-            if (v0) val0.value = Number(value);
-            v1 = !(value = val1.value);
-            for (value in v1 ? index1 : { [value]: index1[value] }) {
-              if (index2 = index1[value]) {
-                if (v1) val1.value = Number(value);
-                v2 = !(value = val2.value);
-                for (value in v2 ? index2 : { [value]: index2[value] }) {
-                  if (v2) val2.value = Number(value);
-                  if (i6 === rule.premise.length - 1)
-                    rule.conclusion.forEach((c4) => {
-                      this._add(c4.subject.value, c4.predicate.value, c4.object.value, content, () => {
-                        cb(c4);
-                      });
-                    });
-                  else
-                    this._evaluatePremise(rule, content, cb, i6 + 1);
-                }
-                if (v2) val2.value = null;
-              }
-            }
-            if (v1) val1.value = null;
-          }
-        }
-        if (v0) val0.value = null;
-      }
-      _evaluateRules(rules, content, cb) {
-        for (let i6 = 0; i6 < rules.length; i6++) {
-          this._evaluatePremise(rules[i6], content, cb);
-        }
-      }
-      // A naive reasoning algorithm where rules are just applied by repeatedly applying rules
-      // until no more evaluations are made
-      _reasonGraphNaive(rules, content) {
-        const newRules = [];
-        function addRule(conclusion) {
-          if (conclusion.next)
-            conclusion.next.forEach((rule) => {
-              newRules.push([conclusion.subject.value, conclusion.predicate.value, conclusion.object.value, rule]);
-            });
-        }
-        const addConclusions = (conclusion) => {
-          conclusion.forEach((c4) => {
-            this._add(c4.subject.value, c4.predicate.value, c4.object.value, content, () => {
-              addRule(c4);
-            });
-          });
-        };
-        this._evaluateRules(rules, content, addRule);
-        let r6;
-        while ((r6 = newRules.pop()) !== void 0) {
-          const [subject2, predicate2, object2, rule] = r6;
-          const v1 = rule.basePremise.subject.value;
-          if (!v1) rule.basePremise.subject.value = subject2;
-          const v2 = rule.basePremise.predicate.value;
-          if (!v2) rule.basePremise.predicate.value = predicate2;
-          const v3 = rule.basePremise.object.value;
-          if (!v3) rule.basePremise.object.value = object2;
-          if (rule.premise.length === 0) {
-            addConclusions(rule.conclusion);
-          } else {
-            this._evaluatePremise(rule, content, addRule);
-          }
-          if (!v1) rule.basePremise.subject.value = null;
-          if (!v2) rule.basePremise.predicate.value = null;
-          if (!v3) rule.basePremise.object.value = null;
-        }
-      }
-      _createRule({ premise, conclusion }) {
-        const varMapping = {};
-        const toId = (value) => value.termType === "Variable" ? (
-          // If the term is a variable, then create an empty object that values can be placed into
-          varMapping[value.value] = varMapping[value.value] || {}
-        ) : (
-          // If the term is not a variable, then set the ID value
-          { value: this._store._termToNewNumericId(value) }
-        );
-        const t5 = (term) => ({ subject: toId(term.subject), predicate: toId(term.predicate), object: toId(term.object) });
-        return {
-          premise: premise.map((p3) => t5(p3)),
-          conclusion: conclusion.map((p3) => t5(p3)),
-          variables: Object.values(varMapping)
-        };
-      }
-      reason(rules) {
-        if (!Array.isArray(rules)) {
-          rules = getRulesFromDataset(rules);
-        }
-        rules = rules.map((rule) => this._createRule(rule));
-        for (const r1 of rules) {
-          for (const r22 of rules) {
-            for (let i6 = 0; i6 < r22.premise.length; i6++) {
-              const p3 = r22.premise[i6];
-              for (const c4 of r1.conclusion) {
-                if (termEq(p3.subject, c4.subject) && termEq(p3.predicate, c4.predicate) && termEq(p3.object, c4.object)) {
-                  const set = /* @__PURE__ */ new Set();
-                  const premise = [];
-                  p3.subject.value = p3.subject.value || 1;
-                  p3.object.value = p3.object.value || 1;
-                  p3.predicate.value = p3.predicate.value || 1;
-                  for (let j = 0; j < r22.premise.length; j++) {
-                    if (j !== i6) {
-                      premise.push(getIndex(r22.premise[j], set));
-                    }
-                  }
-                  (c4.next = c4.next || []).push({
-                    premise,
-                    conclusion: r22.conclusion,
-                    // This is a single premise of the form { subject, predicate, object },
-                    // which we can use to instantiate the rule using the new data that was emitted
-                    basePremise: p3
-                  });
-                }
-                r22.variables.forEach((v2) => {
-                  v2.value = null;
-                });
-              }
-            }
-          }
-        }
-        for (const rule of rules) {
-          const set = /* @__PURE__ */ new Set();
-          rule.premise = rule.premise.map((p3) => getIndex(p3, set));
-        }
-        const graphs = this._store._getGraphs();
-        for (const graphId in graphs) {
-          this._reasonGraphNaive(rules, graphs[graphId]);
-        }
-        this._store._size = null;
-      }
-    };
-  }
-});
-
-// node_modules/n3/src/N3StreamParser.js
-var import_readable_stream2, N3StreamParser;
-var init_N3StreamParser = __esm({
-  "node_modules/n3/src/N3StreamParser.js"() {
-    "use strict";
-    import_readable_stream2 = __toESM(require_browser3());
-    init_N3Parser();
-    N3StreamParser = class extends import_readable_stream2.Transform {
-      constructor(options) {
-        super({ decodeStrings: true });
-        this._readableState.objectMode = true;
-        const parser = new N3Parser(options);
-        let onData, onEnd;
-        const callbacks = {
-          // Handle quads by pushing them down the pipeline
-          onQuad: (error, quad3) => {
-            error && this.emit("error", error) || quad3 && this.push(quad3);
-          },
-          // Emit prefixes through the `prefix` event
-          onPrefix: (prefix2, uri) => {
-            this.emit("prefix", prefix2, uri);
-          }
-        };
-        if (options && options.comments)
-          callbacks.onComment = (comment) => {
-            this.emit("comment", comment);
-          };
-        parser.parse({
-          on: (event, callback) => {
-            switch (event) {
-              case "data":
-                onData = callback;
-                break;
-              case "end":
-                onEnd = callback;
-                break;
-            }
-          }
-        }, callbacks);
-        this._transform = (chunk, encoding, done) => {
-          onData(chunk);
-          done();
-        };
-        this._flush = (done) => {
-          onEnd();
-          done();
-        };
-      }
-      // ### Parses a stream of strings
-      import(stream) {
-        stream.on("data", (chunk) => {
-          this.write(chunk);
-        });
-        stream.on("end", () => {
-          this.end();
-        });
-        stream.on("error", (error) => {
-          this.emit("error", error);
-        });
-        return this;
-      }
-    };
-  }
-});
-
-// node_modules/n3/src/N3StreamWriter.js
-var import_readable_stream3, N3StreamWriter;
-var init_N3StreamWriter = __esm({
-  "node_modules/n3/src/N3StreamWriter.js"() {
-    "use strict";
-    import_readable_stream3 = __toESM(require_browser3());
-    init_N3Writer();
-    N3StreamWriter = class extends import_readable_stream3.Transform {
-      constructor(options) {
-        super({ encoding: "utf8", writableObjectMode: true });
-        const writer = this._writer = new N3Writer({
-          write: (quad3, encoding, callback) => {
-            this.push(quad3);
-            callback && callback();
-          },
-          end: (callback) => {
-            this.push(null);
-            callback && callback();
-          }
-        }, options);
-        this._transform = (quad3, encoding, done) => {
-          writer.addQuad(quad3, done);
-        };
-        this._flush = (done) => {
-          writer.end(done);
-        };
-      }
-      // ### Serializes a stream of quads
-      import(stream) {
-        stream.on("data", (quad3) => {
-          this.write(quad3);
-        });
-        stream.on("end", () => {
-          this.end();
-        });
-        stream.on("error", (error) => {
-          this.emit("error", error);
-        });
-        stream.on("prefix", (prefix2, iri) => {
-          this._writer.addPrefix(prefix2, iri);
-        });
-        return this;
-      }
-    };
-  }
-});
-
-// node_modules/n3/src/index.js
-var src_exports = {};
-__export(src_exports, {
-  BaseIRI: () => BaseIRI,
-  BlankNode: () => BlankNode,
-  DataFactory: () => N3DataFactory_default,
-  DefaultGraph: () => DefaultGraph,
-  EntityIndex: () => N3EntityIndex,
-  Lexer: () => N3Lexer,
-  Literal: () => Literal,
-  NamedNode: () => NamedNode,
-  Parser: () => N3Parser,
-  Quad: () => Quad,
-  Reasoner: () => N3Reasoner,
-  Store: () => N3Store,
-  StoreFactory: () => N3DatasetCoreFactory,
-  StreamParser: () => N3StreamParser,
-  StreamWriter: () => N3StreamWriter,
-  Term: () => Term,
-  Triple: () => Quad,
-  Util: () => N3Util_exports,
-  Variable: () => Variable,
-  Writer: () => N3Writer,
-  default: () => src_default,
-  getRulesFromDataset: () => getRulesFromDataset,
-  termFromId: () => termFromId,
-  termToId: () => termToId
-});
-var src_default;
-var init_src = __esm({
-  "node_modules/n3/src/index.js"() {
-    "use strict";
-    init_N3Lexer();
-    init_N3Parser();
-    init_N3Writer();
-    init_N3Store();
-    init_N3StoreFactory();
-    init_N3Reasoner();
-    init_N3StreamParser();
-    init_N3StreamWriter();
-    init_N3Util();
-    init_BaseIRI();
-    init_N3DataFactory();
-    src_default = {
-      Lexer: N3Lexer,
-      Parser: N3Parser,
-      Writer: N3Writer,
-      Store: N3Store,
-      StoreFactory: N3DatasetCoreFactory,
-      EntityIndex: N3EntityIndex,
-      StreamParser: N3StreamParser,
-      StreamWriter: N3StreamWriter,
-      Util: N3Util_exports,
-      Reasoner: N3Reasoner,
-      BaseIRI,
-      DataFactory: N3DataFactory_default,
-      Term,
-      NamedNode,
-      Literal,
-      BlankNode,
-      Variable,
-      DefaultGraph,
-      Quad,
-      Triple: Quad,
-      termFromId,
-      termToId
-    };
-  }
-});
-
 // node_modules/relative-to-absolute-iri/lib/Resolve.js
 var require_Resolve = __commonJS({
   "node_modules/relative-to-absolute-iri/lib/Resolve.js"(exports) {
@@ -11952,36 +8173,36 @@ var require_Resolve = __commonJS({
     exports.resolve = resolve;
     function removeDotSegments(path) {
       const segmentBuffers = [];
-      let i6 = 0;
-      while (i6 < path.length) {
-        switch (path[i6]) {
+      let i5 = 0;
+      while (i5 < path.length) {
+        switch (path[i5]) {
           case "/":
-            if (path[i6 + 1] === ".") {
-              if (path[i6 + 2] === ".") {
-                if (!isCharacterAllowedAfterRelativePathSegment(path[i6 + 3])) {
+            if (path[i5 + 1] === ".") {
+              if (path[i5 + 2] === ".") {
+                if (!isCharacterAllowedAfterRelativePathSegment(path[i5 + 3])) {
                   segmentBuffers.push([]);
-                  i6++;
+                  i5++;
                   break;
                 }
                 segmentBuffers.pop();
-                if (!path[i6 + 3]) {
+                if (!path[i5 + 3]) {
                   segmentBuffers.push([]);
                 }
-                i6 += 3;
+                i5 += 3;
               } else {
-                if (!isCharacterAllowedAfterRelativePathSegment(path[i6 + 2])) {
+                if (!isCharacterAllowedAfterRelativePathSegment(path[i5 + 2])) {
                   segmentBuffers.push([]);
-                  i6++;
+                  i5++;
                   break;
                 }
-                if (!path[i6 + 2]) {
+                if (!path[i5 + 2]) {
                   segmentBuffers.push([]);
                 }
-                i6 += 2;
+                i5 += 2;
               }
             } else {
               segmentBuffers.push([]);
-              i6++;
+              i5++;
             }
             break;
           case "#":
@@ -11989,15 +8210,15 @@ var require_Resolve = __commonJS({
             if (!segmentBuffers.length) {
               segmentBuffers.push([]);
             }
-            segmentBuffers[segmentBuffers.length - 1].push(path.substr(i6));
-            i6 = path.length;
+            segmentBuffers[segmentBuffers.length - 1].push(path.substr(i5));
+            i5 = path.length;
             break;
           default:
             if (!segmentBuffers.length) {
               segmentBuffers.push([]);
             }
-            segmentBuffers[segmentBuffers.length - 1].push(path[i6]);
-            i6++;
+            segmentBuffers[segmentBuffers.length - 1].push(path[i5]);
+            i5++;
             break;
         }
       }
@@ -12034,7 +8255,7 @@ var require_Resolve = __commonJS({
 var require_relative_to_absolute_iri = __commonJS({
   "node_modules/relative-to-absolute-iri/index.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o7, m2, k2, k22) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
       var desc = Object.getOwnPropertyDescriptor(m2, k2);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -12042,10 +8263,10 @@ var require_relative_to_absolute_iri = __commonJS({
           return m2[k2];
         } };
       }
-      Object.defineProperty(o7, k22, desc);
-    }) : (function(o7, m2, k2, k22) {
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
-      o7[k22] = m2[k2];
+      o6[k22] = m2[k2];
     }));
     var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
       for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
@@ -12272,8 +8493,8 @@ var require_saxes = __commonJS({
     var DTD_TERMINATOR = [...QUOTES, LESS, CLOSE_BRACKET];
     var XML_DECL_NAME_TERMINATOR = [EQUAL, QUESTION, ...S_LIST];
     var ATTRIB_VALUE_UNQUOTED_TERMINATOR = [...S_LIST, GREATER, AMP, LESS];
-    function nsPairCheck(parser, prefix2, uri) {
-      switch (prefix2) {
+    function nsPairCheck(parser, prefix, uri) {
+      switch (prefix) {
         case "xml":
           if (uri !== XML_NAMESPACE) {
             parser.fail(`xml prefix must be bound to ${XML_NAMESPACE}.`);
@@ -12288,10 +8509,10 @@ var require_saxes = __commonJS({
       }
       switch (uri) {
         case XMLNS_NAMESPACE:
-          parser.fail(prefix2 === "" ? `the default namespace may not be set to ${uri}.` : `may not assign a prefix (even "xmlns") to the URI ${XMLNS_NAMESPACE}.`);
+          parser.fail(prefix === "" ? `the default namespace may not be set to ${uri}.` : `may not assign a prefix (even "xmlns") to the URI ${XMLNS_NAMESPACE}.`);
           break;
         case XML_NAMESPACE:
-          switch (prefix2) {
+          switch (prefix) {
             case "xml":
               break;
             case "":
@@ -12624,13 +8845,13 @@ var require_saxes = __commonJS({
        * @returns The character read.
        */
       getCode10() {
-        const { chunk, i: i6 } = this;
-        this.prevI = i6;
-        this.i = i6 + 1;
-        if (i6 >= chunk.length) {
+        const { chunk, i: i5 } = this;
+        this.prevI = i5;
+        this.i = i5 + 1;
+        if (i5 >= chunk.length) {
           return EOC;
         }
-        const code = chunk.charCodeAt(i6);
+        const code = chunk.charCodeAt(i5);
         this.column++;
         if (code < 55296) {
           if (code >= SPACE || code === TAB) {
@@ -12643,8 +8864,8 @@ var require_saxes = __commonJS({
               this.positionAtNewLine = this.position;
               return NL;
             case CR:
-              if (chunk.charCodeAt(i6 + 1) === NL) {
-                this.i = i6 + 2;
+              if (chunk.charCodeAt(i5 + 1) === NL) {
+                this.i = i5 + 2;
               }
               this.line++;
               this.column = 0;
@@ -12661,8 +8882,8 @@ var require_saxes = __commonJS({
           }
           return code;
         }
-        const final = 65536 + (code - 55296) * 1024 + (chunk.charCodeAt(i6 + 1) - 56320);
-        this.i = i6 + 2;
+        const final = 65536 + (code - 55296) * 1024 + (chunk.charCodeAt(i5 + 1) - 56320);
+        this.i = i5 + 2;
         if (final > 1114111) {
           this.fail("disallowed character.");
         }
@@ -12677,13 +8898,13 @@ var require_saxes = __commonJS({
        * @returns {number} The character read.
        */
       getCode11() {
-        const { chunk, i: i6 } = this;
-        this.prevI = i6;
-        this.i = i6 + 1;
-        if (i6 >= chunk.length) {
+        const { chunk, i: i5 } = this;
+        this.prevI = i5;
+        this.i = i5 + 1;
+        if (i5 >= chunk.length) {
           return EOC;
         }
-        const code = chunk.charCodeAt(i6);
+        const code = chunk.charCodeAt(i5);
         this.column++;
         if (code < 55296) {
           if (code > 31 && code < 127 || code > 159 && code !== LS || code === TAB) {
@@ -12696,9 +8917,9 @@ var require_saxes = __commonJS({
               this.positionAtNewLine = this.position;
               return NL;
             case CR: {
-              const next = chunk.charCodeAt(i6 + 1);
+              const next = chunk.charCodeAt(i5 + 1);
               if (next === NL || next === NEL) {
-                this.i = i6 + 2;
+                this.i = i5 + 2;
               }
             }
             /* yes, fall through */
@@ -12720,8 +8941,8 @@ var require_saxes = __commonJS({
           }
           return code;
         }
-        const final = 65536 + (code - 55296) * 1024 + (chunk.charCodeAt(i6 + 1) - 56320);
-        this.i = i6 + 2;
+        const final = 65536 + (code - 55296) * 1024 + (chunk.charCodeAt(i5 + 1) - 56320);
+        this.i = i5 + 2;
         if (final > 1114111) {
           this.fail("disallowed character.");
         }
@@ -13706,11 +9927,11 @@ var require_saxes = __commonJS({
       }
       pushAttribNS(name, value) {
         var _a;
-        const { prefix: prefix2, local } = this.qname(name);
-        const attr = { name, prefix: prefix2, local, value };
+        const { prefix, local } = this.qname(name);
+        const attr = { name, prefix, local, value };
         this.attribList.push(attr);
         (_a = this.attributeHandler) === null || _a === void 0 ? void 0 : _a.call(this, attr);
-        if (prefix2 === "xmlns") {
+        if (prefix === "xmlns") {
           const trimmed = value.trim();
           if (this.currentXMLVersion === "1.0" && trimmed === "") {
             this.fail("invalid attempt to undefine prefix in XML 1.0");
@@ -13765,24 +9986,24 @@ var require_saxes = __commonJS({
        *
        * @returns The namespace URI or ``undefined`` if the prefix is not defined.
        */
-      resolve(prefix2) {
+      resolve(prefix) {
         var _a, _b;
-        let uri = this.topNS[prefix2];
+        let uri = this.topNS[prefix];
         if (uri !== void 0) {
           return uri;
         }
         const { tags } = this;
         for (let index = tags.length - 1; index >= 0; index--) {
-          uri = tags[index].ns[prefix2];
+          uri = tags[index].ns[prefix];
           if (uri !== void 0) {
             return uri;
           }
         }
-        uri = this.ns[prefix2];
+        uri = this.ns[prefix];
         if (uri !== void 0) {
           return uri;
         }
-        return (_b = (_a = this.opt).resolvePrefix) === null || _b === void 0 ? void 0 : _b.call(_a, prefix2);
+        return (_b = (_a = this.opt).resolvePrefix) === null || _b === void 0 ? void 0 : _b.call(_a, prefix);
       }
       /**
        * Parse a qname into its prefix and local name parts.
@@ -13797,28 +10018,28 @@ var require_saxes = __commonJS({
           return { prefix: "", local: name };
         }
         const local = name.slice(colon + 1);
-        const prefix2 = name.slice(0, colon);
-        if (prefix2 === "" || local === "" || local.includes(":")) {
+        const prefix = name.slice(0, colon);
+        if (prefix === "" || local === "" || local.includes(":")) {
           this.fail(`malformed name: ${name}.`);
         }
-        return { prefix: prefix2, local };
+        return { prefix, local };
       }
       processAttribsNS() {
         var _a;
         const { attribList } = this;
         const tag = this.tag;
         {
-          const { prefix: prefix2, local } = this.qname(tag.name);
-          tag.prefix = prefix2;
+          const { prefix, local } = this.qname(tag.name);
+          tag.prefix = prefix;
           tag.local = local;
-          const uri = tag.uri = (_a = this.resolve(prefix2)) !== null && _a !== void 0 ? _a : "";
-          if (prefix2 !== "") {
-            if (prefix2 === "xmlns") {
+          const uri = tag.uri = (_a = this.resolve(prefix)) !== null && _a !== void 0 ? _a : "";
+          if (prefix !== "") {
+            if (prefix === "xmlns") {
               this.fail('tags may not have "xmlns" as prefix.');
             }
             if (uri === "") {
-              this.fail(`unbound namespace prefix: ${JSON.stringify(prefix2)}.`);
-              tag.uri = prefix2;
+              this.fail(`unbound namespace prefix: ${JSON.stringify(prefix)}.`);
+              tag.uri = prefix;
             }
           }
         }
@@ -13828,17 +10049,17 @@ var require_saxes = __commonJS({
         const { attributes } = tag;
         const seen = /* @__PURE__ */ new Set();
         for (const attr of attribList) {
-          const { name, prefix: prefix2, local } = attr;
+          const { name, prefix, local } = attr;
           let uri;
           let eqname;
-          if (prefix2 === "") {
+          if (prefix === "") {
             uri = name === "xmlns" ? XMLNS_NAMESPACE : "";
             eqname = name;
           } else {
-            uri = this.resolve(prefix2);
+            uri = this.resolve(prefix);
             if (uri === void 0) {
-              this.fail(`unbound namespace prefix: ${JSON.stringify(prefix2)}.`);
-              uri = prefix2;
+              this.fail(`unbound namespace prefix: ${JSON.stringify(prefix)}.`);
+              uri = prefix;
             }
             eqname = `{${uri}}${local}`;
           }
@@ -14024,7 +10245,7 @@ var require_NamedNode = __commonJS({
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.NamedNode = void 0;
-    var NamedNode3 = class {
+    var NamedNode2 = class {
       constructor(value) {
         this.termType = "NamedNode";
         this.value = value;
@@ -14033,7 +10254,7 @@ var require_NamedNode = __commonJS({
         return !!other && other.termType === "NamedNode" && other.value === this.value;
       }
     };
-    exports.NamedNode = NamedNode3;
+    exports.NamedNode = NamedNode2;
   }
 });
 
@@ -14086,12 +10307,12 @@ var require_Quad = __commonJS({
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Quad = void 0;
     var Quad2 = class {
-      constructor(subject2, predicate2, object2, graph) {
+      constructor(subject, predicate, object, graph) {
         this.termType = "Quad";
         this.value = "";
-        this.subject = subject2;
-        this.predicate = predicate2;
-        this.object = object2;
+        this.subject = subject;
+        this.predicate = predicate;
+        this.object = object;
         this.graph = graph;
       }
       equals(other) {
@@ -14134,7 +10355,7 @@ var require_DataFactory = __commonJS({
     var Quad_1 = require_Quad();
     var Variable_1 = require_Variable();
     var dataFactoryCounter = 0;
-    var DataFactory5 = class {
+    var DataFactory3 = class {
       constructor(options) {
         this.blankNodeCounter = 0;
         options = options || {};
@@ -14197,8 +10418,8 @@ var require_DataFactory = __commonJS({
        * @return A new instance of Quad.
        * @see Quad
        */
-      quad(subject2, predicate2, object2, graph) {
-        return new Quad_1.Quad(subject2, predicate2, object2, graph || this.defaultGraph());
+      quad(subject, predicate, object, graph) {
+        return new Quad_1.Quad(subject, predicate, object, graph || this.defaultGraph());
       }
       /**
        * Create a deep copy of the given term using this data factory.
@@ -14242,7 +10463,7 @@ var require_DataFactory = __commonJS({
         this.blankNodeCounter = 0;
       }
     };
-    exports.DataFactory = DataFactory5;
+    exports.DataFactory = DataFactory3;
   }
 });
 
@@ -14250,7 +10471,7 @@ var require_DataFactory = __commonJS({
 var require_rdf_data_factory = __commonJS({
   "node_modules/rdf-data-factory/index.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o7, m2, k2, k22) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
       var desc = Object.getOwnPropertyDescriptor(m2, k2);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -14258,10 +10479,10 @@ var require_rdf_data_factory = __commonJS({
           return m2[k2];
         } };
       }
-      Object.defineProperty(o7, k22, desc);
-    }) : (function(o7, m2, k2, k22) {
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
-      o7[k22] = m2[k2];
+      o6[k22] = m2[k2];
     }));
     var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
       for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
@@ -14346,7 +10567,7 @@ var require_Validate = __commonJS({
 var require_validate_iri = __commonJS({
   "node_modules/validate-iri/index.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o7, m2, k2, k22) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
       var desc = Object.getOwnPropertyDescriptor(m2, k2);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -14354,10 +10575,10 @@ var require_validate_iri = __commonJS({
           return m2[k2];
         } };
       }
-      Object.defineProperty(o7, k22, desc);
-    }) : (function(o7, m2, k2, k22) {
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
-      o7[k22] = m2[k2];
+      o6[k22] = m2[k2];
     }));
     var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
       for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
@@ -14431,8 +10652,8 @@ var require_RdfXmlParser = __commonJS({
         }
         try {
           this.saxParser.write(chunk);
-        } catch (e8) {
-          return callback(e8);
+        } catch (e5) {
+          return callback(e5);
         }
         callback();
       }
@@ -14674,16 +10895,16 @@ var require_RdfXmlParser = __commonJS({
                 this.emitTriple(parentTag.subject, parentTag.predicate, activeTag.subject, parentTag.reifiedStatementId, parentTag.childrenTripleTerms, parentTag.reifier);
                 parentTag.predicateEmitted = true;
               }
-              for (let i6 = 0; i6 < parentTag.predicateSubPredicates.length; i6++) {
-                this.emitTriple(activeTag.subject, parentTag.predicateSubPredicates[i6], parentTag.predicateSubObjects[i6], null, parentTag.childrenTripleTerms, parentTag.reifier);
+              for (let i5 = 0; i5 < parentTag.predicateSubPredicates.length; i5++) {
+                this.emitTriple(activeTag.subject, parentTag.predicateSubPredicates[i5], parentTag.predicateSubObjects[i5], null, parentTag.childrenTripleTerms, parentTag.reifier);
               }
               parentTag.predicateSubPredicates = [];
               parentTag.predicateSubObjects = [];
             }
           }
-          for (let i6 = 0; i6 < predicates.length; i6++) {
-            const object2 = this.createLiteral(objects[i6], activeTag);
-            this.emitTriple(activeTag.subject, predicates[i6], object2, parentTag.reifiedStatementId, parentTag.childrenTripleTerms, parentTag.reifier);
+          for (let i5 = 0; i5 < predicates.length; i5++) {
+            const object = this.createLiteral(objects[i5], activeTag);
+            this.emitTriple(activeTag.subject, predicates[i5], object, parentTag.reifiedStatementId, parentTag.childrenTripleTerms, parentTag.reifier);
           }
           if (explicitType) {
             this.emitTriple(activeTag.subject, this.dataFactory.namedNode(_RdfXmlParser.RDF + "type"), this.uriToNamedNode(explicitType), null, activeTag.childrenTripleTerms, activeTag.reifier);
@@ -14830,8 +11051,8 @@ var require_RdfXmlParser = __commonJS({
           const subjectParent = activeTag.subject;
           activeTag.subject = subSubjectValueBlank ? this.dataFactory.blankNode(activeSubSubjectValue) : this.valueToUri(activeSubSubjectValue, activeTag);
           this.emitTriple(subjectParent, activeTag.predicate, activeTag.subject, activeTag.reifiedStatementId, activeTag.childrenTripleTerms, activeTag.reifier);
-          for (let i6 = 0; i6 < predicates.length; i6++) {
-            this.emitTriple(activeTag.subject, predicates[i6], objects[i6], null, activeTag.childrenTripleTerms, activeTag.reifier);
+          for (let i5 = 0; i5 < predicates.length; i5++) {
+            this.emitTriple(activeTag.subject, predicates[i5], objects[i5], null, activeTag.childrenTripleTerms, activeTag.reifier);
           }
           activeTag.predicateEmitted = true;
         } else if (subSubjectValueBlank) {
@@ -14850,21 +11071,21 @@ var require_RdfXmlParser = __commonJS({
        * @param childrenTripleTerms An optional array to push quads into instead of emitting them.
        * @param reifier The reifier to emit this triple under.
        */
-      emitTriple(subject2, predicate2, object2, statementId, childrenTripleTerms, reifier) {
-        const quad3 = this.dataFactory.quad(subject2, predicate2, object2, this.defaultGraph);
+      emitTriple(subject, predicate, object, statementId, childrenTripleTerms, reifier) {
+        const quad2 = this.dataFactory.quad(subject, predicate, object, this.defaultGraph);
         if (childrenTripleTerms) {
-          childrenTripleTerms.push(quad3);
+          childrenTripleTerms.push(quad2);
         } else {
-          this.push(quad3);
+          this.push(quad2);
         }
         if (reifier) {
-          this.push(this.dataFactory.quad(reifier, this.dataFactory.namedNode(_RdfXmlParser.RDF + "reifies"), quad3));
+          this.push(this.dataFactory.quad(reifier, this.dataFactory.namedNode(_RdfXmlParser.RDF + "reifies"), quad2));
         }
         if (statementId) {
           this.push(this.dataFactory.quad(statementId, this.dataFactory.namedNode(_RdfXmlParser.RDF + "type"), this.dataFactory.namedNode(_RdfXmlParser.RDF + "Statement"), this.defaultGraph));
-          this.push(this.dataFactory.quad(statementId, this.dataFactory.namedNode(_RdfXmlParser.RDF + "subject"), subject2, this.defaultGraph));
-          this.push(this.dataFactory.quad(statementId, this.dataFactory.namedNode(_RdfXmlParser.RDF + "predicate"), predicate2, this.defaultGraph));
-          this.push(this.dataFactory.quad(statementId, this.dataFactory.namedNode(_RdfXmlParser.RDF + "object"), object2, this.defaultGraph));
+          this.push(this.dataFactory.quad(statementId, this.dataFactory.namedNode(_RdfXmlParser.RDF + "subject"), subject, this.defaultGraph));
+          this.push(this.dataFactory.quad(statementId, this.dataFactory.namedNode(_RdfXmlParser.RDF + "predicate"), predicate, this.defaultGraph));
+          this.push(this.dataFactory.quad(statementId, this.dataFactory.namedNode(_RdfXmlParser.RDF + "object"), object, this.defaultGraph));
         }
       }
       /**
@@ -14925,10 +11146,10 @@ var require_RdfXmlParser = __commonJS({
           if (!poppedTag.hadChildren && poppedTag.childrenParseType !== ParseType.PROPERTY) {
             this.emitTriple(poppedTag.subject, poppedTag.predicate, this.createLiteral(poppedTag.text || "", poppedTag), poppedTag.reifiedStatementId, poppedTag.childrenTripleTerms, poppedTag.reifier);
           } else if (!poppedTag.predicateEmitted) {
-            const subject2 = this.dataFactory.blankNode();
-            this.emitTriple(poppedTag.subject, poppedTag.predicate, subject2, poppedTag.reifiedStatementId, poppedTag.childrenTripleTerms, poppedTag.reifier);
-            for (let i6 = 0; i6 < poppedTag.predicateSubPredicates.length; i6++) {
-              this.emitTriple(subject2, poppedTag.predicateSubPredicates[i6], poppedTag.predicateSubObjects[i6], null, poppedTag.childrenTripleTerms);
+            const subject = this.dataFactory.blankNode();
+            this.emitTriple(poppedTag.subject, poppedTag.predicate, subject, poppedTag.reifiedStatementId, poppedTag.childrenTripleTerms, poppedTag.reifier);
+            for (let i5 = 0; i5 < poppedTag.predicateSubPredicates.length; i5++) {
+              this.emitTriple(subject, poppedTag.predicateSubPredicates[i5], poppedTag.predicateSubObjects[i5], null, poppedTag.childrenTripleTerms);
             }
           }
         }
@@ -14938,8 +11159,8 @@ var require_RdfXmlParser = __commonJS({
        * @param {string} doctype The read doctype.
        */
       onDoctype(doctype) {
-        doctype.replace(/<!ENTITY\s+([^\s]+)\s+["']([^"']+)["']\s*>/g, (match2, prefix2, uri) => {
-          this.saxParser.ENTITIES[prefix2] = uri;
+        doctype.replace(/<!ENTITY\s+([^\s]+)\s+["']([^"']+)["']\s*>/g, (match, prefix, uri) => {
+          this.saxParser.ENTITIES[prefix] = uri;
           return "";
         });
       }
@@ -15008,7 +11229,7 @@ var require_RdfXmlParser = __commonJS({
 var require_rdfxml_streaming_parser = __commonJS({
   "node_modules/rdfxml-streaming-parser/index.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o7, m2, k2, k22) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
       var desc = Object.getOwnPropertyDescriptor(m2, k2);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -15016,10 +11237,10 @@ var require_rdfxml_streaming_parser = __commonJS({
           return m2[k2];
         } };
       }
-      Object.defineProperty(o7, k22, desc);
-    }) : (function(o7, m2, k2, k22) {
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
-      o7[k22] = m2[k2];
+      o6[k22] = m2[k2];
     }));
     var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
       for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
@@ -15100,8 +11321,8 @@ var require_jsonparse = __commonJS({
     }
     Parser.toknam = function(code) {
       var keys = Object.keys(C2);
-      for (var i6 = 0, l3 = keys.length; i6 < l3; i6++) {
-        var key = keys[i6];
+      for (var i5 = 0, l3 = keys.length; i5 < l3; i5++) {
+        var key = keys[i5];
         if (C2[key] === code) {
           return key;
         }
@@ -15112,9 +11333,9 @@ var require_jsonparse = __commonJS({
     proto.onError = function(err) {
       throw err;
     };
-    proto.charError = function(buffer, i6) {
+    proto.charError = function(buffer, i5) {
       this.tState = STOP;
-      this.onError(new Error("Unexpected " + JSON.stringify(String.fromCharCode(buffer[i6])) + " at position " + i6 + " in state " + Parser.toknam(this.tState)));
+      this.onError(new Error("Unexpected " + JSON.stringify(String.fromCharCode(buffer[i5])) + " at position " + i5 + " in state " + Parser.toknam(this.tState)));
     };
     proto.appendStringChar = function(char) {
       if (this.stringBufferOffset >= STRING_BUFFER_SIZE) {
@@ -15149,9 +11370,9 @@ var require_jsonparse = __commonJS({
     proto.write = function(buffer) {
       if (typeof buffer === "string") buffer = new Buffer3(buffer);
       var n5;
-      for (var i6 = 0, l3 = buffer.length; i6 < l3; i6++) {
+      for (var i5 = 0, l3 = buffer.length; i5 < l3; i5++) {
         if (this.tState === START) {
-          n5 = buffer[i6];
+          n5 = buffer[i5];
           this.offset++;
           if (n5 === 123) {
             this.onToken(LEFT_BRACE, "{");
@@ -15184,34 +11405,34 @@ var require_jsonparse = __commonJS({
               this.tState = NUMBER3;
             } else if (n5 === 32 || n5 === 9 || n5 === 10 || n5 === 13) {
             } else {
-              return this.charError(buffer, i6);
+              return this.charError(buffer, i5);
             }
           }
         } else if (this.tState === STRING1) {
-          n5 = buffer[i6];
+          n5 = buffer[i5];
           if (this.bytes_remaining > 0) {
             for (var j = 0; j < this.bytes_remaining; j++) {
               this.temp_buffs[this.bytes_in_sequence][this.bytes_in_sequence - this.bytes_remaining + j] = buffer[j];
             }
             this.appendStringBuf(this.temp_buffs[this.bytes_in_sequence]);
             this.bytes_in_sequence = this.bytes_remaining = 0;
-            i6 = i6 + j - 1;
+            i5 = i5 + j - 1;
           } else if (this.bytes_remaining === 0 && n5 >= 128) {
             if (n5 <= 193 || n5 > 244) {
-              return this.onError(new Error("Invalid UTF-8 character at position " + i6 + " in state " + Parser.toknam(this.tState)));
+              return this.onError(new Error("Invalid UTF-8 character at position " + i5 + " in state " + Parser.toknam(this.tState)));
             }
             if (n5 >= 194 && n5 <= 223) this.bytes_in_sequence = 2;
             if (n5 >= 224 && n5 <= 239) this.bytes_in_sequence = 3;
             if (n5 >= 240 && n5 <= 244) this.bytes_in_sequence = 4;
-            if (this.bytes_in_sequence + i6 > buffer.length) {
-              for (var k2 = 0; k2 <= buffer.length - 1 - i6; k2++) {
-                this.temp_buffs[this.bytes_in_sequence][k2] = buffer[i6 + k2];
+            if (this.bytes_in_sequence + i5 > buffer.length) {
+              for (var k2 = 0; k2 <= buffer.length - 1 - i5; k2++) {
+                this.temp_buffs[this.bytes_in_sequence][k2] = buffer[i5 + k2];
               }
-              this.bytes_remaining = i6 + this.bytes_in_sequence - buffer.length;
-              i6 = buffer.length - 1;
+              this.bytes_remaining = i5 + this.bytes_in_sequence - buffer.length;
+              i5 = buffer.length - 1;
             } else {
-              this.appendStringBuf(buffer, i6, i6 + this.bytes_in_sequence);
-              i6 = i6 + this.bytes_in_sequence - 1;
+              this.appendStringBuf(buffer, i5, i5 + this.bytes_in_sequence);
+              i5 = i5 + this.bytes_in_sequence - 1;
             }
           } else if (n5 === 34) {
             this.tState = START;
@@ -15225,10 +11446,10 @@ var require_jsonparse = __commonJS({
           } else if (n5 >= 32) {
             this.appendStringChar(n5);
           } else {
-            return this.charError(buffer, i6);
+            return this.charError(buffer, i5);
           }
         } else if (this.tState === STRING2) {
-          n5 = buffer[i6];
+          n5 = buffer[i5];
           if (n5 === 34) {
             this.appendStringChar(n5);
             this.tState = STRING1;
@@ -15257,10 +11478,10 @@ var require_jsonparse = __commonJS({
             this.unicode = "";
             this.tState = STRING3;
           } else {
-            return this.charError(buffer, i6);
+            return this.charError(buffer, i5);
           }
         } else if (this.tState === STRING3 || this.tState === STRING4 || this.tState === STRING5 || this.tState === STRING6) {
-          n5 = buffer[i6];
+          n5 = buffer[i5];
           if (n5 >= 48 && n5 < 64 || n5 > 64 && n5 <= 70 || n5 > 96 && n5 <= 102) {
             this.unicode += String.fromCharCode(n5);
             if (this.tState++ === STRING6) {
@@ -15281,10 +11502,10 @@ var require_jsonparse = __commonJS({
               this.tState = STRING1;
             }
           } else {
-            return this.charError(buffer, i6);
+            return this.charError(buffer, i5);
           }
         } else if (this.tState === NUMBER1 || this.tState === NUMBER3) {
-          n5 = buffer[i6];
+          n5 = buffer[i5];
           switch (n5) {
             case 48:
             // 0
@@ -15320,80 +11541,80 @@ var require_jsonparse = __commonJS({
               break;
             default:
               this.tState = START;
-              var error = this.numberReviver(this.string, buffer, i6);
+              var error = this.numberReviver(this.string, buffer, i5);
               if (error) {
                 return error;
               }
               this.offset += this.string.length - 1;
               this.string = void 0;
-              i6--;
+              i5--;
               break;
           }
         } else if (this.tState === TRUE1) {
-          if (buffer[i6] === 114) {
+          if (buffer[i5] === 114) {
             this.tState = TRUE2;
           } else {
-            return this.charError(buffer, i6);
+            return this.charError(buffer, i5);
           }
         } else if (this.tState === TRUE2) {
-          if (buffer[i6] === 117) {
+          if (buffer[i5] === 117) {
             this.tState = TRUE3;
           } else {
-            return this.charError(buffer, i6);
+            return this.charError(buffer, i5);
           }
         } else if (this.tState === TRUE3) {
-          if (buffer[i6] === 101) {
+          if (buffer[i5] === 101) {
             this.tState = START;
             this.onToken(TRUE, true);
             this.offset += 3;
           } else {
-            return this.charError(buffer, i6);
+            return this.charError(buffer, i5);
           }
         } else if (this.tState === FALSE1) {
-          if (buffer[i6] === 97) {
+          if (buffer[i5] === 97) {
             this.tState = FALSE2;
           } else {
-            return this.charError(buffer, i6);
+            return this.charError(buffer, i5);
           }
         } else if (this.tState === FALSE2) {
-          if (buffer[i6] === 108) {
+          if (buffer[i5] === 108) {
             this.tState = FALSE3;
           } else {
-            return this.charError(buffer, i6);
+            return this.charError(buffer, i5);
           }
         } else if (this.tState === FALSE3) {
-          if (buffer[i6] === 115) {
+          if (buffer[i5] === 115) {
             this.tState = FALSE4;
           } else {
-            return this.charError(buffer, i6);
+            return this.charError(buffer, i5);
           }
         } else if (this.tState === FALSE4) {
-          if (buffer[i6] === 101) {
+          if (buffer[i5] === 101) {
             this.tState = START;
             this.onToken(FALSE, false);
             this.offset += 4;
           } else {
-            return this.charError(buffer, i6);
+            return this.charError(buffer, i5);
           }
         } else if (this.tState === NULL1) {
-          if (buffer[i6] === 117) {
+          if (buffer[i5] === 117) {
             this.tState = NULL2;
           } else {
-            return this.charError(buffer, i6);
+            return this.charError(buffer, i5);
           }
         } else if (this.tState === NULL2) {
-          if (buffer[i6] === 108) {
+          if (buffer[i5] === 108) {
             this.tState = NULL3;
           } else {
-            return this.charError(buffer, i6);
+            return this.charError(buffer, i5);
           }
         } else if (this.tState === NULL3) {
-          if (buffer[i6] === 108) {
+          if (buffer[i5] === 108) {
             this.tState = START;
             this.onToken(NULL, null);
             this.offset += 3;
           } else {
-            return this.charError(buffer, i6);
+            return this.charError(buffer, i5);
           }
         }
       }
@@ -15500,10 +11721,10 @@ var require_jsonparse = __commonJS({
         return this.parseError(token, value);
       }
     };
-    proto.numberReviver = function(text, buffer, i6) {
+    proto.numberReviver = function(text, buffer, i5) {
       var result = Number(text);
       if (isNaN(result)) {
-        return this.charError(buffer, i6);
+        return this.charError(buffer, i5);
       }
       if (text.match(/[0-9]+/) == text && result.toString() != text) {
         this.onToken(STRING, text);
@@ -15645,9 +11866,9 @@ var require_link = __commonJS({
       rel(value) {
         var links = [];
         var type = value.toLowerCase();
-        for (var i6 = 0; i6 < this.refs.length; i6++) {
-          if (typeof this.refs[i6].rel === "string" && this.refs[i6].rel.toLowerCase() === type) {
-            links.push(this.refs[i6]);
+        for (var i5 = 0; i5 < this.refs.length; i5++) {
+          if (typeof this.refs[i5].rel === "string" && this.refs[i5].rel.toLowerCase() === type) {
+            links.push(this.refs[i5]);
           }
         }
         return links;
@@ -15662,9 +11883,9 @@ var require_link = __commonJS({
         attr = attr.toLowerCase();
         value = value.toLowerCase();
         var links = [];
-        for (var i6 = 0; i6 < this.refs.length; i6++) {
-          if (typeof this.refs[i6][attr] === "string" && this.refs[i6][attr].toLowerCase() === value) {
-            links.push(this.refs[i6]);
+        for (var i5 = 0; i5 < this.refs.length; i5++) {
+          if (typeof this.refs[i5][attr] === "string" && this.refs[i5][attr].toLowerCase() === value) {
+            links.push(this.refs[i5]);
           }
         }
         return links;
@@ -15686,8 +11907,8 @@ var require_link = __commonJS({
       has(attr, value) {
         attr = attr.toLowerCase();
         value = value.toLowerCase();
-        for (var i6 = 0; i6 < this.refs.length; i6++) {
-          if (typeof this.refs[i6][attr] === "string" && this.refs[i6][attr].toLowerCase() === value) {
+        for (var i5 = 0; i5 < this.refs.length; i5++) {
+          if (typeof this.refs[i5][attr] === "string" && this.refs[i5][attr].toLowerCase() === value) {
             return true;
           }
         }
@@ -15803,9 +12024,9 @@ var require_link = __commonJS({
         var refs = [];
         var link = "";
         var ref = null;
-        for (var i6 = 0; i6 < this.refs.length; i6++) {
-          ref = this.refs[i6];
-          link = Object.keys(this.refs[i6]).reduce(function(link2, attr) {
+        for (var i5 = 0; i5 < this.refs.length; i5++) {
+          ref = this.refs[i5];
+          link = Object.keys(this.refs[i5]).reduce(function(link2, attr) {
             if (attr === "uri") return link2;
             return link2 + "; " + _Link.formatAttribute(attr, ref[attr]);
           }, "<" + ref.uri + ">");
@@ -15968,12 +12189,12 @@ var require_Util = __commonJS({
           if (term.length > separatorPos + 1 && term.charAt(separatorPos + 1) === "/" && term.charAt(separatorPos + 2) === "/") {
             return null;
           }
-          const prefix2 = term.substr(0, separatorPos);
-          if (prefix2 === "_") {
+          const prefix = term.substr(0, separatorPos);
+          if (prefix === "_") {
             return null;
           }
-          if (context[prefix2]) {
-            return prefix2;
+          if (context[prefix]) {
+            return prefix;
           }
         }
         return null;
@@ -16228,13 +12449,13 @@ var require_JsonLdContextNormalized = __commonJS({
             }
           }
         }
-        const prefix2 = Util_1.Util.getPrefix(term, this.contextRaw);
+        const prefix = Util_1.Util.getPrefix(term, this.contextRaw);
         const vocab = this.contextRaw["@vocab"];
         const vocabRelative = (!!vocab || vocab === "") && vocab.indexOf(":") < 0;
         const base = this.contextRaw["@base"];
         const potentialKeyword = Util_1.Util.isPotentialKeyword(term);
-        if (prefix2) {
-          const contextPrefixValue = this.contextRaw[prefix2];
+        if (prefix) {
+          const contextPrefixValue = this.contextRaw[prefix];
           const value = Util_1.Util.getContextValueId(contextPrefixValue);
           if (value) {
             if (typeof contextPrefixValue === "string" || !options.allowPrefixForcing) {
@@ -16246,7 +12467,7 @@ var require_JsonLdContextNormalized = __commonJS({
                 return term;
               }
             }
-            return value + term.substr(prefix2.length + 1);
+            return value + term.substr(prefix.length + 1);
           }
         } else if (expandVocab && (vocab || vocab === "" || options.allowVocabRelativeToBase && (base && vocabRelative)) && !potentialKeyword && !Util_1.Util.isCompactIri(term)) {
           if (vocabRelative) {
@@ -16799,8 +13020,8 @@ Tried mapping ${key} to ${JSON.stringify(keyValue)}`, ErrorCoded_1.ERROR_CODES.I
                   const parentContext = Object.assign(Object.assign({}, context), { [key]: Object.assign({}, context[key]) });
                   delete parentContext[key]["@context"];
                   await this.parse(value["@context"], Object.assign(Object.assign({}, options), { external: false, parentContext, ignoreProtection: true, ignoreRemoteScopedContexts: true, ignoreScopedContexts: true }));
-                } catch (e8) {
-                  throw new ErrorCoded_1.ErrorCoded(e8.message, ErrorCoded_1.ERROR_CODES.INVALID_SCOPED_CONTEXT);
+                } catch (e5) {
+                  throw new ErrorCoded_1.ErrorCoded(e5.message, ErrorCoded_1.ERROR_CODES.INVALID_SCOPED_CONTEXT);
                 }
               }
               context[key] = Object.assign(Object.assign({}, value), { "@context": (await this.parse(value["@context"], Object.assign(Object.assign({}, options), { external: false, minimalProcessing: true, ignoreRemoteScopedContexts: true, parentContext: context }))).getContextRaw() });
@@ -16831,10 +13052,10 @@ Tried mapping ${key} to ${JSON.stringify(keyValue)}`, ErrorCoded_1.ERROR_CODES.I
           return parsedStringContext;
         } else if (Array.isArray(context)) {
           const contextIris = [];
-          const contexts = await Promise.all(context.map((subContext, i6) => {
+          const contexts = await Promise.all(context.map((subContext, i5) => {
             if (typeof subContext === "string") {
               const contextIri = this.normalizeContextIri(subContext, baseIRI);
-              contextIris[i6] = contextIri;
+              contextIris[i5] = contextIri;
               const overriddenLoad = this.getOverriddenLoad(contextIri, options);
               if (overriddenLoad) {
                 return overriddenLoad;
@@ -16847,12 +13068,12 @@ Tried mapping ${key} to ${JSON.stringify(keyValue)}`, ErrorCoded_1.ERROR_CODES.I
           if (minimalProcessing) {
             return new JsonLdContextNormalized_1.JsonLdContextNormalized(contexts);
           }
-          const reducedContexts = await contexts.reduce((accContextPromise, contextEntry, i6) => accContextPromise.then((accContext) => this.parse(
+          const reducedContexts = await contexts.reduce((accContextPromise, contextEntry, i5) => accContextPromise.then((accContext) => this.parse(
             contextEntry,
-            Object.assign(Object.assign({}, options), { baseIRI: contextIris[i6] || options.baseIRI, external: !!contextIris[i6] || options.external, parentContext: accContext.getContextRaw(), remoteContexts: contextIris[i6] ? Object.assign(Object.assign({}, remoteContexts), { [contextIris[i6]]: true }) : remoteContexts }),
+            Object.assign(Object.assign({}, options), { baseIRI: contextIris[i5] || options.baseIRI, external: !!contextIris[i5] || options.external, parentContext: accContext.getContextRaw(), remoteContexts: contextIris[i5] ? Object.assign(Object.assign({}, remoteContexts), { [contextIris[i5]]: true }) : remoteContexts }),
             // @ts-expect-error: This third argument causes a type error because we have hidden it from consumers
             {
-              skipValidation: i6 < contexts.length - 1
+              skipValidation: i5 < contexts.length - 1
             }
           )), Promise.resolve(new JsonLdContextNormalized_1.JsonLdContextNormalized(parentContext || {})));
           this.applyBaseEntry(reducedContexts.getContextRaw(), options, true);
@@ -16936,8 +13157,8 @@ Tried mapping @context to ${JSON.stringify(context["@context"])}`, ErrorCoded_1.
         let document2;
         try {
           document2 = await this.documentLoader.load(url);
-        } catch (e8) {
-          throw new ErrorCoded_1.ErrorCoded(`Failed to load remote context ${url}: ${e8.message}`, ErrorCoded_1.ERROR_CODES.LOADING_REMOTE_CONTEXT_FAILED);
+        } catch (e5) {
+          throw new ErrorCoded_1.ErrorCoded(`Failed to load remote context ${url}: ${e5.message}`, ErrorCoded_1.ERROR_CODES.LOADING_REMOTE_CONTEXT_FAILED);
         }
         if (!("@context" in document2)) {
           throw new ErrorCoded_1.ErrorCoded(`Missing @context in remote context at ${url}`, ErrorCoded_1.ERROR_CODES.INVALID_REMOTE_CONTEXT);
@@ -17005,7 +13226,7 @@ var require_JsonLdContext = __commonJS({
 var require_jsonld_context_parser = __commonJS({
   "node_modules/jsonld-context-parser/index.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o7, m2, k2, k22) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
       var desc = Object.getOwnPropertyDescriptor(m2, k2);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -17013,10 +13234,10 @@ var require_jsonld_context_parser = __commonJS({
           return m2[k2];
         } };
       }
-      Object.defineProperty(o7, k22, desc);
-    }) : (function(o7, m2, k2, k22) {
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
-      o7[k22] = m2[k2];
+      o6[k22] = m2[k2];
     }));
     var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
       for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
@@ -17095,60 +13316,60 @@ var require_EntryHandlerPredicate = __commonJS({
        * @param {boolean} isAnnotation If the property exists in an annotation object.
        * @return {Promise<void>} A promise resolving when handling is done.
        */
-      static async handlePredicateObject(parsingContext, util, keys, depth, predicate2, object2, reverse, isEmbedded, isAnnotation) {
+      static async handlePredicateObject(parsingContext, util, keys, depth, predicate, object, reverse, isEmbedded, isAnnotation) {
         const depthProperties = await util.getPropertiesDepth(keys, depth);
         const depthOffsetGraph = await util.getDepthOffsetGraph(depth, keys);
         const depthPropertiesGraph = depth - depthOffsetGraph;
-        const subjects2 = parsingContext.idStack[depthProperties];
-        if (subjects2 && !isAnnotation) {
-          for (const subject2 of subjects2) {
+        const subjects = parsingContext.idStack[depthProperties];
+        if (subjects && !isAnnotation) {
+          for (const subject of subjects) {
             const atGraph = depthOffsetGraph >= 0;
             if (atGraph) {
               const graphs = parsingContext.idStack[depthPropertiesGraph - 1];
               if (graphs) {
                 for (const graph of graphs) {
-                  util.emitQuadChecked(depth, subject2, predicate2, object2, graph, reverse, isEmbedded);
+                  util.emitQuadChecked(depth, subject, predicate, object, graph, reverse, isEmbedded);
                 }
               } else {
                 if (reverse) {
-                  util.validateReverseSubject(object2);
-                  parsingContext.getUnidentifiedGraphBufferSafe(depthPropertiesGraph - 1).push({ subject: object2, predicate: predicate2, object: subject2, isEmbedded });
+                  util.validateReverseSubject(object);
+                  parsingContext.getUnidentifiedGraphBufferSafe(depthPropertiesGraph - 1).push({ subject: object, predicate, object: subject, isEmbedded });
                 } else {
-                  parsingContext.getUnidentifiedGraphBufferSafe(depthPropertiesGraph - 1).push({ subject: subject2, predicate: predicate2, object: object2, isEmbedded });
+                  parsingContext.getUnidentifiedGraphBufferSafe(depthPropertiesGraph - 1).push({ subject, predicate, object, isEmbedded });
                 }
               }
             } else {
               const graph = await util.getGraphContainerValue(keys, depthProperties);
-              util.emitQuadChecked(depth, subject2, predicate2, object2, graph, reverse, isEmbedded);
+              util.emitQuadChecked(depth, subject, predicate, object, graph, reverse, isEmbedded);
             }
           }
         } else {
           if (reverse) {
-            util.validateReverseSubject(object2);
+            util.validateReverseSubject(object);
           }
           if (isAnnotation) {
             if (parsingContext.rdfstar) {
               if (parsingContext.idStack[depth]) {
                 parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Found an illegal @id inside an annotation: ${parsingContext.idStack[depth][0].value}`, jsonld_context_parser_1.ERROR_CODES.INVALID_ANNOTATION));
               }
-              for (let i6 = 0; i6 < depth; i6++) {
-                if (await util.unaliasKeyword(keys[i6], keys, i6) === "@id") {
+              for (let i5 = 0; i5 < depth; i5++) {
+                if (await util.unaliasKeyword(keys[i5], keys, i5) === "@id") {
                   parsingContext.emitError(new jsonld_context_parser_1.ErrorCoded(`Found an illegal annotation inside an embedded node`, jsonld_context_parser_1.ERROR_CODES.INVALID_ANNOTATION));
                 }
               }
               const annotationsBuffer = parsingContext.getAnnotationsBufferSafe(depthProperties);
-              const newAnnotation = { predicate: predicate2, object: object2, reverse, nestedAnnotations: [], depth: depthProperties };
+              const newAnnotation = { predicate, object, reverse, nestedAnnotations: [], depth: depthProperties };
               annotationsBuffer.push(newAnnotation);
-              for (let i6 = annotationsBuffer.length - 2; i6 >= 0; i6--) {
-                const existingAnnotation = annotationsBuffer[i6];
+              for (let i5 = annotationsBuffer.length - 2; i5 >= 0; i5--) {
+                const existingAnnotation = annotationsBuffer[i5];
                 if (existingAnnotation.depth > depthProperties) {
                   newAnnotation.nestedAnnotations.push(existingAnnotation);
-                  annotationsBuffer.splice(i6, 1);
+                  annotationsBuffer.splice(i5, 1);
                 }
               }
             }
           } else {
-            parsingContext.getUnidentifiedValueBufferSafe(depthProperties).push({ predicate: predicate2, object: object2, reverse, isEmbedded });
+            parsingContext.getUnidentifiedValueBufferSafe(depthProperties).push({ predicate, object, reverse, isEmbedded });
           }
         }
       }
@@ -17177,11 +13398,11 @@ var require_EntryHandlerPredicate = __commonJS({
       async handle(parsingContext, util, key, keys, value, depth, testResult) {
         const keyOriginal = keys[depth];
         const context = await parsingContext.getContext(keys);
-        const predicate2 = await util.predicateToTerm(context, key);
-        if (predicate2) {
+        const predicate = await util.predicateToTerm(context, key);
+        if (predicate) {
           const objects = await util.valueToTerm(context, key, value, depth, keys);
           if (objects.length) {
-            for (let object2 of objects) {
+            for (let object of objects) {
               let parentKey = await util.unaliasKeywordParent(keys, depth);
               const reverse = Util_1.Util.isPropertyReverse(context, keyOriginal, parentKey);
               let parentDepthOffset = 0;
@@ -17199,18 +13420,18 @@ var require_EntryHandlerPredicate = __commonJS({
               if (value) {
                 const listValueContainer = "@list" in Util_1.Util.getContextValueContainer(context, key);
                 if (listValueContainer || value["@list"]) {
-                  if ((listValueContainer && !Array.isArray(value) && !value["@list"] || value["@list"] && !Array.isArray(value["@list"])) && object2 !== util.rdfNil) {
+                  if ((listValueContainer && !Array.isArray(value) && !value["@list"] || value["@list"] && !Array.isArray(value["@list"])) && object !== util.rdfNil) {
                     const listPointer = util.dataFactory.blankNode();
                     parsingContext.emitQuad(depth, util.dataFactory.quad(listPointer, util.rdfRest, util.rdfNil, util.getDefaultGraph()));
-                    parsingContext.emitQuad(depth, util.dataFactory.quad(listPointer, util.rdfFirst, object2, util.getDefaultGraph()));
-                    object2 = listPointer;
+                    parsingContext.emitQuad(depth, util.dataFactory.quad(listPointer, util.rdfFirst, object, util.getDefaultGraph()));
+                    object = listPointer;
                   }
                   if (reverse && !parsingContext.allowSubjectList) {
                     throw new jsonld_context_parser_1.ErrorCoded(`Found illegal list value in subject position at ${key}`, jsonld_context_parser_1.ERROR_CODES.INVALID_REVERSE_PROPERTY_VALUE);
                   }
                 }
               }
-              await _EntryHandlerPredicate.handlePredicateObject(parsingContext, util, keys, depth, predicate2, object2, reverse, isEmbedded, isAnnotation);
+              await _EntryHandlerPredicate.handlePredicateObject(parsingContext, util, keys, depth, predicate, object, reverse, isEmbedded, isAnnotation);
             }
           }
         }
@@ -17395,11 +13616,11 @@ var require_EntryHandlerContainer = __commonJS({
       static getContainerGraphIndex(containers, depth, keys) {
         let isSimpleGraphContainer = _EntryHandlerContainer.isSimpleGraphContainer(containers);
         let index = "";
-        for (let i6 = depth; i6 < keys.length; i6++) {
-          if (!isSimpleGraphContainer || typeof keys[i6] === "number") {
-            index += ":" + keys[i6];
+        for (let i5 = depth; i5 < keys.length; i5++) {
+          if (!isSimpleGraphContainer || typeof keys[i5] === "number") {
+            index += ":" + keys[i5];
           }
-          if (!isSimpleGraphContainer && typeof keys[i6] !== "number") {
+          if (!isSimpleGraphContainer && typeof keys[i5] !== "number") {
             isSimpleGraphContainer = true;
           }
         }
@@ -17427,17 +13648,17 @@ var require_EntryHandlerContainer = __commonJS({
         };
         let checkGraphContainer = false;
         const context = await parsingContext.getContext(keys, 2);
-        for (let i6 = depth - 1; i6 >= 0; i6--) {
-          if (typeof keys[i6] !== "number") {
-            const containersSelf = Util_1.Util.getContextValue(context, "@container", keys[i6], false);
+        for (let i5 = depth - 1; i5 >= 0; i5--) {
+          if (typeof keys[i5] !== "number") {
+            const containersSelf = Util_1.Util.getContextValue(context, "@container", keys[i5], false);
             if (containersSelf && _EntryHandlerContainer.isSimpleGraphContainer(containersSelf)) {
               return {
                 containers: containersSelf,
-                depth: i6 + 1,
+                depth: i5 + 1,
                 fallback: false
               };
             }
-            const containersParent = Util_1.Util.getContextValue(context, "@container", keys[i6 - 1], false);
+            const containersParent = Util_1.Util.getContextValue(context, "@container", keys[i5 - 1], false);
             if (!containersParent) {
               if (checkGraphContainer) {
                 return fallback;
@@ -17451,7 +13672,7 @@ var require_EntryHandlerContainer = __commonJS({
                     if (_EntryHandlerContainer.CONTAINER_HANDLERS[containerHandleName].canCombineWithGraph()) {
                       return {
                         containers: containersParent,
-                        depth: i6,
+                        depth: i5,
                         fallback: false
                       };
                     } else {
@@ -17463,7 +13684,7 @@ var require_EntryHandlerContainer = __commonJS({
                     } else {
                       return {
                         containers: containersParent,
-                        depth: i6,
+                        depth: i5,
                         fallback: false
                       };
                     }
@@ -17533,23 +13754,23 @@ var require_EntryHandlerContainer = __commonJS({
 var require_canonicalize = __commonJS({
   "node_modules/canonicalize/lib/canonicalize.js"(exports, module) {
     "use strict";
-    module.exports = function serialize(object2) {
-      if (object2 === null || typeof object2 !== "object" || object2.toJSON != null) {
-        return JSON.stringify(object2);
+    module.exports = function serialize(object) {
+      if (object === null || typeof object !== "object" || object.toJSON != null) {
+        return JSON.stringify(object);
       }
-      if (Array.isArray(object2)) {
-        return "[" + object2.reduce((t5, cv, ci) => {
+      if (Array.isArray(object)) {
+        return "[" + object.reduce((t4, cv, ci) => {
           const comma = ci === 0 ? "" : ",";
           const value = cv === void 0 || typeof cv === "symbol" ? null : cv;
-          return t5 + comma + serialize(value);
+          return t4 + comma + serialize(value);
         }, "") + "]";
       }
-      return "{" + Object.keys(object2).sort().reduce((t5, cv, ci) => {
-        if (object2[cv] === void 0 || typeof object2[cv] === "symbol") {
-          return t5;
+      return "{" + Object.keys(object).sort().reduce((t4, cv, ci) => {
+        if (object[cv] === void 0 || typeof object[cv] === "symbol") {
+          return t4;
         }
-        const comma = t5.length === 0 ? "" : ",";
-        return t5 + comma + serialize(cv) + ":" + serialize(object2[cv]);
+        const comma = t4.length === 0 ? "" : ",";
+        return t4 + comma + serialize(cv) + ":" + serialize(object[cv]);
       }, "") + "}";
     };
   }
@@ -17700,8 +13921,8 @@ var require_Util2 = __commonJS({
         if (needle.length > haystack.length) {
           return false;
         }
-        for (let i6 = 0; i6 < needle.length; i6++) {
-          if (needle[i6] !== haystack[i6]) {
+        for (let i5 = 0; i5 < needle.length; i5++) {
+          if (needle[i5] !== haystack[i5]) {
             return false;
           }
         }
@@ -18185,11 +14406,11 @@ var require_Util2 = __commonJS({
        * @return {boolean} If we are processing a literal.
        */
       async isLiteral(keys, depth) {
-        for (let i6 = depth; i6 >= 0; i6--) {
-          if (await this.unaliasKeyword(keys[i6], keys, i6) === "@annotation") {
+        for (let i5 = depth; i5 >= 0; i5--) {
+          if (await this.unaliasKeyword(keys[i5], keys, i5) === "@annotation") {
             return false;
           }
-          if (this.parsingContext.literalStack[i6] || this.parsingContext.jsonLiteralStack[i6]) {
+          if (this.parsingContext.literalStack[i5] || this.parsingContext.jsonLiteralStack[i5]) {
             return true;
           }
         }
@@ -18203,13 +14424,13 @@ var require_Util2 = __commonJS({
        * @return {number} The graph depth offset.
        */
       async getDepthOffsetGraph(depth, keys) {
-        for (let i6 = depth - 1; i6 > 0; i6--) {
-          if (await this.unaliasKeyword(keys[i6], keys, i6) === "@graph") {
-            const containers = (await EntryHandlerContainer_1.EntryHandlerContainer.getContainerHandler(this.parsingContext, keys, i6)).containers;
+        for (let i5 = depth - 1; i5 > 0; i5--) {
+          if (await this.unaliasKeyword(keys[i5], keys, i5) === "@graph") {
+            const containers = (await EntryHandlerContainer_1.EntryHandlerContainer.getContainerHandler(this.parsingContext, keys, i5)).containers;
             if (EntryHandlerContainer_1.EntryHandlerContainer.isComplexGraphContainer(containers)) {
               return -1;
             }
-            return depth - i6 - 1;
+            return depth - i5 - 1;
           }
         }
         return -1;
@@ -18219,9 +14440,9 @@ var require_Util2 = __commonJS({
        * This should be called when applying @reverse'd properties.
        * @param {Term} subject A subject.
        */
-      validateReverseSubject(subject2) {
-        if (subject2.termType === "Literal") {
-          throw new jsonld_context_parser_1.ErrorCoded(`Found illegal literal in subject position: ${subject2.value}`, jsonld_context_parser_1.ERROR_CODES.INVALID_REVERSE_PROPERTY_VALUE);
+      validateReverseSubject(subject) {
+        if (subject.termType === "Literal") {
+          throw new jsonld_context_parser_1.ErrorCoded(`Found illegal literal in subject position: ${subject.value}`, jsonld_context_parser_1.ERROR_CODES.INVALID_REVERSE_PROPERTY_VALUE);
         }
       }
       /**
@@ -18279,13 +14500,13 @@ var require_Util2 = __commonJS({
        */
       async getPropertiesDepth(keys, depth) {
         let lastValidDepth = depth;
-        for (let i6 = depth - 1; i6 > 0; i6--) {
-          if (typeof keys[i6] !== "number") {
-            const parentKey = await this.unaliasKeyword(keys[i6], keys, i6);
+        for (let i5 = depth - 1; i5 > 0; i5--) {
+          if (typeof keys[i5] !== "number") {
+            const parentKey = await this.unaliasKeyword(keys[i5], keys, i5);
             if (parentKey === "@reverse") {
-              return i6;
+              return i5;
             } else if (parentKey === "@nest") {
-              lastValidDepth = i6;
+              lastValidDepth = i5;
             } else {
               return lastValidDepth;
             }
@@ -18326,41 +14547,41 @@ var require_Util2 = __commonJS({
        * @param reverse If a reverse property is active.
        * @param isEmbedded If we're in an embedded node.
        */
-      emitQuadChecked(depth, subject2, predicate2, object2, graph, reverse, isEmbedded) {
-        let quad3;
+      emitQuadChecked(depth, subject, predicate, object, graph, reverse, isEmbedded) {
+        let quad2;
         if (reverse) {
-          this.validateReverseSubject(object2);
-          quad3 = this.dataFactory.quad(object2, predicate2, subject2, graph);
+          this.validateReverseSubject(object);
+          quad2 = this.dataFactory.quad(object, predicate, subject, graph);
         } else {
-          quad3 = this.dataFactory.quad(subject2, predicate2, object2, graph);
+          quad2 = this.dataFactory.quad(subject, predicate, object, graph);
         }
         if (isEmbedded) {
-          if (quad3.graph.termType !== "DefaultGraph") {
-            quad3 = this.dataFactory.quad(quad3.subject, quad3.predicate, quad3.object);
+          if (quad2.graph.termType !== "DefaultGraph") {
+            quad2 = this.dataFactory.quad(quad2.subject, quad2.predicate, quad2.object);
           }
           if (this.parsingContext.idStack[depth - 1]) {
             throw new jsonld_context_parser_1.ErrorCoded(`Illegal multiple properties in an embedded node`, jsonld_context_parser_1.ERROR_CODES.INVALID_EMBEDDED_NODE);
           }
-          this.parsingContext.idStack[depth - 1] = [quad3];
+          this.parsingContext.idStack[depth - 1] = [quad2];
         } else {
-          this.parsingContext.emitQuad(depth, quad3);
+          this.parsingContext.emitQuad(depth, quad2);
         }
         const annotationsBuffer = this.parsingContext.annotationsBuffer[depth];
         if (annotationsBuffer) {
           for (const annotation of annotationsBuffer) {
-            this.emitAnnotation(depth, quad3, annotation);
+            this.emitAnnotation(depth, quad2, annotation);
           }
           delete this.parsingContext.annotationsBuffer[depth];
         }
       }
       // This is a separate function to enable recursion
-      emitAnnotation(depth, quad3, annotation) {
+      emitAnnotation(depth, quad2, annotation) {
         let annotationQuad;
         if (annotation.reverse) {
           this.validateReverseSubject(annotation.object);
-          annotationQuad = this.dataFactory.quad(annotation.object, annotation.predicate, quad3);
+          annotationQuad = this.dataFactory.quad(annotation.object, annotation.predicate, quad2);
         } else {
-          annotationQuad = this.dataFactory.quad(quad3, annotation.predicate, annotation.object);
+          annotationQuad = this.dataFactory.quad(quad2, annotation.predicate, annotation.object);
         }
         this.parsingContext.emitQuad(depth, annotationQuad);
         for (const nestedAnnotation of annotation.nestedAnnotations) {
@@ -18403,18 +14624,18 @@ var require_EntryHandlerArrayValue = __commonJS({
         if (parentKey === "@list") {
           let listRootKey = null;
           let listRootDepth = 0;
-          for (let i6 = depth - 2; i6 > 0; i6--) {
-            const keyOption = keys[i6];
+          for (let i5 = depth - 2; i5 > 0; i5--) {
+            const keyOption = keys[i5];
             if (typeof keyOption === "string" || typeof keyOption === "number") {
-              listRootDepth = i6;
+              listRootDepth = i5;
               listRootKey = keyOption;
               break;
             }
           }
           if (listRootKey !== null) {
             const values = await util.valueToTerm(await parsingContext.getContext(keys), listRootKey, value, depth, keys);
-            for (const object2 of values) {
-              await this.handleListElement(parsingContext, util, object2, value, depth, keys.slice(0, listRootDepth), listRootDepth);
+            for (const object of values) {
+              await this.handleListElement(parsingContext, util, object, value, depth, keys.slice(0, listRootDepth), listRootDepth);
             }
             if (values.length === 0) {
               await this.handleListElement(parsingContext, util, null, value, depth, keys.slice(0, listRootDepth), listRootDepth);
@@ -18423,9 +14644,9 @@ var require_EntryHandlerArrayValue = __commonJS({
         } else if (parentKey === "@set") {
           await parsingContext.newOnValueJob(keys.slice(0, -2), value, depth - 2, false);
         } else if (parentKey !== void 0 && parentKey !== "@type") {
-          for (let i6 = depth - 1; i6 > 0; i6--) {
-            if (typeof keys[i6] !== "number") {
-              parentKey = await util.unaliasKeyword(keys[i6], keys, i6);
+          for (let i5 = depth - 1; i5 > 0; i5--) {
+            if (typeof keys[i5] !== "number") {
+              parentKey = await util.unaliasKeyword(keys[i5], keys, i5);
               break;
             }
           }
@@ -18433,8 +14654,8 @@ var require_EntryHandlerArrayValue = __commonJS({
           if ("@list" in Util_1.Util.getContextValueContainer(parentContext, parentKey)) {
             parsingContext.emittedStack[depth + 1] = true;
             const values = await util.valueToTerm(await parsingContext.getContext(keys), parentKey, value, depth, keys);
-            for (const object2 of values) {
-              await this.handleListElement(parsingContext, util, object2, value, depth, keys.slice(0, -1), depth - 1);
+            for (const object of values) {
+              await this.handleListElement(parsingContext, util, object, value, depth, keys.slice(0, -1), depth - 1);
             }
             if (values.length === 0) {
               await this.handleListElement(parsingContext, util, null, value, depth, keys.slice(0, -1), depth - 1);
@@ -18703,7 +14924,7 @@ var require_EntryHandlerKeywordType = __commonJS({
       async handle(parsingContext, util, key, keys, value, depth) {
         const keyOriginal = keys[depth];
         const context = await parsingContext.getContext(keys);
-        const predicate2 = util.rdfType;
+        const predicate = util.rdfType;
         const parentKey = await util.unaliasKeywordParent(keys, depth);
         const reverse = Util_1.Util.isPropertyReverse(context, keyOriginal, parentKey);
         const isEmbedded = Util_1.Util.isPropertyInEmbeddedNode(parentKey);
@@ -18716,7 +14937,7 @@ var require_EntryHandlerKeywordType = __commonJS({
           }
           const type = util.createVocabOrBaseTerm(context, element);
           if (type) {
-            await EntryHandlerPredicate_1.EntryHandlerPredicate.handlePredicateObject(parsingContext, util, keys, depth, predicate2, type, reverse, isEmbedded, isAnnotation);
+            await EntryHandlerPredicate_1.EntryHandlerPredicate.handlePredicateObject(parsingContext, util, keys, depth, predicate, type, reverse, isEmbedded, isAnnotation);
           }
         }
         let scopedContext = Promise.resolve(context);
@@ -18979,13 +15200,13 @@ var require_ParsingContext = __commonJS({
         const contextData = await this.getContextPropagationAware(keys);
         const context = contextData.context;
         let contextRaw = context.getContextRaw();
-        for (let i6 = contextData.depth; i6 < keysOriginal.length - offset; i6++) {
-          const key = keysOriginal[i6];
+        for (let i5 = contextData.depth; i5 < keysOriginal.length - offset; i5++) {
+          const key = keysOriginal[i5];
           const contextKeyEntry = contextRaw[key];
           if (contextKeyEntry && typeof contextKeyEntry === "object" && "@context" in contextKeyEntry) {
             const scopedContext = (await this.parseContext(contextKeyEntry, contextRaw, true, true)).getContextRaw();
             const propagate = !(key in scopedContext) || scopedContext[key]["@context"]["@propagate"];
-            if (propagate !== false || i6 === keysOriginal.length - 1 - offset) {
+            if (propagate !== false || i5 === keysOriginal.length - 1 - offset) {
               contextRaw = Object.assign({}, scopedContext);
               delete contextRaw["@propagate"];
               contextRaw[key] = Object.assign({}, contextRaw[key]);
@@ -18994,7 +15215,7 @@ var require_ParsingContext = __commonJS({
               }
               delete contextRaw[key]["@context"];
               if (propagate !== false) {
-                this.contextTree.setContext(keysOriginal.slice(0, i6 + offset), Promise.resolve(new jsonld_context_parser_1.JsonLdContextNormalized(contextRaw)));
+                this.contextTree.setContext(keysOriginal.slice(0, i5 + offset), Promise.resolve(new jsonld_context_parser_1.JsonLdContextNormalized(contextRaw)));
               }
             }
           }
@@ -19072,11 +15293,11 @@ var require_ParsingContext = __commonJS({
        * @param {number} depth The depth the quad was generated at.
        * @param {Quad} quad A quad to emit.
        */
-      emitQuad(depth, quad3) {
+      emitQuad(depth, quad2) {
         if (depth === 1) {
           this.topLevelProperties = true;
         }
-        this.parser.push(quad3);
+        this.parser.push(quad2);
       }
       /**
        * Emit the given error into the output stream.
@@ -19308,8 +15529,8 @@ var require_JsonLdParser = __commonJS({
         let streamingProfile;
         if (headers && headers.has("Content-Type")) {
           const contentType = headers.get("Content-Type");
-          const match2 = /; *profile=([^"]*)/.exec(contentType);
-          if (match2 && match2[1] === "http://www.w3.org/ns/json-ld#streaming") {
+          const match = /; *profile=([^"]*)/.exec(contentType);
+          if (match && match[1] === "http://www.w3.org/ns/json-ld#streaming") {
             streamingProfile = true;
           }
         }
@@ -19383,8 +15604,8 @@ var require_JsonLdParser = __commonJS({
         if (this.parsingContext.validationStack.length > 1) {
           inProperty = this.parsingContext.validationStack[this.parsingContext.validationStack.length - 1].property;
         }
-        for (let i6 = Math.max(1, this.parsingContext.validationStack.length - 1); i6 < keys.length - 1; i6++) {
-          const validationResult = this.parsingContext.validationStack[i6] || (this.parsingContext.validationStack[i6] = await this.validateKey(keys.slice(0, i6 + 1), i6, inProperty));
+        for (let i5 = Math.max(1, this.parsingContext.validationStack.length - 1); i5 < keys.length - 1; i5++) {
+          const validationResult = this.parsingContext.validationStack[i5] || (this.parsingContext.validationStack[i5] = await this.validateKey(keys.slice(0, i5 + 1), i5, inProperty));
           if (!validationResult.valid) {
             this.parsingContext.emittedStack[depth] = false;
             handleKey = false;
@@ -19444,21 +15665,21 @@ var require_JsonLdParser = __commonJS({
        * @return {Promise<void>} A promise resolving if flushing is done.
        */
       async flushBuffer(depth, keys) {
-        let subjects2 = this.parsingContext.idStack[depth];
-        const subjectsWasDefined = !!subjects2;
+        let subjects = this.parsingContext.idStack[depth];
+        const subjectsWasDefined = !!subjects;
         if (!subjectsWasDefined) {
-          subjects2 = this.parsingContext.idStack[depth] = [this.util.dataFactory.blankNode()];
+          subjects = this.parsingContext.idStack[depth] = [this.util.dataFactory.blankNode()];
         }
         const valueBuffer = this.parsingContext.unidentifiedValuesBuffer[depth];
         if (valueBuffer) {
-          for (const subject2 of subjects2) {
+          for (const subject of subjects) {
             const depthOffsetGraph = await this.util.getDepthOffsetGraph(depth, keys);
             const graphs = this.parsingContext.graphStack[depth] || depthOffsetGraph >= 0 ? this.parsingContext.idStack[depth - depthOffsetGraph - 1] : [await this.util.getGraphContainerValue(keys, depth)];
             if (graphs) {
               for (const graph of graphs) {
                 this.parsingContext.emittedStack[depth] = true;
                 for (const bufferedValue of valueBuffer) {
-                  this.util.emitQuadChecked(depth, subject2, bufferedValue.predicate, bufferedValue.object, graph, bufferedValue.reverse, bufferedValue.isEmbedded);
+                  this.util.emitQuadChecked(depth, subject, bufferedValue.predicate, bufferedValue.object, graph, bufferedValue.reverse, bufferedValue.isEmbedded);
                 }
               }
             } else {
@@ -19466,7 +15687,7 @@ var require_JsonLdParser = __commonJS({
               for (const bufferedValue of valueBuffer) {
                 if (bufferedValue.reverse) {
                   subGraphBuffer.push({
-                    object: subject2,
+                    object: subject,
                     predicate: bufferedValue.predicate,
                     subject: bufferedValue.object,
                     isEmbedded: bufferedValue.isEmbedded
@@ -19475,7 +15696,7 @@ var require_JsonLdParser = __commonJS({
                   subGraphBuffer.push({
                     object: bufferedValue.object,
                     predicate: bufferedValue.predicate,
-                    subject: subject2,
+                    subject,
                     isEmbedded: bufferedValue.isEmbedded
                   });
                 }
@@ -19488,8 +15709,8 @@ var require_JsonLdParser = __commonJS({
         }
         const graphBuffer = this.parsingContext.unidentifiedGraphsBuffer[depth];
         if (graphBuffer) {
-          for (const subject2 of subjects2) {
-            const graph = depth === 1 && subject2.termType === "BlankNode" && !this.parsingContext.topLevelProperties ? this.util.getDefaultGraph() : subject2;
+          for (const subject of subjects) {
+            const graph = depth === 1 && subject.termType === "BlankNode" && !this.parsingContext.topLevelProperties ? this.util.getDefaultGraph() : subject;
             this.parsingContext.emittedStack[depth] = true;
             for (const bufferedValue of graphBuffer) {
               this.parsingContext.emitQuad(depth, this.util.dataFactory.quad(bufferedValue.subject, bufferedValue.predicate, bufferedValue.object, graph));
@@ -19532,8 +15753,8 @@ var require_JsonLdParser = __commonJS({
       attachJsonParserListeners() {
         this.jsonParser.onValue = (value) => {
           const depth = this.jsonParser.stack.length;
-          const keys = new Array(depth + 1).fill(0).map((v2, i6) => {
-            return i6 === depth ? this.jsonParser.key : this.jsonParser.stack[i6].key;
+          const keys = new Array(depth + 1).fill(0).map((v2, i5) => {
+            return i5 === depth ? this.jsonParser.key : this.jsonParser.stack[i5].key;
           });
           if (!this.isParsingContextInner(depth)) {
             const valueJobCb = () => this.newOnValueJob(keys, value, depth, true);
@@ -19565,8 +15786,8 @@ var require_JsonLdParser = __commonJS({
        * @return {boolean} A boolean.
        */
       isParsingContextInner(depth) {
-        for (let i6 = depth; i6 > 0; i6--) {
-          if (this.jsonParser.stack[i6 - 1].key === "@context") {
+        for (let i5 = depth; i5 > 0; i5--) {
+          if (this.jsonParser.stack[i5 - 1].key === "@context") {
             return true;
           }
         }
@@ -19597,11 +15818,11 @@ var require_JsonLdParser = __commonJS({
           if (this.typeJobs.length > 0) {
             const applicableTypeJobs = [];
             const applicableTypeJobIds = [];
-            for (let i6 = 0; i6 < this.typeJobs.length; i6++) {
-              const typeJob = this.typeJobs[i6];
+            for (let i5 = 0; i5 < this.typeJobs.length; i5++) {
+              const typeJob = this.typeJobs[i5];
               if (Util_1.Util.isPrefixArray(typeJob.keys, job.keys)) {
                 applicableTypeJobs.push(typeJob);
-                applicableTypeJobIds.push(i6);
+                applicableTypeJobIds.push(i5);
               }
             }
             const sortedTypeJobs = applicableTypeJobs.sort((job1, job2) => job1.keys.length - job2.keys.length);
@@ -19641,7 +15862,7 @@ var require_JsonLdParser = __commonJS({
 var require_jsonld_streaming_parser = __commonJS({
   "node_modules/jsonld-streaming-parser/index.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o7, m2, k2, k22) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
       var desc = Object.getOwnPropertyDescriptor(m2, k2);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -19649,10 +15870,10 @@ var require_jsonld_streaming_parser = __commonJS({
           return m2[k2];
         } };
       }
-      Object.defineProperty(o7, k22, desc);
-    }) : (function(o7, m2, k2, k22) {
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
-      o7[k22] = m2[k2];
+      o6[k22] = m2[k2];
     }));
     var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
       for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
@@ -19782,7 +16003,7 @@ var require_decode_codepoint = __commonJS({
 var require_decode = __commonJS({
   "node_modules/entities/lib/decode.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o7, m2, k2, k22) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
       var desc = Object.getOwnPropertyDescriptor(m2, k2);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -19790,15 +16011,15 @@ var require_decode = __commonJS({
           return m2[k2];
         } };
       }
-      Object.defineProperty(o7, k22, desc);
-    }) : (function(o7, m2, k2, k22) {
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
-      o7[k22] = m2[k2];
+      o6[k22] = m2[k2];
     }));
-    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o7, v2) {
-      Object.defineProperty(o7, "default", { enumerable: true, value: v2 });
-    }) : function(o7, v2) {
-      o7["default"] = v2;
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o6, v2) {
+      Object.defineProperty(o6, "default", { enumerable: true, value: v2 });
+    }) : function(o6, v2) {
+      o6["default"] = v2;
     });
     var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule) return mod;
@@ -20815,7 +17036,7 @@ var require_Tokenizer = __commonJS({
 var require_Parser = __commonJS({
   "node_modules/htmlparser2/lib/Parser.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o7, m2, k2, k22) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
       var desc = Object.getOwnPropertyDescriptor(m2, k2);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -20823,15 +17044,15 @@ var require_Parser = __commonJS({
           return m2[k2];
         } };
       }
-      Object.defineProperty(o7, k22, desc);
-    }) : (function(o7, m2, k2, k22) {
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
-      o7[k22] = m2[k2];
+      o6[k22] = m2[k2];
     }));
-    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o7, v2) {
-      Object.defineProperty(o7, "default", { enumerable: true, value: v2 });
-    }) : function(o7, v2) {
-      o7["default"] = v2;
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o6, v2) {
+      Object.defineProperty(o6, "default", { enumerable: true, value: v2 });
+    }) : function(o6, v2) {
+      o6["default"] = v2;
     });
     var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule) return mod;
@@ -21304,30 +17525,30 @@ var require_node = __commonJS({
       };
     })();
     var __assign = exports && exports.__assign || function() {
-      __assign = Object.assign || function(t5) {
-        for (var s4, i6 = 1, n5 = arguments.length; i6 < n5; i6++) {
-          s4 = arguments[i6];
+      __assign = Object.assign || function(t4) {
+        for (var s4, i5 = 1, n5 = arguments.length; i5 < n5; i5++) {
+          s4 = arguments[i5];
           for (var p3 in s4) if (Object.prototype.hasOwnProperty.call(s4, p3))
-            t5[p3] = s4[p3];
+            t4[p3] = s4[p3];
         }
-        return t5;
+        return t4;
       };
       return __assign.apply(this, arguments);
     };
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.cloneNode = exports.hasChildren = exports.isDocument = exports.isDirective = exports.isComment = exports.isText = exports.isCDATA = exports.isTag = exports.Element = exports.Document = exports.CDATA = exports.NodeWithChildren = exports.ProcessingInstruction = exports.Comment = exports.Text = exports.DataNode = exports.Node = void 0;
     var domelementtype_1 = require_lib();
-    var Node2 = (
+    var Node = (
       /** @class */
       (function() {
-        function Node3() {
+        function Node2() {
           this.parent = null;
           this.prev = null;
           this.next = null;
           this.startIndex = null;
           this.endIndex = null;
         }
-        Object.defineProperty(Node3.prototype, "parentNode", {
+        Object.defineProperty(Node2.prototype, "parentNode", {
           // Read-write aliases for properties
           /**
            * Same as {@link parent}.
@@ -21342,7 +17563,7 @@ var require_node = __commonJS({
           enumerable: false,
           configurable: true
         });
-        Object.defineProperty(Node3.prototype, "previousSibling", {
+        Object.defineProperty(Node2.prototype, "previousSibling", {
           /**
            * Same as {@link prev}.
            * [DOM spec](https://dom.spec.whatwg.org)-compatible alias.
@@ -21356,7 +17577,7 @@ var require_node = __commonJS({
           enumerable: false,
           configurable: true
         });
-        Object.defineProperty(Node3.prototype, "nextSibling", {
+        Object.defineProperty(Node2.prototype, "nextSibling", {
           /**
            * Same as {@link next}.
            * [DOM spec](https://dom.spec.whatwg.org)-compatible alias.
@@ -21370,16 +17591,16 @@ var require_node = __commonJS({
           enumerable: false,
           configurable: true
         });
-        Node3.prototype.cloneNode = function(recursive) {
+        Node2.prototype.cloneNode = function(recursive) {
           if (recursive === void 0) {
             recursive = false;
           }
           return cloneNode(this, recursive);
         };
-        return Node3;
+        return Node2;
       })()
     );
-    exports.Node = Node2;
+    exports.Node = Node;
     var DataNode = (
       /** @class */
       (function(_super) {
@@ -21404,7 +17625,7 @@ var require_node = __commonJS({
           configurable: true
         });
         return DataNode2;
-      })(Node2)
+      })(Node)
     );
     exports.DataNode = DataNode;
     var Text = (
@@ -21510,7 +17731,7 @@ var require_node = __commonJS({
           configurable: true
         });
         return NodeWithChildren2;
-      })(Node2)
+      })(Node)
     );
     exports.NodeWithChildren = NodeWithChildren;
     var CDATA = (
@@ -21705,9 +17926,9 @@ var require_node = __commonJS({
       var children = childs.map(function(child) {
         return cloneNode(child, true);
       });
-      for (var i6 = 1; i6 < children.length; i6++) {
-        children[i6].prev = children[i6 - 1];
-        children[i6 - 1].next = children[i6];
+      for (var i5 = 1; i5 < children.length; i5++) {
+        children[i5].prev = children[i5 - 1];
+        children[i5 - 1].next = children[i5];
       }
       return children;
     }
@@ -21718,7 +17939,7 @@ var require_node = __commonJS({
 var require_lib2 = __commonJS({
   "node_modules/domhandler/lib/index.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o7, m2, k2, k22) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
       var desc = Object.getOwnPropertyDescriptor(m2, k2);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -21726,10 +17947,10 @@ var require_lib2 = __commonJS({
           return m2[k2];
         } };
       }
-      Object.defineProperty(o7, k22, desc);
-    }) : (function(o7, m2, k2, k22) {
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
-      o7[k22] = m2[k2];
+      o6[k22] = m2[k2];
     }));
     var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
       for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
@@ -21879,8 +18100,8 @@ var require_encode_html = __commonJS({
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function restoreDiff(arr) {
-      for (var i6 = 1; i6 < arr.length; i6++) {
-        arr[i6][0] += arr[i6 - 1][0] + 1;
+      for (var i5 = 1; i5 < arr.length; i5++) {
+        arr[i5][0] += arr[i5 - 1][0] + 1;
       }
       return arr;
     }
@@ -21914,16 +18135,16 @@ var require_escape = __commonJS({
     function encodeXML(str) {
       var ret = "";
       var lastIdx = 0;
-      var match2;
-      while ((match2 = exports.xmlReplacer.exec(str)) !== null) {
-        var i6 = match2.index;
-        var char = str.charCodeAt(i6);
+      var match;
+      while ((match = exports.xmlReplacer.exec(str)) !== null) {
+        var i5 = match.index;
+        var char = str.charCodeAt(i5);
         var next = xmlCodeMap.get(char);
         if (next !== void 0) {
-          ret += str.substring(lastIdx, i6) + next;
-          lastIdx = i6 + 1;
+          ret += str.substring(lastIdx, i5) + next;
+          lastIdx = i5 + 1;
         } else {
-          ret += "".concat(str.substring(lastIdx, i6), "&#x").concat((0, exports.getCodePoint)(str, i6).toString(16), ";");
+          ret += "".concat(str.substring(lastIdx, i5), "&#x").concat((0, exports.getCodePoint)(str, i5).toString(16), ";");
           lastIdx = exports.xmlReplacer.lastIndex += Number((char & 64512) === 55296);
         }
       }
@@ -21932,16 +18153,16 @@ var require_escape = __commonJS({
     exports.encodeXML = encodeXML;
     exports.escape = encodeXML;
     function getEscaper(regex, map) {
-      return function escape2(data) {
-        var match2;
+      return function escape(data) {
+        var match;
         var lastIdx = 0;
         var result = "";
-        while (match2 = regex.exec(data)) {
-          if (lastIdx !== match2.index) {
-            result += data.substring(lastIdx, match2.index);
+        while (match = regex.exec(data)) {
+          if (lastIdx !== match.index) {
+            result += data.substring(lastIdx, match.index);
           }
-          result += map.get(match2[0].charCodeAt(0));
-          lastIdx = match2.index + 1;
+          result += map.get(match[0].charCodeAt(0));
+          lastIdx = match.index + 1;
         }
         return result + data.substring(lastIdx);
       };
@@ -21984,15 +18205,15 @@ var require_encode = __commonJS({
     function encodeHTMLTrieRe(regExp, str) {
       var ret = "";
       var lastIdx = 0;
-      var match2;
-      while ((match2 = regExp.exec(str)) !== null) {
-        var i6 = match2.index;
-        ret += str.substring(lastIdx, i6);
-        var char = str.charCodeAt(i6);
+      var match;
+      while ((match = regExp.exec(str)) !== null) {
+        var i5 = match.index;
+        ret += str.substring(lastIdx, i5);
+        var char = str.charCodeAt(i5);
         var next = encode_html_js_1.default.get(char);
         if (typeof next === "object") {
-          if (i6 + 1 < str.length) {
-            var nextChar = str.charCodeAt(i6 + 1);
+          if (i5 + 1 < str.length) {
+            var nextChar = str.charCodeAt(i5 + 1);
             var value = typeof next.n === "number" ? next.n === nextChar ? next.o : void 0 : next.n.get(nextChar);
             if (value !== void 0) {
               ret += value;
@@ -22004,9 +18225,9 @@ var require_encode = __commonJS({
         }
         if (next !== void 0) {
           ret += next;
-          lastIdx = i6 + 1;
+          lastIdx = i5 + 1;
         } else {
-          var cp = (0, escape_js_1.getCodePoint)(str, i6);
+          var cp = (0, escape_js_1.getCodePoint)(str, i5);
           ret += "&#x".concat(cp.toString(16), ";");
           lastIdx = regExp.lastIndex += Number(cp !== char);
         }
@@ -22264,17 +18485,17 @@ var require_lib4 = __commonJS({
   "node_modules/dom-serializer/lib/index.js"(exports) {
     "use strict";
     var __assign = exports && exports.__assign || function() {
-      __assign = Object.assign || function(t5) {
-        for (var s4, i6 = 1, n5 = arguments.length; i6 < n5; i6++) {
-          s4 = arguments[i6];
+      __assign = Object.assign || function(t4) {
+        for (var s4, i5 = 1, n5 = arguments.length; i5 < n5; i5++) {
+          s4 = arguments[i5];
           for (var p3 in s4) if (Object.prototype.hasOwnProperty.call(s4, p3))
-            t5[p3] = s4[p3];
+            t4[p3] = s4[p3];
         }
-        return t5;
+        return t4;
       };
       return __assign.apply(this, arguments);
     };
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o7, m2, k2, k22) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
       var desc = Object.getOwnPropertyDescriptor(m2, k2);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -22282,15 +18503,15 @@ var require_lib4 = __commonJS({
           return m2[k2];
         } };
       }
-      Object.defineProperty(o7, k22, desc);
-    }) : (function(o7, m2, k2, k22) {
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
-      o7[k22] = m2[k2];
+      o6[k22] = m2[k2];
     }));
-    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o7, v2) {
-      Object.defineProperty(o7, "default", { enumerable: true, value: v2 });
-    }) : function(o7, v2) {
-      o7["default"] = v2;
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o6, v2) {
+      Object.defineProperty(o6, "default", { enumerable: true, value: v2 });
+    }) : function(o6, v2) {
+      o6["default"] = v2;
     });
     var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule) return mod;
@@ -22357,23 +18578,23 @@ var require_lib4 = __commonJS({
       "track",
       "wbr"
     ]);
-    function render2(node, options) {
+    function render(node, options) {
       if (options === void 0) {
         options = {};
       }
       var nodes = "length" in node ? node : [node];
       var output = "";
-      for (var i6 = 0; i6 < nodes.length; i6++) {
-        output += renderNode(nodes[i6], options);
+      for (var i5 = 0; i5 < nodes.length; i5++) {
+        output += renderNode(nodes[i5], options);
       }
       return output;
     }
-    exports.render = render2;
-    exports.default = render2;
+    exports.render = render;
+    exports.default = render;
     function renderNode(node, options) {
       switch (node.type) {
         case ElementType.Root:
-          return render2(node.children, options);
+          return render(node.children, options);
         // @ts-expect-error We don't use `Doctype` yet
         case ElementType.Doctype:
         case ElementType.Directive:
@@ -22431,7 +18652,7 @@ var require_lib4 = __commonJS({
       } else {
         tag += ">";
         if (elem.children.length > 0) {
-          tag += render2(elem.children, opts);
+          tag += render(elem.children, opts);
         }
         if (opts.xmlMode || !singleTag.has(elem.name)) {
           tag += "</".concat(elem.name, ">");
@@ -22738,8 +18959,8 @@ var require_querying = __commonJS({
         recurse = true;
       }
       var searchedNodes = Array.isArray(nodes) ? nodes : [nodes];
-      for (var i6 = 0; i6 < searchedNodes.length; i6++) {
-        var node = searchedNodes[i6];
+      for (var i5 = 0; i5 < searchedNodes.length; i5++) {
+        var node = searchedNodes[i5];
         if ((0, domhandler_1.isTag)(node) && test(node)) {
           return node;
         }
@@ -22974,8 +19195,8 @@ var require_helpers = __commonJS({
       return DocumentPosition.PRECEDING;
     }
     function uniqueSort(nodes) {
-      nodes = nodes.filter(function(node, i6, arr) {
-        return !arr.includes(node, i6 + 1);
+      nodes = nodes.filter(function(node, i5, arr) {
+        return !arr.includes(node, i5 + 1);
       });
       nodes.sort(function(a3, b3) {
         var relative = compareDocumentPosition(a3, b3);
@@ -23135,7 +19356,7 @@ var require_feeds = __commonJS({
 var require_lib5 = __commonJS({
   "node_modules/domutils/lib/index.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o7, m2, k2, k22) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
       var desc = Object.getOwnPropertyDescriptor(m2, k2);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -23143,10 +19364,10 @@ var require_lib5 = __commonJS({
           return m2[k2];
         } };
       }
-      Object.defineProperty(o7, k22, desc);
-    }) : (function(o7, m2, k2, k22) {
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
-      o7[k22] = m2[k2];
+      o6[k22] = m2[k2];
     }));
     var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
       for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
@@ -23186,7 +19407,7 @@ var require_lib5 = __commonJS({
 var require_lib6 = __commonJS({
   "node_modules/htmlparser2/lib/index.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o7, m2, k2, k22) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
       var desc = Object.getOwnPropertyDescriptor(m2, k2);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -23194,15 +19415,15 @@ var require_lib6 = __commonJS({
           return m2[k2];
         } };
       }
-      Object.defineProperty(o7, k22, desc);
-    }) : (function(o7, m2, k2, k22) {
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
-      o7[k22] = m2[k2];
+      o6[k22] = m2[k2];
     }));
-    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o7, v2) {
-      Object.defineProperty(o7, "default", { enumerable: true, value: v2 });
-    }) : function(o7, v2) {
-      o7["default"] = v2;
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o6, v2) {
+      Object.defineProperty(o6, "default", { enumerable: true, value: v2 });
+    }) : function(o6, v2) {
+      o6["default"] = v2;
     });
     var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule) return mod;
@@ -23500,14 +19721,14 @@ var require_Util3 = __commonJS({
           }
         }
         if (attributes.prefix || Object.keys(additionalPrefixes).length > 0) {
-          const prefixes2 = Object.assign(Object.assign({}, parentPrefixes), additionalPrefixes);
+          const prefixes = Object.assign(Object.assign({}, parentPrefixes), additionalPrefixes);
           if (attributes.prefix) {
             let prefixMatch;
             while (prefixMatch = _Util.PREFIX_REGEX.exec(attributes.prefix)) {
-              prefixes2[prefixMatch[1]] = prefixMatch[2];
+              prefixes[prefixMatch[1]] = prefixMatch[2];
             }
           }
-          return prefixes2;
+          return prefixes;
         } else {
           return parentPrefixes;
         }
@@ -23520,17 +19741,17 @@ var require_Util3 = __commonJS({
        */
       static expandPrefixedTerm(term, activeTag) {
         const colonIndex = term.indexOf(":");
-        let prefix2;
+        let prefix;
         let local;
         if (colonIndex >= 0) {
-          prefix2 = term.substr(0, colonIndex);
+          prefix = term.substr(0, colonIndex);
           local = term.substr(colonIndex + 1);
         }
-        if (prefix2 === "") {
+        if (prefix === "") {
           return "http://www.w3.org/1999/xhtml/vocab#" + local;
         }
-        if (prefix2) {
-          const prefixElement = activeTag.prefixesAll[prefix2];
+        if (prefix) {
+          const prefixElement = activeTag.prefixesAll[prefix];
           if (prefixElement) {
             return prefixElement + local;
           }
@@ -23599,17 +19820,17 @@ var require_Util3 = __commonJS({
        * @param {IActiveTag} activeTag The current active tag.
        * @return {Literal} A new literal node.
        */
-      createLiteral(literal3, activeTag) {
+      createLiteral(literal2, activeTag) {
         var _a;
         if (activeTag.interpretObjectAsTime && !activeTag.datatype) {
           for (const entry of _Util.TIME_REGEXES) {
-            if (literal3.match(entry.regex)) {
+            if (literal2.match(entry.regex)) {
               activeTag.datatype = this.dataFactory.namedNode(_Util.XSD + entry.type);
               break;
             }
           }
         }
-        return this.dataFactory.literal(literal3, activeTag.datatype || ((_a = activeTag.language) === null || _a === void 0 ? void 0 : _a.toLowerCase()));
+        return this.dataFactory.literal(literal2, activeTag.datatype || ((_a = activeTag.language) === null || _a === void 0 ? void 0 : _a.toLowerCase()));
       }
       /**
        * Create a blank node.
@@ -23765,9 +19986,9 @@ var require_RdfaParser = __commonJS({
         };
         this.activeTagStack.push(activeTag);
         if (activeTag.collectChildTags) {
-          for (const prefix2 of Object.keys(parentTag.prefixesCustom).sort()) {
-            const suffix = parentTag.prefixesCustom[prefix2];
-            const attributeKey = prefix2 === "" ? "xmlns" : "xmlns:" + prefix2;
+          for (const prefix of Object.keys(parentTag.prefixesCustom).sort()) {
+            const suffix = parentTag.prefixesCustom[prefix];
+            const attributeKey = prefix === "" ? "xmlns" : "xmlns:" + prefix;
             if (!(attributeKey in attributes)) {
               attributes[attributeKey] = suffix;
             }
@@ -23971,19 +20192,19 @@ var require_RdfaParser = __commonJS({
         }
         if (currentObjectResource) {
           if ("rel" in attributes && "inlist" in attributes) {
-            for (const predicate2 of this.util.createVocabIris(attributes.rel, activeTag, allowTermsInRelPredicates, false)) {
-              this.addListMapping(activeTag, newSubject, predicate2, currentObjectResource);
+            for (const predicate of this.util.createVocabIris(attributes.rel, activeTag, allowTermsInRelPredicates, false)) {
+              this.addListMapping(activeTag, newSubject, predicate, currentObjectResource);
             }
           }
           if (!("rel" in attributes && "inlist" in attributes)) {
             if ("rel" in attributes) {
-              for (const predicate2 of this.util.createVocabIris(attributes.rel, activeTag, allowTermsInRelPredicates, false)) {
-                this.emitTriple(this.util.getResourceOrBaseIri(newSubject, activeTag), predicate2, this.util.getResourceOrBaseIri(currentObjectResource, activeTag));
+              for (const predicate of this.util.createVocabIris(attributes.rel, activeTag, allowTermsInRelPredicates, false)) {
+                this.emitTriple(this.util.getResourceOrBaseIri(newSubject, activeTag), predicate, this.util.getResourceOrBaseIri(currentObjectResource, activeTag));
               }
             }
             if ("rev" in attributes) {
-              for (const predicate2 of this.util.createVocabIris(attributes.rev, activeTag, allowTermsInRevPredicates, false)) {
-                this.emitTriple(this.util.getResourceOrBaseIri(currentObjectResource, activeTag), predicate2, this.util.getResourceOrBaseIri(newSubject, activeTag));
+              for (const predicate of this.util.createVocabIris(attributes.rev, activeTag, allowTermsInRevPredicates, false)) {
+                this.emitTriple(this.util.getResourceOrBaseIri(currentObjectResource, activeTag), predicate, this.util.getResourceOrBaseIri(newSubject, activeTag));
               }
             }
           }
@@ -23991,19 +20212,19 @@ var require_RdfaParser = __commonJS({
         if (!currentObjectResource) {
           if ("rel" in attributes) {
             if ("inlist" in attributes) {
-              for (const predicate2 of this.util.createVocabIris(attributes.rel, activeTag, allowTermsInRelPredicates, false)) {
-                this.addListMapping(activeTag, newSubject, predicate2, null);
-                activeTag.incompleteTriples.push({ predicate: predicate2, reverse: false, list: true });
+              for (const predicate of this.util.createVocabIris(attributes.rel, activeTag, allowTermsInRelPredicates, false)) {
+                this.addListMapping(activeTag, newSubject, predicate, null);
+                activeTag.incompleteTriples.push({ predicate, reverse: false, list: true });
               }
             } else {
-              for (const predicate2 of this.util.createVocabIris(attributes.rel, activeTag, allowTermsInRelPredicates, false)) {
-                activeTag.incompleteTriples.push({ predicate: predicate2, reverse: false });
+              for (const predicate of this.util.createVocabIris(attributes.rel, activeTag, allowTermsInRelPredicates, false)) {
+                activeTag.incompleteTriples.push({ predicate, reverse: false });
               }
             }
           }
           if ("rev" in attributes) {
-            for (const predicate2 of this.util.createVocabIris(attributes.rev, activeTag, allowTermsInRevPredicates, false)) {
-              activeTag.incompleteTriples.push({ predicate: predicate2, reverse: true });
+            for (const predicate of this.util.createVocabIris(attributes.rev, activeTag, allowTermsInRevPredicates, false)) {
+              activeTag.incompleteTriples.push({ predicate, reverse: true });
             }
           }
           if (activeTag.incompleteTriples.length > 0) {
@@ -24039,42 +20260,42 @@ var require_RdfaParser = __commonJS({
             activeTag.collectChildTagsForCurrentTag = false;
           }
           if ("content" in attributes) {
-            const object2 = this.util.createLiteral(attributes.content, activeTag);
+            const object = this.util.createLiteral(attributes.content, activeTag);
             if ("inlist" in attributes) {
-              for (const predicate2 of activeTag.predicates) {
-                this.addListMapping(activeTag, newSubject, predicate2, object2);
+              for (const predicate of activeTag.predicates) {
+                this.addListMapping(activeTag, newSubject, predicate, object);
               }
             } else {
-              const subject2 = this.util.getResourceOrBaseIri(newSubject, activeTag);
-              for (const predicate2 of activeTag.predicates) {
-                this.emitTriple(subject2, predicate2, object2);
+              const subject = this.util.getResourceOrBaseIri(newSubject, activeTag);
+              for (const predicate of activeTag.predicates) {
+                this.emitTriple(subject, predicate, object);
               }
             }
             activeTag.predicates = null;
           } else if (this.features.datetimeAttribute && "datetime" in attributes) {
             activeTag.interpretObjectAsTime = true;
-            const object2 = this.util.createLiteral(attributes.datetime, activeTag);
+            const object = this.util.createLiteral(attributes.datetime, activeTag);
             if ("inlist" in attributes) {
-              for (const predicate2 of activeTag.predicates) {
-                this.addListMapping(activeTag, newSubject, predicate2, object2);
+              for (const predicate of activeTag.predicates) {
+                this.addListMapping(activeTag, newSubject, predicate, object);
               }
             } else {
-              const subject2 = this.util.getResourceOrBaseIri(newSubject, activeTag);
-              for (const predicate2 of activeTag.predicates) {
-                this.emitTriple(subject2, predicate2, object2);
+              const subject = this.util.getResourceOrBaseIri(newSubject, activeTag);
+              for (const predicate of activeTag.predicates) {
+                this.emitTriple(subject, predicate, object);
               }
             }
             activeTag.predicates = null;
           } else if (localObjectResource) {
-            const object2 = this.util.getResourceOrBaseIri(localObjectResource, activeTag);
+            const object = this.util.getResourceOrBaseIri(localObjectResource, activeTag);
             if ("inlist" in attributes) {
-              for (const predicate2 of activeTag.predicates) {
-                this.addListMapping(activeTag, newSubject, predicate2, object2);
+              for (const predicate of activeTag.predicates) {
+                this.addListMapping(activeTag, newSubject, predicate, object);
               }
             } else {
-              const subject2 = this.util.getResourceOrBaseIri(newSubject, activeTag);
-              for (const predicate2 of activeTag.predicates) {
-                this.emitTriple(subject2, predicate2, object2);
+              const subject = this.util.getResourceOrBaseIri(newSubject, activeTag);
+              for (const predicate of activeTag.predicates) {
+                this.emitTriple(subject, predicate, object);
               }
             }
             activeTag.predicates = null;
@@ -24083,24 +20304,24 @@ var require_RdfaParser = __commonJS({
         let incompleteTriplesCompleted = false;
         if (!activeTag.skipElement && newSubject && parentTag.incompleteTriples.length > 0) {
           incompleteTriplesCompleted = true;
-          const subject2 = this.util.getResourceOrBaseIri(parentTag.subject, activeTag);
-          const object2 = this.util.getResourceOrBaseIri(newSubject, activeTag);
+          const subject = this.util.getResourceOrBaseIri(parentTag.subject, activeTag);
+          const object = this.util.getResourceOrBaseIri(newSubject, activeTag);
           for (const incompleteTriple of parentTag.incompleteTriples) {
             if (!incompleteTriple.reverse) {
               if (incompleteTriple.list) {
                 let firstInListTag = null;
-                for (let i6 = this.activeTagStack.length - 1; i6 >= 0; i6--) {
-                  if (this.activeTagStack[i6].inlist) {
-                    firstInListTag = this.activeTagStack[i6];
+                for (let i5 = this.activeTagStack.length - 1; i5 >= 0; i5--) {
+                  if (this.activeTagStack[i5].inlist) {
+                    firstInListTag = this.activeTagStack[i5];
                     break;
                   }
                 }
-                this.addListMapping(firstInListTag, newSubject, incompleteTriple.predicate, object2);
+                this.addListMapping(firstInListTag, newSubject, incompleteTriple.predicate, object);
               } else {
-                this.emitTriple(subject2, incompleteTriple.predicate, object2);
+                this.emitTriple(subject, incompleteTriple.predicate, object);
               }
             } else {
-              this.emitTriple(object2, incompleteTriple.predicate, subject2);
+              this.emitTriple(object, incompleteTriple.predicate, subject);
             }
           }
         }
@@ -24144,7 +20365,7 @@ var require_RdfaParser = __commonJS({
             return;
           }
           if (activeTag.predicates) {
-            const subject2 = this.util.getResourceOrBaseIri(activeTag.subject, activeTag);
+            const subject = this.util.getResourceOrBaseIri(activeTag.subject, activeTag);
             let textSegments;
             if (!activeTag.collectChildTagsForCurrentTag) {
               textSegments = activeTag.textWithoutTags || [];
@@ -24154,14 +20375,14 @@ var require_RdfaParser = __commonJS({
                 textSegments = textSegments.slice(1);
               }
             }
-            const object2 = this.util.createLiteral(textSegments.join(""), activeTag);
+            const object = this.util.createLiteral(textSegments.join(""), activeTag);
             if (activeTag.inlist) {
-              for (const predicate2 of activeTag.predicates) {
-                this.addListMapping(activeTag, subject2, predicate2, object2);
+              for (const predicate of activeTag.predicates) {
+                this.addListMapping(activeTag, subject, predicate, object);
               }
             } else {
-              for (const predicate2 of activeTag.predicates) {
-                this.emitTriple(subject2, predicate2, object2);
+              for (const predicate of activeTag.predicates) {
+                this.emitTriple(subject, predicate, object);
               }
             }
             if (!parentTag.predicates) {
@@ -24170,20 +20391,20 @@ var require_RdfaParser = __commonJS({
             }
           }
           if (activeTag.object && Object.keys(activeTag.listMapping).length > 0) {
-            const subject2 = this.util.getResourceOrBaseIri(activeTag.object, activeTag);
+            const subject = this.util.getResourceOrBaseIri(activeTag.object, activeTag);
             for (const predicateValue in activeTag.listMapping) {
-              const predicate2 = this.util.dataFactory.namedNode(predicateValue);
+              const predicate = this.util.dataFactory.namedNode(predicateValue);
               const values = activeTag.listMapping[predicateValue];
               if (values.length > 0) {
                 const bnodes = values.map(() => this.util.createBlankNode());
-                for (let i6 = 0; i6 < values.length; i6++) {
-                  const object2 = this.util.getResourceOrBaseIri(values[i6], activeTag);
-                  this.emitTriple(bnodes[i6], this.util.dataFactory.namedNode(Util_1.Util.RDF + "first"), object2);
-                  this.emitTriple(bnodes[i6], this.util.dataFactory.namedNode(Util_1.Util.RDF + "rest"), i6 < values.length - 1 ? bnodes[i6 + 1] : this.util.dataFactory.namedNode(Util_1.Util.RDF + "nil"));
+                for (let i5 = 0; i5 < values.length; i5++) {
+                  const object = this.util.getResourceOrBaseIri(values[i5], activeTag);
+                  this.emitTriple(bnodes[i5], this.util.dataFactory.namedNode(Util_1.Util.RDF + "first"), object);
+                  this.emitTriple(bnodes[i5], this.util.dataFactory.namedNode(Util_1.Util.RDF + "rest"), i5 < values.length - 1 ? bnodes[i5 + 1] : this.util.dataFactory.namedNode(Util_1.Util.RDF + "nil"));
                 }
-                this.emitTriple(subject2, predicate2, bnodes[0]);
+                this.emitTriple(subject, predicate, bnodes[0]);
               } else {
-                this.emitTriple(subject2, predicate2, this.util.dataFactory.namedNode(Util_1.Util.RDF + "nil"));
+                this.emitTriple(subject, predicate, this.util.dataFactory.namedNode(Util_1.Util.RDF + "nil"));
               }
             }
           }
@@ -24249,16 +20470,16 @@ var require_RdfaParser = __commonJS({
        * @param {Term} predicate A predicate term.
        * @param {Term | boolean} currentObjectResource The current object resource.
        */
-      addListMapping(activeTag, subject2, predicate2, currentObjectResource) {
+      addListMapping(activeTag, subject, predicate, currentObjectResource) {
         if (activeTag.explicitNewSubject) {
           const bNode = this.util.createBlankNode();
-          this.emitTriple(this.util.getResourceOrBaseIri(subject2, activeTag), predicate2, bNode);
+          this.emitTriple(this.util.getResourceOrBaseIri(subject, activeTag), predicate, bNode);
           this.emitTriple(bNode, this.util.dataFactory.namedNode(Util_1.Util.RDF + "first"), this.util.getResourceOrBaseIri(currentObjectResource, activeTag));
           this.emitTriple(bNode, this.util.dataFactory.namedNode(Util_1.Util.RDF + "rest"), this.util.dataFactory.namedNode(Util_1.Util.RDF + "nil"));
         } else {
-          let predicateList = activeTag.listMappingLocal[predicate2.value];
+          let predicateList = activeTag.listMappingLocal[predicate.value];
           if (!predicateList) {
-            activeTag.listMappingLocal[predicate2.value] = predicateList = [];
+            activeTag.listMappingLocal[predicate.value] = predicateList = [];
           }
           if (currentObjectResource) {
             predicateList.push(currentObjectResource);
@@ -24271,11 +20492,11 @@ var require_RdfaParser = __commonJS({
        * @param {Term} predicate A predicate term.
        * @param {Term} object An object term.
        */
-      emitTriple(subject2, predicate2, object2) {
-        if (subject2.termType === "NamedNode" && subject2.value.indexOf(":") < 0 || predicate2.termType === "NamedNode" && predicate2.value.indexOf(":") < 0 || object2.termType === "NamedNode" && object2.value.indexOf(":") < 0) {
+      emitTriple(subject, predicate, object) {
+        if (subject.termType === "NamedNode" && subject.value.indexOf(":") < 0 || predicate.termType === "NamedNode" && predicate.value.indexOf(":") < 0 || object.termType === "NamedNode" && object.value.indexOf(":") < 0) {
           return;
         }
-        this.push(this.util.dataFactory.quad(subject2, predicate2, object2, this.defaultGraph));
+        this.push(this.util.dataFactory.quad(subject, predicate, object, this.defaultGraph));
       }
       /**
        * Emit an instantiation of the given pattern with the given parent tag.
@@ -24332,8 +20553,8 @@ var require_RdfaParser = __commonJS({
               if (this.htmlParseListener) {
                 this.htmlParseListener.onTagClose();
               }
-            } catch (e8) {
-              this.emit("error", e8);
+            } catch (e5) {
+              this.emit("error", e5);
             }
           },
           onend: () => {
@@ -24342,8 +20563,8 @@ var require_RdfaParser = __commonJS({
               if (this.htmlParseListener) {
                 this.htmlParseListener.onEnd();
               }
-            } catch (e8) {
-              this.emit("error", e8);
+            } catch (e5) {
+              this.emit("error", e5);
             }
           },
           onopentag: (name, attributes) => {
@@ -24352,8 +20573,8 @@ var require_RdfaParser = __commonJS({
               if (this.htmlParseListener) {
                 this.htmlParseListener.onTagOpen(name, attributes);
               }
-            } catch (e8) {
-              this.emit("error", e8);
+            } catch (e5) {
+              this.emit("error", e5);
             }
           },
           ontext: (data) => {
@@ -24362,8 +20583,8 @@ var require_RdfaParser = __commonJS({
               if (this.htmlParseListener) {
                 this.htmlParseListener.onText(data);
               }
-            } catch (e8) {
-              this.emit("error", e8);
+            } catch (e5) {
+              this.emit("error", e5);
             }
           }
         }, {
@@ -24381,7 +20602,7 @@ var require_RdfaParser = __commonJS({
 var require_rdfa_streaming_parser = __commonJS({
   "node_modules/rdfa-streaming-parser/index.js"(exports) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o7, m2, k2, k22) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
       var desc = Object.getOwnPropertyDescriptor(m2, k2);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -24389,10 +20610,10 @@ var require_rdfa_streaming_parser = __commonJS({
           return m2[k2];
         } };
       }
-      Object.defineProperty(o7, k22, desc);
-    }) : (function(o7, m2, k2, k22) {
+      Object.defineProperty(o6, k22, desc);
+    }) : (function(o6, m2, k2, k22) {
       if (k22 === void 0) k22 = k2;
-      o7[k22] = m2[k2];
+      o6[k22] = m2[k2];
     }));
     var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
       for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
@@ -24407,1702 +20628,50 @@ var require_rdfa_streaming_parser = __commonJS({
   }
 });
 
-// node_modules/rdf-lens/dist/lens.js
-function termToString(term) {
-  if (term.termType === "NamedNode") {
-    return "<" + term.value + ">";
-  }
-  if (term.termType === "BlankNode") {
-    return "_:" + term.value;
-  }
-  return JSON.stringify(term.value);
-}
-function createContext() {
-  const ctx = {
-    stateMap: /* @__PURE__ */ new Map(),
-    lineage: []
-  };
-  const clone = () => ({
-    clone,
-    stateMap: ctx.stateMap,
-    lineage: ctx.lineage.slice()
-  });
-  return Object.assign(ctx, { clone });
-}
-function deconstructList(x2) {
-  if (x2.length == 1) {
-    return x2[0];
-  }
-  return x2;
-}
-function asList(x2) {
-  if (Array.isArray(x2))
-    return x2;
-  return [x2];
-}
-function pred(pred2) {
-  return new BasicLensM(({ quads, id }) => {
-    const out = quads.filter((q) => q.subject.equals(id) && (!pred2 || q.predicate.equals(pred2)));
-    return out.map((q) => ({ quads, id: q.object }));
-  }).named("pred", pred2 && termToString(pred2));
-}
-function invPred(pred2) {
-  return new BasicLensM(({ quads, id }) => {
-    const out = quads.filter((q) => q.object.equals(id) && (!pred2 || q.predicate.equals(pred2)));
-    return out.map((q) => ({ quads, id: q.subject }));
-  }).named("invPred", pred2 && termToString(pred2));
-}
-function predTriple(pred2) {
-  return new BasicLensM(({ quads, id }) => {
-    const out = quads.filter((q) => q.subject.equals(id) && (!pred2 || q.predicate.equals(pred2)));
-    return out.map((q) => ({ quads, id: q }));
-  }).named("predTriple");
-}
-function unique() {
-  return new BasicLensM((qs) => {
-    const literals = {};
-    const named = {};
-    const blank = {};
-    for (const q of qs) {
-      const ty = q.id.termType;
-      if (ty === "Literal")
-        literals[q.id.value] = q;
-      if (ty === "NamedNode")
-        named[q.id.value] = q;
-      if (ty === "BlankNode")
-        blank[q.id.value] = q;
-    }
-    const out = [];
-    out.push(...Object.values(literals));
-    out.push(...Object.values(named));
-    out.push(...Object.values(blank));
-    return out;
-  }).named("unique");
-}
-function subjects() {
-  return new BasicLensM((quads) => {
-    return quads.map((x2) => ({ id: x2.subject, quads }));
-  }).named("subjects");
-}
-function match(subject2, predicate2, object2) {
-  return new BasicLensM((quads) => {
-    return quads.filter((x2) => (!subject2 || x2.subject.equals(subject2)) && (!predicate2 || x2.predicate.equals(predicate2)) && (!object2 || x2.object.equals(object2))).map((id) => ({ id, quads }));
-  }).named("match", { subject: subject2 && termToString(subject2), predicate: predicate2 && termToString(predicate2), object: object2 && termToString(object2) });
-}
-function empty() {
-  return new BasicLens((x2) => x2);
-}
-var LensError, BasicLens, BasicLensM, subject, predicate, object;
-var init_lens = __esm({
-  "node_modules/rdf-lens/dist/lens.js"() {
-    "use strict";
-    LensError = class extends Error {
-      constructor(message, lineage) {
-        super(message);
-        __publicField(this, "lineage");
-        this.message = message;
-        this.lineage = lineage;
-      }
-    };
-    BasicLens = class _BasicLens {
-      constructor(execute) {
-        __publicField(this, "_exec");
-        __publicField(this, "index");
-        this._exec = execute;
-      }
-      named(name, opts, cb) {
-        return new _BasicLens((c4, ctx) => {
-          let extras = asList(opts) || [];
-          if (cb) {
-            extras = [...extras, ...asList(cb(c4))];
-          }
-          ctx.lineage.push({ name, opts: deconstructList(extras) });
-          return this.execute(c4, ctx);
-        });
-      }
-      asMulti() {
-        return new BasicLensM((c4, ctx) => {
-          const out = this.execute(c4, ctx);
-          return out;
-        });
-      }
-      and(...and) {
-        return new _BasicLens((c4, ctx) => {
-          const a3 = this.execute(c4, ctx);
-          const rest = and.map((x2) => x2.execute(c4, ctx));
-          return [a3, ...rest];
-        });
-      }
-      orM(...others) {
-        return new BasicLensM((c4, ctx) => {
-          const all = [this, ...others];
-          return all.flatMap((x2) => {
-            try {
-              return [x2.execute(c4, ctx.clone())];
-            } catch (ex) {
-              return [];
-            }
-          });
-        });
-      }
-      or(...others) {
-        return new _BasicLens((c4, ctx) => {
-          const errors = [];
-          try {
-            return this.execute(c4, ctx);
-          } catch (ex) {
-            errors.push(ex);
-            for (let i6 = 0; i6 < others.length; i6++) {
-              try {
-                return others[i6].execute(c4, ctx.clone());
-              } catch (ex2) {
-                errors.push(ex2);
-              }
-            }
-          }
-          throw errors;
-        });
-      }
-      map(fn) {
-        return new _BasicLens((c4, ctx) => {
-          const a3 = this.execute(c4, ctx);
-          return fn(a3, ctx);
-        });
-      }
-      then(next) {
-        return new _BasicLens((c4, ctx) => {
-          const a3 = this.execute(c4, ctx);
-          return next.execute(a3, ctx);
-        });
-      }
-      execute(container, ctx = createContext()) {
-        return this._exec(container, ctx);
-      }
-    };
-    BasicLensM = class _BasicLensM extends BasicLens {
-      named(name, opts, cb) {
-        return new _BasicLensM((c4, ctx) => {
-          let extras = asList(opts) || [];
-          if (cb) {
-            extras = [...extras, ...asList(cb(c4))];
-          }
-          ctx.lineage.push({ name, opts: deconstructList(extras) });
-          return this.execute(c4, ctx);
-        });
-      }
-      one(def) {
-        return new BasicLens((c4, ctx) => {
-          const qs = this.execute(c4, ctx);
-          return qs[0] || def;
-        });
-      }
-      expectOne() {
-        return new BasicLens((c4, ctx) => {
-          const qs = this.execute(c4, ctx);
-          if (qs.length < 1)
-            throw new LensError("Expected one, found none", ctx.lineage.slice());
-          return qs[0];
-        });
-      }
-      thenAll(next) {
-        return new _BasicLensM((c4, ctx) => {
-          const qs = this.execute(c4, ctx.clone());
-          return qs.map((x2) => next.execute(x2, ctx.clone()));
-        });
-      }
-      thenSome(next) {
-        return new _BasicLensM((c4, ctx) => {
-          const qs = this.execute(c4, ctx.clone());
-          return qs.flatMap((x2) => {
-            try {
-              const o7 = next.execute(x2, ctx.clone());
-              return [o7];
-            } catch (ex) {
-              return [];
-            }
-          });
-        });
-      }
-      thenFlat(next) {
-        return new _BasicLensM((c4, ctx) => {
-          const qs = this.execute(c4, ctx.clone());
-          return qs.flatMap((x2) => next.execute(x2, ctx.clone()));
-        });
-      }
-      mapAll(fn) {
-        return new _BasicLensM((c4, ctx) => {
-          const qs = this.execute(c4, ctx);
-          return qs.map((x2) => fn(x2, ctx));
-        });
-      }
-      orAll(...others) {
-        return new _BasicLensM((c4, ctx) => {
-          const out = [];
-          try {
-            out.push(...this.execute(c4, ctx.clone()));
-          } catch (ex) {
-          }
-          for (let i6 = 0; i6 < others.length; i6++) {
-            try {
-              out.push(...others[i6].execute(c4, ctx.clone()));
-            } catch (ex) {
-            }
-          }
-          return out;
-        });
-      }
-      filter(fn) {
-        return new _BasicLensM((c4, ctx) => {
-          return this.execute(c4, ctx).filter(fn);
-        });
-      }
-      reduce(lens, start) {
-        return new BasicLens((c4, ctx) => {
-          const st = this.and(start).map(([ts, f3]) => {
-            return ts.reduce((acc, v2) => lens.execute([v2, acc], ctx), f3);
-          });
-          return st.execute(c4, ctx);
-        });
-      }
-    };
-    subject = new BasicLens(({ id, quads }) => ({
-      id: id.subject,
-      quads
-    })).named("subject");
-    predicate = new BasicLens(({ id, quads }) => ({
-      id: id.predicate,
-      quads
-    })).named("predicate");
-    object = new BasicLens(({ id, quads }) => ({
-      id: id.object,
-      quads
-    })).named("object");
-  }
-});
-
-// node_modules/@treecg/types/dist/lib/Bucketizer.js
-var require_Bucketizer = __commonJS({
-  "node_modules/@treecg/types/dist/lib/Bucketizer.js"(exports) {
-    "use strict";
-    exports.__esModule = true;
-  }
-});
-
-// node_modules/@treecg/types/dist/lib/BucketizerOptions.js
-var require_BucketizerOptions = __commonJS({
-  "node_modules/@treecg/types/dist/lib/BucketizerOptions.js"(exports) {
-    "use strict";
-    exports.__esModule = true;
-  }
-});
-
-// node_modules/@treecg/types/dist/lib/Fragment.js
-var require_Fragment = __commonJS({
-  "node_modules/@treecg/types/dist/lib/Fragment.js"(exports) {
-    "use strict";
-    exports.__esModule = true;
-  }
-});
-
-// node_modules/@treecg/types/dist/lib/Member.js
-var require_Member = __commonJS({
-  "node_modules/@treecg/types/dist/lib/Member.js"(exports) {
-    "use strict";
-    exports.__esModule = true;
-  }
-});
-
-// node_modules/@treecg/types/dist/lib/RelationParameters.js
-var require_RelationParameters = __commonJS({
-  "node_modules/@treecg/types/dist/lib/RelationParameters.js"(exports) {
-    "use strict";
-    exports.__esModule = true;
-    exports.RelationType = void 0;
-    var RelationType;
-    (function(RelationType2) {
-      RelationType2["Relation"] = "https://w3id.org/tree#Relation";
-      RelationType2["Substring"] = "https://w3id.org/tree#SubstringRelation";
-      RelationType2["Prefix"] = "https://w3id.org/tree#PrefixRelation";
-      RelationType2["Suffix"] = "https://w3id.org/tree#SuffixRelation";
-      RelationType2["GreaterThan"] = "https://w3id.org/tree#GreaterThanRelation";
-      RelationType2["GreaterThanOrEqualTo"] = "https://w3id.org/tree#GreaterThanOrEqualToRelation";
-      RelationType2["LessThan"] = "https://w3id.org/tree#LessThanRelation";
-      RelationType2["LessThanOrEqualTo"] = "https://w3id.org/tree#LessThanOrEqualToRelation";
-      RelationType2["EqualThan"] = "https://w3id.org/tree#EqualThanRelation";
-      RelationType2["GeospatiallyContains"] = "https://w3id.org/tree#GeospatiallyContainsRelation";
-    })(RelationType = exports.RelationType || (exports.RelationType = {}));
-  }
-});
-
-// node_modules/loglevel/lib/loglevel.js
-var require_loglevel = __commonJS({
-  "node_modules/loglevel/lib/loglevel.js"(exports, module) {
-    "use strict";
-    (function(root, definition) {
-      "use strict";
-      if (typeof define === "function" && define.amd) {
-        define(definition);
-      } else if (typeof module === "object" && module.exports) {
-        module.exports = definition();
-      } else {
-        root.log = definition();
-      }
-    })(exports, function() {
-      "use strict";
-      var noop2 = function() {
-      };
-      var undefinedType = "undefined";
-      var isIE = typeof window !== undefinedType && typeof window.navigator !== undefinedType && /Trident\/|MSIE /.test(window.navigator.userAgent);
-      var logMethods = [
-        "trace",
-        "debug",
-        "info",
-        "warn",
-        "error"
-      ];
-      var _loggersByName = {};
-      var defaultLogger = null;
-      function bindMethod(obj, methodName) {
-        var method = obj[methodName];
-        if (typeof method.bind === "function") {
-          return method.bind(obj);
-        } else {
-          try {
-            return Function.prototype.bind.call(method, obj);
-          } catch (e8) {
-            return function() {
-              return Function.prototype.apply.apply(method, [obj, arguments]);
-            };
-          }
-        }
-      }
-      function traceForIE() {
-        if (console.log) {
-          if (console.log.apply) {
-            console.log.apply(console, arguments);
-          } else {
-            Function.prototype.apply.apply(console.log, [console, arguments]);
-          }
-        }
-        if (console.trace) console.trace();
-      }
-      function realMethod(methodName) {
-        if (methodName === "debug") {
-          methodName = "log";
-        }
-        if (typeof console === undefinedType) {
-          return false;
-        } else if (methodName === "trace" && isIE) {
-          return traceForIE;
-        } else if (console[methodName] !== void 0) {
-          return bindMethod(console, methodName);
-        } else if (console.log !== void 0) {
-          return bindMethod(console, "log");
-        } else {
-          return noop2;
-        }
-      }
-      function replaceLoggingMethods() {
-        var level = this.getLevel();
-        for (var i6 = 0; i6 < logMethods.length; i6++) {
-          var methodName = logMethods[i6];
-          this[methodName] = i6 < level ? noop2 : this.methodFactory(methodName, level, this.name);
-        }
-        this.log = this.debug;
-        if (typeof console === undefinedType && level < this.levels.SILENT) {
-          return "No console available for logging";
-        }
-      }
-      function enableLoggingWhenConsoleArrives(methodName) {
-        return function() {
-          if (typeof console !== undefinedType) {
-            replaceLoggingMethods.call(this);
-            this[methodName].apply(this, arguments);
-          }
-        };
-      }
-      function defaultMethodFactory(methodName, _level, _loggerName) {
-        return realMethod(methodName) || enableLoggingWhenConsoleArrives.apply(this, arguments);
-      }
-      function Logger(name, factory3) {
-        var self2 = this;
-        var inheritedLevel;
-        var defaultLevel;
-        var userLevel;
-        var storageKey = "loglevel";
-        if (typeof name === "string") {
-          storageKey += ":" + name;
-        } else if (typeof name === "symbol") {
-          storageKey = void 0;
-        }
-        function persistLevelIfPossible(levelNum) {
-          var levelName = (logMethods[levelNum] || "silent").toUpperCase();
-          if (typeof window === undefinedType || !storageKey) return;
-          try {
-            window.localStorage[storageKey] = levelName;
-            return;
-          } catch (ignore) {
-          }
-          try {
-            window.document.cookie = encodeURIComponent(storageKey) + "=" + levelName + ";";
-          } catch (ignore) {
-          }
-        }
-        function getPersistedLevel() {
-          var storedLevel;
-          if (typeof window === undefinedType || !storageKey) return;
-          try {
-            storedLevel = window.localStorage[storageKey];
-          } catch (ignore) {
-          }
-          if (typeof storedLevel === undefinedType) {
-            try {
-              var cookie = window.document.cookie;
-              var cookieName = encodeURIComponent(storageKey);
-              var location = cookie.indexOf(cookieName + "=");
-              if (location !== -1) {
-                storedLevel = /^([^;]+)/.exec(
-                  cookie.slice(location + cookieName.length + 1)
-                )[1];
-              }
-            } catch (ignore) {
-            }
-          }
-          if (self2.levels[storedLevel] === void 0) {
-            storedLevel = void 0;
-          }
-          return storedLevel;
-        }
-        function clearPersistedLevel() {
-          if (typeof window === undefinedType || !storageKey) return;
-          try {
-            window.localStorage.removeItem(storageKey);
-          } catch (ignore) {
-          }
-          try {
-            window.document.cookie = encodeURIComponent(storageKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-          } catch (ignore) {
-          }
-        }
-        function normalizeLevel(input) {
-          var level = input;
-          if (typeof level === "string" && self2.levels[level.toUpperCase()] !== void 0) {
-            level = self2.levels[level.toUpperCase()];
-          }
-          if (typeof level === "number" && level >= 0 && level <= self2.levels.SILENT) {
-            return level;
-          } else {
-            throw new TypeError("log.setLevel() called with invalid level: " + input);
-          }
-        }
-        self2.name = name;
-        self2.levels = {
-          "TRACE": 0,
-          "DEBUG": 1,
-          "INFO": 2,
-          "WARN": 3,
-          "ERROR": 4,
-          "SILENT": 5
-        };
-        self2.methodFactory = factory3 || defaultMethodFactory;
-        self2.getLevel = function() {
-          if (userLevel != null) {
-            return userLevel;
-          } else if (defaultLevel != null) {
-            return defaultLevel;
-          } else {
-            return inheritedLevel;
-          }
-        };
-        self2.setLevel = function(level, persist) {
-          userLevel = normalizeLevel(level);
-          if (persist !== false) {
-            persistLevelIfPossible(userLevel);
-          }
-          return replaceLoggingMethods.call(self2);
-        };
-        self2.setDefaultLevel = function(level) {
-          defaultLevel = normalizeLevel(level);
-          if (!getPersistedLevel()) {
-            self2.setLevel(level, false);
-          }
-        };
-        self2.resetLevel = function() {
-          userLevel = null;
-          clearPersistedLevel();
-          replaceLoggingMethods.call(self2);
-        };
-        self2.enableAll = function(persist) {
-          self2.setLevel(self2.levels.TRACE, persist);
-        };
-        self2.disableAll = function(persist) {
-          self2.setLevel(self2.levels.SILENT, persist);
-        };
-        self2.rebuild = function() {
-          if (defaultLogger !== self2) {
-            inheritedLevel = normalizeLevel(defaultLogger.getLevel());
-          }
-          replaceLoggingMethods.call(self2);
-          if (defaultLogger === self2) {
-            for (var childName in _loggersByName) {
-              _loggersByName[childName].rebuild();
-            }
-          }
-        };
-        inheritedLevel = normalizeLevel(
-          defaultLogger ? defaultLogger.getLevel() : "WARN"
-        );
-        var initialLevel = getPersistedLevel();
-        if (initialLevel != null) {
-          userLevel = normalizeLevel(initialLevel);
-        }
-        replaceLoggingMethods.call(self2);
-      }
-      defaultLogger = new Logger();
-      defaultLogger.getLogger = function getLogger(name) {
-        if (typeof name !== "symbol" && typeof name !== "string" || name === "") {
-          throw new TypeError("You must supply a name when creating a logger.");
-        }
-        var logger = _loggersByName[name];
-        if (!logger) {
-          logger = _loggersByName[name] = new Logger(
-            name,
-            defaultLogger.methodFactory
-          );
-        }
-        return logger;
-      };
-      var _log = typeof window !== undefinedType ? window.log : void 0;
-      defaultLogger.noConflict = function() {
-        if (typeof window !== undefinedType && window.log === defaultLogger) {
-          window.log = _log;
-        }
-        return defaultLogger;
-      };
-      defaultLogger.getLoggers = function getLoggers() {
-        return _loggersByName;
-      };
-      defaultLogger["default"] = defaultLogger;
-      return defaultLogger;
-    });
-  }
-});
-
-// node_modules/loglevel-plugin-prefix/lib/loglevel-plugin-prefix.js
-var require_loglevel_plugin_prefix = __commonJS({
-  "node_modules/loglevel-plugin-prefix/lib/loglevel-plugin-prefix.js"(exports, module) {
-    "use strict";
-    (function(root, factory3) {
-      if (typeof define === "function" && define.amd) {
-        define(factory3);
-      } else if (typeof module === "object" && module.exports) {
-        module.exports = factory3();
-      } else {
-        root.prefix = factory3(root);
-      }
-    })(exports, function(root) {
-      "use strict";
-      var merge2 = function(target) {
-        var i6 = 1;
-        var length = arguments.length;
-        var key;
-        for (; i6 < length; i6++) {
-          for (key in arguments[i6]) {
-            if (Object.prototype.hasOwnProperty.call(arguments[i6], key)) {
-              target[key] = arguments[i6][key];
-            }
-          }
-        }
-        return target;
-      };
-      var defaults = {
-        template: "[%t] %l:",
-        levelFormatter: function(level) {
-          return level.toUpperCase();
-        },
-        nameFormatter: function(name) {
-          return name || "root";
-        },
-        timestampFormatter: function(date) {
-          return date.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
-        },
-        format: void 0
-      };
-      var loglevel;
-      var configs = {};
-      var reg = function(rootLogger) {
-        if (!rootLogger || !rootLogger.getLogger) {
-          throw new TypeError("Argument is not a root logger");
-        }
-        loglevel = rootLogger;
-      };
-      var apply = function(logger, config) {
-        if (!logger || !logger.setLevel) {
-          throw new TypeError("Argument is not a logger");
-        }
-        var originalFactory = logger.methodFactory;
-        var name = logger.name || "";
-        var parent = configs[name] || configs[""] || defaults;
-        function methodFactory(methodName, logLevel, loggerName) {
-          var originalMethod = originalFactory(methodName, logLevel, loggerName);
-          var options = configs[loggerName] || configs[""];
-          var hasTimestamp = options.template.indexOf("%t") !== -1;
-          var hasLevel = options.template.indexOf("%l") !== -1;
-          var hasName = options.template.indexOf("%n") !== -1;
-          return function() {
-            var content = "";
-            var length = arguments.length;
-            var args = Array(length);
-            var key = 0;
-            for (; key < length; key++) {
-              args[key] = arguments[key];
-            }
-            if (name || !configs[loggerName]) {
-              var timestamp = options.timestampFormatter(/* @__PURE__ */ new Date());
-              var level = options.levelFormatter(methodName);
-              var lname = options.nameFormatter(loggerName);
-              if (options.format) {
-                content += options.format(level, lname, timestamp);
-              } else {
-                content += options.template;
-                if (hasTimestamp) {
-                  content = content.replace(/%t/, timestamp);
-                }
-                if (hasLevel) content = content.replace(/%l/, level);
-                if (hasName) content = content.replace(/%n/, lname);
-              }
-              if (args.length && typeof args[0] === "string") {
-                args[0] = content + " " + args[0];
-              } else {
-                args.unshift(content);
-              }
-            }
-            originalMethod.apply(void 0, args);
-          };
-        }
-        if (!configs[name]) {
-          logger.methodFactory = methodFactory;
-        }
-        config = config || {};
-        if (config.template) config.format = void 0;
-        configs[name] = merge2({}, parent, config);
-        logger.setLevel(logger.getLevel());
-        if (!loglevel) {
-          logger.warn(
-            "It is necessary to call the function reg() of loglevel-plugin-prefix before calling apply. From the next release, it will throw an error. See more: https://github.com/kutuluk/loglevel-plugin-prefix/blob/master/README.md"
-          );
-        }
-        return logger;
-      };
-      var api = {
-        reg,
-        apply
-      };
-      var save;
-      if (root) {
-        save = root.prefix;
-        api.noConflict = function() {
-          if (root.prefix === api) {
-            root.prefix = save;
-          }
-          return api;
-        };
-      }
-      return api;
-    });
-  }
-});
-
-// node_modules/@treecg/types/dist/lib/utils/Logger-Browser.js
-var require_Logger_Browser = __commonJS({
-  "node_modules/@treecg/types/dist/lib/utils/Logger-Browser.js"(exports) {
-    "use strict";
-    exports.__esModule = true;
-    exports.getLogger = exports.LoggerBrowser = void 0;
-    var log = require_loglevel();
-    var prefix2 = require_loglevel_plugin_prefix();
-    var LoggerBrowser = (
-      /** @class */
-      (function() {
-        function LoggerBrowser2(loggable, level) {
-          var label = typeof loggable === "string" ? loggable : loggable.constructor.name;
-          level = level && isLogLevel(level) ? level : "info";
-          log.setDefaultLevel("info");
-          if (level && isLogLevel(level)) {
-            log.setLevel(level);
-          }
-          prefix2.reg(log);
-          prefix2.apply(log, {
-            template: "%t [%n] %l:",
-            levelFormatter: function(level2) {
-              return level2;
-            },
-            nameFormatter: function(name) {
-              return name || "global";
-            },
-            timestampFormatter: function(date) {
-              return date.toISOString();
-            }
-          });
-          this.logger = log.getLogger(label);
-        }
-        LoggerBrowser2.prototype.error = function(message) {
-          this.logger.error(message);
-        };
-        LoggerBrowser2.prototype.warn = function(message) {
-          this.logger.warn(message);
-        };
-        LoggerBrowser2.prototype.info = function(message) {
-          this.logger.info(message);
-        };
-        LoggerBrowser2.prototype.debug = function(message) {
-          this.logger.debug(message);
-        };
-        LoggerBrowser2.prototype.trace = function(message) {
-          this.logger.trace(message);
-        };
-        return LoggerBrowser2;
-      })()
-    );
-    exports.LoggerBrowser = LoggerBrowser;
-    function isLogLevel(value) {
-      value = value.toUpperCase();
-      return Object.keys(log.levels).includes(value);
-    }
-    var getLogger = function(name) {
-      return new LoggerBrowser(name, "info");
-    };
-    exports.getLogger = getLogger;
-  }
-});
-
-// node_modules/@treecg/types/node_modules/rdf-data-factory/lib/BlankNode.js
-var require_BlankNode2 = __commonJS({
-  "node_modules/@treecg/types/node_modules/rdf-data-factory/lib/BlankNode.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.BlankNode = void 0;
-    var BlankNode2 = class {
-      constructor(value) {
-        this.termType = "BlankNode";
-        this.value = value;
-      }
-      equals(other) {
-        return !!other && other.termType === "BlankNode" && other.value === this.value;
-      }
-    };
-    exports.BlankNode = BlankNode2;
-  }
-});
-
-// node_modules/@treecg/types/node_modules/rdf-data-factory/lib/DefaultGraph.js
-var require_DefaultGraph2 = __commonJS({
-  "node_modules/@treecg/types/node_modules/rdf-data-factory/lib/DefaultGraph.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.DefaultGraph = void 0;
-    var DefaultGraph2 = class {
-      constructor() {
-        this.termType = "DefaultGraph";
-        this.value = "";
-      }
-      equals(other) {
-        return !!other && other.termType === "DefaultGraph";
-      }
-    };
-    exports.DefaultGraph = DefaultGraph2;
-    DefaultGraph2.INSTANCE = new DefaultGraph2();
-  }
-});
-
-// node_modules/@treecg/types/node_modules/rdf-data-factory/lib/NamedNode.js
-var require_NamedNode2 = __commonJS({
-  "node_modules/@treecg/types/node_modules/rdf-data-factory/lib/NamedNode.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.NamedNode = void 0;
-    var NamedNode3 = class {
-      constructor(value) {
-        this.termType = "NamedNode";
-        this.value = value;
-      }
-      equals(other) {
-        return !!other && other.termType === "NamedNode" && other.value === this.value;
-      }
-    };
-    exports.NamedNode = NamedNode3;
-  }
-});
-
-// node_modules/@treecg/types/node_modules/rdf-data-factory/lib/Literal.js
-var require_Literal2 = __commonJS({
-  "node_modules/@treecg/types/node_modules/rdf-data-factory/lib/Literal.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Literal = void 0;
-    var NamedNode_1 = require_NamedNode2();
-    var Literal2 = class _Literal {
-      constructor(value, languageOrDatatype) {
-        this.termType = "Literal";
-        this.value = value;
-        if (typeof languageOrDatatype === "string") {
-          this.language = languageOrDatatype;
-          this.datatype = _Literal.RDF_LANGUAGE_STRING;
-        } else if (languageOrDatatype) {
-          this.language = "";
-          this.datatype = languageOrDatatype;
-        } else {
-          this.language = "";
-          this.datatype = _Literal.XSD_STRING;
-        }
-      }
-      equals(other) {
-        return !!other && other.termType === "Literal" && other.value === this.value && other.language === this.language && this.datatype.equals(other.datatype);
-      }
-    };
-    exports.Literal = Literal2;
-    Literal2.RDF_LANGUAGE_STRING = new NamedNode_1.NamedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#langString");
-    Literal2.XSD_STRING = new NamedNode_1.NamedNode("http://www.w3.org/2001/XMLSchema#string");
-  }
-});
-
-// node_modules/@treecg/types/node_modules/rdf-data-factory/lib/Quad.js
-var require_Quad2 = __commonJS({
-  "node_modules/@treecg/types/node_modules/rdf-data-factory/lib/Quad.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Quad = void 0;
-    var Quad2 = class {
-      constructor(subject2, predicate2, object2, graph) {
-        this.termType = "Quad";
-        this.value = "";
-        this.subject = subject2;
-        this.predicate = predicate2;
-        this.object = object2;
-        this.graph = graph;
-      }
-      equals(other) {
-        return !!other && (other.termType === "Quad" || !other.termType) && this.subject.equals(other.subject) && this.predicate.equals(other.predicate) && this.object.equals(other.object) && this.graph.equals(other.graph);
-      }
-    };
-    exports.Quad = Quad2;
-  }
-});
-
-// node_modules/@treecg/types/node_modules/rdf-data-factory/lib/Variable.js
-var require_Variable2 = __commonJS({
-  "node_modules/@treecg/types/node_modules/rdf-data-factory/lib/Variable.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Variable = void 0;
-    var Variable2 = class {
-      constructor(value) {
-        this.termType = "Variable";
-        this.value = value;
-      }
-      equals(other) {
-        return !!other && other.termType === "Variable" && other.value === this.value;
-      }
-    };
-    exports.Variable = Variable2;
-  }
-});
-
-// node_modules/@treecg/types/node_modules/rdf-data-factory/lib/DataFactory.js
-var require_DataFactory2 = __commonJS({
-  "node_modules/@treecg/types/node_modules/rdf-data-factory/lib/DataFactory.js"(exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.DataFactory = void 0;
-    var BlankNode_1 = require_BlankNode2();
-    var DefaultGraph_1 = require_DefaultGraph2();
-    var Literal_1 = require_Literal2();
-    var NamedNode_1 = require_NamedNode2();
-    var Quad_1 = require_Quad2();
-    var Variable_1 = require_Variable2();
-    var dataFactoryCounter = 0;
-    var DataFactory5 = class {
-      constructor(options) {
-        this.blankNodeCounter = 0;
-        options = options || {};
-        this.blankNodePrefix = options.blankNodePrefix || `df_${dataFactoryCounter++}_`;
-      }
-      /**
-       * @param value The IRI for the named node.
-       * @return A new instance of NamedNode.
-       * @see NamedNode
-       */
-      namedNode(value) {
-        return new NamedNode_1.NamedNode(value);
-      }
-      /**
-       * @param value The optional blank node identifier.
-       * @return A new instance of BlankNode.
-       *         If the `value` parameter is undefined a new identifier
-       *         for the blank node is generated for each call.
-       * @see BlankNode
-       */
-      blankNode(value) {
-        return new BlankNode_1.BlankNode(value || `${this.blankNodePrefix}${this.blankNodeCounter++}`);
-      }
-      /**
-       * @param value              The literal value.
-       * @param languageOrDatatype The optional language or datatype.
-       *                           If `languageOrDatatype` is a NamedNode,
-       *                           then it is used for the value of `NamedNode.datatype`.
-       *                           Otherwise `languageOrDatatype` is used for the value
-       *                           of `NamedNode.language`.
-       * @return A new instance of Literal.
-       * @see Literal
-       */
-      literal(value, languageOrDatatype) {
-        return new Literal_1.Literal(value, languageOrDatatype);
-      }
-      /**
-       * This method is optional.
-       * @param value The variable name
-       * @return A new instance of Variable.
-       * @see Variable
-       */
-      variable(value) {
-        return new Variable_1.Variable(value);
-      }
-      /**
-       * @return An instance of DefaultGraph.
-       */
-      defaultGraph() {
-        return DefaultGraph_1.DefaultGraph.INSTANCE;
-      }
-      /**
-       * @param subject   The quad subject term.
-       * @param predicate The quad predicate term.
-       * @param object    The quad object term.
-       * @param graph     The quad graph term.
-       * @return A new instance of Quad.
-       * @see Quad
-       */
-      quad(subject2, predicate2, object2, graph) {
-        return new Quad_1.Quad(subject2, predicate2, object2, graph || this.defaultGraph());
-      }
-      /**
-       * Create a deep copy of the given term using this data factory.
-       * @param original An RDF term.
-       * @return A deep copy of the given term.
-       */
-      fromTerm(original) {
-        switch (original.termType) {
-          case "NamedNode":
-            return this.namedNode(original.value);
-          case "BlankNode":
-            return this.blankNode(original.value);
-          case "Literal":
-            if (original.language) {
-              return this.literal(original.value, original.language);
-            }
-            if (!original.datatype.equals(Literal_1.Literal.XSD_STRING)) {
-              return this.literal(original.value, this.fromTerm(original.datatype));
-            }
-            return this.literal(original.value);
-          case "Variable":
-            return this.variable(original.value);
-          case "DefaultGraph":
-            return this.defaultGraph();
-          case "Quad":
-            return this.quad(this.fromTerm(original.subject), this.fromTerm(original.predicate), this.fromTerm(original.object), this.fromTerm(original.graph));
-        }
-      }
-      /**
-       * Create a deep copy of the given quad using this data factory.
-       * @param original An RDF quad.
-       * @return A deep copy of the given quad.
-       */
-      fromQuad(original) {
-        return this.fromTerm(original);
-      }
-      /**
-       * Reset the internal blank node counter.
-       */
-      resetBlankNodeCounter() {
-        this.blankNodeCounter = 0;
-      }
-    };
-    exports.DataFactory = DataFactory5;
-  }
-});
-
-// node_modules/@treecg/types/node_modules/rdf-data-factory/index.js
-var require_rdf_data_factory2 = __commonJS({
-  "node_modules/@treecg/types/node_modules/rdf-data-factory/index.js"(exports) {
-    "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o7, m2, k2, k22) {
-      if (k22 === void 0) k22 = k2;
-      var desc = Object.getOwnPropertyDescriptor(m2, k2);
-      if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
-        desc = { enumerable: true, get: function() {
-          return m2[k2];
-        } };
-      }
-      Object.defineProperty(o7, k22, desc);
-    }) : (function(o7, m2, k2, k22) {
-      if (k22 === void 0) k22 = k2;
-      o7[k22] = m2[k2];
-    }));
-    var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
-      for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
-    };
-    Object.defineProperty(exports, "__esModule", { value: true });
-    __exportStar(require_BlankNode2(), exports);
-    __exportStar(require_DataFactory2(), exports);
-    __exportStar(require_DefaultGraph2(), exports);
-    __exportStar(require_Literal2(), exports);
-    __exportStar(require_NamedNode2(), exports);
-    __exportStar(require_Quad2(), exports);
-    __exportStar(require_Variable2(), exports);
-  }
-});
-
-// node_modules/@treecg/types/dist/lib/Vocabularies.js
-var require_Vocabularies = __commonJS({
-  "node_modules/@treecg/types/dist/lib/Vocabularies.js"(exports) {
-    "use strict";
-    var __spreadArray = exports && exports.__spreadArray || function(to, from, pack) {
-      if (pack || arguments.length === 2) for (var i6 = 0, l3 = from.length, ar; i6 < l3; i6++) {
-        if (ar || !(i6 in from)) {
-          if (!ar) ar = Array.prototype.slice.call(from, 0, i6);
-          ar[i6] = from[i6];
-        }
-      }
-      return to.concat(ar || Array.prototype.slice.call(from));
-    };
-    exports.__esModule = true;
-    exports.EX = exports.SHACL = exports.VOID = exports.PPLAN = exports.PROV = exports.SDS = exports.LDES = exports.TREE = exports.XSD = exports.RDFS = exports.RDF = exports.FOAF = exports.DC = exports.createUriAndTermNamespace = exports.createTermNamespace = exports.createUriNamespace = exports.createNamespace = void 0;
-    var rdf_data_factory_1 = require_rdf_data_factory2();
-    var factory3 = new rdf_data_factory_1.DataFactory();
-    function createNamespace(baseUri, toValue) {
-      var localNames = [];
-      for (var _i = 2; _i < arguments.length; _i++) {
-        localNames[_i - 2] = arguments[_i];
-      }
-      var expanded = {};
-      expanded.namespace = toValue(baseUri);
-      expanded.custom = function(v2) {
-        return toValue(baseUri + v2);
-      };
-      for (var _a = 0, localNames_1 = localNames; _a < localNames_1.length; _a++) {
-        var localName = localNames_1[_a];
-        expanded[localName] = toValue("".concat(baseUri).concat(localName));
-      }
-      return expanded;
-    }
-    exports.createNamespace = createNamespace;
-    function createUriNamespace(baseUri) {
-      var localNames = [];
-      for (var _i = 1; _i < arguments.length; _i++) {
-        localNames[_i - 1] = arguments[_i];
-      }
-      return createNamespace.apply(void 0, __spreadArray([baseUri, function(expanded) {
-        return expanded;
-      }], localNames, false));
-    }
-    exports.createUriNamespace = createUriNamespace;
-    function createTermNamespace2(baseUri) {
-      var localNames = [];
-      for (var _i = 1; _i < arguments.length; _i++) {
-        localNames[_i - 1] = arguments[_i];
-      }
-      return createNamespace.apply(void 0, __spreadArray([baseUri, factory3.namedNode], localNames, false));
-    }
-    exports.createTermNamespace = createTermNamespace2;
-    function createUriAndTermNamespace2(baseUri) {
-      var localNames = [];
-      for (var _i = 1; _i < arguments.length; _i++) {
-        localNames[_i - 1] = arguments[_i];
-      }
-      return Object.assign(createUriNamespace.apply(void 0, __spreadArray([baseUri], localNames, false)), { terms: createTermNamespace2.apply(void 0, __spreadArray([baseUri], localNames, false)) });
-    }
-    exports.createUriAndTermNamespace = createUriAndTermNamespace2;
-    exports.DC = createUriAndTermNamespace2("http://purl.org/dc/terms/", "description", "modified", "title");
-    exports.FOAF = createUriAndTermNamespace2("http://xmlns.com/foaf/0.1/", "Agent");
-    exports.RDF = createUriAndTermNamespace2("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "type", "Class", "Property", "nil", "rest", "first");
-    exports.RDFS = createUriAndTermNamespace2("http://www.w3.org/2000/01/rdf-schema#", "label", "comment", "domain", "range", "isDefinedBy", "Class", "subClassOf");
-    exports.XSD = createUriAndTermNamespace2("http://www.w3.org/2001/XMLSchema#", "dateTime", "integer", "string");
-    exports.TREE = createUriAndTermNamespace2("https://w3id.org/tree#", "Collection", "Relation", "Node", "Member", "member", "view", "value", "relation", "PrefixRelation", "SubstringRelation", "SuffixRelation", "GreaterThanRelation", "GreaterThanOrEqualToRelation", "LessThanRelation", "LessThanOrEqualToRelation", "EqualToRelation", "GeospatiallyContainsRelation", "path", "node", "shape", "search", "ConditionalImport", "import", "importStream", "remainingItems", "zoom", "latitudeTile", "longitudeTile");
-    exports.LDES = createUriAndTermNamespace2("https://w3id.org/ldes#", "EventStream", "timestampPath", "versionOfPath", "DurationAgoPolicy", "Bucketization", "retentionPolicy", "amount", "bucket", "bucketProperty", "bucketType", "LatestVersionSubset", "BucketizeStrategy");
-    exports.SDS = createUriAndTermNamespace2("https://w3id.org/sds#", "Member", "Record", "ImmutableMember", "shape", "carries", "dataset", "Stream", "payload", "bucket", "relationType", "relationBucket", "relationValue", "relationPath", "stream", "relation");
-    exports.PROV = createUriAndTermNamespace2("http://www.w3.org/ns/prov#", "used", "startedAtTime", "wasGeneratedBy");
-    exports.PPLAN = createUriAndTermNamespace2("http://purl.org/net/p-plan#", "Activity");
-    exports.VOID = createUriAndTermNamespace2("http://rdfs.org/ns/void#", "Dataset", "DatasetDescription", "Linkset", "TechnicalFeature", "feature", "sparqlEndpoint", "dataDump", "rootResource", "exampleResource", "uriLookupEndpoint", "openSearchDescription", "uriSpace", "uriRegexPattern", "vocabulary", "subset", "propertyPartition", "triples", "entities", "class", "classes", "classPartition", "property", "properties", "distinctSubjects", "distinctObjects", "documents", "target", "subjectsTarget", "objectsTarget", "linkPredicate", "inDataset");
-    exports.SHACL = createUriAndTermNamespace2("http://www.w3.org/ns/shacl#", "NodeShape", "targetClass", "property", "path", "name", "alternativePath", "datatype", "nodeKind", "pattern", "flags", "minExclusive", "minInclusive", "maxExclusive", "maxInclusive", "not", "and", "or", "xone", "in", "hasValue", "defaultValue", "minCount", "maxCount");
-    exports.EX = createUriAndTermNamespace2("http://example.org/ns#");
-  }
-});
-
-// node_modules/@treecg/types/dist/index.js
-var require_dist = __commonJS({
-  "node_modules/@treecg/types/dist/index.js"(exports) {
-    "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o7, m2, k2, k22) {
-      if (k22 === void 0) k22 = k2;
-      Object.defineProperty(o7, k22, { enumerable: true, get: function() {
-        return m2[k2];
-      } });
-    }) : (function(o7, m2, k2, k22) {
-      if (k22 === void 0) k22 = k2;
-      o7[k22] = m2[k2];
-    }));
-    var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
-      for (var p3 in m2) if (p3 !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p3)) __createBinding(exports2, m2, p3);
-    };
-    exports.__esModule = true;
-    exports.getLogger = exports.Logger = exports.LoggerBrowser = void 0;
-    __exportStar(require_Bucketizer(), exports);
-    __exportStar(require_BucketizerOptions(), exports);
-    __exportStar(require_Fragment(), exports);
-    __exportStar(require_Member(), exports);
-    __exportStar(require_RelationParameters(), exports);
-    var Logger_Browser_1 = require_Logger_Browser();
-    __createBinding(exports, Logger_Browser_1, "LoggerBrowser");
-    __createBinding(exports, Logger_Browser_1, "LoggerBrowser", "Logger");
-    __createBinding(exports, Logger_Browser_1, "getLogger");
-    __exportStar(require_Vocabularies(), exports);
-  }
-});
-
-// node_modules/rdf-lens/dist/ontology.js
-var import_types2, RDFS, SHACL, RDFL;
-var init_ontology = __esm({
-  "node_modules/rdf-lens/dist/ontology.js"() {
-    "use strict";
-    import_types2 = __toESM(require_dist(), 1);
-    RDFS = (0, import_types2.createTermNamespace)("http://www.w3.org/2000/01/rdf-schema#", "subClassOf");
-    SHACL = (0, import_types2.createTermNamespace)("http://www.w3.org/ns/shacl#", "Shape", "NodeShape", "PropertyShape", "targetNode", "targetClass", "targetSubjectsOf", "targetObjectsOf", "property", "path", "class", "name", "description", "defaultValue", "alternativePath", "zeroOrMorePath", "oneOrMorePath", "zeroOrOnePath", "inversePath", "minCount", "maxCount", "datatype");
-    RDFL = (0, import_types2.createUriAndTermNamespace)("https://w3id.org/rdf-lens/ontology#", "CBD", "PathLens", "Context", "TypedExtract", "EnvVariable", "envKey", "envDefault", "datatype");
-  }
-});
-
-// node_modules/rdf-lens/dist/shacl.js
-function termToString2(term) {
-  if (term.termType === "NamedNode") {
-    return "<" + term.value + ">";
-  }
-  if (term.termType === "BlankNode") {
-    return "_:" + term.value;
-  }
-  return JSON.stringify(term.value);
-}
-function fieldToLens(field2) {
-  const minCount = field2.minCount || 0;
-  const maxCount = field2.maxCount || Number.MAX_SAFE_INTEGER;
-  if (maxCount < 2) {
-    return field2.path.one(void 0).then(new BasicLens((x2, ctx) => {
-      if (x2) {
-        return field2.extract.execute(x2, ctx);
-      } else {
-        if (minCount > 0) {
-          throw new LensError("Field is not defined and required", ctx.lineage.slice());
-        } else {
-          return x2;
-        }
-      }
-    }));
-  }
-  if (maxCount < 2)
-    return field2.path.one().then(field2.extract);
-  const thenListExtract = RdfList.and(empty()).map(([terms, { quads }]) => terms.map((id) => ({ id, quads })));
-  const noListExtract = empty().map((x2) => [x2]);
-  return field2.path.thenFlat(thenListExtract.or(noListExtract).asMulti()).thenAll(field2.extract).map((x2) => x2.filter((x3) => x3 !== void 0)).map((xs, ctx) => {
-    if (xs.length < minCount) {
-      throw new LensError("Mininum Count violation", [
-        { name: "found:", opts: xs.length },
-        ...ctx.lineage.slice()
-      ]);
-    }
-    if (xs.length > maxCount) {
-      throw new LensError("Maximum Count violation", [
-        { name: "found: " + xs.length, opts: [] },
-        ...ctx.lineage.slice()
-      ]);
-    }
-    return xs;
-  }).map((x2) => {
-    const out = x2.filter((x3) => x3 !== void 0);
-    if (maxCount < 2) {
-      return out[0];
-    } else {
-      return out;
-    }
-  });
-}
-function toLens(shape) {
-  if (shape.fields.length === 0)
-    return empty().map(() => ({})).named("first", shape.ty.value).named("shape", { id: shape.id, type: termToString2(shape.ty), description: shape.description }).named("id", [], (cont) => termToString2(cont.id));
-  ;
-  const fields = shape.fields.map((field2) => {
-    const base = fieldToLens(field2);
-    const asField = empty().named("processing field", {
-      name: field2.name,
-      minCount: field2.minCount,
-      maxCount: field2.maxCount
-    }).then(base).map((x2) => {
-      const out = {};
-      out[field2.name] = x2;
-      return out;
-    });
-    return asField;
-  });
-  return fields[0].and(...fields.slice(1)).map((xs) => Object.assign({}, ...xs)).named("shape", { id: shape.id, type: termToString2(shape.ty), description: shape.description }).named("id", [], (cont) => termToString2(cont.id));
-}
-function MultiPath(predicate2, min, max) {
-  return pred(predicate2).one().then(new BasicLens((c4, ctx) => {
-    return ShaclPath.execute(c4, ctx);
-  })).map((x2) => new BasicLensM((c4, ctx) => {
-    const out = [];
-    let current = [c4];
-    let done = 0;
-    if (min == 0) {
-      out.push(c4);
-    }
-    while (current.length > 0) {
-      done += 1;
-      const todo = current.slice();
-      current = [];
-      for (const c5 of todo) {
-        try {
-          const news = x2.execute(c5, ctx);
-          current.push(...news);
-          if (done >= min && (!max || done <= max)) {
-            out.push(c5);
-          }
-        } catch (ex) {
-          console.log(ex);
-          if (done >= min && (!max || done <= max)) {
-            out.push(c5);
-          }
-          break;
-        }
-      }
-    }
-    return out;
-  }));
-}
-function field(predicate2, name, convert) {
-  const conv = convert || ((x2) => x2);
-  return pred(predicate2).one().map(({ id }) => {
-    const out = {};
-    out[name] = conv(id.value);
-    return out;
-  });
-}
-function optionalField(predicate2, name, convert) {
-  const conv = convert || ((x2) => x2);
-  return pred(predicate2).one(void 0).map((inp) => {
-    const out = {};
-    if (inp) {
-      out[name] = conv(inp.id.value);
-    }
-    return out;
-  });
-}
-function dataTypeToExtract(dataType, t5) {
-  if (dataType.equals(import_types3.XSD.terms.integer))
-    return +t5.value;
-  if (dataType.equals(import_types3.XSD.terms.custom("float")))
-    return +t5.value;
-  if (dataType.equals(import_types3.XSD.terms.custom("double")))
-    return +t5.value;
-  if (dataType.equals(import_types3.XSD.terms.custom("decimal")))
-    return +t5.value;
-  if (dataType.equals(import_types3.XSD.terms.string))
-    return t5.value;
-  if (dataType.equals(import_types3.XSD.terms.dateTime))
-    return new Date(t5.value);
-  if (dataType.equals(import_types3.XSD.terms.custom("boolean")))
-    return t5.value === "true";
-  if (dataType.equals(import_types3.XSD.terms.custom("iri")))
-    return new import_rdf_data_factory2.NamedNode(t5.value);
-  if (dataType.equals(import_types3.XSD.terms.custom("anyURI"))) {
-    return new import_rdf_data_factory2.NamedNode(t5.value);
-  }
-  return t5;
-}
-function envLens(dataType) {
-  const checkType = pred(import_types3.RDF.terms.type).thenSome(new BasicLens(({ id }, ctx) => {
-    if (!id.equals(RDFL.terms.EnvVariable)) {
-      throw new LensError("Expected type " + RDFL.EnvVariable, ctx.lineage);
-    }
-    return { checked: true };
-  })).expectOne();
-  const envName = pred(RDFL.terms.envKey).one().map(({ id }) => ({
-    key: id.value
-  }));
-  const defaultValue = pred(RDFL.terms.envDefault).one(void 0).map((found) => ({
-    defaultValue: found?.id.value
-  }));
-  const envDatatype = pred(RDFL.terms.datatype).one(void 0).map((found) => ({ dt: found?.id }));
-  return checkType.and(envName, defaultValue, envDatatype).map(([_2, { key }, { defaultValue: defaultValue2 }, { dt }], ctx) => {
-    const value = process.env[key] || defaultValue2;
-    const thisDt = dataType || dt || import_types3.XSD.terms.custom("literal");
-    if (value) {
-      return dataTypeToExtract(thisDt, literal2(value));
-    } else {
-      throw new LensError("ENV and default are not set", [
-        { name: "Env Key", opts: key },
-        ...ctx.lineage
-      ]);
-    }
-  });
-}
-function sliced() {
-  return new BasicLens((x2) => x2.slice());
-}
-function remove_cbd(quads, subject2) {
-  const toRemoves = [subject2];
-  while (toRemoves.length > 0) {
-    const toRemove = toRemoves.pop();
-    quads = quads.filter((q) => {
-      if (q.subject.equals(toRemove)) {
-        if (q.object.termType === "BlankNode") {
-          toRemoves.push(q.object);
-        }
-        return false;
-      } else {
-        return true;
-      }
-    });
-  }
-  return quads;
-}
-function envReplace() {
-  const shouldReplace = empty().map((x2) => x2[0]).then(envLens().and(empty().map((x2) => x2.id))).map(([value, id]) => ({
-    value,
-    id
-  }));
-  const reduce = shouldReplace.and(empty().map((x2) => x2[1])).map(([{ value, id }, quads]) => {
-    return remove_cbd(quads.map((q) => {
-      if (q.object.equals(id)) {
-        return quad2(q.subject, q.predicate, value, q.graph);
-      } else {
-        return q;
-      }
-    }), id);
-  });
-  const actualReplace = match(void 0, import_types3.RDF.terms.type, RDFL.terms.EnvVariable).thenAll(subject).reduce(reduce, empty());
-  return sliced().then(actualReplace);
-}
-function extractLeaf(datatype) {
-  return envLens(datatype).or(empty().map((item) => dataTypeToExtract(datatype, item.id)));
-}
-function extractProperty(cache, _subClasses, apply) {
-  const pathLens = pred(SHACL.path).one().then(ShaclPath).map((path) => ({
-    path
-  }));
-  const nameLens = field(SHACL.name, "name");
-  const minCount = optionalField(SHACL.minCount, "minCount", (x2) => +x2);
-  const maxCount = optionalField(SHACL.maxCount, "maxCount", (x2) => +x2);
-  const dataTypeLens = pred(SHACL.datatype).one().map(({ id }) => ({
-    extract: extractLeaf(id)
-  }));
-  const clazzLens = field(SHACL.class, "clazz").map(({ clazz: expected_class }) => {
-    return {
-      extract: new BasicLens(({ id, quads }, ctx) => {
-        const lens = cache[expected_class];
-        if (!lens) {
-          throw new LensError("Tried extracting class, but no shape was defined", [
-            {
-              name: "Found type: " + expected_class,
-              opts: Object.keys(cache)
-            },
-            ...ctx.lineage.slice()
-          ]);
-        }
-        if (apply[expected_class]) {
-          return lens.map(apply[expected_class]).execute({ id, quads }, ctx);
-        } else {
-          return lens.execute({ id, quads }, ctx);
-        }
-      }).named("extracting class", expected_class)
-    };
-  });
-  return pathLens.and(nameLens, minCount, maxCount, clazzLens.or(dataTypeLens)).map((xs) => Object.assign({}, ...xs));
-}
-function getCacheState(le, ctx, st) {
-  const out = ctx.stateMap.get(le);
-  if (out !== void 0)
-    return out;
-  const o7 = st();
-  ctx.stateMap.set(le, o7);
-  return o7;
-}
-function extractShape(cache, subclasses, apply) {
-  const checkTy = pred(import_types3.RDF.terms.type).one().map(({ id }, ctx) => {
-    if (id.equals(SHACL.NodeShape))
-      return {};
-    throw new LensError("Expected type sh:NodeShape", [
-      { name: "found type", opts: termToString2(id) },
-      ...ctx.lineage
-    ]);
-  });
-  const idLens = empty().map(({ id }) => ({ id: id.value }));
-  const clazzs = pred(SHACL.targetClass);
-  const multiple = clazzs.thenAll(empty().map(({ id }) => ({ ty: id })));
-  const descriptionClassLens = optionalField(SHACL.description, "description");
-  const fields = pred(SHACL.property).thenAll(extractProperty(cache, subclasses, apply)).map((fields2) => ({ fields: fields2 }));
-  return multiple.and(checkTy, idLens, descriptionClassLens, fields).map(([multiple2, ...others]) => multiple2.map((xs) => Object.assign({}, xs, ...others)));
-}
-function extractShapes(quads, apply = {}, customClasses = {}) {
-  const cache = Object.assign({}, customClasses);
-  cache[RDFL.PathLens] = ShaclPath;
-  cache[RDFL.CBD] = CBDLens;
-  cache[RDFL.Context] = new BasicLens(({ quads: quads2 }) => {
-    return quads2;
-  });
-  const subClasses = {};
-  quads.filter((x2) => x2.predicate.equals(RDFS.subClassOf)).forEach((x2) => subClasses[x2.subject.value] = x2.object.value);
-  const shapes = subjects().then(unique()).asMulti().thenSome(extractShape(cache, subClasses, apply)).execute(quads, createContext()).flat();
-  const lenses = [];
-  cache[RDFL.TypedExtract] = TypedExtract(cache, apply, subClasses);
-  for (const shape of shapes) {
-    const lens = toLens(shape);
-    const target = cache[shape.ty.value];
-    if (target) {
-      cache[shape.ty.value] = target.or(lens);
-    } else {
-      cache[shape.ty.value] = lens;
-    }
-    lenses.push(lens);
-  }
-  return { lenses: cache, shapes, subClasses };
-}
-var import_types3, import_rdf_data_factory2, literal2, quad2, RDFListElement, RdfList, ShaclSequencePath, ShaclAlternativepath, ShaclPredicatePath, ShaclInversePath, ShaclPath, getId, CBDLens, Cached, TypedExtract;
-var init_shacl = __esm({
-  "node_modules/rdf-lens/dist/shacl.js"() {
-    "use strict";
-    import_types3 = __toESM(require_dist(), 1);
-    init_lens();
-    import_rdf_data_factory2 = __toESM(require_rdf_data_factory(), 1);
-    init_ontology();
-    ({ literal: literal2, quad: quad2 } = new import_rdf_data_factory2.DataFactory());
-    RDFListElement = pred(import_types3.RDF.terms.first).expectOne().and(pred(import_types3.RDF.terms.rest).expectOne());
-    RdfList = new BasicLens((c4, ctx) => {
-      if (c4.id.equals(import_types3.RDF.terms.nil)) {
-        return [];
-      }
-      const [first, rest] = RDFListElement.execute(c4, ctx);
-      const els = RdfList.execute(rest, ctx);
-      els.unshift(first.id);
-      return els;
-    });
-    ShaclSequencePath = new BasicLens((c4, ctx) => {
-      const pathList = RdfList.execute(c4, ctx);
-      const paths = pathList.map((x2) => ShaclPath.execute({ id: x2, quads: c4.quads }, ctx));
-      if (paths.length === 0) {
-        return new BasicLensM((c5) => [c5]);
-      }
-      let start = paths[0];
-      for (let i6 = 1; i6 < pathList.length; i6++) {
-        start = start.thenFlat(paths[i6]);
-      }
-      return start;
-    });
-    ShaclAlternativepath = new BasicLens((c4, ctx) => {
-      const options = pred(SHACL.alternativePath).one().then(RdfList).execute(c4, ctx);
-      const optionLenses = options.map((id) => ShaclPath.execute({ id, quads: c4.quads }, ctx));
-      return optionLenses[0].orAll(...optionLenses.slice(1));
-    });
-    ShaclPredicatePath = extractLeaf(import_types3.XSD.terms.custom("iri")).map(pred);
-    ShaclInversePath = pred(SHACL.inversePath).one().then(new BasicLens((c4, ctx) => {
-      const pathList = RdfList.execute(c4, ctx);
-      if (pathList.length === 0) {
-        return new BasicLensM((c5) => [c5]);
-      }
-      pathList.reverse();
-      let start = invPred(pathList[0]);
-      for (let i6 = 1; i6 < pathList.length; i6++) {
-        start = start.thenFlat(invPred(pathList[i6]));
-      }
-      return start;
-    }).or(new BasicLens((c4) => {
-      return invPred(c4.id);
-    })));
-    ShaclPath = ShaclSequencePath.or(ShaclAlternativepath, ShaclInversePath, MultiPath(SHACL.zeroOrMorePath, 0), MultiPath(SHACL.zeroOrMorePath, 1), MultiPath(SHACL.zeroOrOnePath, 0, 1), ShaclPredicatePath);
-    getId = empty().map(({ id }) => id);
-    CBDLens = new BasicLensM(({ id, quads }, cont) => {
-      cont.lineage.push({ name: "CBD", opts: ["from: " + id.value] });
-      const done = /* @__PURE__ */ new Set();
-      const todo = [id];
-      const out = [];
-      let item = todo.pop();
-      while (item) {
-        const found = quads.filter((x2) => x2.subject.equals(item));
-        out.push(...found);
-        for (const option of found) {
-          const object2 = option.object;
-          if (object2.termType !== "BlankNode") {
-            continue;
-          }
-          if (done.has(object2.value))
-            continue;
-          done.add(object2.value);
-          todo.push(object2);
-        }
-        item = todo.pop();
-      }
-      return out;
-    });
-    Cached = function(lens, cachedLenses) {
-      const lenses = cachedLenses["lenses"] ?? (cachedLenses.lenses = []);
-      const found = lenses.find((x2) => x2.from === lens);
-      if (found) {
-        return found.lens;
-      }
-      const newLens = new BasicLens(({ id, quads }, ctx) => {
-        const state = getCacheState(newLens, ctx, () => ({
-          namedNodes: {},
-          blankNodes: {}
-        }));
-        let stateDict = {};
-        if (id.termType == "NamedNode") {
-          stateDict = state.namedNodes = state.namedNodes ?? {};
-        }
-        if (id.termType == "BlankNode") {
-          stateDict = state.blankNodes = state.blankNodes ?? {};
-        }
-        if (!(id.value in stateDict)) {
-          stateDict[id.value] = [];
-        }
-        const res = stateDict[id.value].find((x2) => x2.lens == lens);
-        if (res) {
-          return res.result;
-        }
-        const thisThing = { lens, result: {} };
-        stateDict[id.value].push(thisThing);
-        const executedLens = lens.execute({ quads, id }, ctx);
-        Object.assign(thisThing.result, executedLens);
-        return thisThing.result;
-      });
-      lenses.push({ lens: newLens, from: lens });
-      return newLens;
-    };
-    TypedExtract = function(cache, apply, subClasses) {
-      const lens = new BasicLens(({ id, quads }, ctx) => {
-        const ty = quads.find((q) => q.subject.equals(id) && q.predicate.equals(import_types3.RDF.terms.type))?.object.value;
-        ctx.lineage.push({ name: "Found type", opts: ty });
-        ctx.lineage.push({ name: "TypedExtract", opts: void 0 });
-        if (!ty) {
-          throw new LensError("Expected a type, found none", ctx.lineage.slice());
-        }
-        const lenses = [];
-        let current = ty;
-        while (current) {
-          const thisLens = cache[current];
-          if (thisLens) {
-            const state = getCacheState(lens, ctx, () => ({
-              lenses: []
-            }));
-            lenses.push(Cached(thisLens, state));
-          }
-          current = subClasses[current];
-        }
-        if (lenses.length === 0) {
-          throw new LensError("Expected a lens for type, found none", ctx.lineage.slice());
-        }
-        const finalLens = lenses.length == 1 ? lenses[0] : lenses[0].and(...lenses.slice(1)).map((xs) => Object.assign({}, ...xs));
-        if (apply[ty]) {
-          return finalLens.map(apply[ty]).execute({ id, quads }, ctx);
-        } else {
-          return finalLens.execute({ id, quads }, ctx);
-        }
-      });
-      return lens;
-    };
-  }
-});
-
-// node_modules/rdf-lens/dist/index.js
-var dist_exports = {};
-__export(dist_exports, {
-  BasicLens: () => BasicLens,
-  BasicLensM: () => BasicLensM,
-  CBDLens: () => CBDLens,
-  Cached: () => Cached,
-  LensError: () => LensError,
-  MultiPath: () => MultiPath,
-  RdfList: () => RdfList,
-  ShaclAlternativepath: () => ShaclAlternativepath,
-  ShaclInversePath: () => ShaclInversePath,
-  ShaclPath: () => ShaclPath,
-  ShaclPredicatePath: () => ShaclPredicatePath,
-  ShaclSequencePath: () => ShaclSequencePath,
-  TypedExtract: () => TypedExtract,
-  createContext: () => createContext,
-  empty: () => empty,
-  envReplace: () => envReplace,
-  extractShape: () => extractShape,
-  extractShapes: () => extractShapes,
-  invPred: () => invPred,
-  match: () => match,
-  object: () => object,
-  pred: () => pred,
-  predTriple: () => predTriple,
-  predicate: () => predicate,
-  sliced: () => sliced,
-  subject: () => subject,
-  subjects: () => subjects,
-  toLens: () => toLens,
-  unique: () => unique
-});
-var init_dist = __esm({
-  "node_modules/rdf-lens/dist/index.js"() {
-    "use strict";
-    init_lens();
-    init_shacl();
-  }
-});
-
 // node_modules/@lit/reactive-element/css-tag.js
 var t = globalThis;
 var e = t.ShadowRoot && (void 0 === t.ShadyCSS || t.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype;
 var s = /* @__PURE__ */ Symbol();
 var o = /* @__PURE__ */ new WeakMap();
 var n = class {
-  constructor(t5, e8, o7) {
-    if (this._$cssResult$ = true, o7 !== s) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
-    this.cssText = t5, this.t = e8;
+  constructor(t4, e5, o6) {
+    if (this._$cssResult$ = true, o6 !== s) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
+    this.cssText = t4, this.t = e5;
   }
   get styleSheet() {
-    let t5 = this.o;
+    let t4 = this.o;
     const s4 = this.t;
-    if (e && void 0 === t5) {
-      const e8 = void 0 !== s4 && 1 === s4.length;
-      e8 && (t5 = o.get(s4)), void 0 === t5 && ((this.o = t5 = new CSSStyleSheet()).replaceSync(this.cssText), e8 && o.set(s4, t5));
+    if (e && void 0 === t4) {
+      const e5 = void 0 !== s4 && 1 === s4.length;
+      e5 && (t4 = o.get(s4)), void 0 === t4 && ((this.o = t4 = new CSSStyleSheet()).replaceSync(this.cssText), e5 && o.set(s4, t4));
     }
-    return t5;
+    return t4;
   }
   toString() {
     return this.cssText;
   }
 };
-var r = (t5) => new n("string" == typeof t5 ? t5 : t5 + "", void 0, s);
-var i = (t5, ...e8) => {
-  const o7 = 1 === t5.length ? t5[0] : e8.reduce((e9, s4, o8) => e9 + ((t6) => {
-    if (true === t6._$cssResult$) return t6.cssText;
-    if ("number" == typeof t6) return t6;
-    throw Error("Value passed to 'css' function must be a 'css' function result: " + t6 + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
-  })(s4) + t5[o8 + 1], t5[0]);
-  return new n(o7, t5, s);
+var r = (t4) => new n("string" == typeof t4 ? t4 : t4 + "", void 0, s);
+var i = (t4, ...e5) => {
+  const o6 = 1 === t4.length ? t4[0] : e5.reduce((e6, s4, o7) => e6 + ((t5) => {
+    if (true === t5._$cssResult$) return t5.cssText;
+    if ("number" == typeof t5) return t5;
+    throw Error("Value passed to 'css' function must be a 'css' function result: " + t5 + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
+  })(s4) + t4[o7 + 1], t4[0]);
+  return new n(o6, t4, s);
 };
-var S = (s4, o7) => {
-  if (e) s4.adoptedStyleSheets = o7.map((t5) => t5 instanceof CSSStyleSheet ? t5 : t5.styleSheet);
-  else for (const e8 of o7) {
-    const o8 = document.createElement("style"), n5 = t.litNonce;
-    void 0 !== n5 && o8.setAttribute("nonce", n5), o8.textContent = e8.cssText, s4.appendChild(o8);
+var S = (s4, o6) => {
+  if (e) s4.adoptedStyleSheets = o6.map((t4) => t4 instanceof CSSStyleSheet ? t4 : t4.styleSheet);
+  else for (const e5 of o6) {
+    const o7 = document.createElement("style"), n5 = t.litNonce;
+    void 0 !== n5 && o7.setAttribute("nonce", n5), o7.textContent = e5.cssText, s4.appendChild(o7);
   }
 };
-var c = e ? (t5) => t5 : (t5) => t5 instanceof CSSStyleSheet ? ((t6) => {
-  let e8 = "";
-  for (const s4 of t6.cssRules) e8 += s4.cssText;
-  return r(e8);
-})(t5) : t5;
+var c = e ? (t4) => t4 : (t4) => t4 instanceof CSSStyleSheet ? ((t5) => {
+  let e5 = "";
+  for (const s4 of t5.cssRules) e5 += s4.cssText;
+  return r(e5);
+})(t4) : t4;
 
 // node_modules/@lit/reactive-element/reactive-element.js
 var { is: i2, defineProperty: e2, getOwnPropertyDescriptor: h, getOwnPropertyNames: r2, getOwnPropertySymbols: o2, getPrototypeOf: n2 } = Object;
@@ -26110,169 +20679,169 @@ var a = globalThis;
 var c2 = a.trustedTypes;
 var l = c2 ? c2.emptyScript : "";
 var p = a.reactiveElementPolyfillSupport;
-var d = (t5, s4) => t5;
-var u = { toAttribute(t5, s4) {
+var d = (t4, s4) => t4;
+var u = { toAttribute(t4, s4) {
   switch (s4) {
     case Boolean:
-      t5 = t5 ? l : null;
+      t4 = t4 ? l : null;
       break;
     case Object:
     case Array:
-      t5 = null == t5 ? t5 : JSON.stringify(t5);
+      t4 = null == t4 ? t4 : JSON.stringify(t4);
   }
-  return t5;
-}, fromAttribute(t5, s4) {
-  let i6 = t5;
+  return t4;
+}, fromAttribute(t4, s4) {
+  let i5 = t4;
   switch (s4) {
     case Boolean:
-      i6 = null !== t5;
+      i5 = null !== t4;
       break;
     case Number:
-      i6 = null === t5 ? null : Number(t5);
+      i5 = null === t4 ? null : Number(t4);
       break;
     case Object:
     case Array:
       try {
-        i6 = JSON.parse(t5);
-      } catch (t6) {
-        i6 = null;
+        i5 = JSON.parse(t4);
+      } catch (t5) {
+        i5 = null;
       }
   }
-  return i6;
+  return i5;
 } };
-var f = (t5, s4) => !i2(t5, s4);
+var f = (t4, s4) => !i2(t4, s4);
 var b = { attribute: true, type: String, converter: u, reflect: false, useDefault: false, hasChanged: f };
 Symbol.metadata ?? (Symbol.metadata = /* @__PURE__ */ Symbol("metadata")), a.litPropertyMetadata ?? (a.litPropertyMetadata = /* @__PURE__ */ new WeakMap());
 var y = class extends HTMLElement {
-  static addInitializer(t5) {
-    this._$Ei(), (this.l ?? (this.l = [])).push(t5);
+  static addInitializer(t4) {
+    this._$Ei(), (this.l ?? (this.l = [])).push(t4);
   }
   static get observedAttributes() {
     return this.finalize(), this._$Eh && [...this._$Eh.keys()];
   }
-  static createProperty(t5, s4 = b) {
-    if (s4.state && (s4.attribute = false), this._$Ei(), this.prototype.hasOwnProperty(t5) && ((s4 = Object.create(s4)).wrapped = true), this.elementProperties.set(t5, s4), !s4.noAccessor) {
-      const i6 = /* @__PURE__ */ Symbol(), h3 = this.getPropertyDescriptor(t5, i6, s4);
-      void 0 !== h3 && e2(this.prototype, t5, h3);
+  static createProperty(t4, s4 = b) {
+    if (s4.state && (s4.attribute = false), this._$Ei(), this.prototype.hasOwnProperty(t4) && ((s4 = Object.create(s4)).wrapped = true), this.elementProperties.set(t4, s4), !s4.noAccessor) {
+      const i5 = /* @__PURE__ */ Symbol(), h3 = this.getPropertyDescriptor(t4, i5, s4);
+      void 0 !== h3 && e2(this.prototype, t4, h3);
     }
   }
-  static getPropertyDescriptor(t5, s4, i6) {
-    const { get: e8, set: r6 } = h(this.prototype, t5) ?? { get() {
+  static getPropertyDescriptor(t4, s4, i5) {
+    const { get: e5, set: r5 } = h(this.prototype, t4) ?? { get() {
       return this[s4];
-    }, set(t6) {
-      this[s4] = t6;
+    }, set(t5) {
+      this[s4] = t5;
     } };
-    return { get: e8, set(s5) {
-      const h3 = e8?.call(this);
-      r6?.call(this, s5), this.requestUpdate(t5, h3, i6);
+    return { get: e5, set(s5) {
+      const h3 = e5?.call(this);
+      r5?.call(this, s5), this.requestUpdate(t4, h3, i5);
     }, configurable: true, enumerable: true };
   }
-  static getPropertyOptions(t5) {
-    return this.elementProperties.get(t5) ?? b;
+  static getPropertyOptions(t4) {
+    return this.elementProperties.get(t4) ?? b;
   }
   static _$Ei() {
     if (this.hasOwnProperty(d("elementProperties"))) return;
-    const t5 = n2(this);
-    t5.finalize(), void 0 !== t5.l && (this.l = [...t5.l]), this.elementProperties = new Map(t5.elementProperties);
+    const t4 = n2(this);
+    t4.finalize(), void 0 !== t4.l && (this.l = [...t4.l]), this.elementProperties = new Map(t4.elementProperties);
   }
   static finalize() {
     if (this.hasOwnProperty(d("finalized"))) return;
     if (this.finalized = true, this._$Ei(), this.hasOwnProperty(d("properties"))) {
-      const t6 = this.properties, s4 = [...r2(t6), ...o2(t6)];
-      for (const i6 of s4) this.createProperty(i6, t6[i6]);
+      const t5 = this.properties, s4 = [...r2(t5), ...o2(t5)];
+      for (const i5 of s4) this.createProperty(i5, t5[i5]);
     }
-    const t5 = this[Symbol.metadata];
-    if (null !== t5) {
-      const s4 = litPropertyMetadata.get(t5);
-      if (void 0 !== s4) for (const [t6, i6] of s4) this.elementProperties.set(t6, i6);
+    const t4 = this[Symbol.metadata];
+    if (null !== t4) {
+      const s4 = litPropertyMetadata.get(t4);
+      if (void 0 !== s4) for (const [t5, i5] of s4) this.elementProperties.set(t5, i5);
     }
     this._$Eh = /* @__PURE__ */ new Map();
-    for (const [t6, s4] of this.elementProperties) {
-      const i6 = this._$Eu(t6, s4);
-      void 0 !== i6 && this._$Eh.set(i6, t6);
+    for (const [t5, s4] of this.elementProperties) {
+      const i5 = this._$Eu(t5, s4);
+      void 0 !== i5 && this._$Eh.set(i5, t5);
     }
     this.elementStyles = this.finalizeStyles(this.styles);
   }
   static finalizeStyles(s4) {
-    const i6 = [];
+    const i5 = [];
     if (Array.isArray(s4)) {
-      const e8 = new Set(s4.flat(1 / 0).reverse());
-      for (const s5 of e8) i6.unshift(c(s5));
-    } else void 0 !== s4 && i6.push(c(s4));
-    return i6;
+      const e5 = new Set(s4.flat(1 / 0).reverse());
+      for (const s5 of e5) i5.unshift(c(s5));
+    } else void 0 !== s4 && i5.push(c(s4));
+    return i5;
   }
-  static _$Eu(t5, s4) {
-    const i6 = s4.attribute;
-    return false === i6 ? void 0 : "string" == typeof i6 ? i6 : "string" == typeof t5 ? t5.toLowerCase() : void 0;
+  static _$Eu(t4, s4) {
+    const i5 = s4.attribute;
+    return false === i5 ? void 0 : "string" == typeof i5 ? i5 : "string" == typeof t4 ? t4.toLowerCase() : void 0;
   }
   constructor() {
     super(), this._$Ep = void 0, this.isUpdatePending = false, this.hasUpdated = false, this._$Em = null, this._$Ev();
   }
   _$Ev() {
-    this._$ES = new Promise((t5) => this.enableUpdating = t5), this._$AL = /* @__PURE__ */ new Map(), this._$E_(), this.requestUpdate(), this.constructor.l?.forEach((t5) => t5(this));
+    this._$ES = new Promise((t4) => this.enableUpdating = t4), this._$AL = /* @__PURE__ */ new Map(), this._$E_(), this.requestUpdate(), this.constructor.l?.forEach((t4) => t4(this));
   }
-  addController(t5) {
-    (this._$EO ?? (this._$EO = /* @__PURE__ */ new Set())).add(t5), void 0 !== this.renderRoot && this.isConnected && t5.hostConnected?.();
+  addController(t4) {
+    (this._$EO ?? (this._$EO = /* @__PURE__ */ new Set())).add(t4), void 0 !== this.renderRoot && this.isConnected && t4.hostConnected?.();
   }
-  removeController(t5) {
-    this._$EO?.delete(t5);
+  removeController(t4) {
+    this._$EO?.delete(t4);
   }
   _$E_() {
-    const t5 = /* @__PURE__ */ new Map(), s4 = this.constructor.elementProperties;
-    for (const i6 of s4.keys()) this.hasOwnProperty(i6) && (t5.set(i6, this[i6]), delete this[i6]);
-    t5.size > 0 && (this._$Ep = t5);
+    const t4 = /* @__PURE__ */ new Map(), s4 = this.constructor.elementProperties;
+    for (const i5 of s4.keys()) this.hasOwnProperty(i5) && (t4.set(i5, this[i5]), delete this[i5]);
+    t4.size > 0 && (this._$Ep = t4);
   }
   createRenderRoot() {
-    const t5 = this.shadowRoot ?? this.attachShadow(this.constructor.shadowRootOptions);
-    return S(t5, this.constructor.elementStyles), t5;
+    const t4 = this.shadowRoot ?? this.attachShadow(this.constructor.shadowRootOptions);
+    return S(t4, this.constructor.elementStyles), t4;
   }
   connectedCallback() {
-    this.renderRoot ?? (this.renderRoot = this.createRenderRoot()), this.enableUpdating(true), this._$EO?.forEach((t5) => t5.hostConnected?.());
+    this.renderRoot ?? (this.renderRoot = this.createRenderRoot()), this.enableUpdating(true), this._$EO?.forEach((t4) => t4.hostConnected?.());
   }
-  enableUpdating(t5) {
+  enableUpdating(t4) {
   }
   disconnectedCallback() {
-    this._$EO?.forEach((t5) => t5.hostDisconnected?.());
+    this._$EO?.forEach((t4) => t4.hostDisconnected?.());
   }
-  attributeChangedCallback(t5, s4, i6) {
-    this._$AK(t5, i6);
+  attributeChangedCallback(t4, s4, i5) {
+    this._$AK(t4, i5);
   }
-  _$ET(t5, s4) {
-    const i6 = this.constructor.elementProperties.get(t5), e8 = this.constructor._$Eu(t5, i6);
-    if (void 0 !== e8 && true === i6.reflect) {
-      const h3 = (void 0 !== i6.converter?.toAttribute ? i6.converter : u).toAttribute(s4, i6.type);
-      this._$Em = t5, null == h3 ? this.removeAttribute(e8) : this.setAttribute(e8, h3), this._$Em = null;
+  _$ET(t4, s4) {
+    const i5 = this.constructor.elementProperties.get(t4), e5 = this.constructor._$Eu(t4, i5);
+    if (void 0 !== e5 && true === i5.reflect) {
+      const h3 = (void 0 !== i5.converter?.toAttribute ? i5.converter : u).toAttribute(s4, i5.type);
+      this._$Em = t4, null == h3 ? this.removeAttribute(e5) : this.setAttribute(e5, h3), this._$Em = null;
     }
   }
-  _$AK(t5, s4) {
-    const i6 = this.constructor, e8 = i6._$Eh.get(t5);
-    if (void 0 !== e8 && this._$Em !== e8) {
-      const t6 = i6.getPropertyOptions(e8), h3 = "function" == typeof t6.converter ? { fromAttribute: t6.converter } : void 0 !== t6.converter?.fromAttribute ? t6.converter : u;
-      this._$Em = e8;
-      const r6 = h3.fromAttribute(s4, t6.type);
-      this[e8] = r6 ?? this._$Ej?.get(e8) ?? r6, this._$Em = null;
+  _$AK(t4, s4) {
+    const i5 = this.constructor, e5 = i5._$Eh.get(t4);
+    if (void 0 !== e5 && this._$Em !== e5) {
+      const t5 = i5.getPropertyOptions(e5), h3 = "function" == typeof t5.converter ? { fromAttribute: t5.converter } : void 0 !== t5.converter?.fromAttribute ? t5.converter : u;
+      this._$Em = e5;
+      const r5 = h3.fromAttribute(s4, t5.type);
+      this[e5] = r5 ?? this._$Ej?.get(e5) ?? r5, this._$Em = null;
     }
   }
-  requestUpdate(t5, s4, i6, e8 = false, h3) {
-    if (void 0 !== t5) {
-      const r6 = this.constructor;
-      if (false === e8 && (h3 = this[t5]), i6 ?? (i6 = r6.getPropertyOptions(t5)), !((i6.hasChanged ?? f)(h3, s4) || i6.useDefault && i6.reflect && h3 === this._$Ej?.get(t5) && !this.hasAttribute(r6._$Eu(t5, i6)))) return;
-      this.C(t5, s4, i6);
+  requestUpdate(t4, s4, i5, e5 = false, h3) {
+    if (void 0 !== t4) {
+      const r5 = this.constructor;
+      if (false === e5 && (h3 = this[t4]), i5 ?? (i5 = r5.getPropertyOptions(t4)), !((i5.hasChanged ?? f)(h3, s4) || i5.useDefault && i5.reflect && h3 === this._$Ej?.get(t4) && !this.hasAttribute(r5._$Eu(t4, i5)))) return;
+      this.C(t4, s4, i5);
     }
     false === this.isUpdatePending && (this._$ES = this._$EP());
   }
-  C(t5, s4, { useDefault: i6, reflect: e8, wrapped: h3 }, r6) {
-    i6 && !(this._$Ej ?? (this._$Ej = /* @__PURE__ */ new Map())).has(t5) && (this._$Ej.set(t5, r6 ?? s4 ?? this[t5]), true !== h3 || void 0 !== r6) || (this._$AL.has(t5) || (this.hasUpdated || i6 || (s4 = void 0), this._$AL.set(t5, s4)), true === e8 && this._$Em !== t5 && (this._$Eq ?? (this._$Eq = /* @__PURE__ */ new Set())).add(t5));
+  C(t4, s4, { useDefault: i5, reflect: e5, wrapped: h3 }, r5) {
+    i5 && !(this._$Ej ?? (this._$Ej = /* @__PURE__ */ new Map())).has(t4) && (this._$Ej.set(t4, r5 ?? s4 ?? this[t4]), true !== h3 || void 0 !== r5) || (this._$AL.has(t4) || (this.hasUpdated || i5 || (s4 = void 0), this._$AL.set(t4, s4)), true === e5 && this._$Em !== t4 && (this._$Eq ?? (this._$Eq = /* @__PURE__ */ new Set())).add(t4));
   }
   async _$EP() {
     this.isUpdatePending = true;
     try {
       await this._$ES;
-    } catch (t6) {
-      Promise.reject(t6);
+    } catch (t5) {
+      Promise.reject(t5);
     }
-    const t5 = this.scheduleUpdate();
-    return null != t5 && await t5, !this.isUpdatePending;
+    const t4 = this.scheduleUpdate();
+    return null != t4 && await t4, !this.isUpdatePending;
   }
   scheduleUpdate() {
     return this.performUpdate();
@@ -26281,28 +20850,28 @@ var y = class extends HTMLElement {
     if (!this.isUpdatePending) return;
     if (!this.hasUpdated) {
       if (this.renderRoot ?? (this.renderRoot = this.createRenderRoot()), this._$Ep) {
-        for (const [t7, s5] of this._$Ep) this[t7] = s5;
+        for (const [t6, s5] of this._$Ep) this[t6] = s5;
         this._$Ep = void 0;
       }
-      const t6 = this.constructor.elementProperties;
-      if (t6.size > 0) for (const [s5, i6] of t6) {
-        const { wrapped: t7 } = i6, e8 = this[s5];
-        true !== t7 || this._$AL.has(s5) || void 0 === e8 || this.C(s5, void 0, i6, e8);
+      const t5 = this.constructor.elementProperties;
+      if (t5.size > 0) for (const [s5, i5] of t5) {
+        const { wrapped: t6 } = i5, e5 = this[s5];
+        true !== t6 || this._$AL.has(s5) || void 0 === e5 || this.C(s5, void 0, i5, e5);
       }
     }
-    let t5 = false;
+    let t4 = false;
     const s4 = this._$AL;
     try {
-      t5 = this.shouldUpdate(s4), t5 ? (this.willUpdate(s4), this._$EO?.forEach((t6) => t6.hostUpdate?.()), this.update(s4)) : this._$EM();
+      t4 = this.shouldUpdate(s4), t4 ? (this.willUpdate(s4), this._$EO?.forEach((t5) => t5.hostUpdate?.()), this.update(s4)) : this._$EM();
     } catch (s5) {
-      throw t5 = false, this._$EM(), s5;
+      throw t4 = false, this._$EM(), s5;
     }
-    t5 && this._$AE(s4);
+    t4 && this._$AE(s4);
   }
-  willUpdate(t5) {
+  willUpdate(t4) {
   }
-  _$AE(t5) {
-    this._$EO?.forEach((t6) => t6.hostUpdated?.()), this.hasUpdated || (this.hasUpdated = true, this.firstUpdated(t5)), this.updated(t5);
+  _$AE(t4) {
+    this._$EO?.forEach((t5) => t5.hostUpdated?.()), this.hasUpdated || (this.hasUpdated = true, this.firstUpdated(t4)), this.updated(t4);
   }
   _$EM() {
     this._$AL = /* @__PURE__ */ new Map(), this.isUpdatePending = false;
@@ -26313,33 +20882,33 @@ var y = class extends HTMLElement {
   getUpdateComplete() {
     return this._$ES;
   }
-  shouldUpdate(t5) {
+  shouldUpdate(t4) {
     return true;
   }
-  update(t5) {
-    this._$Eq && (this._$Eq = this._$Eq.forEach((t6) => this._$ET(t6, this[t6]))), this._$EM();
+  update(t4) {
+    this._$Eq && (this._$Eq = this._$Eq.forEach((t5) => this._$ET(t5, this[t5]))), this._$EM();
   }
-  updated(t5) {
+  updated(t4) {
   }
-  firstUpdated(t5) {
+  firstUpdated(t4) {
   }
 };
 y.elementStyles = [], y.shadowRootOptions = { mode: "open" }, y[d("elementProperties")] = /* @__PURE__ */ new Map(), y[d("finalized")] = /* @__PURE__ */ new Map(), p?.({ ReactiveElement: y }), (a.reactiveElementVersions ?? (a.reactiveElementVersions = [])).push("2.1.2");
 
 // node_modules/lit-html/lit-html.js
 var t2 = globalThis;
-var i3 = (t5) => t5;
+var i3 = (t4) => t4;
 var s2 = t2.trustedTypes;
-var e3 = s2 ? s2.createPolicy("lit-html", { createHTML: (t5) => t5 }) : void 0;
+var e3 = s2 ? s2.createPolicy("lit-html", { createHTML: (t4) => t4 }) : void 0;
 var h2 = "$lit$";
 var o3 = `lit$${Math.random().toFixed(9).slice(2)}$`;
 var n3 = "?" + o3;
 var r3 = `<${n3}>`;
 var l2 = document;
 var c3 = () => l2.createComment("");
-var a2 = (t5) => null === t5 || "object" != typeof t5 && "function" != typeof t5;
+var a2 = (t4) => null === t4 || "object" != typeof t4 && "function" != typeof t4;
 var u2 = Array.isArray;
-var d2 = (t5) => u2(t5) || "function" == typeof t5?.[Symbol.iterator];
+var d2 = (t4) => u2(t4) || "function" == typeof t4?.[Symbol.iterator];
 var f2 = "[ 	\n\f\r]";
 var v = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g;
 var _ = /-->/g;
@@ -26349,7 +20918,7 @@ var p2 = RegExp(`>|${f2}(?:([^\\s"'>=/]+)(${f2}*=${f2}*(?:[^
 var g = /'/g;
 var $ = /"/g;
 var y2 = /^(?:script|style|textarea|title)$/i;
-var x = (t5) => (i6, ...s4) => ({ _$litType$: t5, strings: i6, values: s4 });
+var x = (t4) => (i5, ...s4) => ({ _$litType$: t4, strings: i5, values: s4 });
 var b2 = x(1);
 var w = x(2);
 var T = x(3);
@@ -26357,68 +20926,68 @@ var E = /* @__PURE__ */ Symbol.for("lit-noChange");
 var A = /* @__PURE__ */ Symbol.for("lit-nothing");
 var C = /* @__PURE__ */ new WeakMap();
 var P = l2.createTreeWalker(l2, 129);
-function V(t5, i6) {
-  if (!u2(t5) || !t5.hasOwnProperty("raw")) throw Error("invalid template strings array");
-  return void 0 !== e3 ? e3.createHTML(i6) : i6;
+function V(t4, i5) {
+  if (!u2(t4) || !t4.hasOwnProperty("raw")) throw Error("invalid template strings array");
+  return void 0 !== e3 ? e3.createHTML(i5) : i5;
 }
-var N = (t5, i6) => {
-  const s4 = t5.length - 1, e8 = [];
-  let n5, l3 = 2 === i6 ? "<svg>" : 3 === i6 ? "<math>" : "", c4 = v;
-  for (let i7 = 0; i7 < s4; i7++) {
-    const s5 = t5[i7];
+var N = (t4, i5) => {
+  const s4 = t4.length - 1, e5 = [];
+  let n5, l3 = 2 === i5 ? "<svg>" : 3 === i5 ? "<math>" : "", c4 = v;
+  for (let i6 = 0; i6 < s4; i6++) {
+    const s5 = t4[i6];
     let a3, u3, d3 = -1, f3 = 0;
     for (; f3 < s5.length && (c4.lastIndex = f3, u3 = c4.exec(s5), null !== u3); ) f3 = c4.lastIndex, c4 === v ? "!--" === u3[1] ? c4 = _ : void 0 !== u3[1] ? c4 = m : void 0 !== u3[2] ? (y2.test(u3[2]) && (n5 = RegExp("</" + u3[2], "g")), c4 = p2) : void 0 !== u3[3] && (c4 = p2) : c4 === p2 ? ">" === u3[0] ? (c4 = n5 ?? v, d3 = -1) : void 0 === u3[1] ? d3 = -2 : (d3 = c4.lastIndex - u3[2].length, a3 = u3[1], c4 = void 0 === u3[3] ? p2 : '"' === u3[3] ? $ : g) : c4 === $ || c4 === g ? c4 = p2 : c4 === _ || c4 === m ? c4 = v : (c4 = p2, n5 = void 0);
-    const x2 = c4 === p2 && t5[i7 + 1].startsWith("/>") ? " " : "";
-    l3 += c4 === v ? s5 + r3 : d3 >= 0 ? (e8.push(a3), s5.slice(0, d3) + h2 + s5.slice(d3) + o3 + x2) : s5 + o3 + (-2 === d3 ? i7 : x2);
+    const x2 = c4 === p2 && t4[i6 + 1].startsWith("/>") ? " " : "";
+    l3 += c4 === v ? s5 + r3 : d3 >= 0 ? (e5.push(a3), s5.slice(0, d3) + h2 + s5.slice(d3) + o3 + x2) : s5 + o3 + (-2 === d3 ? i6 : x2);
   }
-  return [V(t5, l3 + (t5[s4] || "<?>") + (2 === i6 ? "</svg>" : 3 === i6 ? "</math>" : "")), e8];
+  return [V(t4, l3 + (t4[s4] || "<?>") + (2 === i5 ? "</svg>" : 3 === i5 ? "</math>" : "")), e5];
 };
 var S2 = class _S {
-  constructor({ strings: t5, _$litType$: i6 }, e8) {
-    let r6;
+  constructor({ strings: t4, _$litType$: i5 }, e5) {
+    let r5;
     this.parts = [];
     let l3 = 0, a3 = 0;
-    const u3 = t5.length - 1, d3 = this.parts, [f3, v2] = N(t5, i6);
-    if (this.el = _S.createElement(f3, e8), P.currentNode = this.el.content, 2 === i6 || 3 === i6) {
-      const t6 = this.el.content.firstChild;
-      t6.replaceWith(...t6.childNodes);
+    const u3 = t4.length - 1, d3 = this.parts, [f3, v2] = N(t4, i5);
+    if (this.el = _S.createElement(f3, e5), P.currentNode = this.el.content, 2 === i5 || 3 === i5) {
+      const t5 = this.el.content.firstChild;
+      t5.replaceWith(...t5.childNodes);
     }
-    for (; null !== (r6 = P.nextNode()) && d3.length < u3; ) {
-      if (1 === r6.nodeType) {
-        if (r6.hasAttributes()) for (const t6 of r6.getAttributeNames()) if (t6.endsWith(h2)) {
-          const i7 = v2[a3++], s4 = r6.getAttribute(t6).split(o3), e9 = /([.?@])?(.*)/.exec(i7);
-          d3.push({ type: 1, index: l3, name: e9[2], strings: s4, ctor: "." === e9[1] ? I : "?" === e9[1] ? L : "@" === e9[1] ? z : H }), r6.removeAttribute(t6);
-        } else t6.startsWith(o3) && (d3.push({ type: 6, index: l3 }), r6.removeAttribute(t6));
-        if (y2.test(r6.tagName)) {
-          const t6 = r6.textContent.split(o3), i7 = t6.length - 1;
-          if (i7 > 0) {
-            r6.textContent = s2 ? s2.emptyScript : "";
-            for (let s4 = 0; s4 < i7; s4++) r6.append(t6[s4], c3()), P.nextNode(), d3.push({ type: 2, index: ++l3 });
-            r6.append(t6[i7], c3());
+    for (; null !== (r5 = P.nextNode()) && d3.length < u3; ) {
+      if (1 === r5.nodeType) {
+        if (r5.hasAttributes()) for (const t5 of r5.getAttributeNames()) if (t5.endsWith(h2)) {
+          const i6 = v2[a3++], s4 = r5.getAttribute(t5).split(o3), e6 = /([.?@])?(.*)/.exec(i6);
+          d3.push({ type: 1, index: l3, name: e6[2], strings: s4, ctor: "." === e6[1] ? I : "?" === e6[1] ? L : "@" === e6[1] ? z : H }), r5.removeAttribute(t5);
+        } else t5.startsWith(o3) && (d3.push({ type: 6, index: l3 }), r5.removeAttribute(t5));
+        if (y2.test(r5.tagName)) {
+          const t5 = r5.textContent.split(o3), i6 = t5.length - 1;
+          if (i6 > 0) {
+            r5.textContent = s2 ? s2.emptyScript : "";
+            for (let s4 = 0; s4 < i6; s4++) r5.append(t5[s4], c3()), P.nextNode(), d3.push({ type: 2, index: ++l3 });
+            r5.append(t5[i6], c3());
           }
         }
-      } else if (8 === r6.nodeType) if (r6.data === n3) d3.push({ type: 2, index: l3 });
+      } else if (8 === r5.nodeType) if (r5.data === n3) d3.push({ type: 2, index: l3 });
       else {
-        let t6 = -1;
-        for (; -1 !== (t6 = r6.data.indexOf(o3, t6 + 1)); ) d3.push({ type: 7, index: l3 }), t6 += o3.length - 1;
+        let t5 = -1;
+        for (; -1 !== (t5 = r5.data.indexOf(o3, t5 + 1)); ) d3.push({ type: 7, index: l3 }), t5 += o3.length - 1;
       }
       l3++;
     }
   }
-  static createElement(t5, i6) {
+  static createElement(t4, i5) {
     const s4 = l2.createElement("template");
-    return s4.innerHTML = t5, s4;
+    return s4.innerHTML = t4, s4;
   }
 };
-function M(t5, i6, s4 = t5, e8) {
-  if (i6 === E) return i6;
-  let h3 = void 0 !== e8 ? s4._$Co?.[e8] : s4._$Cl;
-  const o7 = a2(i6) ? void 0 : i6._$litDirective$;
-  return h3?.constructor !== o7 && (h3?._$AO?.(false), void 0 === o7 ? h3 = void 0 : (h3 = new o7(t5), h3._$AT(t5, s4, e8)), void 0 !== e8 ? (s4._$Co ?? (s4._$Co = []))[e8] = h3 : s4._$Cl = h3), void 0 !== h3 && (i6 = M(t5, h3._$AS(t5, i6.values), h3, e8)), i6;
+function M(t4, i5, s4 = t4, e5) {
+  if (i5 === E) return i5;
+  let h3 = void 0 !== e5 ? s4._$Co?.[e5] : s4._$Cl;
+  const o6 = a2(i5) ? void 0 : i5._$litDirective$;
+  return h3?.constructor !== o6 && (h3?._$AO?.(false), void 0 === o6 ? h3 = void 0 : (h3 = new o6(t4), h3._$AT(t4, s4, e5)), void 0 !== e5 ? (s4._$Co ?? (s4._$Co = []))[e5] = h3 : s4._$Cl = h3), void 0 !== h3 && (i5 = M(t4, h3._$AS(t4, i5.values), h3, e5)), i5;
 }
 var R = class {
-  constructor(t5, i6) {
-    this._$AV = [], this._$AN = void 0, this._$AD = t5, this._$AM = i6;
+  constructor(t4, i5) {
+    this._$AV = [], this._$AN = void 0, this._$AD = t4, this._$AM = i5;
   }
   get parentNode() {
     return this._$AM.parentNode;
@@ -26426,35 +20995,35 @@ var R = class {
   get _$AU() {
     return this._$AM._$AU;
   }
-  u(t5) {
-    const { el: { content: i6 }, parts: s4 } = this._$AD, e8 = (t5?.creationScope ?? l2).importNode(i6, true);
-    P.currentNode = e8;
-    let h3 = P.nextNode(), o7 = 0, n5 = 0, r6 = s4[0];
-    for (; void 0 !== r6; ) {
-      if (o7 === r6.index) {
-        let i7;
-        2 === r6.type ? i7 = new k(h3, h3.nextSibling, this, t5) : 1 === r6.type ? i7 = new r6.ctor(h3, r6.name, r6.strings, this, t5) : 6 === r6.type && (i7 = new Z(h3, this, t5)), this._$AV.push(i7), r6 = s4[++n5];
+  u(t4) {
+    const { el: { content: i5 }, parts: s4 } = this._$AD, e5 = (t4?.creationScope ?? l2).importNode(i5, true);
+    P.currentNode = e5;
+    let h3 = P.nextNode(), o6 = 0, n5 = 0, r5 = s4[0];
+    for (; void 0 !== r5; ) {
+      if (o6 === r5.index) {
+        let i6;
+        2 === r5.type ? i6 = new k(h3, h3.nextSibling, this, t4) : 1 === r5.type ? i6 = new r5.ctor(h3, r5.name, r5.strings, this, t4) : 6 === r5.type && (i6 = new Z(h3, this, t4)), this._$AV.push(i6), r5 = s4[++n5];
       }
-      o7 !== r6?.index && (h3 = P.nextNode(), o7++);
+      o6 !== r5?.index && (h3 = P.nextNode(), o6++);
     }
-    return P.currentNode = l2, e8;
+    return P.currentNode = l2, e5;
   }
-  p(t5) {
-    let i6 = 0;
-    for (const s4 of this._$AV) void 0 !== s4 && (void 0 !== s4.strings ? (s4._$AI(t5, s4, i6), i6 += s4.strings.length - 2) : s4._$AI(t5[i6])), i6++;
+  p(t4) {
+    let i5 = 0;
+    for (const s4 of this._$AV) void 0 !== s4 && (void 0 !== s4.strings ? (s4._$AI(t4, s4, i5), i5 += s4.strings.length - 2) : s4._$AI(t4[i5])), i5++;
   }
 };
 var k = class _k {
   get _$AU() {
     return this._$AM?._$AU ?? this._$Cv;
   }
-  constructor(t5, i6, s4, e8) {
-    this.type = 2, this._$AH = A, this._$AN = void 0, this._$AA = t5, this._$AB = i6, this._$AM = s4, this.options = e8, this._$Cv = e8?.isConnected ?? true;
+  constructor(t4, i5, s4, e5) {
+    this.type = 2, this._$AH = A, this._$AN = void 0, this._$AA = t4, this._$AB = i5, this._$AM = s4, this.options = e5, this._$Cv = e5?.isConnected ?? true;
   }
   get parentNode() {
-    let t5 = this._$AA.parentNode;
-    const i6 = this._$AM;
-    return void 0 !== i6 && 11 === t5?.nodeType && (t5 = i6.parentNode), t5;
+    let t4 = this._$AA.parentNode;
+    const i5 = this._$AM;
+    return void 0 !== i5 && 11 === t4?.nodeType && (t4 = i5.parentNode), t4;
   }
   get startNode() {
     return this._$AA;
@@ -26462,45 +21031,45 @@ var k = class _k {
   get endNode() {
     return this._$AB;
   }
-  _$AI(t5, i6 = this) {
-    t5 = M(this, t5, i6), a2(t5) ? t5 === A || null == t5 || "" === t5 ? (this._$AH !== A && this._$AR(), this._$AH = A) : t5 !== this._$AH && t5 !== E && this._(t5) : void 0 !== t5._$litType$ ? this.$(t5) : void 0 !== t5.nodeType ? this.T(t5) : d2(t5) ? this.k(t5) : this._(t5);
+  _$AI(t4, i5 = this) {
+    t4 = M(this, t4, i5), a2(t4) ? t4 === A || null == t4 || "" === t4 ? (this._$AH !== A && this._$AR(), this._$AH = A) : t4 !== this._$AH && t4 !== E && this._(t4) : void 0 !== t4._$litType$ ? this.$(t4) : void 0 !== t4.nodeType ? this.T(t4) : d2(t4) ? this.k(t4) : this._(t4);
   }
-  O(t5) {
-    return this._$AA.parentNode.insertBefore(t5, this._$AB);
+  O(t4) {
+    return this._$AA.parentNode.insertBefore(t4, this._$AB);
   }
-  T(t5) {
-    this._$AH !== t5 && (this._$AR(), this._$AH = this.O(t5));
+  T(t4) {
+    this._$AH !== t4 && (this._$AR(), this._$AH = this.O(t4));
   }
-  _(t5) {
-    this._$AH !== A && a2(this._$AH) ? this._$AA.nextSibling.data = t5 : this.T(l2.createTextNode(t5)), this._$AH = t5;
+  _(t4) {
+    this._$AH !== A && a2(this._$AH) ? this._$AA.nextSibling.data = t4 : this.T(l2.createTextNode(t4)), this._$AH = t4;
   }
-  $(t5) {
-    const { values: i6, _$litType$: s4 } = t5, e8 = "number" == typeof s4 ? this._$AC(t5) : (void 0 === s4.el && (s4.el = S2.createElement(V(s4.h, s4.h[0]), this.options)), s4);
-    if (this._$AH?._$AD === e8) this._$AH.p(i6);
+  $(t4) {
+    const { values: i5, _$litType$: s4 } = t4, e5 = "number" == typeof s4 ? this._$AC(t4) : (void 0 === s4.el && (s4.el = S2.createElement(V(s4.h, s4.h[0]), this.options)), s4);
+    if (this._$AH?._$AD === e5) this._$AH.p(i5);
     else {
-      const t6 = new R(e8, this), s5 = t6.u(this.options);
-      t6.p(i6), this.T(s5), this._$AH = t6;
+      const t5 = new R(e5, this), s5 = t5.u(this.options);
+      t5.p(i5), this.T(s5), this._$AH = t5;
     }
   }
-  _$AC(t5) {
-    let i6 = C.get(t5.strings);
-    return void 0 === i6 && C.set(t5.strings, i6 = new S2(t5)), i6;
+  _$AC(t4) {
+    let i5 = C.get(t4.strings);
+    return void 0 === i5 && C.set(t4.strings, i5 = new S2(t4)), i5;
   }
-  k(t5) {
+  k(t4) {
     u2(this._$AH) || (this._$AH = [], this._$AR());
-    const i6 = this._$AH;
-    let s4, e8 = 0;
-    for (const h3 of t5) e8 === i6.length ? i6.push(s4 = new _k(this.O(c3()), this.O(c3()), this, this.options)) : s4 = i6[e8], s4._$AI(h3), e8++;
-    e8 < i6.length && (this._$AR(s4 && s4._$AB.nextSibling, e8), i6.length = e8);
+    const i5 = this._$AH;
+    let s4, e5 = 0;
+    for (const h3 of t4) e5 === i5.length ? i5.push(s4 = new _k(this.O(c3()), this.O(c3()), this, this.options)) : s4 = i5[e5], s4._$AI(h3), e5++;
+    e5 < i5.length && (this._$AR(s4 && s4._$AB.nextSibling, e5), i5.length = e5);
   }
-  _$AR(t5 = this._$AA.nextSibling, s4) {
-    for (this._$AP?.(false, true, s4); t5 !== this._$AB; ) {
-      const s5 = i3(t5).nextSibling;
-      i3(t5).remove(), t5 = s5;
+  _$AR(t4 = this._$AA.nextSibling, s4) {
+    for (this._$AP?.(false, true, s4); t4 !== this._$AB; ) {
+      const s5 = i3(t4).nextSibling;
+      i3(t4).remove(), t4 = s5;
     }
   }
-  setConnected(t5) {
-    void 0 === this._$AM && (this._$Cv = t5, this._$AP?.(t5));
+  setConnected(t4) {
+    void 0 === this._$AM && (this._$Cv = t4, this._$AP?.(t4));
   }
 };
 var H = class {
@@ -26510,74 +21079,74 @@ var H = class {
   get _$AU() {
     return this._$AM._$AU;
   }
-  constructor(t5, i6, s4, e8, h3) {
-    this.type = 1, this._$AH = A, this._$AN = void 0, this.element = t5, this.name = i6, this._$AM = e8, this.options = h3, s4.length > 2 || "" !== s4[0] || "" !== s4[1] ? (this._$AH = Array(s4.length - 1).fill(new String()), this.strings = s4) : this._$AH = A;
+  constructor(t4, i5, s4, e5, h3) {
+    this.type = 1, this._$AH = A, this._$AN = void 0, this.element = t4, this.name = i5, this._$AM = e5, this.options = h3, s4.length > 2 || "" !== s4[0] || "" !== s4[1] ? (this._$AH = Array(s4.length - 1).fill(new String()), this.strings = s4) : this._$AH = A;
   }
-  _$AI(t5, i6 = this, s4, e8) {
+  _$AI(t4, i5 = this, s4, e5) {
     const h3 = this.strings;
-    let o7 = false;
-    if (void 0 === h3) t5 = M(this, t5, i6, 0), o7 = !a2(t5) || t5 !== this._$AH && t5 !== E, o7 && (this._$AH = t5);
+    let o6 = false;
+    if (void 0 === h3) t4 = M(this, t4, i5, 0), o6 = !a2(t4) || t4 !== this._$AH && t4 !== E, o6 && (this._$AH = t4);
     else {
-      const e9 = t5;
-      let n5, r6;
-      for (t5 = h3[0], n5 = 0; n5 < h3.length - 1; n5++) r6 = M(this, e9[s4 + n5], i6, n5), r6 === E && (r6 = this._$AH[n5]), o7 || (o7 = !a2(r6) || r6 !== this._$AH[n5]), r6 === A ? t5 = A : t5 !== A && (t5 += (r6 ?? "") + h3[n5 + 1]), this._$AH[n5] = r6;
+      const e6 = t4;
+      let n5, r5;
+      for (t4 = h3[0], n5 = 0; n5 < h3.length - 1; n5++) r5 = M(this, e6[s4 + n5], i5, n5), r5 === E && (r5 = this._$AH[n5]), o6 || (o6 = !a2(r5) || r5 !== this._$AH[n5]), r5 === A ? t4 = A : t4 !== A && (t4 += (r5 ?? "") + h3[n5 + 1]), this._$AH[n5] = r5;
     }
-    o7 && !e8 && this.j(t5);
+    o6 && !e5 && this.j(t4);
   }
-  j(t5) {
-    t5 === A ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, t5 ?? "");
+  j(t4) {
+    t4 === A ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, t4 ?? "");
   }
 };
 var I = class extends H {
   constructor() {
     super(...arguments), this.type = 3;
   }
-  j(t5) {
-    this.element[this.name] = t5 === A ? void 0 : t5;
+  j(t4) {
+    this.element[this.name] = t4 === A ? void 0 : t4;
   }
 };
 var L = class extends H {
   constructor() {
     super(...arguments), this.type = 4;
   }
-  j(t5) {
-    this.element.toggleAttribute(this.name, !!t5 && t5 !== A);
+  j(t4) {
+    this.element.toggleAttribute(this.name, !!t4 && t4 !== A);
   }
 };
 var z = class extends H {
-  constructor(t5, i6, s4, e8, h3) {
-    super(t5, i6, s4, e8, h3), this.type = 5;
+  constructor(t4, i5, s4, e5, h3) {
+    super(t4, i5, s4, e5, h3), this.type = 5;
   }
-  _$AI(t5, i6 = this) {
-    if ((t5 = M(this, t5, i6, 0) ?? A) === E) return;
-    const s4 = this._$AH, e8 = t5 === A && s4 !== A || t5.capture !== s4.capture || t5.once !== s4.once || t5.passive !== s4.passive, h3 = t5 !== A && (s4 === A || e8);
-    e8 && this.element.removeEventListener(this.name, this, s4), h3 && this.element.addEventListener(this.name, this, t5), this._$AH = t5;
+  _$AI(t4, i5 = this) {
+    if ((t4 = M(this, t4, i5, 0) ?? A) === E) return;
+    const s4 = this._$AH, e5 = t4 === A && s4 !== A || t4.capture !== s4.capture || t4.once !== s4.once || t4.passive !== s4.passive, h3 = t4 !== A && (s4 === A || e5);
+    e5 && this.element.removeEventListener(this.name, this, s4), h3 && this.element.addEventListener(this.name, this, t4), this._$AH = t4;
   }
-  handleEvent(t5) {
-    "function" == typeof this._$AH ? this._$AH.call(this.options?.host ?? this.element, t5) : this._$AH.handleEvent(t5);
+  handleEvent(t4) {
+    "function" == typeof this._$AH ? this._$AH.call(this.options?.host ?? this.element, t4) : this._$AH.handleEvent(t4);
   }
 };
 var Z = class {
-  constructor(t5, i6, s4) {
-    this.element = t5, this.type = 6, this._$AN = void 0, this._$AM = i6, this.options = s4;
+  constructor(t4, i5, s4) {
+    this.element = t4, this.type = 6, this._$AN = void 0, this._$AM = i5, this.options = s4;
   }
   get _$AU() {
     return this._$AM._$AU;
   }
-  _$AI(t5) {
-    M(this, t5);
+  _$AI(t4) {
+    M(this, t4);
   }
 };
 var B = t2.litHtmlPolyfillSupport;
 B?.(S2, k), (t2.litHtmlVersions ?? (t2.litHtmlVersions = [])).push("3.3.2");
-var D = (t5, i6, s4) => {
-  const e8 = s4?.renderBefore ?? i6;
-  let h3 = e8._$litPart$;
+var D = (t4, i5, s4) => {
+  const e5 = s4?.renderBefore ?? i5;
+  let h3 = e5._$litPart$;
   if (void 0 === h3) {
-    const t6 = s4?.renderBefore ?? null;
-    e8._$litPart$ = h3 = new k(i6.insertBefore(c3(), t6), t6, void 0, s4 ?? {});
+    const t5 = s4?.renderBefore ?? null;
+    e5._$litPart$ = h3 = new k(i5.insertBefore(c3(), t5), t5, void 0, s4 ?? {});
   }
-  return h3._$AI(t5), h3;
+  return h3._$AI(t4), h3;
 };
 
 // node_modules/lit-element/lit-element.js
@@ -26588,12 +21157,12 @@ var i4 = class extends y {
   }
   createRenderRoot() {
     var _a;
-    const t5 = super.createRenderRoot();
-    return (_a = this.renderOptions).renderBefore ?? (_a.renderBefore = t5.firstChild), t5;
+    const t4 = super.createRenderRoot();
+    return (_a = this.renderOptions).renderBefore ?? (_a.renderBefore = t4.firstChild), t4;
   }
-  update(t5) {
-    const r6 = this.render();
-    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(t5), this._$Do = D(r6, this.renderRoot, this.renderOptions);
+  update(t4) {
+    const r5 = this.render();
+    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(t4), this._$Do = D(r5, this.renderRoot, this.renderOptions);
   }
   connectedCallback() {
     super.connectedCallback(), this._$Do?.setConnected(true);
@@ -26611,92 +21180,1863 @@ o4?.({ LitElement: i4 });
 (s3.litElementVersions ?? (s3.litElementVersions = [])).push("4.2.2");
 
 // node_modules/@lit/reactive-element/decorators/custom-element.js
-var t3 = (t5) => (e8, o7) => {
-  void 0 !== o7 ? o7.addInitializer(() => {
-    customElements.define(t5, e8);
-  }) : customElements.define(t5, e8);
+var t3 = (t4) => (e5, o6) => {
+  void 0 !== o6 ? o6.addInitializer(() => {
+    customElements.define(t4, e5);
+  }) : customElements.define(t4, e5);
 };
 
 // node_modules/@lit/reactive-element/decorators/property.js
 var o5 = { attribute: true, type: String, converter: u, reflect: false, hasChanged: f };
-var r4 = (t5 = o5, e8, r6) => {
-  const { kind: n5, metadata: i6 } = r6;
-  let s4 = globalThis.litPropertyMetadata.get(i6);
-  if (void 0 === s4 && globalThis.litPropertyMetadata.set(i6, s4 = /* @__PURE__ */ new Map()), "setter" === n5 && ((t5 = Object.create(t5)).wrapped = true), s4.set(r6.name, t5), "accessor" === n5) {
-    const { name: o7 } = r6;
-    return { set(r7) {
-      const n6 = e8.get.call(this);
-      e8.set.call(this, r7), this.requestUpdate(o7, n6, t5, true, r7);
-    }, init(e9) {
-      return void 0 !== e9 && this.C(o7, void 0, t5, e9), e9;
+var r4 = (t4 = o5, e5, r5) => {
+  const { kind: n5, metadata: i5 } = r5;
+  let s4 = globalThis.litPropertyMetadata.get(i5);
+  if (void 0 === s4 && globalThis.litPropertyMetadata.set(i5, s4 = /* @__PURE__ */ new Map()), "setter" === n5 && ((t4 = Object.create(t4)).wrapped = true), s4.set(r5.name, t4), "accessor" === n5) {
+    const { name: o6 } = r5;
+    return { set(r6) {
+      const n6 = e5.get.call(this);
+      e5.set.call(this, r6), this.requestUpdate(o6, n6, t4, true, r6);
+    }, init(e6) {
+      return void 0 !== e6 && this.C(o6, void 0, t4, e6), e6;
     } };
   }
   if ("setter" === n5) {
-    const { name: o7 } = r6;
-    return function(r7) {
-      const n6 = this[o7];
-      e8.call(this, r7), this.requestUpdate(o7, n6, t5, true, r7);
+    const { name: o6 } = r5;
+    return function(r6) {
+      const n6 = this[o6];
+      e5.call(this, r6), this.requestUpdate(o6, n6, t4, true, r6);
     };
   }
   throw Error("Unsupported decorator location: " + n5);
 };
-function n4(t5) {
-  return (e8, o7) => "object" == typeof o7 ? r4(t5, e8, o7) : ((t6, e9, o8) => {
-    const r6 = e9.hasOwnProperty(o8);
-    return e9.constructor.createProperty(o8, t6), r6 ? Object.getOwnPropertyDescriptor(e9, o8) : void 0;
-  })(t5, e8, o7);
+function n4(t4) {
+  return (e5, o6) => "object" == typeof o6 ? r4(t4, e5, o6) : ((t5, e6, o7) => {
+    const r5 = e6.hasOwnProperty(o7);
+    return e6.constructor.createProperty(o7, t5), r5 ? Object.getOwnPropertyDescriptor(e6, o7) : void 0;
+  })(t4, e5, o6);
 }
 
-// node_modules/@lit/reactive-element/decorators/state.js
-function r5(r6) {
-  return n4({ ...r6, state: true, attribute: false });
+// node_modules/n3/src/N3Lexer.js
+var import_buffer = __toESM(require_buffer());
+
+// node_modules/n3/src/IRIs.js
+var RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+var XSD = "http://www.w3.org/2001/XMLSchema#";
+var SWAP = "http://www.w3.org/2000/10/swap/";
+var IRIs_default = {
+  xsd: {
+    decimal: `${XSD}decimal`,
+    boolean: `${XSD}boolean`,
+    double: `${XSD}double`,
+    integer: `${XSD}integer`,
+    string: `${XSD}string`
+  },
+  rdf: {
+    type: `${RDF}type`,
+    nil: `${RDF}nil`,
+    first: `${RDF}first`,
+    rest: `${RDF}rest`,
+    langString: `${RDF}langString`,
+    dirLangString: `${RDF}dirLangString`,
+    reifies: `${RDF}reifies`
+  },
+  owl: {
+    sameAs: "http://www.w3.org/2002/07/owl#sameAs"
+  },
+  r: {
+    forSome: `${SWAP}reify#forSome`,
+    forAll: `${SWAP}reify#forAll`
+  },
+  log: {
+    implies: `${SWAP}log#implies`,
+    isImpliedBy: `${SWAP}log#isImpliedBy`
+  }
+};
+
+// node_modules/n3/src/N3Lexer.js
+var { xsd } = IRIs_default;
+var escapeSequence = /\\u([a-fA-F0-9]{4})|\\U([a-fA-F0-9]{8})|\\([^])/g;
+var escapeReplacements = {
+  "\\": "\\",
+  "'": "'",
+  '"': '"',
+  "n": "\n",
+  "r": "\r",
+  "t": "	",
+  "f": "\f",
+  "b": "\b",
+  "_": "_",
+  "~": "~",
+  ".": ".",
+  "-": "-",
+  "!": "!",
+  "$": "$",
+  "&": "&",
+  "(": "(",
+  ")": ")",
+  "*": "*",
+  "+": "+",
+  ",": ",",
+  ";": ";",
+  "=": "=",
+  "/": "/",
+  "?": "?",
+  "#": "#",
+  "@": "@",
+  "%": "%"
+};
+var illegalIriChars = /[\x00-\x20<>\\"\{\}\|\^\`]/;
+var lineModeRegExps = {
+  _iri: true,
+  _unescapedIri: true,
+  _simpleQuotedString: true,
+  _langcode: true,
+  _dircode: true,
+  _blank: true,
+  _newline: true,
+  _comment: true,
+  _whitespace: true,
+  _endOfFile: true
+};
+var invalidRegExp = /$0^/;
+var N3Lexer = class {
+  constructor(options) {
+    this._iri = /^<((?:[^ <>{}\\]|\\[uU])+)>[ \t]*/;
+    this._unescapedIri = /^<([^\x00-\x20<>\\"\{\}\|\^\`]*)>[ \t]*/;
+    this._simpleQuotedString = /^"([^"\\\r\n]*)"(?=[^"])/;
+    this._simpleApostropheString = /^'([^'\\\r\n]*)'(?=[^'])/;
+    this._langcode = /^@([a-z]+(?:-[a-z0-9]+)*)(?=[^a-z0-9])/i;
+    this._dircode = /^--(ltr)|(rtl)/;
+    this._prefix = /^((?:[A-Za-z\xc0-\xd6\xd8-\xf6\xf8-\u02ff\u0370-\u037d\u037f-\u1fff\u200c\u200d\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff])(?:\.?[\-0-9A-Z_a-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c\u200d\u203f\u2040\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff])*)?:(?=[#\s<])/;
+    this._prefixed = /^((?:[A-Za-z\xc0-\xd6\xd8-\xf6\xf8-\u02ff\u0370-\u037d\u037f-\u1fff\u200c\u200d\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff])(?:\.?[\-0-9A-Z_a-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c\u200d\u203f\u2040\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff])*)?:((?:(?:[0-:A-Z_a-z\xc0-\xd6\xd8-\xf6\xf8-\u02ff\u0370-\u037d\u037f-\u1fff\u200c\u200d\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff]|%[0-9a-fA-F]{2}|\\[!#-\/;=?\-@_~])(?:(?:[\.\-0-:A-Z_a-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c\u200d\u203f\u2040\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff]|%[0-9a-fA-F]{2}|\\[!#-\/;=?\-@_~])*(?:[\-0-:A-Z_a-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c\u200d\u203f\u2040\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff]|%[0-9a-fA-F]{2}|\\[!#-\/;=?\-@_~]))?)?)(?:[ \t]+|(?=\.?[,;!\^\s#()\[\]\{\}"'<>]))/;
+    this._variable = /^\?(?:(?:[A-Z_a-z\xc0-\xd6\xd8-\xf6\xf8-\u02ff\u0370-\u037d\u037f-\u1fff\u200c\u200d\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff])(?:[\-0-:A-Z_a-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c\u200d\u203f\u2040\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff])*)(?=[.,;!\^\s#()\[\]\{\}"'<>])/;
+    this._blank = /^_:((?:[0-9A-Z_a-z\xc0-\xd6\xd8-\xf6\xf8-\u02ff\u0370-\u037d\u037f-\u1fff\u200c\u200d\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff])(?:\.?[\-0-9A-Z_a-z\xb7\xc0-\xd6\xd8-\xf6\xf8-\u037d\u037f-\u1fff\u200c\u200d\u203f\u2040\u2070-\u218f\u2c00-\u2fef\u3001-\ud7ff\uf900-\ufdcf\ufdf0-\ufffd]|[\ud800-\udb7f][\udc00-\udfff])*)(?:[ \t]+|(?=\.?[,;:\s#()\[\]\{\}"'<>]))/;
+    this._number = /^[\-+]?(?:(\d+\.\d*|\.?\d+)[eE][\-+]?|\d*(\.)?)\d+(?=\.?[,;:\s#()\[\]\{\}"'<>])/;
+    this._boolean = /^(?:true|false)(?=[.,;\s#()\[\]\{\}"'<>])/;
+    this._atKeyword = /^@[a-z]+(?=[\s#<:])/i;
+    this._keyword = /^(?:PREFIX|BASE|VERSION|GRAPH)(?=[\s#<])/i;
+    this._shortPredicates = /^a(?=[\s#()\[\]\{\}"'<>])/;
+    this._newline = /^[ \t]*(?:#[^\n\r]*)?(?:\r\n|\n|\r)[ \t]*/;
+    this._comment = /#([^\n\r]*)/;
+    this._whitespace = /^[ \t]+/;
+    this._endOfFile = /^(?:#[^\n\r]*)?$/;
+    options = options || {};
+    this._isImpliedBy = options.isImpliedBy;
+    if (this._lineMode = !!options.lineMode) {
+      this._n3Mode = false;
+      for (const key in this) {
+        if (!(key in lineModeRegExps) && this[key] instanceof RegExp)
+          this[key] = invalidRegExp;
+      }
+    } else {
+      this._n3Mode = options.n3 !== false;
+    }
+    this.comments = !!options.comments;
+    this._literalClosingPos = 0;
+  }
+  // ## Private methods
+  // ### `_tokenizeToEnd` tokenizes as for as possible, emitting tokens through the callback
+  _tokenizeToEnd(callback, inputFinished) {
+    let input = this._input;
+    let currentLineLength = input.length;
+    while (true) {
+      let whiteSpaceMatch, comment;
+      while (whiteSpaceMatch = this._newline.exec(input)) {
+        if (this.comments && (comment = this._comment.exec(whiteSpaceMatch[0])))
+          emitToken("comment", comment[1], "", this._line, whiteSpaceMatch[0].length);
+        input = input.substr(whiteSpaceMatch[0].length, input.length);
+        currentLineLength = input.length;
+        this._line++;
+      }
+      if (!whiteSpaceMatch && (whiteSpaceMatch = this._whitespace.exec(input)))
+        input = input.substr(whiteSpaceMatch[0].length, input.length);
+      if (this._endOfFile.test(input)) {
+        if (inputFinished) {
+          if (this.comments && (comment = this._comment.exec(input)))
+            emitToken("comment", comment[1], "", this._line, input.length);
+          input = null;
+          emitToken("eof", "", "", this._line, 0);
+        }
+        return this._input = input;
+      }
+      const line = this._line, firstChar = input[0];
+      let type = "", value = "", prefix = "", match = null, matchLength = 0, inconclusive = false;
+      switch (firstChar) {
+        case "^":
+          if (input.length < 3)
+            break;
+          else if (input[1] === "^") {
+            this._previousMarker = "^^";
+            input = input.substr(2);
+            if (input[0] !== "<") {
+              inconclusive = true;
+              break;
+            }
+          } else {
+            if (this._n3Mode) {
+              matchLength = 1;
+              type = "^";
+            }
+            break;
+          }
+        // Fall through in case the type is an IRI
+        case "<":
+          if (match = this._unescapedIri.exec(input))
+            type = "IRI", value = match[1];
+          else if (match = this._iri.exec(input)) {
+            value = this._unescape(match[1]);
+            if (value === null || illegalIriChars.test(value))
+              return reportSyntaxError(this);
+            type = "IRI";
+          } else if (input.length > 2 && input[1] === "<" && input[2] === "(")
+            type = "<<(", matchLength = 3;
+          else if (!this._lineMode && input.length > (inputFinished ? 1 : 2) && input[1] === "<")
+            type = "<<", matchLength = 2;
+          else if (this._n3Mode && input.length > 1 && input[1] === "=") {
+            matchLength = 2;
+            if (this._isImpliedBy) type = "abbreviation", value = "<";
+            else type = "inverse", value = ">";
+          }
+          break;
+        case ">":
+          if (input.length > 1 && input[1] === ">")
+            type = ">>", matchLength = 2;
+          break;
+        case "_":
+          if ((match = this._blank.exec(input)) || inputFinished && (match = this._blank.exec(`${input} `)))
+            type = "blank", prefix = "_", value = match[1];
+          break;
+        case '"':
+          if (match = this._simpleQuotedString.exec(input))
+            value = match[1];
+          else {
+            ({ value, matchLength } = this._parseLiteral(input));
+            if (value === null)
+              return reportSyntaxError(this);
+          }
+          if (match !== null || matchLength !== 0) {
+            type = "literal";
+            this._literalClosingPos = 0;
+          }
+          break;
+        case "'":
+          if (!this._lineMode) {
+            if (match = this._simpleApostropheString.exec(input))
+              value = match[1];
+            else {
+              ({ value, matchLength } = this._parseLiteral(input));
+              if (value === null)
+                return reportSyntaxError(this);
+            }
+            if (match !== null || matchLength !== 0) {
+              type = "literal";
+              this._literalClosingPos = 0;
+            }
+          }
+          break;
+        case "?":
+          if (this._n3Mode && (match = this._variable.exec(input)))
+            type = "var", value = match[0];
+          break;
+        case "@":
+          if (this._previousMarker === "literal" && (match = this._langcode.exec(input)) && match[1] !== "version")
+            type = "langcode", value = match[1];
+          else if (match = this._atKeyword.exec(input))
+            type = match[0];
+          break;
+        case ".":
+          if (input.length === 1 ? inputFinished : input[1] < "0" || input[1] > "9") {
+            type = ".";
+            matchLength = 1;
+            break;
+          }
+        // Fall through to numerical case (could be a decimal dot)
+        case "0":
+        case "1":
+        case "2":
+        case "3":
+        case "4":
+        case "5":
+        case "6":
+        case "7":
+        case "8":
+        case "9":
+        case "+":
+        case "-":
+          if (input[1] === "-") {
+            if (this._previousMarker === "langcode" && (match = this._dircode.exec(input)))
+              type = "dircode", matchLength = 2, value = match[1] || match[2], matchLength = value.length + 2;
+            break;
+          }
+          if (match = this._number.exec(input) || inputFinished && (match = this._number.exec(`${input} `))) {
+            type = "literal", value = match[0];
+            prefix = typeof match[1] === "string" ? xsd.double : typeof match[2] === "string" ? xsd.decimal : xsd.integer;
+          }
+          break;
+        case "B":
+        case "b":
+        case "p":
+        case "P":
+        case "G":
+        case "g":
+        case "V":
+        case "v":
+          if (match = this._keyword.exec(input))
+            type = match[0].toUpperCase();
+          else
+            inconclusive = true;
+          break;
+        case "f":
+        case "t":
+          if (match = this._boolean.exec(input))
+            type = "literal", value = match[0], prefix = xsd.boolean;
+          else
+            inconclusive = true;
+          break;
+        case "a":
+          if (match = this._shortPredicates.exec(input))
+            type = "abbreviation", value = "a";
+          else
+            inconclusive = true;
+          break;
+        case "=":
+          if (this._n3Mode && input.length > 1) {
+            type = "abbreviation";
+            if (input[1] !== ">")
+              matchLength = 1, value = "=";
+            else
+              matchLength = 2, value = ">";
+          }
+          break;
+        case "!":
+          if (!this._n3Mode)
+            break;
+        case ")":
+          if (!inputFinished && (input.length === 1 || input.length === 2 && input[1] === ">")) {
+            break;
+          }
+          if (input.length > 2 && input[1] === ">" && input[2] === ">") {
+            type = ")>>", matchLength = 3;
+            break;
+          }
+        case ",":
+        case ";":
+        case "[":
+        case "]":
+        case "(":
+        case "}":
+        case "~":
+          if (!this._lineMode) {
+            matchLength = 1;
+            type = firstChar;
+          }
+          break;
+        case "{":
+          if (!this._lineMode && input.length >= 2) {
+            if (input[1] === "|")
+              type = "{|", matchLength = 2;
+            else
+              type = firstChar, matchLength = 1;
+          }
+          break;
+        case "|":
+          if (input.length >= 2 && input[1] === "}")
+            type = "|}", matchLength = 2;
+          break;
+        default:
+          inconclusive = true;
+      }
+      if (inconclusive) {
+        if ((this._previousMarker === "@prefix" || this._previousMarker === "PREFIX") && (match = this._prefix.exec(input)))
+          type = "prefix", value = match[1] || "";
+        else if ((match = this._prefixed.exec(input)) || inputFinished && (match = this._prefixed.exec(`${input} `)))
+          type = "prefixed", prefix = match[1] || "", value = this._unescape(match[2]);
+      }
+      if (this._previousMarker === "^^") {
+        switch (type) {
+          case "prefixed":
+            type = "type";
+            break;
+          case "IRI":
+            type = "typeIRI";
+            break;
+          default:
+            type = "";
+        }
+      }
+      if (!type) {
+        if (inputFinished || !/^'''|^"""/.test(input) && /\n|\r/.test(input))
+          return reportSyntaxError(this);
+        else
+          return this._input = input;
+      }
+      const length = matchLength || match[0].length;
+      const token = emitToken(type, value, prefix, line, length);
+      this.previousToken = token;
+      this._previousMarker = type;
+      input = input.substr(length, input.length);
+    }
+    function emitToken(type, value, prefix, line, length) {
+      const start = input ? currentLineLength - input.length : currentLineLength;
+      const end = start + length;
+      const token = { type, value, prefix, line, start, end };
+      callback(null, token);
+      return token;
+    }
+    function reportSyntaxError(self2) {
+      callback(self2._syntaxError(/^\S*/.exec(input)[0]));
+    }
+  }
+  // ### `_unescape` replaces N3 escape codes by their corresponding characters
+  _unescape(item) {
+    let invalid = false;
+    const replaced = item.replace(escapeSequence, (sequence, unicode4, unicode8, escapedChar) => {
+      if (typeof unicode4 === "string")
+        return String.fromCharCode(Number.parseInt(unicode4, 16));
+      if (typeof unicode8 === "string") {
+        let charCode = Number.parseInt(unicode8, 16);
+        return charCode <= 65535 ? String.fromCharCode(Number.parseInt(unicode8, 16)) : String.fromCharCode(55296 + ((charCode -= 65536) >> 10), 56320 + (charCode & 1023));
+      }
+      if (escapedChar in escapeReplacements)
+        return escapeReplacements[escapedChar];
+      invalid = true;
+      return "";
+    });
+    return invalid ? null : replaced;
+  }
+  // ### `_parseLiteral` parses a literal into an unescaped value
+  _parseLiteral(input) {
+    if (input.length >= 3) {
+      const opening = input.match(/^(?:"""|"|'''|'|)/)[0];
+      const openingLength = opening.length;
+      let closingPos = Math.max(this._literalClosingPos, openingLength);
+      while ((closingPos = input.indexOf(opening, closingPos)) > 0) {
+        let backslashCount = 0;
+        while (input[closingPos - backslashCount - 1] === "\\")
+          backslashCount++;
+        if (backslashCount % 2 === 0) {
+          const raw = input.substring(openingLength, closingPos);
+          const lines = raw.split(/\r\n|\r|\n/).length - 1;
+          const matchLength = closingPos + openingLength;
+          if (openingLength === 1 && lines !== 0 || openingLength === 3 && this._lineMode)
+            break;
+          this._line += lines;
+          return { value: this._unescape(raw), matchLength };
+        }
+        closingPos++;
+      }
+      this._literalClosingPos = input.length - openingLength + 1;
+    }
+    return { value: "", matchLength: 0 };
+  }
+  // ### `_syntaxError` creates a syntax error for the given issue
+  _syntaxError(issue) {
+    this._input = null;
+    const err = new Error(`Unexpected "${issue}" on line ${this._line}.`);
+    err.context = {
+      token: void 0,
+      line: this._line,
+      previousToken: this.previousToken
+    };
+    return err;
+  }
+  // ### Strips off any starting UTF BOM mark.
+  _readStartingBom(input) {
+    return input.startsWith("\uFEFF") ? input.substr(1) : input;
+  }
+  // ## Public methods
+  // ### `tokenize` starts the transformation of an N3 document into an array of tokens.
+  // The input can be a string or a stream.
+  tokenize(input, callback) {
+    this._line = 1;
+    if (typeof input === "string") {
+      this._input = this._readStartingBom(input);
+      if (typeof callback === "function")
+        queueMicrotask(() => this._tokenizeToEnd(callback, true));
+      else {
+        const tokens = [];
+        let error;
+        this._tokenizeToEnd((e5, t4) => e5 ? error = e5 : tokens.push(t4), true);
+        if (error) throw error;
+        return tokens;
+      }
+    } else {
+      this._pendingBuffer = null;
+      if (typeof input.setEncoding === "function")
+        input.setEncoding("utf8");
+      input.on("data", (data) => {
+        if (this._input !== null && data.length !== 0) {
+          if (this._pendingBuffer) {
+            data = import_buffer.Buffer.concat([this._pendingBuffer, data]);
+            this._pendingBuffer = null;
+          }
+          if (data[data.length - 1] & 128) {
+            this._pendingBuffer = data;
+          } else {
+            if (typeof this._input === "undefined")
+              this._input = this._readStartingBom(typeof data === "string" ? data : data.toString());
+            else
+              this._input += data;
+            this._tokenizeToEnd(callback, false);
+          }
+        }
+      });
+      input.on("end", () => {
+        if (typeof this._input === "string")
+          this._tokenizeToEnd(callback, true);
+      });
+      input.on("error", callback);
+    }
+  }
+};
+
+// node_modules/n3/src/N3DataFactory.js
+var { rdf, xsd: xsd2 } = IRIs_default;
+var DEFAULTGRAPH;
+var _blankNodeCounter = 0;
+var DataFactory = {
+  namedNode,
+  blankNode,
+  variable,
+  literal,
+  defaultGraph,
+  quad,
+  triple: quad,
+  fromTerm,
+  fromQuad
+};
+var N3DataFactory_default = DataFactory;
+var Term = class _Term {
+  constructor(id) {
+    this.id = id;
+  }
+  // ### The value of this term
+  get value() {
+    return this.id;
+  }
+  // ### Returns whether this object represents the same term as the other
+  equals(other) {
+    if (other instanceof _Term)
+      return this.id === other.id;
+    return !!other && this.termType === other.termType && this.value === other.value;
+  }
+  // ### Implement hashCode for Immutable.js, since we implement `equals`
+  // https://immutable-js.com/docs/v4.0.0/ValueObject/#hashCode()
+  hashCode() {
+    return 0;
+  }
+  // ### Returns a plain object representation of this term
+  toJSON() {
+    return {
+      termType: this.termType,
+      value: this.value
+    };
+  }
+};
+var NamedNode = class extends Term {
+  // ### The term type of this term
+  get termType() {
+    return "NamedNode";
+  }
+};
+var Literal = class _Literal extends Term {
+  // ### The term type of this term
+  get termType() {
+    return "Literal";
+  }
+  // ### The text value of this literal
+  get value() {
+    return this.id.substring(1, this.id.lastIndexOf('"'));
+  }
+  // ### The language of this literal
+  get language() {
+    const id = this.id;
+    let atPos = id.lastIndexOf('"') + 1;
+    const dirPos = id.lastIndexOf("--");
+    return atPos < id.length && id[atPos++] === "@" ? (dirPos > atPos ? id.substr(0, dirPos) : id).substr(atPos).toLowerCase() : "";
+  }
+  // ### The direction of this literal
+  get direction() {
+    const id = this.id;
+    const endPos = id.lastIndexOf('"');
+    const dirPos = id.lastIndexOf("--");
+    return dirPos > endPos && dirPos + 2 < id.length ? id.substr(dirPos + 2).toLowerCase() : "";
+  }
+  // ### The datatype IRI of this literal
+  get datatype() {
+    return new NamedNode(this.datatypeString);
+  }
+  // ### The datatype string of this literal
+  get datatypeString() {
+    const id = this.id, dtPos = id.lastIndexOf('"') + 1;
+    const char = dtPos < id.length ? id[dtPos] : "";
+    return char === "^" ? id.substr(dtPos + 2) : (
+      // If "@" follows, return rdf:langString or rdf:dirLangString; xsd:string otherwise
+      char !== "@" ? xsd2.string : id.indexOf("--", dtPos) > 0 ? rdf.dirLangString : rdf.langString
+    );
+  }
+  // ### Returns whether this object represents the same term as the other
+  equals(other) {
+    if (other instanceof _Literal)
+      return this.id === other.id;
+    return !!other && !!other.datatype && this.termType === other.termType && this.value === other.value && this.language === other.language && (this.direction === other.direction || this.direction === "" && !other.direction) && this.datatype.value === other.datatype.value;
+  }
+  toJSON() {
+    return {
+      termType: this.termType,
+      value: this.value,
+      language: this.language,
+      direction: this.direction,
+      datatype: { termType: "NamedNode", value: this.datatypeString }
+    };
+  }
+};
+var BlankNode = class extends Term {
+  constructor(name) {
+    super(`_:${name}`);
+  }
+  // ### The term type of this term
+  get termType() {
+    return "BlankNode";
+  }
+  // ### The name of this blank node
+  get value() {
+    return this.id.substr(2);
+  }
+};
+var Variable = class extends Term {
+  constructor(name) {
+    super(`?${name}`);
+  }
+  // ### The term type of this term
+  get termType() {
+    return "Variable";
+  }
+  // ### The name of this variable
+  get value() {
+    return this.id.substr(1);
+  }
+};
+var DefaultGraph = class extends Term {
+  constructor() {
+    super("");
+    return DEFAULTGRAPH || this;
+  }
+  // ### The term type of this term
+  get termType() {
+    return "DefaultGraph";
+  }
+  // ### Returns whether this object represents the same term as the other
+  equals(other) {
+    return this === other || !!other && this.termType === other.termType;
+  }
+};
+DEFAULTGRAPH = new DefaultGraph();
+var Quad = class extends Term {
+  constructor(subject, predicate, object, graph) {
+    super("");
+    this._subject = subject;
+    this._predicate = predicate;
+    this._object = object;
+    this._graph = graph || DEFAULTGRAPH;
+  }
+  // ### The term type of this term
+  get termType() {
+    return "Quad";
+  }
+  get subject() {
+    return this._subject;
+  }
+  get predicate() {
+    return this._predicate;
+  }
+  get object() {
+    return this._object;
+  }
+  get graph() {
+    return this._graph;
+  }
+  // ### Returns a plain object representation of this quad
+  toJSON() {
+    return {
+      termType: this.termType,
+      subject: this._subject.toJSON(),
+      predicate: this._predicate.toJSON(),
+      object: this._object.toJSON(),
+      graph: this._graph.toJSON()
+    };
+  }
+  // ### Returns whether this object represents the same quad as the other
+  equals(other) {
+    return !!other && this._subject.equals(other.subject) && this._predicate.equals(other.predicate) && this._object.equals(other.object) && this._graph.equals(other.graph);
+  }
+};
+function namedNode(iri) {
+  return new NamedNode(iri);
 }
+function blankNode(name) {
+  return new BlankNode(name || `n3-${_blankNodeCounter++}`);
+}
+function literal(value, languageOrDataType) {
+  if (typeof languageOrDataType === "string")
+    return new Literal(`"${value}"@${languageOrDataType.toLowerCase()}`);
+  if (languageOrDataType !== void 0 && !("termType" in languageOrDataType)) {
+    return new Literal(`"${value}"@${languageOrDataType.language.toLowerCase()}${languageOrDataType.direction ? `--${languageOrDataType.direction.toLowerCase()}` : ""}`);
+  }
+  let datatype = languageOrDataType ? languageOrDataType.value : "";
+  if (datatype === "") {
+    if (typeof value === "boolean")
+      datatype = xsd2.boolean;
+    else if (typeof value === "number") {
+      if (Number.isFinite(value))
+        datatype = Number.isInteger(value) ? xsd2.integer : xsd2.double;
+      else {
+        datatype = xsd2.double;
+        if (!Number.isNaN(value))
+          value = value > 0 ? "INF" : "-INF";
+      }
+    }
+  }
+  return datatype === "" || datatype === xsd2.string ? new Literal(`"${value}"`) : new Literal(`"${value}"^^${datatype}`);
+}
+function variable(name) {
+  return new Variable(name);
+}
+function defaultGraph() {
+  return DEFAULTGRAPH;
+}
+function quad(subject, predicate, object, graph) {
+  return new Quad(subject, predicate, object, graph);
+}
+function fromTerm(term) {
+  if (term instanceof Term)
+    return term;
+  switch (term.termType) {
+    case "NamedNode":
+      return namedNode(term.value);
+    case "BlankNode":
+      return blankNode(term.value);
+    case "Variable":
+      return variable(term.value);
+    case "DefaultGraph":
+      return DEFAULTGRAPH;
+    case "Literal":
+      return literal(term.value, term.language || term.datatype);
+    case "Quad":
+      return fromQuad(term);
+    default:
+      throw new Error(`Unexpected termType: ${term.termType}`);
+  }
+}
+function fromQuad(inQuad) {
+  if (inQuad instanceof Quad)
+    return inQuad;
+  if (inQuad.termType !== "Quad")
+    throw new Error(`Unexpected termType: ${inQuad.termType}`);
+  return quad(fromTerm(inQuad.subject), fromTerm(inQuad.predicate), fromTerm(inQuad.object), fromTerm(inQuad.graph));
+}
+
+// node_modules/n3/src/N3Parser.js
+var blankNodePrefix = 0;
+var N3Parser = class _N3Parser {
+  constructor(options) {
+    this._contextStack = [];
+    this._graph = null;
+    options = options || {};
+    this._setBase(options.baseIRI);
+    options.factory && initDataFactory(this, options.factory);
+    const format = typeof options.format === "string" ? options.format.match(/\w*$/)[0].toLowerCase() : "", isTurtle = /turtle/.test(format), isTriG = /trig/.test(format), isNTriples = /triple/.test(format), isNQuads = /quad/.test(format), isN3 = this._n3Mode = /n3/.test(format), isLineMode = isNTriples || isNQuads;
+    if (!(this._supportsNamedGraphs = !(isTurtle || isN3)))
+      this._readPredicateOrNamedGraph = this._readPredicate;
+    this._supportsQuads = !(isTurtle || isTriG || isNTriples || isN3);
+    this._isImpliedBy = options.isImpliedBy;
+    if (isLineMode)
+      this._resolveRelativeIRI = (iri) => {
+        return null;
+      };
+    this._blankNodePrefix = typeof options.blankNodePrefix !== "string" ? "" : options.blankNodePrefix.replace(/^(?!_:)/, "_:");
+    this._lexer = options.lexer || new N3Lexer({ lineMode: isLineMode, n3: isN3, isImpliedBy: this._isImpliedBy });
+    this._explicitQuantifiers = !!options.explicitQuantifiers;
+    this._parseUnsupportedVersions = !!options.parseUnsupportedVersions;
+    this._version = options.version;
+  }
+  // ## Static class methods
+  // ### `_resetBlankNodePrefix` restarts blank node prefix identification
+  static _resetBlankNodePrefix() {
+    blankNodePrefix = 0;
+  }
+  // ## Private methods
+  // ### `_setBase` sets the base IRI to resolve relative IRIs
+  _setBase(baseIRI) {
+    if (!baseIRI) {
+      this._base = "";
+      this._basePath = "";
+    } else {
+      const fragmentPos = baseIRI.indexOf("#");
+      if (fragmentPos >= 0)
+        baseIRI = baseIRI.substr(0, fragmentPos);
+      this._base = baseIRI;
+      this._basePath = baseIRI.indexOf("/") < 0 ? baseIRI : baseIRI.replace(/[^\/?]*(?:\?.*)?$/, "");
+      baseIRI = baseIRI.match(/^(?:([a-z][a-z0-9+.-]*:))?(?:\/\/[^\/]*)?/i);
+      this._baseRoot = baseIRI[0];
+      this._baseScheme = baseIRI[1];
+    }
+  }
+  // ### `_saveContext` stores the current parsing context
+  // when entering a new scope (list, blank node, formula)
+  _saveContext(type, graph, subject, predicate, object) {
+    const n3Mode = this._n3Mode;
+    this._contextStack.push({
+      type,
+      subject,
+      predicate,
+      object,
+      graph,
+      inverse: n3Mode ? this._inversePredicate : false,
+      blankPrefix: n3Mode ? this._prefixes._ : "",
+      quantified: n3Mode ? this._quantified : null
+    });
+    if (n3Mode) {
+      this._inversePredicate = false;
+      this._prefixes._ = this._graph ? `${this._graph.value}.` : ".";
+      this._quantified = Object.create(this._quantified);
+    }
+  }
+  // ### `_restoreContext` restores the parent context
+  // when leaving a scope (list, blank node, formula)
+  _restoreContext(type, token) {
+    const context = this._contextStack.pop();
+    if (!context || context.type !== type)
+      return this._error(`Unexpected ${token.type}`, token);
+    this._subject = context.subject;
+    this._predicate = context.predicate;
+    this._object = context.object;
+    this._graph = context.graph;
+    if (this._n3Mode) {
+      this._inversePredicate = context.inverse;
+      this._prefixes._ = context.blankPrefix;
+      this._quantified = context.quantified;
+    }
+  }
+  // ### `_readBeforeTopContext` is called once only at the start of parsing.
+  _readBeforeTopContext(token) {
+    if (this._version && !this._isValidVersion(this._version))
+      return this._error(`Detected unsupported version as media type parameter: "${this._version}"`, token);
+    return this._readInTopContext(token);
+  }
+  // ### `_readInTopContext` reads a token when in the top context
+  _readInTopContext(token) {
+    switch (token.type) {
+      // If an EOF token arrives in the top context, signal that we're done
+      case "eof":
+        if (this._graph !== null)
+          return this._error("Unclosed graph", token);
+        delete this._prefixes._;
+        return this._callback(null, null, this._prefixes);
+      // It could be a prefix declaration
+      case "PREFIX":
+        this._sparqlStyle = true;
+      case "@prefix":
+        return this._readPrefix;
+      // It could be a base declaration
+      case "BASE":
+        this._sparqlStyle = true;
+      case "@base":
+        return this._readBaseIRI;
+      // It could be a version declaration
+      case "VERSION":
+        this._sparqlStyle = true;
+      case "@version":
+        return this._readVersion;
+      // It could be a graph
+      case "{":
+        if (this._supportsNamedGraphs) {
+          this._graph = "";
+          this._subject = null;
+          return this._readSubject;
+        }
+      case "GRAPH":
+        if (this._supportsNamedGraphs)
+          return this._readNamedGraphLabel;
+      // Otherwise, the next token must be a subject
+      default:
+        return this._readSubject(token);
+    }
+  }
+  // ### `_readEntity` reads an IRI, prefixed name, blank node, or variable
+  _readEntity(token, quantifier) {
+    let value;
+    switch (token.type) {
+      // Read a relative or absolute IRI
+      case "IRI":
+      case "typeIRI":
+        const iri = this._resolveIRI(token.value);
+        if (iri === null)
+          return this._error("Invalid IRI", token);
+        value = this._factory.namedNode(iri);
+        break;
+      // Read a prefixed name
+      case "type":
+      case "prefixed":
+        const prefix = this._prefixes[token.prefix];
+        if (prefix === void 0)
+          return this._error(`Undefined prefix "${token.prefix}:"`, token);
+        value = this._factory.namedNode(prefix + token.value);
+        break;
+      // Read a blank node
+      case "blank":
+        value = this._factory.blankNode(this._prefixes[token.prefix] + token.value);
+        break;
+      // Read a variable
+      case "var":
+        value = this._factory.variable(token.value.substr(1));
+        break;
+      // Everything else is not an entity
+      default:
+        return this._error(`Expected entity but got ${token.type}`, token);
+    }
+    if (!quantifier && this._n3Mode && value.id in this._quantified)
+      value = this._quantified[value.id];
+    return value;
+  }
+  // ### `_readSubject` reads a quad's subject
+  _readSubject(token) {
+    this._predicate = null;
+    switch (token.type) {
+      case "[":
+        this._saveContext(
+          "blank",
+          this._graph,
+          this._subject = this._factory.blankNode(),
+          null,
+          null
+        );
+        return this._readBlankNodeHead;
+      case "(":
+        const stack = this._contextStack, parent = stack.length && stack[stack.length - 1];
+        if (parent.type === "<<") {
+          return this._error("Unexpected list in reified triple", token);
+        }
+        this._saveContext("list", this._graph, this.RDF_NIL, null, null);
+        this._subject = null;
+        return this._readListItem;
+      case "{":
+        if (!this._n3Mode)
+          return this._error("Unexpected graph", token);
+        this._saveContext(
+          "formula",
+          this._graph,
+          this._graph = this._factory.blankNode(),
+          null,
+          null
+        );
+        return this._readSubject;
+      case "}":
+        return this._readPunctuation(token);
+      case "@forSome":
+        if (!this._n3Mode)
+          return this._error('Unexpected "@forSome"', token);
+        this._subject = null;
+        this._predicate = this.N3_FORSOME;
+        this._quantifier = "blankNode";
+        return this._readQuantifierList;
+      case "@forAll":
+        if (!this._n3Mode)
+          return this._error('Unexpected "@forAll"', token);
+        this._subject = null;
+        this._predicate = this.N3_FORALL;
+        this._quantifier = "variable";
+        return this._readQuantifierList;
+      case "literal":
+        if (!this._n3Mode)
+          return this._error("Unexpected literal", token);
+        if (token.prefix.length === 0) {
+          this._literalValue = token.value;
+          return this._completeSubjectLiteral;
+        } else
+          this._subject = this._factory.literal(token.value, this._factory.namedNode(token.prefix));
+        break;
+      case "<<(":
+        if (!this._n3Mode)
+          return this._error("Disallowed triple term as subject", token);
+        this._saveContext("<<(", this._graph, null, null, null);
+        this._graph = null;
+        return this._readSubject;
+      case "<<":
+        this._saveContext("<<", this._graph, null, null, null);
+        this._graph = null;
+        return this._readSubject;
+      default:
+        if ((this._subject = this._readEntity(token)) === void 0)
+          return;
+        if (this._n3Mode)
+          return this._getPathReader(this._readPredicateOrNamedGraph);
+    }
+    return this._readPredicateOrNamedGraph;
+  }
+  // ### `_readPredicate` reads a quad's predicate
+  _readPredicate(token) {
+    const type = token.type;
+    switch (type) {
+      case "inverse":
+        this._inversePredicate = true;
+      case "abbreviation":
+        this._predicate = this.ABBREVIATIONS[token.value];
+        break;
+      case ".":
+      case "]":
+      case "}":
+      case "|}":
+        if (this._predicate === null)
+          return this._error(`Unexpected ${type}`, token);
+        this._subject = null;
+        return type === "]" ? this._readBlankNodeTail(token) : this._readPunctuation(token);
+      case ";":
+        return this._predicate !== null ? this._readPredicate : this._error("Expected predicate but got ;", token);
+      case "[":
+        if (this._n3Mode) {
+          this._saveContext(
+            "blank",
+            this._graph,
+            this._subject,
+            this._subject = this._factory.blankNode(),
+            null
+          );
+          return this._readBlankNodeHead;
+        }
+      case "blank":
+        if (!this._n3Mode)
+          return this._error("Disallowed blank node as predicate", token);
+      default:
+        if ((this._predicate = this._readEntity(token)) === void 0)
+          return;
+    }
+    this._validAnnotation = true;
+    return this._readObject;
+  }
+  // ### `_readObject` reads a quad's object
+  _readObject(token) {
+    switch (token.type) {
+      case "literal":
+        if (token.prefix.length === 0) {
+          this._literalValue = token.value;
+          return this._readDataTypeOrLang;
+        } else
+          this._object = this._factory.literal(token.value, this._factory.namedNode(token.prefix));
+        break;
+      case "[":
+        this._saveContext(
+          "blank",
+          this._graph,
+          this._subject,
+          this._predicate,
+          this._subject = this._factory.blankNode()
+        );
+        return this._readBlankNodeHead;
+      case "(":
+        const stack = this._contextStack, parent = stack.length && stack[stack.length - 1];
+        if (parent.type === "<<") {
+          return this._error("Unexpected list in reified triple", token);
+        }
+        this._saveContext("list", this._graph, this._subject, this._predicate, this.RDF_NIL);
+        this._subject = null;
+        return this._readListItem;
+      case "{":
+        if (!this._n3Mode)
+          return this._error("Unexpected graph", token);
+        this._saveContext(
+          "formula",
+          this._graph,
+          this._subject,
+          this._predicate,
+          this._graph = this._factory.blankNode()
+        );
+        return this._readSubject;
+      case "<<(":
+        this._saveContext("<<(", this._graph, this._subject, this._predicate, null);
+        this._graph = null;
+        return this._readSubject;
+      case "<<":
+        this._saveContext("<<", this._graph, this._subject, this._predicate, null);
+        this._graph = null;
+        return this._readSubject;
+      default:
+        if ((this._object = this._readEntity(token)) === void 0)
+          return;
+        if (this._n3Mode)
+          return this._getPathReader(this._getContextEndReader());
+    }
+    return this._getContextEndReader();
+  }
+  // ### `_readPredicateOrNamedGraph` reads a quad's predicate, or a named graph
+  _readPredicateOrNamedGraph(token) {
+    return token.type === "{" ? this._readGraph(token) : this._readPredicate(token);
+  }
+  // ### `_readGraph` reads a graph
+  _readGraph(token) {
+    if (token.type !== "{")
+      return this._error(`Expected graph but got ${token.type}`, token);
+    this._graph = this._subject, this._subject = null;
+    return this._readSubject;
+  }
+  // ### `_readBlankNodeHead` reads the head of a blank node
+  _readBlankNodeHead(token) {
+    if (token.type === "]") {
+      this._subject = null;
+      return this._readBlankNodeTail(token);
+    } else {
+      const stack = this._contextStack, parentParent = stack.length > 1 && stack[stack.length - 2];
+      if (parentParent.type === "<<") {
+        return this._error("Unexpected compound blank node expression in reified triple", token);
+      }
+      this._predicate = null;
+      return this._readPredicate(token);
+    }
+  }
+  // ### `_readBlankNodeTail` reads the end of a blank node
+  _readBlankNodeTail(token) {
+    if (token.type !== "]")
+      return this._readBlankNodePunctuation(token);
+    if (this._subject !== null)
+      this._emit(this._subject, this._predicate, this._object, this._graph);
+    const empty = this._predicate === null;
+    this._restoreContext("blank", token);
+    if (this._object !== null)
+      return this._getContextEndReader();
+    else if (this._predicate !== null)
+      return this._readObject;
+    else
+      return empty ? this._readPredicateOrNamedGraph : this._readPredicateAfterBlank;
+  }
+  // ### `_readPredicateAfterBlank` reads a predicate after an anonymous blank node
+  _readPredicateAfterBlank(token) {
+    switch (token.type) {
+      case ".":
+      case "}":
+        this._subject = null;
+        return this._readPunctuation(token);
+      default:
+        return this._readPredicate(token);
+    }
+  }
+  // ### `_readListItem` reads items from a list
+  _readListItem(token) {
+    let item = null, list = null, next = this._readListItem;
+    const previousList = this._subject, stack = this._contextStack, parent = stack[stack.length - 1];
+    switch (token.type) {
+      case "[":
+        this._saveContext(
+          "blank",
+          this._graph,
+          list = this._factory.blankNode(),
+          this.RDF_FIRST,
+          this._subject = item = this._factory.blankNode()
+        );
+        next = this._readBlankNodeHead;
+        break;
+      case "(":
+        this._saveContext(
+          "list",
+          this._graph,
+          list = this._factory.blankNode(),
+          this.RDF_FIRST,
+          this.RDF_NIL
+        );
+        this._subject = null;
+        break;
+      case ")":
+        this._restoreContext("list", token);
+        if (stack.length !== 0 && stack[stack.length - 1].type === "list")
+          this._emit(this._subject, this._predicate, this._object, this._graph);
+        if (this._predicate === null) {
+          next = this._readPredicate;
+          if (this._subject === this.RDF_NIL)
+            return next;
+        } else {
+          next = this._getContextEndReader();
+          if (this._object === this.RDF_NIL)
+            return next;
+        }
+        list = this.RDF_NIL;
+        break;
+      case "literal":
+        if (token.prefix.length === 0) {
+          this._literalValue = token.value;
+          next = this._readListItemDataTypeOrLang;
+        } else {
+          item = this._factory.literal(token.value, this._factory.namedNode(token.prefix));
+          next = this._getContextEndReader();
+        }
+        break;
+      case "{":
+        if (!this._n3Mode)
+          return this._error("Unexpected graph", token);
+        this._saveContext(
+          "formula",
+          this._graph,
+          this._subject,
+          this._predicate,
+          this._graph = this._factory.blankNode()
+        );
+        return this._readSubject;
+      case "<<":
+        this._saveContext("<<", this._graph, null, null, null);
+        this._graph = null;
+        next = this._readSubject;
+        break;
+      default:
+        if ((item = this._readEntity(token)) === void 0)
+          return;
+    }
+    if (list === null)
+      this._subject = list = this._factory.blankNode();
+    if (token.type === "<<")
+      stack[stack.length - 1].subject = this._subject;
+    if (previousList === null) {
+      if (parent.predicate === null)
+        parent.subject = list;
+      else
+        parent.object = list;
+    } else {
+      this._emit(previousList, this.RDF_REST, list, this._graph);
+    }
+    if (item !== null) {
+      if (this._n3Mode && (token.type === "IRI" || token.type === "prefixed")) {
+        this._saveContext("item", this._graph, list, this.RDF_FIRST, item);
+        this._subject = item, this._predicate = null;
+        return this._getPathReader(this._readListItem);
+      }
+      this._emit(list, this.RDF_FIRST, item, this._graph);
+    }
+    return next;
+  }
+  // ### `_readDataTypeOrLang` reads an _optional_ datatype or language
+  _readDataTypeOrLang(token) {
+    return this._completeObjectLiteral(token, false);
+  }
+  // ### `_readListItemDataTypeOrLang` reads an _optional_ datatype or language in a list
+  _readListItemDataTypeOrLang(token) {
+    return this._completeObjectLiteral(token, true);
+  }
+  // ### `_completeLiteral` completes a literal with an optional datatype or language
+  _completeLiteral(token, component) {
+    let literal2 = this._factory.literal(this._literalValue);
+    let readCb;
+    switch (token.type) {
+      // Create a datatyped literal
+      case "type":
+      case "typeIRI":
+        const datatype = this._readEntity(token);
+        if (datatype === void 0) return;
+        if (datatype.value === IRIs_default.rdf.langString || datatype.value === IRIs_default.rdf.dirLangString) {
+          return this._error("Detected illegal (directional) languaged-tagged string with explicit datatype", token);
+        }
+        literal2 = this._factory.literal(this._literalValue, datatype);
+        token = null;
+        break;
+      // Create a language-tagged string
+      case "langcode":
+        if (token.value.split("-").some((t4) => t4.length > 8))
+          return this._error("Detected language tag with subtag longer than 8 characters", token);
+        literal2 = this._factory.literal(this._literalValue, token.value);
+        this._literalLanguage = token.value;
+        token = null;
+        readCb = this._readDirCode.bind(this, component);
+        break;
+    }
+    return { token, literal: literal2, readCb };
+  }
+  _readDirCode(component, listItem, token) {
+    if (token.type === "dircode") {
+      const term = this._factory.literal(this._literalValue, { language: this._literalLanguage, direction: token.value });
+      if (component === "subject")
+        this._subject = term;
+      else
+        this._object = term;
+      this._literalLanguage = void 0;
+      token = null;
+    }
+    if (component === "subject")
+      return token === null ? this._readPredicateOrNamedGraph : this._readPredicateOrNamedGraph(token);
+    return this._completeObjectLiteralPost(token, listItem);
+  }
+  // Completes a literal in subject position
+  _completeSubjectLiteral(token) {
+    const completed = this._completeLiteral(token, "subject");
+    this._subject = completed.literal;
+    if (completed.readCb)
+      return completed.readCb.bind(this, false);
+    return this._readPredicateOrNamedGraph;
+  }
+  // Completes a literal in object position
+  _completeObjectLiteral(token, listItem) {
+    const completed = this._completeLiteral(token, "object");
+    if (!completed)
+      return;
+    this._object = completed.literal;
+    if (completed.readCb)
+      return completed.readCb.bind(this, listItem);
+    return this._completeObjectLiteralPost(completed.token, listItem);
+  }
+  _completeObjectLiteralPost(token, listItem) {
+    if (listItem)
+      this._emit(this._subject, this.RDF_FIRST, this._object, this._graph);
+    if (token === null)
+      return this._getContextEndReader();
+    else {
+      this._readCallback = this._getContextEndReader();
+      return this._readCallback(token);
+    }
+  }
+  // ### `_readFormulaTail` reads the end of a formula
+  _readFormulaTail(token) {
+    if (token.type !== "}")
+      return this._readPunctuation(token);
+    if (this._subject !== null)
+      this._emit(this._subject, this._predicate, this._object, this._graph);
+    this._restoreContext("formula", token);
+    return this._object === null ? this._readPredicate : this._getContextEndReader();
+  }
+  // ### `_readPunctuation` reads punctuation between quads or quad parts
+  _readPunctuation(token) {
+    let next, graph = this._graph, startingAnnotation = false;
+    const subject = this._subject, inversePredicate = this._inversePredicate;
+    switch (token.type) {
+      // A closing brace ends a graph
+      case "}":
+        if (this._graph === null)
+          return this._error("Unexpected graph closing", token);
+        if (this._n3Mode)
+          return this._readFormulaTail(token);
+        this._graph = null;
+      // A dot just ends the statement, without sharing anything with the next
+      case ".":
+        this._subject = null;
+        this._tripleTerm = null;
+        next = this._contextStack.length ? this._readSubject : this._readInTopContext;
+        if (inversePredicate) this._inversePredicate = false;
+        break;
+      // Semicolon means the subject is shared; predicate and object are different
+      case ";":
+        next = this._readPredicate;
+        break;
+      // Comma means both the subject and predicate are shared; the object is different
+      case ",":
+        next = this._readObject;
+        break;
+      // ~ is allowed in the annotation syntax
+      case "~":
+        next = this._readReifierInAnnotation;
+        startingAnnotation = true;
+        break;
+      // {| means that the current triple is annotated with predicate-object pairs.
+      case "{|":
+        this._subject = this._readTripleTerm();
+        this._validAnnotation = false;
+        startingAnnotation = true;
+        next = this._readPredicate;
+        break;
+      // |} means that the current reified triple in annotation syntax is finalized.
+      case "|}":
+        if (!this._annotation)
+          return this._error("Unexpected annotation syntax closing", token);
+        if (!this._validAnnotation)
+          return this._error("Annotation block can not be empty", token);
+        this._subject = null;
+        this._annotation = false;
+        next = this._readPunctuation;
+        break;
+      default:
+        if (this._supportsQuads && this._graph === null && (graph = this._readEntity(token)) !== void 0) {
+          next = this._readQuadPunctuation;
+          break;
+        }
+        return this._error(`Expected punctuation to follow "${this._object.id}"`, token);
+    }
+    if (subject !== null && (!startingAnnotation || startingAnnotation && !this._annotation)) {
+      const predicate = this._predicate, object = this._object;
+      if (!inversePredicate)
+        this._emit(subject, predicate, object, graph);
+      else
+        this._emit(object, predicate, subject, graph);
+    }
+    if (startingAnnotation) {
+      this._annotation = true;
+    }
+    return next;
+  }
+  // ### `_readBlankNodePunctuation` reads punctuation in a blank node
+  _readBlankNodePunctuation(token) {
+    let next;
+    switch (token.type) {
+      // Semicolon means the subject is shared; predicate and object are different
+      case ";":
+        next = this._readPredicate;
+        break;
+      // Comma means both the subject and predicate are shared; the object is different
+      case ",":
+        next = this._readObject;
+        break;
+      default:
+        return this._error(`Expected punctuation to follow "${this._object.id}"`, token);
+    }
+    this._emit(this._subject, this._predicate, this._object, this._graph);
+    return next;
+  }
+  // ### `_readQuadPunctuation` reads punctuation after a quad
+  _readQuadPunctuation(token) {
+    if (token.type !== ".")
+      return this._error("Expected dot to follow quad", token);
+    return this._readInTopContext;
+  }
+  // ### `_readPrefix` reads the prefix of a prefix declaration
+  _readPrefix(token) {
+    if (token.type !== "prefix")
+      return this._error("Expected prefix to follow @prefix", token);
+    this._prefix = token.value;
+    return this._readPrefixIRI;
+  }
+  // ### `_readPrefixIRI` reads the IRI of a prefix declaration
+  _readPrefixIRI(token) {
+    if (token.type !== "IRI")
+      return this._error(`Expected IRI to follow prefix "${this._prefix}:"`, token);
+    const prefixNode = this._readEntity(token);
+    this._prefixes[this._prefix] = prefixNode.value;
+    this._prefixCallback(this._prefix, prefixNode);
+    return this._readDeclarationPunctuation;
+  }
+  // ### `_readBaseIRI` reads the IRI of a base declaration
+  _readBaseIRI(token) {
+    const iri = token.type === "IRI" && this._resolveIRI(token.value);
+    if (!iri)
+      return this._error("Expected valid IRI to follow base declaration", token);
+    this._setBase(iri);
+    return this._readDeclarationPunctuation;
+  }
+  // ### `_isValidVersion` checks if the given version is valid for this parser to handle.
+  _isValidVersion(version) {
+    return this._parseUnsupportedVersions || _N3Parser.SUPPORTED_VERSIONS.includes(version);
+  }
+  // ### `_readVersion` reads version string declaration
+  _readVersion(token) {
+    if (token.type !== "literal")
+      return this._error("Expected literal to follow version declaration", token);
+    if (token.end - token.start !== token.value.length + 2)
+      return this._error("Version declarations must use single quotes", token);
+    this._versionCallback(token.value);
+    if (!this._isValidVersion(token.value))
+      return this._error(`Detected unsupported version: "${token.value}"`, token);
+    return this._readDeclarationPunctuation;
+  }
+  // ### `_readNamedGraphLabel` reads the label of a named graph
+  _readNamedGraphLabel(token) {
+    switch (token.type) {
+      case "IRI":
+      case "blank":
+      case "prefixed":
+        return this._readSubject(token), this._readGraph;
+      case "[":
+        return this._readNamedGraphBlankLabel;
+      default:
+        return this._error("Invalid graph label", token);
+    }
+  }
+  // ### `_readNamedGraphLabel` reads a blank node label of a named graph
+  _readNamedGraphBlankLabel(token) {
+    if (token.type !== "]")
+      return this._error("Invalid graph label", token);
+    this._subject = this._factory.blankNode();
+    return this._readGraph;
+  }
+  // ### `_readDeclarationPunctuation` reads the punctuation of a declaration
+  _readDeclarationPunctuation(token) {
+    if (this._sparqlStyle) {
+      this._sparqlStyle = false;
+      return this._readInTopContext(token);
+    }
+    if (token.type !== ".")
+      return this._error("Expected declaration to end with a dot", token);
+    return this._readInTopContext;
+  }
+  // Reads a list of quantified symbols from a @forSome or @forAll statement
+  _readQuantifierList(token) {
+    let entity;
+    switch (token.type) {
+      case "IRI":
+      case "prefixed":
+        if ((entity = this._readEntity(token, true)) !== void 0)
+          break;
+      default:
+        return this._error(`Unexpected ${token.type}`, token);
+    }
+    if (!this._explicitQuantifiers)
+      this._quantified[entity.id] = this._factory[this._quantifier](this._factory.blankNode().value);
+    else {
+      if (this._subject === null)
+        this._emit(
+          this._graph || this.DEFAULTGRAPH,
+          this._predicate,
+          this._subject = this._factory.blankNode(),
+          this.QUANTIFIERS_GRAPH
+        );
+      else
+        this._emit(
+          this._subject,
+          this.RDF_REST,
+          this._subject = this._factory.blankNode(),
+          this.QUANTIFIERS_GRAPH
+        );
+      this._emit(this._subject, this.RDF_FIRST, entity, this.QUANTIFIERS_GRAPH);
+    }
+    return this._readQuantifierPunctuation;
+  }
+  // Reads punctuation from a @forSome or @forAll statement
+  _readQuantifierPunctuation(token) {
+    if (token.type === ",")
+      return this._readQuantifierList;
+    else {
+      if (this._explicitQuantifiers) {
+        this._emit(this._subject, this.RDF_REST, this.RDF_NIL, this.QUANTIFIERS_GRAPH);
+        this._subject = null;
+      }
+      this._readCallback = this._getContextEndReader();
+      return this._readCallback(token);
+    }
+  }
+  // ### `_getPathReader` reads a potential path and then resumes with the given function
+  _getPathReader(afterPath) {
+    this._afterPath = afterPath;
+    return this._readPath;
+  }
+  // ### `_readPath` reads a potential path
+  _readPath(token) {
+    switch (token.type) {
+      // Forward path
+      case "!":
+        return this._readForwardPath;
+      // Backward path
+      case "^":
+        return this._readBackwardPath;
+      // Not a path; resume reading where we left off
+      default:
+        const stack = this._contextStack, parent = stack.length && stack[stack.length - 1];
+        if (parent && parent.type === "item") {
+          const item = this._subject;
+          this._restoreContext("item", token);
+          this._emit(this._subject, this.RDF_FIRST, item, this._graph);
+        }
+        return this._afterPath(token);
+    }
+  }
+  // ### `_readForwardPath` reads a '!' path
+  _readForwardPath(token) {
+    let subject, predicate;
+    const object = this._factory.blankNode();
+    if ((predicate = this._readEntity(token)) === void 0)
+      return;
+    if (this._predicate === null)
+      subject = this._subject, this._subject = object;
+    else
+      subject = this._object, this._object = object;
+    this._emit(subject, predicate, object, this._graph);
+    return this._readPath;
+  }
+  // ### `_readBackwardPath` reads a '^' path
+  _readBackwardPath(token) {
+    const subject = this._factory.blankNode();
+    let predicate, object;
+    if ((predicate = this._readEntity(token)) === void 0)
+      return;
+    if (this._predicate === null)
+      object = this._subject, this._subject = subject;
+    else
+      object = this._object, this._object = subject;
+    this._emit(subject, predicate, object, this._graph);
+    return this._readPath;
+  }
+  // ### `_readTripleTermTail` reads the end of a triple term
+  _readTripleTermTail(token) {
+    if (token.type !== ")>>")
+      return this._error(`Expected )>> but got ${token.type}`, token);
+    const quad2 = this._factory.quad(
+      this._subject,
+      this._predicate,
+      this._object,
+      this._graph || this.DEFAULTGRAPH
+    );
+    this._restoreContext("<<(", token);
+    if (this._subject === null) {
+      this._subject = quad2;
+      return this._readPredicate;
+    } else {
+      this._object = quad2;
+      return this._getContextEndReader();
+    }
+  }
+  // ### `_readReifiedTripleTailOrReifier` reads a reifier or the end of a nested reified triple
+  _readReifiedTripleTailOrReifier(token) {
+    if (token.type === "~") {
+      return this._readReifier;
+    }
+    return this._readReifiedTripleTail(token);
+  }
+  // ### `_readReifiedTripleTail` reads the end of a nested reified triple
+  _readReifiedTripleTail(token) {
+    if (token.type !== ">>")
+      return this._error(`Expected >> but got ${token.type}`, token);
+    this._tripleTerm = null;
+    const reifier = this._readTripleTerm();
+    this._restoreContext("<<", token);
+    const stack = this._contextStack, parent = stack.length && stack[stack.length - 1];
+    if (parent && parent.type === "list") {
+      this._emit(this._subject, this.RDF_FIRST, reifier, this._graph);
+      return this._getContextEndReader();
+    } else if (this._subject === null) {
+      this._subject = reifier;
+      return this._readPredicateOrReifierTripleEnd;
+    } else {
+      this._object = reifier;
+      return this._getContextEndReader();
+    }
+  }
+  _readPredicateOrReifierTripleEnd(token) {
+    if (token.type === ".") {
+      this._subject = null;
+      return this._readPunctuation(token);
+    }
+    return this._readPredicate(token);
+  }
+  // ### `_readReifier` reads the triple term identifier after a tilde when in a reifying triple.
+  _readReifier(token) {
+    this._reifier = this._readEntity(token);
+    return this._readReifiedTripleTail;
+  }
+  // ### `_readReifier` reads the optional triple term identifier after a tilde when in annotation syntax.
+  _readReifierInAnnotation(token) {
+    if (token.type === "IRI" || token.type === "typeIRI" || token.type === "type" || token.type === "prefixed" || token.type === "blank" || token.type === "var") {
+      this._reifier = this._readEntity(token);
+      return this._readPunctuation;
+    }
+    this._readTripleTerm();
+    this._subject = null;
+    return this._readPunctuation(token);
+  }
+  _readTripleTerm() {
+    const stack = this._contextStack, parent = stack.length && stack[stack.length - 1];
+    const parentGraph = parent ? parent.graph : void 0;
+    const reifier = this._reifier || this._factory.blankNode();
+    this._reifier = null;
+    this._tripleTerm = this._tripleTerm || this._factory.quad(this._subject, this._predicate, this._object);
+    this._emit(reifier, this.RDF_REIFIES, this._tripleTerm, parentGraph || this.DEFAULTGRAPH);
+    return reifier;
+  }
+  // ### `_getContextEndReader` gets the next reader function at the end of a context
+  _getContextEndReader() {
+    const contextStack = this._contextStack;
+    if (!contextStack.length)
+      return this._readPunctuation;
+    switch (contextStack[contextStack.length - 1].type) {
+      case "blank":
+        return this._readBlankNodeTail;
+      case "list":
+        return this._readListItem;
+      case "formula":
+        return this._readFormulaTail;
+      case "<<(":
+        return this._readTripleTermTail;
+      case "<<":
+        return this._readReifiedTripleTailOrReifier;
+    }
+  }
+  // ### `_emit` sends a quad through the callback
+  _emit(subject, predicate, object, graph) {
+    this._callback(null, this._factory.quad(subject, predicate, object, graph || this.DEFAULTGRAPH));
+  }
+  // ### `_error` emits an error message through the callback
+  _error(message, token) {
+    const err = new Error(`${message} on line ${token.line}.`);
+    err.context = {
+      token,
+      line: token.line,
+      previousToken: this._lexer.previousToken
+    };
+    this._callback(err);
+    this._callback = noop;
+  }
+  // ### `_resolveIRI` resolves an IRI against the base path
+  _resolveIRI(iri) {
+    return /^[a-z][a-z0-9+.-]*:/i.test(iri) ? iri : this._resolveRelativeIRI(iri);
+  }
+  // ### `_resolveRelativeIRI` resolves an IRI against the base path,
+  // assuming that a base path has been set and that the IRI is indeed relative
+  _resolveRelativeIRI(iri) {
+    if (!iri.length)
+      return this._base;
+    switch (iri[0]) {
+      // Resolve relative fragment IRIs against the base IRI
+      case "#":
+        return this._base + iri;
+      // Resolve relative query string IRIs by replacing the query string
+      case "?":
+        return this._base.replace(/(?:\?.*)?$/, iri);
+      // Resolve root-relative IRIs at the root of the base IRI
+      case "/":
+        return (iri[1] === "/" ? this._baseScheme : this._baseRoot) + this._removeDotSegments(iri);
+      // Resolve all other IRIs at the base IRI's path
+      default:
+        return /^[^/:]*:/.test(iri) ? null : this._removeDotSegments(this._basePath + iri);
+    }
+  }
+  // ### `_removeDotSegments` resolves './' and '../' path segments in an IRI as per RFC3986
+  _removeDotSegments(iri) {
+    if (!/(^|\/)\.\.?($|[/#?])/.test(iri))
+      return iri;
+    const length = iri.length;
+    let result = "", i5 = -1, pathStart = -1, segmentStart = 0, next = "/";
+    while (i5 < length) {
+      switch (next) {
+        // The path starts with the first slash after the authority
+        case ":":
+          if (pathStart < 0) {
+            if (iri[++i5] === "/" && iri[++i5] === "/")
+              while ((pathStart = i5 + 1) < length && iri[pathStart] !== "/")
+                i5 = pathStart;
+          }
+          break;
+        // Don't modify a query string or fragment
+        case "?":
+        case "#":
+          i5 = length;
+          break;
+        // Handle '/.' or '/..' path segments
+        case "/":
+          if (iri[i5 + 1] === ".") {
+            next = iri[++i5 + 1];
+            switch (next) {
+              // Remove a '/.' segment
+              case "/":
+                result += iri.substring(segmentStart, i5 - 1);
+                segmentStart = i5 + 1;
+                break;
+              // Remove a trailing '/.' segment
+              case void 0:
+              case "?":
+              case "#":
+                return result + iri.substring(segmentStart, i5) + iri.substr(i5 + 1);
+              // Remove a '/..' segment
+              case ".":
+                next = iri[++i5 + 1];
+                if (next === void 0 || next === "/" || next === "?" || next === "#") {
+                  result += iri.substring(segmentStart, i5 - 2);
+                  if ((segmentStart = result.lastIndexOf("/")) >= pathStart)
+                    result = result.substr(0, segmentStart);
+                  if (next !== "/")
+                    return `${result}/${iri.substr(i5 + 1)}`;
+                  segmentStart = i5 + 1;
+                }
+            }
+          }
+      }
+      next = iri[++i5];
+    }
+    return result + iri.substring(segmentStart);
+  }
+  // ## Public methods
+  // ### `parse` parses the N3 input and emits each parsed quad through the onQuad callback.
+  parse(input, quadCallback, prefixCallback, versionCallback) {
+    let onQuad, onPrefix, onComment, onVersion;
+    if (quadCallback && (quadCallback.onQuad || quadCallback.onPrefix || quadCallback.onComment || quadCallback.onVersion)) {
+      onQuad = quadCallback.onQuad;
+      onPrefix = quadCallback.onPrefix;
+      onComment = quadCallback.onComment;
+      onVersion = quadCallback.onVersion;
+    } else {
+      onQuad = quadCallback;
+      onPrefix = prefixCallback;
+      onVersion = versionCallback;
+    }
+    this._readCallback = this._readBeforeTopContext;
+    this._sparqlStyle = false;
+    this._prefixes = /* @__PURE__ */ Object.create(null);
+    this._prefixes._ = this._blankNodePrefix ? this._blankNodePrefix.substr(2) : `b${blankNodePrefix++}_`;
+    this._prefixCallback = onPrefix || noop;
+    this._versionCallback = onVersion || noop;
+    this._inversePredicate = false;
+    this._quantified = /* @__PURE__ */ Object.create(null);
+    if (!onQuad) {
+      const quads = [];
+      let error;
+      this._callback = (e5, t4) => {
+        e5 ? error = e5 : t4 && quads.push(t4);
+      };
+      this._lexer.tokenize(input).every((token) => {
+        return this._readCallback = this._readCallback(token);
+      });
+      if (error) throw error;
+      return quads;
+    }
+    let processNextToken = (error, token) => {
+      if (error !== null)
+        this._callback(error), this._callback = noop;
+      else if (this._readCallback)
+        this._readCallback = this._readCallback(token);
+    };
+    if (onComment) {
+      this._lexer.comments = true;
+      processNextToken = (error, token) => {
+        if (error !== null)
+          this._callback(error), this._callback = noop;
+        else if (this._readCallback) {
+          if (token.type === "comment")
+            onComment(token.value);
+          else
+            this._readCallback = this._readCallback(token);
+        }
+      };
+    }
+    this._callback = onQuad;
+    this._lexer.tokenize(input, processNextToken);
+  }
+};
+function noop() {
+}
+function initDataFactory(parser, factory2) {
+  parser._factory = factory2;
+  parser.DEFAULTGRAPH = factory2.defaultGraph();
+  parser.RDF_FIRST = factory2.namedNode(IRIs_default.rdf.first);
+  parser.RDF_REST = factory2.namedNode(IRIs_default.rdf.rest);
+  parser.RDF_NIL = factory2.namedNode(IRIs_default.rdf.nil);
+  parser.RDF_REIFIES = factory2.namedNode(IRIs_default.rdf.reifies);
+  parser.N3_FORALL = factory2.namedNode(IRIs_default.r.forAll);
+  parser.N3_FORSOME = factory2.namedNode(IRIs_default.r.forSome);
+  parser.ABBREVIATIONS = {
+    "a": factory2.namedNode(IRIs_default.rdf.type),
+    "=": factory2.namedNode(IRIs_default.owl.sameAs),
+    ">": factory2.namedNode(IRIs_default.log.implies),
+    "<": factory2.namedNode(IRIs_default.log.isImpliedBy)
+  };
+  parser.QUANTIFIERS_GRAPH = factory2.namedNode("urn:n3:quantifiers");
+}
+N3Parser.SUPPORTED_VERSIONS = [
+  "1.2",
+  "1.2-basic",
+  "1.1"
+];
+initDataFactory(N3Parser.prototype, N3DataFactory_default);
 
 // src/rdf-webcomponents/core/worker/parsers/index.ts
-init_src();
 var import_rdfxml_streaming_parser = __toESM(require_rdfxml_streaming_parser());
 var import_jsonld_streaming_parser = __toESM(require_jsonld_streaming_parser());
 var import_rdfa_streaming_parser = __toESM(require_rdfa_streaming_parser());
 var import_rdf_data_factory = __toESM(require_rdf_data_factory());
 
 // src/rdf-webcomponents/types/index.ts
-var MessageType = /* @__PURE__ */ ((MessageType2) => {
-  MessageType2["FETCH_REQUEST"] = "FETCH_REQUEST";
-  MessageType2["FETCH_RESPONSE"] = "FETCH_RESPONSE";
-  MessageType2["FETCH_ERROR"] = "FETCH_ERROR";
-  MessageType2["FETCH_PROGRESS"] = "FETCH_PROGRESS";
-  MessageType2["PARSE_REQUEST"] = "PARSE_REQUEST";
-  MessageType2["PARSE_RESPONSE"] = "PARSE_RESPONSE";
-  MessageType2["PARSE_ERROR"] = "PARSE_ERROR";
-  MessageType2["PARSE_PROGRESS"] = "PARSE_PROGRESS";
-  MessageType2["QUERY_REQUEST"] = "QUERY_REQUEST";
-  MessageType2["QUERY_RESPONSE"] = "QUERY_RESPONSE";
-  MessageType2["QUERY_ERROR"] = "QUERY_ERROR";
-  MessageType2["EXTRACT_SHAPES_REQUEST"] = "EXTRACT_SHAPES_REQUEST";
-  MessageType2["EXTRACT_SHAPES_RESPONSE"] = "EXTRACT_SHAPES_RESPONSE";
-  MessageType2["EXTRACT_SHAPES_ERROR"] = "EXTRACT_SHAPES_ERROR";
-  MessageType2["EXECUTE_LENS_REQUEST"] = "EXECUTE_LENS_REQUEST";
-  MessageType2["EXECUTE_LENS_RESPONSE"] = "EXECUTE_LENS_RESPONSE";
-  MessageType2["EXECUTE_LENS_ERROR"] = "EXECUTE_LENS_ERROR";
-  MessageType2["RENDER_TEMPLATE_REQUEST"] = "RENDER_TEMPLATE_REQUEST";
-  MessageType2["RENDER_TEMPLATE_RESPONSE"] = "RENDER_TEMPLATE_RESPONSE";
-  MessageType2["RENDER_TEMPLATE_ERROR"] = "RENDER_TEMPLATE_ERROR";
-  MessageType2["CACHE_GET_REQUEST"] = "CACHE_GET_REQUEST";
-  MessageType2["CACHE_GET_RESPONSE"] = "CACHE_GET_RESPONSE";
-  MessageType2["CACHE_SET_REQUEST"] = "CACHE_SET_REQUEST";
-  MessageType2["CACHE_SET_RESPONSE"] = "CACHE_SET_RESPONSE";
-  MessageType2["CACHE_CLEAR_REQUEST"] = "CACHE_CLEAR_REQUEST";
-  MessageType2["CACHE_CLEAR_RESPONSE"] = "CACHE_CLEAR_RESPONSE";
-  MessageType2["WORKER_READY"] = "WORKER_READY";
-  MessageType2["WORKER_ERROR"] = "WORKER_ERROR";
-  return MessageType2;
-})(MessageType || {});
-function serializeQuad(quad3) {
+function serializeQuad(quad2) {
   return {
-    subject: serializeTerm(quad3.subject),
-    predicate: serializeTerm(quad3.predicate),
-    object: serializeTerm(quad3.object),
-    graph: quad3.graph ? serializeTerm(quad3.graph) : void 0
+    subject: serializeTerm(quad2.subject),
+    predicate: serializeTerm(quad2.predicate),
+    object: serializeTerm(quad2.object),
+    graph: quad2.graph ? serializeTerm(quad2.graph) : void 0
   };
 }
 function serializeTerm(term) {
@@ -26714,8 +23054,6 @@ function serializeTerm(term) {
   }
   return serialized;
 }
-var DEFAULT_CACHE_TTL = 3600;
-var MAX_CACHE_SIZE = 1e3;
 
 // src/rdf-webcomponents/core/worker/parsers/index.ts
 var factory = new import_rdf_data_factory.DataFactory();
@@ -26758,32 +23096,6 @@ function detectFormat(url, content) {
   }
   return "turtle";
 }
-function getMimeType(format) {
-  const mimeTypes = {
-    "turtle": "text/turtle",
-    "n-triples": "application/n-triples",
-    "n-quads": "application/n-quads",
-    "rdf-xml": "application/rdf+xml",
-    "json-ld": "application/ld+json",
-    "rdfa": "text/html",
-    "sparql-results": "application/sparql-results+json"
-  };
-  return mimeTypes[format] || "text/turtle";
-}
-function getAcceptHeader(format) {
-  if (format) {
-    return getMimeType(format);
-  }
-  return [
-    "text/turtle",
-    "application/n-triples",
-    "application/n-quads",
-    "application/rdf+xml",
-    "application/ld+json",
-    "application/sparql-results+json",
-    "application/sparql-results+xml"
-  ].join(", ");
-}
 function parseN3(content, format = "turtle", onProgress) {
   return new Promise((resolve) => {
     const quads = [];
@@ -26795,12 +23107,12 @@ function parseN3(content, format = "turtle", onProgress) {
     });
     let quadCount = 0;
     const totalLines = content.split("\n").length;
-    parser.parse(content, (error, quad3) => {
+    parser.parse(content, (error, quad2) => {
       if (error) {
         errors.push({ message: error.message });
         resolve({ quads, format, errors, warnings });
-      } else if (quad3) {
-        quads.push(quad3);
+      } else if (quad2) {
+        quads.push(quad2);
         quadCount++;
         if (onProgress && quadCount % 1e3 === 0) {
           onProgress({
@@ -26825,8 +23137,8 @@ function parseRdfXml(content, onProgress) {
       dataFactory: factory
     });
     let quadCount = 0;
-    parser.on("data", (quad3) => {
-      quads.push(quad3);
+    parser.on("data", (quad2) => {
+      quads.push(quad2);
       quadCount++;
       if (onProgress && quadCount % 1e3 === 0) {
         onProgress({
@@ -26863,8 +23175,8 @@ function parseJsonLd(content, onProgress) {
       dataFactory: factory
     });
     let quadCount = 0;
-    parser.on("data", (quad3) => {
-      quads.push(quad3);
+    parser.on("data", (quad2) => {
+      quads.push(quad2);
       quadCount++;
       if (onProgress && quadCount % 1e3 === 0) {
         onProgress({
@@ -26902,8 +23214,8 @@ function parseRdfa(content, baseUrl, onProgress) {
       baseIRI: baseUrl
     });
     let quadCount = 0;
-    parser.on("data", (quad3) => {
-      quads.push(quad3);
+    parser.on("data", (quad2) => {
+      quads.push(quad2);
       quadCount++;
       if (onProgress && quadCount % 100 === 0) {
         onProgress({
@@ -27029,23 +23341,23 @@ async function parseSourceRdfConfigRdf(content, format, source) {
   const providedKeys = /* @__PURE__ */ new Set();
   const config = {};
   const configSubjects = new Set(
-    parsed.quads.filter((quad3) => quad3.predicate.value === RDF_TYPE && quad3.object.value === SOURCE_RDF_CONFIG_TYPE).map((quad3) => quad3.subject.value)
+    parsed.quads.filter((quad2) => quad2.predicate.value === RDF_TYPE && quad2.object.value === SOURCE_RDF_CONFIG_TYPE).map((quad2) => quad2.subject.value)
   );
-  for (const quad3 of parsed.quads) {
-    if (configSubjects.size > 0 && !configSubjects.has(quad3.subject.value)) {
+  for (const quad2 of parsed.quads) {
+    if (configSubjects.size > 0 && !configSubjects.has(quad2.subject.value)) {
       continue;
     }
-    const predicate2 = quad3.predicate.value;
-    if (!predicate2.startsWith(SOURCE_RDF_NS)) {
+    const predicate = quad2.predicate.value;
+    if (!predicate.startsWith(SOURCE_RDF_NS)) {
       continue;
     }
-    const localName = predicate2.slice(SOURCE_RDF_NS.length);
+    const localName = predicate.slice(SOURCE_RDF_NS.length);
     if (!CONFIG_KEYS.has(localName)) {
       warnings.push(`Unknown source-rdf property '${localName}' in config RDF`);
       continue;
     }
     providedKeys.add(localName);
-    const value = quad3.object.value;
+    const value = quad2.object.value;
     switch (localName) {
       case "url":
         config.url = value;
@@ -27136,14 +23448,14 @@ function buildSparqlQuery(strategy, config) {
   }
   return `DESCRIBE <${config.subject}>`;
 }
-function buildCbdConstructQuery(subject2, depth) {
+function buildCbdConstructQuery(subject, depth) {
   const safeDepth = Math.max(1, depth);
-  const constructLines = [`<${subject2}> ?p ?o .`];
-  const whereLines = [`<${subject2}> ?p ?o .`];
-  for (let i6 = 1; i6 <= safeDepth; i6++) {
-    const prevVar = i6 === 1 ? "o" : `o${i6 - 1}`;
-    constructLines.push(`?o${i6 - 1} ?p${i6} ?o${i6} .`);
-    whereLines.push(`OPTIONAL { ?${prevVar} ?p${i6} ?o${i6} . FILTER(isBlank(?${prevVar})) }`);
+  const constructLines = [`<${subject}> ?p ?o .`];
+  const whereLines = [`<${subject}> ?p ?o .`];
+  for (let i5 = 1; i5 <= safeDepth; i5++) {
+    const prevVar = i5 === 1 ? "o" : `o${i5 - 1}`;
+    constructLines.push(`?o${i5 - 1} ?p${i5} ?o${i5} .`);
+    whereLines.push(`OPTIONAL { ?${prevVar} ?p${i5} ?o${i5} . FILTER(isBlank(?${prevVar})) }`);
   }
   return `CONSTRUCT { ${constructLines.join(" ")} } WHERE { ${whereLines.join(" ")} }`;
 }
@@ -27416,2841 +23728,8 @@ __decorateClass([
 SourceRdf = __decorateClass([
   t3("source-rdf")
 ], SourceRdf);
-
-// src/rdf-webcomponents/components/rdf-lens-config.ts
-var RDF_LENS_NS = "https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#";
-var RDF_TYPE2 = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-var RDF_LENS_CONFIG_TYPE = `${RDF_LENS_NS}RdfLensConfig`;
-var CONFIG_KEYS2 = /* @__PURE__ */ new Set([
-  "shapeFile",
-  "shapeClass",
-  "shapes",
-  "strict",
-  "multiple",
-  "subject"
-]);
-function parseBoolean2(value) {
-  return value === "true" || value === "1";
-}
-async function parseRdfLensConfigRdf(content, format, source) {
-  const parsedFormat = format ?? detectFormat(source, content);
-  const parsed = await parseRdf(content, parsedFormat, source);
-  if (parsed.errors.length > 0) {
-    throw new Error(`Config parse failed: ${parsed.errors[0].message}`);
-  }
-  const warnings = [];
-  const providedKeys = /* @__PURE__ */ new Set();
-  const config = {};
-  const configSubjects = new Set(
-    parsed.quads.filter((quad3) => quad3.predicate.value === RDF_TYPE2 && quad3.object.value === RDF_LENS_CONFIG_TYPE).map((quad3) => quad3.subject.value)
-  );
-  for (const quad3 of parsed.quads) {
-    if (configSubjects.size > 0 && !configSubjects.has(quad3.subject.value)) {
-      continue;
-    }
-    const predicate2 = quad3.predicate.value;
-    if (!predicate2.startsWith(RDF_LENS_NS)) {
-      continue;
-    }
-    const localName = predicate2.slice(RDF_LENS_NS.length);
-    if (!CONFIG_KEYS2.has(localName)) {
-      warnings.push(`Unknown rdf-lens property '${localName}' in config RDF`);
-      continue;
-    }
-    providedKeys.add(localName);
-    const value = quad3.object.value;
-    switch (localName) {
-      case "shapeFile":
-        config.shapeFile = value;
-        break;
-      case "shapeClass":
-        config.shapeClass = value;
-        break;
-      case "shapes":
-        config.shapes = value;
-        break;
-      case "strict":
-        config.strict = parseBoolean2(value);
-        break;
-      case "multiple":
-        config.multiple = parseBoolean2(value);
-        break;
-      case "subject":
-        config.subject = value;
-        break;
-      default:
-        break;
-    }
-  }
-  return { config, warnings, providedKeys };
-}
-function validateRdfLensConfig(config) {
-  if (!config.shapeFile?.trim() && !config.shapes?.trim()) {
-    throw new Error("rdf-lens config requires either shapeFile or shapes.");
-  }
-  return [];
-}
-
-// src/rdf-webcomponents/components/rdf-lens.ts
-var RdfLens = class extends i4 {
-  constructor() {
-    super(...arguments);
-    this.config = "";
-    // ===========================================================================
-    // Internal State
-    // ===========================================================================
-    this._data = null;
-    this._quads = [];
-    this._shapeQuads = [];
-    this._loading = false;
-    this._error = null;
-    this._shapesLoaded = false;
-    this._resolvedConfig = {};
-    this._onTriplestoreReady = (event) => {
-      const source = event.composedPath?.()[0] ?? event.target;
-      console.log(
-        "[rdf-lens] triplestore-ready received \u2014 source:",
-        source?.tagName,
-        "| quads on source:",
-        source?.quads?.length ?? "n/a",
-        "| shapesLoaded:",
-        this._shapesLoaded
-      );
-      if (source?.quads && Array.isArray(source.quads)) {
-        this._quads = source.quads;
-        console.log(`[rdf-lens] stored ${this._quads.length} quads from adapter`);
-      } else {
-        console.warn("[rdf-lens] triplestore-ready: could not read quads from source element");
-      }
-      if (this._shapesLoaded) {
-        this._extractData();
-      } else {
-        console.log("[rdf-lens] shapes not yet loaded \u2014 extraction deferred");
-      }
-    };
-  }
-  // ===========================================================================
-  // Public API
-  // ===========================================================================
-  /** Returns the extracted data */
-  get data() {
-    return this._data;
-  }
-  /** Returns whether data is loading */
-  get loading() {
-    return this._loading;
-  }
-  /** Returns the current error */
-  get error() {
-    return this._error;
-  }
-  /** Sets the triplestore data (called by parent or through events) */
-  setQuads(quads) {
-    this._quads = quads;
-    if (this._shapesLoaded) {
-      this._extractData();
-    }
-  }
-  // ===========================================================================
-  // Lifecycle Methods
-  // ===========================================================================
-  async firstUpdated(changedProperties) {
-    super.firstUpdated(changedProperties);
-    await this._refreshConfiguration();
-  }
-  connectedCallback() {
-    super.connectedCallback();
-    this.addEventListener("triplestore-ready", this._onTriplestoreReady);
-  }
-  updated(changedProperties) {
-    super.updated(changedProperties);
-    if (changedProperties.has("config")) {
-      void this._refreshConfiguration();
-    }
-  }
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this.removeEventListener("triplestore-ready", this._onTriplestoreReady);
-  }
-  // ===========================================================================
-  // Rendering
-  // ===========================================================================
-  render() {
-    return b2`
-      <slot name="loading" ?hidden=${!this._loading}>
-        ${this._loading ? b2`
-          <div class="rdf-lens-loading">
-            Extracting data from shapes...
-          </div>
-        ` : ""}
-      </slot>
-      
-      <slot name="error" ?hidden=${!this._error}>
-        ${this._error ? b2`
-          <div class="rdf-lens-error">
-            <div class="rdf-lens-error-title">Error extracting data</div>
-            <div class="rdf-lens-error-message">${this._error}</div>
-          </div>
-        ` : ""}
-      </slot>
-      
-      <slot ?hidden=${this._loading || this._error}></slot>
-    `;
-  }
-  // ===========================================================================
-  // Private Methods
-  // ===========================================================================
-  async _loadShapes(shapeFile) {
-    this._loading = true;
-    this._error = null;
-    this._emitEvent("shape-loading", { phase: "fetch" });
-    try {
-      const response = await fetch(shapeFile);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch shapes: ${response.status} ${response.statusText}`);
-      }
-      const content = await response.text();
-      await this._parseShapesContent(content, shapeFile);
-    } catch (error) {
-      this._loading = false;
-      this._error = error instanceof Error ? error.message : String(error);
-      const eventDetail = {
-        message: this._error,
-        phase: "shape",
-        error: error instanceof Error ? error : void 0
-      };
-      this._emitEvent("shape-error", eventDetail);
-      this.requestUpdate();
-    }
-  }
-  async _parseInlineShapes(shapes) {
-    this._loading = true;
-    try {
-      await this._parseShapesContent(shapes, "inline");
-    } catch (error) {
-      this._loading = false;
-      this._error = error instanceof Error ? error.message : String(error);
-      this._emitEvent("shape-error", {
-        message: this._error,
-        phase: "shape",
-        error: error instanceof Error ? error : void 0
-      });
-      this.requestUpdate();
-    }
-  }
-  async _refreshConfiguration() {
-    try {
-      const resolvedConfig = await this._resolveConfig();
-      const warnings = [...resolvedConfig.warnings, ...validateRdfLensConfig(resolvedConfig.config)];
-      for (const warning of warnings) {
-        console.warn(`[rdf-lens] ${warning}`);
-      }
-      this._resolvedConfig = resolvedConfig.config;
-      this._shapeQuads = [];
-      this._shapesLoaded = false;
-      if (this._resolvedConfig.shapeFile) {
-        await this._loadShapes(this._resolvedConfig.shapeFile);
-      } else if (this._resolvedConfig.shapes) {
-        await this._parseInlineShapes(this._resolvedConfig.shapes);
-      }
-    } catch (error) {
-      this._loading = false;
-      this._error = error instanceof Error ? error.message : String(error);
-      this._emitEvent("shape-error", {
-        message: this._error,
-        phase: "config",
-        error: error instanceof Error ? error : void 0
-      });
-      this.requestUpdate();
-    }
-  }
-  async _resolveConfig() {
-    if (this.config && this.config.trim()) {
-      return parseRdfLensConfigRdf(this.config, void 0, "inline-config-attribute");
-    }
-    const inline = this._readInlineConfigScript();
-    if (inline) {
-      return parseRdfLensConfigRdf(inline.content, inline.format, "inline-config-script");
-    }
-    throw new Error("rdf-lens requires a config RDF payload.");
-  }
-  _readInlineConfigScript() {
-    const script = this.querySelector('script[data-rdf-lens-config="true"][type]');
-    if (!script || !script.textContent?.trim()) {
-      return null;
-    }
-    const type = script.getAttribute("type")?.toLowerCase() ?? "";
-    const content = script.textContent;
-    if (type.includes("ld+json")) return { content, format: "json-ld" };
-    if (type.includes("rdf+xml")) return { content, format: "rdf-xml" };
-    if (type.includes("n-triples")) return { content, format: "n-triples" };
-    if (type.includes("n-quads")) return { content, format: "n-quads" };
-    if (type.includes("turtle") || type.includes("ttl")) return { content, format: "turtle" };
-    if (type.includes("html")) return { content, format: "rdfa" };
-    return { content };
-  }
-  async _parseShapesContent(content, baseUrl) {
-    const { Parser, DataFactory: DataFactory5 } = await Promise.resolve().then(() => (init_src(), src_exports));
-    const { namedNode: namedNode2 } = DataFactory5;
-    const parser = new Parser({ baseIRI: baseUrl });
-    return new Promise((resolve, reject) => {
-      const quads = [];
-      parser.parse(content, (error, quad3) => {
-        if (error) {
-          console.error("[rdf-lens] shape parse error:", error.message);
-          reject(error);
-        } else if (quad3) {
-          quads.push({
-            subject: this._serializeTerm(quad3.subject),
-            predicate: this._serializeTerm(quad3.predicate),
-            object: this._serializeTerm(quad3.object),
-            graph: quad3.graph ? this._serializeTerm(quad3.graph) : void 0
-          });
-        } else {
-          console.log(`[rdf-lens] shapes parsed: ${quads.length} quads | dataQuads already available: ${this._quads.length}`);
-          this._shapeQuads = quads;
-          this._shapesLoaded = true;
-          this._loading = false;
-          this._emitEvent("shapes-loaded", { count: quads.length });
-          this.requestUpdate();
-          if (this._quads.length > 0) {
-            this._extractData();
-          }
-          resolve();
-        }
-      });
-    });
-  }
-  async _extractData() {
-    if (this._quads.length === 0 || this._shapeQuads.length === 0) return;
-    this._loading = true;
-    this._error = null;
-    this._emitEvent("extraction-start", {});
-    const startTime = Date.now();
-    try {
-      const result = await this._executeLens();
-      this._data = result.data;
-      this._loading = false;
-      const eventDetail = {
-        data: result.data,
-        shapeClass: result.shapeClass,
-        count: result.count,
-        duration: Date.now() - startTime
-      };
-      this._emitEvent("shape-processed", eventDetail);
-      this.requestUpdate();
-    } catch (error) {
-      this._loading = false;
-      this._error = error instanceof Error ? error.message : String(error);
-      const eventDetail = {
-        message: this._error,
-        phase: "extract",
-        error: error instanceof Error ? error : void 0
-      };
-      this._emitEvent("shape-error", eventDetail);
-      this.requestUpdate();
-    }
-  }
-  async _executeLens() {
-    const { extractShapes: extractShapes2 } = await Promise.resolve().then(() => (init_dist(), dist_exports));
-    const { DataFactory: DataFactory5 } = await Promise.resolve().then(() => (init_src(), src_exports));
-    const { namedNode: namedNode2 } = DataFactory5;
-    const dt = (term) => {
-      switch (term.termType) {
-        case "NamedNode":
-          return DataFactory5.namedNode(term.value);
-        case "Literal":
-          if (term.language) return DataFactory5.literal(term.value, term.language);
-          if (term.datatype) return DataFactory5.literal(term.value, DataFactory5.namedNode(term.datatype));
-          return DataFactory5.literal(term.value);
-        case "BlankNode":
-          return DataFactory5.blankNode(term.value);
-        case "DefaultGraph":
-          return DataFactory5.defaultGraph();
-        default:
-          return DataFactory5.namedNode(term.value);
-      }
-    };
-    const shapeQuads = this._shapeQuads.map(
-      (q) => DataFactory5.quad(
-        dt(q.subject),
-        dt(q.predicate),
-        dt(q.object),
-        q.graph ? dt(q.graph) : DataFactory5.defaultGraph()
-      )
-    );
-    const dataQuads = this._quads.map(
-      (q) => DataFactory5.quad(
-        dt(q.subject),
-        dt(q.predicate),
-        dt(q.object),
-        q.graph ? dt(q.graph) : DataFactory5.defaultGraph()
-      )
-    );
-    const shapes = extractShapes2(shapeQuads);
-    console.log("[rdf-lens] extractShapes result \u2014 available lenses:", Object.keys(shapes.lenses));
-    console.log("[rdf-lens] dataQuads count:", dataQuads.length, "| shapeQuads count:", shapeQuads.length);
-    let subjects2 = [];
-    const targetType = this._resolvedConfig.shapeClass;
-    console.log("[rdf-lens] target shapeClass:", targetType);
-    if (this._resolvedConfig.subject) {
-      subjects2 = [this._resolvedConfig.subject];
-    } else if (targetType) {
-      const typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-      subjects2 = dataQuads.filter((q) => q.predicate.value === typePredicate && q.object.value === targetType).map((q) => q.subject.value);
-    } else {
-      const availableClass = Object.keys(shapes.lenses).find(
-        (k2) => k2.startsWith("http") && !k2.includes("rdf-lens")
-      );
-      if (availableClass) {
-        const typePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-        subjects2 = dataQuads.filter((q) => q.predicate.value === typePredicate && q.object.value === availableClass).map((q) => q.subject.value);
-      }
-    }
-    console.log("[rdf-lens] subjects found:", subjects2);
-    if (subjects2.length === 0) {
-      throw new Error("No subjects found to extract. Ensure your data has instances of the target class.");
-    }
-    const lensKey = targetType || subjects2[0];
-    const lens = shapes.lenses[lensKey];
-    if (!lens) {
-      const availableKeys = Object.keys(shapes.lenses);
-      throw new Error(`No lens found for class: ${lensKey}. Available: ${availableKeys.join(", ")}`);
-    }
-    const results = [];
-    const subjectsToProcess = this._resolvedConfig.multiple ? subjects2 : subjects2.slice(0, 1);
-    console.log(`[rdf-lens] executing lens for ${subjectsToProcess.length} subject(s) (multiple=${this._resolvedConfig.multiple})`);
-    for (const subjectUri of subjectsToProcess) {
-      try {
-        const result = lens.execute({
-          id: namedNode2(subjectUri),
-          quads: dataQuads
-        });
-        console.log(`[rdf-lens] extracted subject ${subjectUri}:`, result);
-        results.push(result);
-      } catch (error) {
-        if (this._resolvedConfig.strict) {
-          throw error;
-        }
-        console.warn(`[rdf-lens] failed to extract ${subjectUri}:`, error);
-      }
-    }
-    console.log(`[rdf-lens] extraction complete: ${results.length} results, emitting shape-processed`);
-    return {
-      data: this._resolvedConfig.multiple ? results : results[0],
-      count: results.length,
-      shapeClass: lensKey
-    };
-  }
-  _serializeTerm(term) {
-    return {
-      termType: term.termType,
-      value: term.value,
-      datatype: term.datatype?.value,
-      language: term.language
-    };
-  }
-  _emitEvent(eventName, detail) {
-    const event = new CustomEvent(eventName, {
-      detail,
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(event);
-  }
-};
-// ===========================================================================
-// Static Properties
-// ===========================================================================
-RdfLens.styles = i`
-    :host {
-      display: contents;
-    }
-    
-    :host([hidden]) {
-      display: none;
-    }
-    
-    .rdf-lens-loading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      color: var(--rdf-loading-color, #666);
-    }
-    
-    .rdf-lens-error {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      color: var(--rdf-error-color, #c00);
-      background: var(--rdf-error-bg, #fee);
-      border-radius: 4px;
-    }
-    
-    .rdf-lens-error-title {
-      font-weight: bold;
-      margin-bottom: 0.5rem;
-    }
-    
-    .rdf-lens-error-message {
-      font-family: monospace;
-      font-size: 0.875rem;
-    }
-  `;
-__decorateClass([
-  n4({ type: String, reflect: true })
-], RdfLens.prototype, "config", 2);
-RdfLens = __decorateClass([
-  t3("rdf-lens")
-], RdfLens);
-
-// node_modules/lit-html/directive.js
-var t4 = { ATTRIBUTE: 1, CHILD: 2, PROPERTY: 3, BOOLEAN_ATTRIBUTE: 4, EVENT: 5, ELEMENT: 6 };
-var e5 = (t5) => (...e8) => ({ _$litDirective$: t5, values: e8 });
-var i5 = class {
-  constructor(t5) {
-  }
-  get _$AU() {
-    return this._$AM._$AU;
-  }
-  _$AT(t5, e8, i6) {
-    this._$Ct = t5, this._$AM = e8, this._$Ci = i6;
-  }
-  _$AS(t5, e8) {
-    return this.update(t5, e8);
-  }
-  update(t5, e8) {
-    return this.render(...e8);
-  }
-};
-
-// node_modules/lit-html/directives/unsafe-html.js
-var e6 = class extends i5 {
-  constructor(i6) {
-    if (super(i6), this.it = A, i6.type !== t4.CHILD) throw Error(this.constructor.directiveName + "() can only be used in child bindings");
-  }
-  render(r6) {
-    if (r6 === A || null == r6) return this._t = void 0, this.it = r6;
-    if (r6 === E) return r6;
-    if ("string" != typeof r6) throw Error(this.constructor.directiveName + "() called with a non-string value");
-    if (r6 === this.it) return this._t;
-    this.it = r6;
-    const s4 = [r6];
-    return s4.raw = s4, this._t = { _$litType$: this.constructor.resultType, strings: s4, values: [] };
-  }
-};
-e6.directiveName = "unsafeHTML", e6.resultType = 1;
-var o6 = e5(e6);
-
-// node_modules/lit-html/directives/class-map.js
-var e7 = e5(class extends i5 {
-  constructor(t5) {
-    if (super(t5), t5.type !== t4.ATTRIBUTE || "class" !== t5.name || t5.strings?.length > 2) throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.");
-  }
-  render(t5) {
-    return " " + Object.keys(t5).filter((s4) => t5[s4]).join(" ") + " ";
-  }
-  update(s4, [i6]) {
-    if (void 0 === this.st) {
-      this.st = /* @__PURE__ */ new Set(), void 0 !== s4.strings && (this.nt = new Set(s4.strings.join(" ").split(/\s/).filter((t5) => "" !== t5)));
-      for (const t5 in i6) i6[t5] && !this.nt?.has(t5) && this.st.add(t5);
-      return this.render(i6);
-    }
-    const r6 = s4.element.classList;
-    for (const t5 of this.st) t5 in i6 || (r6.remove(t5), this.st.delete(t5));
-    for (const t5 in i6) {
-      const s5 = !!i6[t5];
-      s5 === this.st.has(t5) || this.nt?.has(t5) || (s5 ? (r6.add(t5), this.st.add(t5)) : (r6.remove(t5), this.st.delete(t5)));
-    }
-    return E;
-  }
-});
-
-// src/rdf-webcomponents/components/lens-display-config.ts
-var LENS_DISPLAY_NS = "https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#";
-var RDF_TYPE3 = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-var LENS_DISPLAY_CONFIG_TYPE = `${LENS_DISPLAY_NS}LensDisplayConfig`;
-var CONFIG_KEYS3 = /* @__PURE__ */ new Set(["theme", "class"]);
-async function parseLensDisplayConfigRdf(content, format, source) {
-  const parsedQuads = await parseTurtleConfig(content, source, format);
-  const warnings = [];
-  const providedKeys = /* @__PURE__ */ new Set();
-  const config = {};
-  const configSubjects = new Set(
-    parsedQuads.filter((quad3) => quad3.predicate.value === RDF_TYPE3 && quad3.object.value === LENS_DISPLAY_CONFIG_TYPE).map((quad3) => quad3.subject.value)
-  );
-  for (const quad3 of parsedQuads) {
-    if (configSubjects.size > 0 && !configSubjects.has(quad3.subject.value)) {
-      continue;
-    }
-    const predicate2 = quad3.predicate.value;
-    if (!predicate2.startsWith(LENS_DISPLAY_NS)) {
-      continue;
-    }
-    const localName = predicate2.slice(LENS_DISPLAY_NS.length);
-    if (!CONFIG_KEYS3.has(localName)) {
-      warnings.push(`Unknown lens-display property '${localName}' in config RDF`);
-      continue;
-    }
-    providedKeys.add(localName);
-    const value = quad3.object.value;
-    if (localName === "theme") {
-      config.theme = value;
-    }
-    if (localName === "class") {
-      config.class = value;
-    }
-  }
-  return { config, warnings, providedKeys };
-}
-function validateLensDisplayConfig(_config) {
-  return [];
-}
-async function parseTurtleConfig(content, source, format) {
-  if (format && format !== "turtle" && format !== "n-triples" && format !== "n-quads") {
-    throw new Error(`lens-display config supports Turtle-like serializations only. Received '${format}'.`);
-  }
-  const { Parser } = await Promise.resolve().then(() => (init_src(), src_exports));
-  const parser = new Parser({ baseIRI: source });
-  return new Promise((resolve, reject) => {
-    const quads = [];
-    parser.parse(content, (error, quad3) => {
-      if (error) {
-        reject(new Error(`Config parse failed: ${error.message}`));
-        return;
-      }
-      if (!quad3) {
-        resolve(quads);
-        return;
-      }
-      quads.push({
-        subject: serializeTerm2(quad3.subject),
-        predicate: serializeTerm2(quad3.predicate),
-        object: serializeTerm2(quad3.object),
-        graph: quad3.graph ? serializeTerm2(quad3.graph) : void 0
-      });
-    });
-  });
-}
-function serializeTerm2(term) {
-  return {
-    termType: term.termType,
-    value: term.value,
-    datatype: term.datatype?.value,
-    language: term.language
-  };
-}
-
-// src/rdf-webcomponents/components/lens-display.ts
-var TemplateEngine = class {
-  constructor() {
-    this.templateCache = /* @__PURE__ */ new Map();
-  }
-  /**
-   * Loads a template from a URL
-   */
-  async loadTemplate(url) {
-    const cached = this.templateCache.get(url);
-    if (cached) {
-      return cached;
-    }
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Failed to load template: ${response.status} ${response.statusText}`);
-    }
-    const template = await response.text();
-    this.templateCache.set(url, template);
-    return template;
-  }
-  /**
-   * Renders a template with data
-   */
-  render(template, data) {
-    const items = Array.isArray(data) ? data : [data];
-    return items.map((item) => this.renderItem(template, item)).join("");
-  }
-  /**
-   * Renders a single item
-   */
-  renderItem(template, data) {
-    let result = template;
-    result = result.replace(/\{\{#each\s+(\w+)\}\}([\s\S]*?)\{\{\/each\}\}/g, (_2, field2, content) => {
-      const items = this.getNestedValue(data, field2);
-      if (Array.isArray(items)) {
-        return items.map((item, index) => {
-          let itemContent = content;
-          itemContent = itemContent.replace(/\{\{@index\}\}/g, String(index));
-          if (typeof item !== "object" || item === null) {
-            itemContent = itemContent.replace(/\{\{this\}\}/g, String(item));
-          }
-          if (typeof item === "object" && item !== null) {
-            itemContent = this.renderItem(itemContent, item);
-          }
-          return itemContent;
-        }).join("");
-      }
-      return "";
-    });
-    result = result.replace(/\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_2, field2, content) => {
-      const value = this.getNestedValue(data, field2);
-      if (value && (Array.isArray(value) ? value.length > 0 : true)) {
-        return this.renderItem(content, data);
-      }
-      return "";
-    });
-    result = result.replace(/\{\{\^(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_2, field2, content) => {
-      const value = this.getNestedValue(data, field2);
-      if (!value || Array.isArray(value) && value.length === 0) {
-        return this.renderItem(content, data);
-      }
-      return "";
-    });
-    result = result.replace(/\$\{(?:data\.)?([^}]+)\}/g, (_2, path) => {
-      const value = this.getNestedValue(data, path);
-      return this.escapeHtml(String(value ?? ""));
-    });
-    result = result.replace(/\{\{([^#/][^}]*)\}\}/g, (_2, path) => {
-      const trimmedPath = path.trim();
-      if (trimmedPath === "@index") {
-        return "0";
-      }
-      const value = this.getNestedValue(data, trimmedPath);
-      if (value === null || value === void 0) {
-        return "";
-      }
-      if (typeof value === "object") {
-        return JSON.stringify(value);
-      }
-      return this.escapeHtml(String(value));
-    });
-    result = result.replace(/\{\{\{([^}]+)\}\}\}/g, (_2, path) => {
-      const value = this.getNestedValue(data, path.trim());
-      return String(value ?? "");
-    });
-    return result;
-  }
-  /**
-   * Gets a nested value from an object
-   */
-  getNestedValue(obj, path) {
-    const parts = path.split(".");
-    let current = obj;
-    for (const part of parts) {
-      if (current === null || current === void 0) {
-        return void 0;
-      }
-      const arrayMatch = part.match(/^(\w+)\[(\d+)\]$/);
-      if (arrayMatch) {
-        const [, arrayName, index] = arrayMatch;
-        current = current[arrayName]?.[parseInt(index)];
-      } else {
-        current = current[part];
-      }
-    }
-    return current;
-  }
-  /**
-   * Escapes HTML special characters
-   */
-  escapeHtml(str) {
-    const htmlEntities = {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;"
-    };
-    return str.replace(/[&<>"']/g, (char) => htmlEntities[char]);
-  }
-  /**
-   * Clears the template cache
-   */
-  clearCache() {
-    this.templateCache.clear();
-  }
-};
-var DEFAULT_CARD_TEMPLATE = `
-<article class="rdf-card">
-  <dl class="rdf-card-content">
-    {{#each _properties}}
-    <div class="rdf-card-property">
-      <dt class="rdf-card-key">{{@key}}</dt>
-      <dd class="rdf-card-value">{{this}}</dd>
-    </div>
-    {{/each}}
-  </dl>
-</article>
-`;
-var LensDisplay = class extends i4 {
-  constructor() {
-    super(...arguments);
-    this.config = "";
-    this._data = null;
-    this._renderedHtml = "";
-    this._templateContent = "";
-    this._loading = false;
-    this._error = null;
-    this._configError = null;
-    this._resolvedConfig = {};
-    this._engine = new TemplateEngine();
-    this._onShapeProcessed = (event) => {
-      const detail = event.detail;
-      console.log("[lens-display] shape-processed received \u2014 detail:", detail);
-      if (detail?.data !== void 0 && detail.data !== null) {
-        this._data = detail.data;
-        console.log(
-          "[lens-display] data set from event.detail.data:",
-          Array.isArray(this._data) ? `array[${this._data.length}]` : typeof this._data,
-          "| templateContent length:",
-          this._templateContent.length
-        );
-        this._renderData();
-      } else {
-        console.warn("[lens-display] shape-processed received but event.detail.data is empty:", detail);
-      }
-    };
-  }
-  // ===========================================================================
-  // Public API
-  // ===========================================================================
-  /** Returns the current data */
-  get data() {
-    return this._data;
-  }
-  /** Returns whether data is loading */
-  get loading() {
-    return this._loading;
-  }
-  /** Returns the current error */
-  get error() {
-    return this._error;
-  }
-  /** Sets the data to render */
-  setData(data) {
-    this._data = data;
-    this._renderData();
-  }
-  /** Reloads the template */
-  async reloadTemplate() {
-    if (this.template) {
-      await this._loadTemplate();
-      if (this._data) {
-        this._renderData();
-      }
-    }
-  }
-  // ===========================================================================
-  // Lifecycle Methods
-  // ===========================================================================
-  async firstUpdated() {
-    await this._refreshConfiguration();
-    await this._loadTemplate();
-    if (this._data) {
-      this._renderData();
-    }
-  }
-  async updated(changedProperties) {
-    super.updated(changedProperties);
-    if (changedProperties.has("config")) {
-      await this._refreshConfiguration();
-      this.requestUpdate();
-    }
-    if (changedProperties.has("template")) {
-      await this._loadTemplate();
-      if (this._data) {
-        this._renderData();
-      }
-    }
-  }
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this.removeEventListener("shape-processed", this._onShapeProcessed);
-  }
-  connectedCallback() {
-    super.connectedCallback();
-    this.addEventListener("shape-processed", this._onShapeProcessed);
-  }
-  // ===========================================================================
-  // Rendering
-  // ===========================================================================
-  render() {
-    const containerClasses = {
-      "rdf-container": true,
-      [`rdf-theme-${this._resolvedConfig.theme}`]: !!this._resolvedConfig.theme,
-      "rdf-animated": true
-    };
-    if (this._resolvedConfig.class) {
-      containerClasses[this._resolvedConfig.class] = true;
-    }
-    return b2`
-      <div class=${e7(containerClasses)}>
-        <slot name="loading" ?hidden=${!this._loading}>
-          ${this._loading ? b2`
-            <div class="rdf-loading">
-              Rendering template...
-            </div>
-          ` : ""}
-        </slot>
-        
-        <slot name="error" ?hidden=${!(this._configError || this._error)}>
-          ${this._configError || this._error ? b2`
-            <div class="rdf-error">
-              <strong>Render Error</strong>
-              <p>${this._configError || this._error}</p>
-            </div>
-          ` : ""}
-        </slot>
-        
-        <slot name="empty" ?hidden=${!this._data || Array.isArray(this._data) && this._data.length === 0}>
-          ${(!this._data || Array.isArray(this._data) && this._data.length === 0) && !this._loading && !this._error ? b2`
-            <div class="rdf-empty">
-              No data to display
-            </div>
-          ` : ""}
-        </slot>
-        
-        ${this._renderedHtml ? o6(this._renderedHtml) : ""}
-        
-        <slot ?hidden=${this._loading || !!(this._configError || this._error)}></slot>
-      </div>
-    `;
-  }
-  // ===========================================================================
-  // Private Methods
-  // ===========================================================================
-  async _loadTemplate() {
-    if (!this.template) {
-      this._templateContent = this._getDefaultTemplate();
-      return;
-    }
-    this._loading = true;
-    this._error = null;
-    try {
-      this._templateContent = await this._engine.loadTemplate(this.template);
-      this._loading = false;
-      console.log(`[lens-display] template loaded from ${this.template} (${this._templateContent.length} chars)`);
-      if (this._data) {
-        this._renderData();
-      }
-      this.requestUpdate();
-    } catch (error) {
-      this._loading = false;
-      this._error = error instanceof Error ? error.message : String(error);
-      this._emitEvent("render-error", {
-        message: this._error,
-        phase: "render",
-        error: error instanceof Error ? error : void 0
-      });
-      this.requestUpdate();
-    }
-  }
-  _getDefaultTemplate() {
-    return DEFAULT_CARD_TEMPLATE;
-  }
-  async _refreshConfiguration() {
-    try {
-      const resolved = await this._resolveConfig();
-      const warnings = [...resolved.warnings, ...validateLensDisplayConfig(resolved.config)];
-      for (const warning of warnings) {
-        console.warn(`[lens-display] ${warning}`);
-      }
-      this._resolvedConfig = resolved.config;
-      this._configError = null;
-    } catch (error) {
-      this._configError = error instanceof Error ? error.message : String(error);
-      this._renderedHtml = "";
-      this._emitEvent("render-error", {
-        message: this._configError,
-        phase: "config",
-        error: error instanceof Error ? error : void 0
-      });
-    }
-  }
-  async _resolveConfig() {
-    if (this.config?.trim()) {
-      return parseLensDisplayConfigRdf(this.config, void 0, "inline-config-property");
-    }
-    const inline = this._readInlineConfigScript();
-    if (inline) {
-      return parseLensDisplayConfigRdf(inline.content, inline.format, "inline-config-script");
-    }
-    return { config: {}, warnings: [], providedKeys: /* @__PURE__ */ new Set() };
-  }
-  _readInlineConfigScript() {
-    const script = this.querySelector('script[data-lens-display-config="true"][type]');
-    if (!script || !script.textContent?.trim()) {
-      return null;
-    }
-    const type = script.getAttribute("type")?.toLowerCase() ?? "";
-    const content = script.textContent;
-    if (type.includes("n-triples")) return { content, format: "n-triples" };
-    if (type.includes("n-quads")) return { content, format: "n-quads" };
-    if (type.includes("turtle") || type.includes("ttl")) return { content, format: "turtle" };
-    throw new Error(`Unsupported lens-display config script type '${type}'. Use text/turtle, application/n-triples, or application/n-quads.`);
-  }
-  _renderData() {
-    if (!this._data || !this._templateContent) {
-      console.warn(
-        "[lens-display] _renderData called but missing data or template",
-        { hasData: !!this._data, templateLength: this._templateContent.length }
-      );
-      return;
-    }
-    console.group("[lens-display] rendering");
-    console.log("data:", this._data);
-    const startTime = Date.now();
-    try {
-      let dataToRender;
-      if (Array.isArray(this._data)) {
-        const preparedItems = this._data.map((item) => this._prepareItem(item));
-        if (this._templateExpectsItemsArray()) {
-          dataToRender = { items: preparedItems };
-        } else {
-          dataToRender = preparedItems;
-        }
-      } else {
-        dataToRender = this._prepareItem(this._data);
-      }
-      console.log("[lens-display] dataToRender:", dataToRender);
-      this._renderedHtml = this._engine.render(this._templateContent, dataToRender);
-      console.log(`[lens-display] rendered HTML length: ${this._renderedHtml.length} chars in ${Date.now() - startTime}ms`);
-      console.groupEnd();
-      const eventDetail = {
-        html: this._renderedHtml,
-        data: this._data,
-        duration: Date.now() - startTime
-      };
-      this._emitEvent("render-complete", eventDetail);
-      this.requestUpdate();
-    } catch (error) {
-      console.error("[lens-display] render error:", error);
-      console.groupEnd();
-      this._error = error instanceof Error ? error.message : String(error);
-      this._emitEvent("render-error", {
-        message: this._error,
-        phase: "render",
-        error: error instanceof Error ? error : void 0
-      });
-      this.requestUpdate();
-    }
-  }
-  _prepareItem(item) {
-    if (typeof item !== "object" || item === null) {
-      return item;
-    }
-    const prepared = { ...item };
-    if (!prepared._properties) {
-      prepared._properties = Object.entries(item).filter(([key]) => !key.startsWith("_")).map(([key, value]) => ({ "@key": key, "this": value }));
-    }
-    return prepared;
-  }
-  _templateExpectsItemsArray() {
-    return /\{\{#each\s+items\}\}/.test(this._templateContent);
-  }
-  _emitEvent(eventName, detail) {
-    const event = new CustomEvent(eventName, {
-      detail,
-      bubbles: true,
-      composed: true
-    });
-    this.dispatchEvent(event);
-  }
-};
-// ===========================================================================
-// Static Properties
-// ===========================================================================
-LensDisplay.styles = i`
-    :host {
-      display: block;
-    }
-    
-    :host([hidden]) {
-      display: none;
-    }
-    
-    /* Default styles */
-    .rdf-container {
-      font-family: system-ui, -apple-system, sans-serif;
-      line-height: 1.5;
-      color: #333;
-    }
-    
-    .rdf-loading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      color: var(--rdf-loading-color, #666);
-    }
-    
-    .rdf-error {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      color: var(--rdf-error-color, #c00);
-      background: var(--rdf-error-bg, #fee);
-      border-radius: 4px;
-    }
-    
-    .rdf-empty {
-      text-align: center;
-      padding: 2rem;
-      color: #999;
-    }
-    
-    /* Card styles */
-    .rdf-card {
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      background: #fff;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    
-    .rdf-card-title {
-      margin: 0 0 1rem;
-      font-size: 1.25rem;
-      color: #333;
-    }
-    
-    .rdf-card-content {
-      margin: 0;
-    }
-    
-    .rdf-card-property {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
-    }
-    
-    .rdf-card-key {
-      font-weight: 500;
-      min-width: 120px;
-    }
-    
-    .rdf-card-value {
-      margin: 0;
-    }
-    
-    /* List styles */
-    .rdf-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    
-    .rdf-list-item {
-      padding: 0.75rem;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .rdf-list-item:hover {
-      background: #f5f5f5;
-    }
-    
-    /* Table styles */
-    .rdf-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    
-    .rdf-table th,
-    .rdf-table td {
-      padding: 0.75rem;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .rdf-table th {
-      background: #f5f5f5;
-      font-weight: 500;
-    }
-    
-    /* Grid layout */
-    .rdf-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1rem;
-    }
-    
-    /* Animation */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .rdf-animated {
-      animation: fadeIn 0.3s ease-out;
-    }
-  `;
-__decorateClass([
-  n4({ type: String, reflect: true })
-], LensDisplay.prototype, "template", 2);
-__decorateClass([
-  n4({ type: String, attribute: false })
-], LensDisplay.prototype, "config", 2);
-__decorateClass([
-  r5()
-], LensDisplay.prototype, "_data", 2);
-__decorateClass([
-  r5()
-], LensDisplay.prototype, "_renderedHtml", 2);
-__decorateClass([
-  r5()
-], LensDisplay.prototype, "_templateContent", 2);
-__decorateClass([
-  r5()
-], LensDisplay.prototype, "_loading", 2);
-__decorateClass([
-  r5()
-], LensDisplay.prototype, "_error", 2);
-__decorateClass([
-  r5()
-], LensDisplay.prototype, "_configError", 2);
-LensDisplay = __decorateClass([
-  t3("lens-display")
-], LensDisplay);
-
-// src/rdf-webcomponents/components/link-orchestration.ts
-var ORCHESTRATED_ATTR = "data-orchestrated";
-var ORCHESTRATOR_OWNER_ATTR = "data-orchestrator-owner";
-var ORCHESTRATOR_STATE_ATTR = "data-orchestrator-state";
-var ORCHESTRATED_INSTANCE_ATTR = "data-orchestrated-instance";
-var LinkOrchestration = class extends i4 {
-  constructor() {
-    super(...arguments);
-    this.debounceMs = 120;
-    this.maxConcurrentPipelines = 4;
-    this.allowRecursive = false;
-    this._observer = null;
-    this._scanTimer = null;
-    this._active = 0;
-    this._queue = [];
-    this._records = /* @__PURE__ */ new Map();
-    this._ownerId = `orchestrator-${Math.random().toString(36).slice(2, 10)}`;
-    this._resolvedConfig = { rules: [] };
-    this._configOverride = null;
-    this._isConnected = false;
-  }
-  static get observedAttributes() {
-    return ["config-src", "debounce-ms", "max-concurrent-pipelines", "allow-recursive"];
-  }
-  set config(value) {
-    this._configOverride = value;
-    if (this._isConnected) {
-      void this.loadConfig();
-    }
-  }
-  get config() {
-    return this._configOverride;
-  }
-  render() {
-    return b2`<slot></slot>`;
-  }
-  connectedCallback() {
-    super.connectedCallback();
-    this._isConnected = true;
-    void this.loadConfig();
-  }
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this._isConnected = false;
-    this.disconnectObserver();
-    this.rollbackAll();
-  }
-  attributeChangedCallback(name, oldValue, newValue) {
-    super.attributeChangedCallback(name, oldValue, newValue);
-    if (oldValue === newValue) {
-      return;
-    }
-    if (name === "config-src") {
-      this.configSrc = newValue ?? void 0;
-    }
-    if (name === "debounce-ms") {
-      const parsed = Number(newValue);
-      this.debounceMs = Number.isFinite(parsed) ? parsed : 120;
-    }
-    if (name === "max-concurrent-pipelines") {
-      const parsed = Number(newValue);
-      this.maxConcurrentPipelines = Number.isFinite(parsed) && parsed > 0 ? parsed : 4;
-    }
-    if (name === "allow-recursive") {
-      this.allowRecursive = newValue !== null && newValue !== "false";
-    }
-    if (this._isConnected) {
-      void this.loadConfig();
-    }
-  }
-  async loadConfig() {
-    try {
-      const config = await this._resolveConfig();
-      this._resolvedConfig = config;
-      if (typeof config.debounceMs === "number") {
-        this.debounceMs = config.debounceMs;
-      }
-      if (typeof config.maxConcurrentPipelines === "number") {
-        this.maxConcurrentPipelines = Math.max(1, config.maxConcurrentPipelines);
-      }
-      if (typeof config.allowRecursive === "boolean") {
-        this.allowRecursive = config.allowRecursive;
-      }
-      this._startObserver();
-      await this.refresh();
-    } catch (error) {
-      this._emitEvent("orchestrator-link-error", {
-        message: error instanceof Error ? error.message : String(error),
-        phase: "config"
-      });
-    }
-  }
-  async refresh() {
-    this._emitEvent("orchestrator-scan-start", {
-      ownerId: this._ownerId,
-      scope: this._isGlobal() ? "document" : "descendants"
-    });
-    const candidates = this._collectCandidates();
-    const matched = this._matchCandidates(candidates);
-    for (const [link, record] of this._records.entries()) {
-      const expectedRule = this._findFirstMatchingRule(link);
-      if (!expectedRule || expectedRule.id !== record.ruleId) {
-        this._rollbackLink(link);
-      }
-    }
-    for (const item of matched) {
-      if (this._records.has(item.link)) {
-        continue;
-      }
-      this._enqueue(async () => this._processMatch(item.link, item.rule));
-    }
-    this._drainQueue();
-    this._emitEvent("orchestrator-scan-complete", {
-      ownerId: this._ownerId,
-      candidates: candidates.length,
-      matched: matched.length,
-      active: this._records.size
-    });
-  }
-  rollbackAll() {
-    const links = [...this._records.keys()];
-    for (const link of links) {
-      this._rollbackLink(link);
-    }
-  }
-  disconnectObserver() {
-    if (this._observer) {
-      this._observer.disconnect();
-      this._observer = null;
-    }
-    if (this._scanTimer !== null) {
-      window.clearTimeout(this._scanTimer);
-      this._scanTimer = null;
-    }
-  }
-  _startObserver() {
-    this.disconnectObserver();
-    const root = this._scopeRoot();
-    this._observer = new MutationObserver((mutations) => {
-      if (this._shouldIgnoreMutations(mutations)) {
-        return;
-      }
-      if (this._scanTimer !== null) {
-        window.clearTimeout(this._scanTimer);
-      }
-      this._scanTimer = window.setTimeout(() => {
-        void this.refresh();
-      }, this.debounceMs);
-    });
-    this._observer.observe(root, {
-      subtree: true,
-      childList: true,
-      attributes: true,
-      attributeFilter: ["href", "class", "src"]
-    });
-  }
-  async _resolveConfig() {
-    if (this._configOverride) {
-      return this._configOverride;
-    }
-    const inlineScript = this.querySelector('script[type="application/json"]');
-    if (inlineScript?.textContent?.trim()) {
-      return this._parseConfig(inlineScript.textContent);
-    }
-    if (this.configSrc) {
-      const response = await fetch(this.configSrc);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch config from ${this.configSrc}: ${response.status} ${response.statusText}`);
-      }
-      const content = await response.text();
-      return this._parseConfig(content);
-    }
-    return { rules: [] };
-  }
-  _parseConfig(raw) {
-    const parsed = JSON.parse(raw);
-    return {
-      debounceMs: parsed.debounceMs,
-      maxConcurrentPipelines: parsed.maxConcurrentPipelines,
-      allowRecursive: parsed.allowRecursive,
-      decorators: parsed.decorators,
-      rules: Array.isArray(parsed.rules) ? parsed.rules : []
-    };
-  }
-  _collectCandidates() {
-    const root = this._scopeRoot();
-    const links = Array.from(root.querySelectorAll("a[href]"));
-    return links.filter((link) => {
-      if (!this.allowRecursive && link.closest(`[${ORCHESTRATED_INSTANCE_ATTR}="true"]`)) {
-        return false;
-      }
-      if (this._isGlobal() && this._isOwnedByBodyOrchestrator(link)) {
-        return false;
-      }
-      const owner = link.getAttribute(ORCHESTRATOR_OWNER_ATTR);
-      if (owner && owner !== this._ownerId) {
-        return false;
-      }
-      return true;
-    });
-  }
-  _matchCandidates(candidates) {
-    const matches = [];
-    for (const link of candidates) {
-      const rule = this._findFirstMatchingRule(link);
-      if (rule) {
-        matches.push({ link, rule });
-      }
-    }
-    return matches;
-  }
-  _findFirstMatchingRule(link) {
-    for (const rule of this._resolvedConfig.rules) {
-      if (!rule || !rule.id || rule.enabled === false) {
-        continue;
-      }
-      if (this._matchesRule(link, rule)) {
-        return rule;
-      }
-    }
-    return null;
-  }
-  _shouldIgnoreMutations(mutations) {
-    if (mutations.length === 0) {
-      return true;
-    }
-    return mutations.every((mutation) => {
-      const targetNode = mutation.target;
-      const isInternalTarget = !!targetNode?.closest?.(`[${ORCHESTRATED_INSTANCE_ATTR}="true"]`);
-      const addedAllInternal = Array.from(mutation.addedNodes).every((node) => {
-        if (node.nodeType !== Node.ELEMENT_NODE) {
-          return true;
-        }
-        return !!node.closest?.(`[${ORCHESTRATED_INSTANCE_ATTR}="true"]`) || node.hasAttribute?.(ORCHESTRATED_INSTANCE_ATTR);
-      });
-      const removedAllInternal = Array.from(mutation.removedNodes).every((node) => {
-        if (node.nodeType !== Node.ELEMENT_NODE) {
-          return true;
-        }
-        const element = node;
-        return element.hasAttribute?.(ORCHESTRATED_INSTANCE_ATTR) || !!element.querySelector?.(`[${ORCHESTRATED_INSTANCE_ATTR}="true"]`);
-      });
-      return isInternalTarget && addedAllInternal && removedAllInternal;
-    });
-  }
-  _matchesRule(link, rule) {
-    const match2 = rule.match;
-    if (!match2 || match2.enabled === false) {
-      return false;
-    }
-    if (match2.css) {
-      try {
-        if (!link.matches(match2.css)) {
-          return false;
-        }
-      } catch {
-        return false;
-      }
-    }
-    if (match2.xpath && !this._matchesXPath(link, match2.xpath)) {
-      return false;
-    }
-    if (match2.parentCss) {
-      try {
-        if (!link.closest(match2.parentCss)) {
-          return false;
-        }
-      } catch {
-        return false;
-      }
-    }
-    if (match2.urlPattern && !this._globMatch(link.href, match2.urlPattern)) {
-      return false;
-    }
-    if (match2.urlRegex) {
-      let regex;
-      try {
-        regex = new RegExp(match2.urlRegex);
-      } catch {
-        return false;
-      }
-      if (!regex.test(link.href)) {
-        return false;
-      }
-    }
-    if (match2.hostEquals) {
-      const url = this._safeUrl(link.href);
-      if (!url || url.hostname !== match2.hostEquals) {
-        return false;
-      }
-    }
-    if (match2.pathStartsWith) {
-      const url = this._safeUrl(link.href);
-      if (!url || !url.pathname.startsWith(match2.pathStartsWith)) {
-        return false;
-      }
-    }
-    const contentType = rule.overrideContentType || this._detectContentType(link);
-    if (match2.contentType && contentType !== match2.contentType) {
-      return false;
-    }
-    return true;
-  }
-  _matchesXPath(link, xpath) {
-    try {
-      const root = this._scopeRoot();
-      const result = document.evaluate(
-        xpath,
-        root,
-        null,
-        XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-        null
-      );
-      for (let i6 = 0; i6 < result.snapshotLength; i6 += 1) {
-        const node = result.snapshotItem(i6);
-        if (node === link) {
-          return true;
-        }
-      }
-    } catch {
-      return false;
-    }
-    return false;
-  }
-  _safeUrl(value) {
-    try {
-      return new URL(value, document.baseURI);
-    } catch {
-      return null;
-    }
-  }
-  _globMatch(value, pattern) {
-    const escaped = pattern.replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*");
-    const regex = new RegExp(`^${escaped}$`);
-    return regex.test(value);
-  }
-  _detectContentType(link) {
-    const hasMedia = !!link.querySelector("img, picture, video, svg, canvas");
-    return hasMedia ? "image" : "text";
-  }
-  _enqueue(task) {
-    this._queue.push(task);
-  }
-  _drainQueue() {
-    while (this._active < this.maxConcurrentPipelines && this._queue.length > 0) {
-      const task = this._queue.shift();
-      if (!task) {
-        break;
-      }
-      this._active += 1;
-      void task().finally(() => {
-        this._active -= 1;
-        this._drainQueue();
-      });
-    }
-  }
-  async _processMatch(link, rule) {
-    const decorators = this._resolveDecorators(rule);
-    const contentType = rule.overrideContentType || this._detectContentType(link);
-    this._emitEvent("orchestrator-link-loading", {
-      ownerId: this._ownerId,
-      href: link.href,
-      ruleId: rule.id,
-      contentType
-    });
-    const record = {
-      link,
-      ruleId: rule.id,
-      ownerId: this._ownerId,
-      pipelineHost: null,
-      displayElement: null,
-      adapterElement: null,
-      iconElement: null,
-      state: "loading"
-    };
-    this._records.set(link, record);
-    link.setAttribute(ORCHESTRATED_ATTR, "true");
-    link.setAttribute(ORCHESTRATOR_OWNER_ATTR, this._ownerId);
-    link.setAttribute(ORCHESTRATOR_STATE_ATTR, "loading");
-    if (decorators.enabled && contentType === "text") {
-      record.iconElement = this._setLifecycleIcon(link, decorators.icons?.loading ?? "\u23F3");
-    }
-    try {
-      const staged = await this._createStagedPipeline(link, rule);
-      this._commitPipeline(link, record, staged, decorators, contentType);
-      this._emitEvent("orchestrator-link-ready", {
-        ownerId: this._ownerId,
-        href: link.href,
-        ruleId: rule.id,
-        contentType
-      });
-    } catch (error) {
-      this._cleanupRecord(record);
-      link.removeAttribute(ORCHESTRATED_ATTR);
-      link.removeAttribute(ORCHESTRATOR_OWNER_ATTR);
-      link.removeAttribute(ORCHESTRATOR_STATE_ATTR);
-      this._emitEvent("orchestrator-link-error", {
-        ownerId: this._ownerId,
-        href: link.href,
-        ruleId: rule.id,
-        message: error instanceof Error ? error.message : String(error),
-        phase: "pipeline"
-      });
-      this._records.delete(link);
-    }
-  }
-  _resolveDecorators(rule) {
-    return {
-      ...this._resolvedConfig.decorators,
-      ...rule.decorators,
-      icons: {
-        ...this._resolvedConfig.decorators?.icons,
-        ...rule.decorators?.icons
-      }
-    };
-  }
-  _setLifecycleIcon(link, icon) {
-    const existing = link.querySelector(":scope > .orchestrator-icon");
-    if (existing) {
-      existing.textContent = icon;
-      return existing;
-    }
-    const iconElement = document.createElement("span");
-    iconElement.className = "orchestrator-icon";
-    iconElement.setAttribute("aria-hidden", "true");
-    iconElement.textContent = icon;
-    link.prepend(iconElement);
-    return iconElement;
-  }
-  async _createStagedPipeline(link, rule) {
-    const adapter = document.createElement("source-rdf");
-    adapter.setAttribute("url", rule.adapter?.url ?? link.href);
-    this._applyAdapterConfig(adapter, rule.adapter);
-    const lens = document.createElement("rdf-lens");
-    this._applyLensConfig(lens, rule.lens);
-    lens.appendChild(adapter);
-    const display = document.createElement("lens-display");
-    const inlineTemplateBlobUrl = this._applyDisplayConfig(display, rule.display);
-    display.appendChild(lens);
-    await this._awaitPipeline(display);
-    return {
-      display,
-      lens,
-      adapter,
-      inlineTemplateBlobUrl
-    };
-  }
-  _applyAdapterConfig(adapter, config) {
-    if (!config) {
-      return;
-    }
-    const rdfConfig = this._buildAdapterConfigRdf(config);
-    if (rdfConfig) {
-      adapter.setAttribute("config", rdfConfig);
-    }
-  }
-  _buildAdapterConfigRdf(config) {
-    const triples = [];
-    if (config.url) triples.push(`srdf:url ${this._iriOrString(config.url)}`);
-    if (config.format) triples.push(`srdf:format ${this._ttlString(config.format)}`);
-    if (config.strategy) triples.push(`srdf:strategy ${this._ttlString(config.strategy)}`);
-    if (config.subject) triples.push(`srdf:subject ${this._iriOrString(config.subject)}`);
-    if (config.subjectQuery) triples.push(`srdf:subjectQuery ${this._ttlString(config.subjectQuery)}`);
-    if (config.subjectClass) triples.push(`srdf:subjectClass ${this._iriOrString(config.subjectClass)}`);
-    if (typeof config.depth === "number") triples.push(`srdf:depth ${config.depth}`);
-    if (config.cache) triples.push(`srdf:cache ${this._ttlString(config.cache)}`);
-    if (typeof config.cacheTtl === "number") triples.push(`srdf:cacheTtl ${config.cacheTtl}`);
-    if (typeof config.shared === "boolean") triples.push(`srdf:shared ${config.shared}`);
-    if (config.headers) triples.push(`srdf:headers ${this._ttlString(JSON.stringify(config.headers))}`);
-    if (triples.length === 0) {
-      return "";
-    }
-    return [
-      "@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .",
-      "",
-      `[] a srdf:SourceRdfConfig ;
-  ${triples.join(" ;\n  ")} .`
-    ].join("\n");
-  }
-  _ttlString(value) {
-    return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n")}"`;
-  }
-  _iriOrString(value) {
-    if (/^https?:\/\//i.test(value)) {
-      return `<${value}>`;
-    }
-    return this._ttlString(value);
-  }
-  _applyLensConfig(lens, config) {
-    if (!config) {
-      return;
-    }
-    const rdfConfig = this._buildLensConfigRdf(config);
-    if (rdfConfig) {
-      lens.setAttribute("config", rdfConfig);
-    }
-  }
-  _buildLensConfigRdf(config) {
-    const triples = [];
-    if (config.shapeFile) triples.push(`lrdf:shapeFile ${this._iriOrString(config.shapeFile)}`);
-    if (config.shapeClass) triples.push(`lrdf:shapeClass ${this._iriOrString(config.shapeClass)}`);
-    if (config.shapes) triples.push(`lrdf:shapes ${this._ttlString(config.shapes)}`);
-    if (typeof config.strict === "boolean") triples.push(`lrdf:strict ${config.strict}`);
-    if (typeof config.multiple === "boolean") triples.push(`lrdf:multiple ${config.multiple}`);
-    if (config.subject) triples.push(`lrdf:subject ${this._iriOrString(config.subject)}`);
-    if (triples.length === 0) {
-      return "";
-    }
-    return [
-      "@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .",
-      "",
-      `[] a lrdf:RdfLensConfig ;
-  ${triples.join(" ;\n  ")} .`
-    ].join("\n");
-  }
-  _applyDisplayConfig(display, config) {
-    if (!config) {
-      return void 0;
-    }
-    const rdfConfig = this._buildDisplayConfigRdf(config);
-    if (rdfConfig) {
-      display.config = rdfConfig;
-    }
-    if (config.templateInline && !config.template) {
-      const blob = new Blob([config.templateInline], { type: "text/html" });
-      const url = URL.createObjectURL(blob);
-      display.setAttribute("template", url);
-      return url;
-    }
-    if (config.template) {
-      display.setAttribute("template", config.template);
-    }
-    return void 0;
-  }
-  _buildDisplayConfigRdf(config) {
-    const triples = [];
-    if (config.theme) triples.push(`drdf:theme ${this._ttlString(config.theme)}`);
-    if (config.class) triples.push(`drdf:class ${this._ttlString(config.class)}`);
-    if (triples.length === 0) {
-      return "";
-    }
-    return [
-      "@prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .",
-      "",
-      `[] a drdf:LensDisplayConfig ;
-  ${triples.join(" ;\n  ")} .`
-    ].join("\n");
-  }
-  _awaitPipeline(display) {
-    return new Promise((resolve, reject) => {
-      const stage = document.createElement("div");
-      stage.style.display = "none";
-      stage.appendChild(display);
-      document.body.appendChild(stage);
-      const done = () => {
-        display.removeEventListener("render-complete", onReady);
-        display.removeEventListener("render-error", onError);
-        display.removeEventListener("shape-error", onError);
-        display.removeEventListener("triplestore-error", onError);
-        stage.remove();
-      };
-      const onReady = () => {
-        done();
-        resolve();
-      };
-      const onError = (event) => {
-        done();
-        const detail = event.detail;
-        reject(new Error(detail?.message || "Pipeline failed"));
-      };
-      display.addEventListener("render-complete", onReady, { once: true });
-      display.addEventListener("render-error", onError, { once: true });
-      display.addEventListener("shape-error", onError, { once: true });
-      display.addEventListener("triplestore-error", onError, { once: true });
-    });
-  }
-  _commitPipeline(link, record, staged, decorators, contentType) {
-    const parent = link.parentNode;
-    if (!parent) {
-      throw new Error("Target link has no parent node");
-    }
-    const host = document.createElement("span");
-    host.className = "orchestrated-link-host";
-    host.setAttribute(ORCHESTRATED_INSTANCE_ATTR, "true");
-    host.setAttribute(ORCHESTRATOR_OWNER_ATTR, this._ownerId);
-    if (decorators.enabled && contentType === "text") {
-      const icon = document.createElement("span");
-      icon.className = "orchestrator-icon";
-      icon.setAttribute("aria-hidden", "true");
-      icon.textContent = decorators.icons?.ready ?? "\u2705";
-      host.appendChild(icon);
-      record.iconElement?.remove();
-      record.iconElement = icon;
-    } else if (record.iconElement) {
-      record.iconElement.remove();
-      record.iconElement = null;
-    }
-    const adapterElement = staged.adapter;
-    link.hidden = true;
-    link.setAttribute("aria-hidden", "true");
-    adapterElement.appendChild(link);
-    host.appendChild(staged.display);
-    parent.appendChild(host);
-    record.pipelineHost = host;
-    record.displayElement = staged.display;
-    record.adapterElement = adapterElement;
-    record.inlineTemplateBlobUrl = staged.inlineTemplateBlobUrl;
-    record.state = "ready";
-    link.setAttribute(ORCHESTRATOR_STATE_ATTR, "ready");
-  }
-  _rollbackLink(link) {
-    const record = this._records.get(link);
-    if (!record) {
-      return;
-    }
-    if (record.pipelineHost && record.pipelineHost.parentNode) {
-      const originalParent = record.pipelineHost.parentNode;
-      link.hidden = false;
-      link.removeAttribute("aria-hidden");
-      originalParent.insertBefore(link, record.pipelineHost);
-      record.pipelineHost.remove();
-    }
-    link.removeAttribute(ORCHESTRATED_ATTR);
-    link.removeAttribute(ORCHESTRATOR_OWNER_ATTR);
-    link.setAttribute(ORCHESTRATOR_STATE_ATTR, "rolled-back");
-    this._cleanupRecord(record);
-    this._records.delete(link);
-    this._emitEvent("orchestrator-link-rollback", {
-      ownerId: this._ownerId,
-      href: link.href,
-      ruleId: record.ruleId
-    });
-  }
-  _cleanupRecord(record) {
-    if (record.iconElement) {
-      record.iconElement.remove();
-      record.iconElement = null;
-    }
-    if (record.inlineTemplateBlobUrl) {
-      URL.revokeObjectURL(record.inlineTemplateBlobUrl);
-      record.inlineTemplateBlobUrl = void 0;
-    }
-    if (record.pipelineHost) {
-      record.pipelineHost.remove();
-      record.pipelineHost = null;
-    }
-  }
-  _scopeRoot() {
-    if (this._isGlobal()) {
-      return document;
-    }
-    return this;
-  }
-  _isGlobal() {
-    return this.parentElement?.tagName === "HEAD";
-  }
-  _isOwnedByBodyOrchestrator(link) {
-    const orchestrators = Array.from(document.querySelectorAll("body link-orchestration"));
-    for (const orchestrator of orchestrators) {
-      if (orchestrator !== this && orchestrator.contains(link)) {
-        return true;
-      }
-    }
-    return false;
-  }
-  _emitEvent(eventName, detail) {
-    this.dispatchEvent(new CustomEvent(eventName, {
-      detail,
-      bubbles: true,
-      composed: true
-    }));
-  }
-};
-LinkOrchestration.styles = i`
-    :host {
-      display: contents;
-    }
-
-    .orchestrator-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 0.35rem;
-      font-size: 0.875em;
-      line-height: 1;
-    }
-
-    .orchestrated-link-host {
-      display: contents;
-    }
-  `;
-LinkOrchestration = __decorateClass([
-  t3("link-orchestration")
-], LinkOrchestration);
-
-// src/rdf-webcomponents/core/cache/index.ts
-var LRUCache = class {
-  constructor(options = {}) {
-    this.cache = /* @__PURE__ */ new Map();
-    this.stats = { hits: 0, misses: 0 };
-    this.maxSize = options.maxSize ?? MAX_CACHE_SIZE;
-    this.defaultTtl = (options.defaultTtl ?? DEFAULT_CACHE_TTL) * 1e3;
-    this.namespace = options.namespace ?? "default";
-  }
-  /**
-   * Gets a cache key with namespace
-   */
-  getNamespacedKey(key) {
-    return `${this.namespace}:${key}`;
-  }
-  /**
-   * Estimates the size of a value in bytes
-   */
-  estimateSize(value) {
-    try {
-      return JSON.stringify(value).length * 2;
-    } catch {
-      return 1e3;
-    }
-  }
-  /**
-   * Checks if an entry has expired
-   */
-  isExpired(entry) {
-    return Date.now() - entry.timestamp > entry.ttl;
-  }
-  /**
-   * Evicts expired entries and enforces size limit
-   */
-  evict() {
-    for (const [key, entry] of this.cache) {
-      if (this.isExpired(entry)) {
-        this.cache.delete(key);
-      }
-    }
-    while (this.cache.size > this.maxSize) {
-      const firstKey = this.cache.keys().next().value;
-      if (firstKey) {
-        this.cache.delete(firstKey);
-      } else {
-        break;
-      }
-    }
-  }
-  /**
-   * Gets a value from the cache
-   */
-  get(key) {
-    const namespacedKey = this.getNamespacedKey(key);
-    const entry = this.cache.get(namespacedKey);
-    if (!entry) {
-      this.stats.misses++;
-      return void 0;
-    }
-    if (this.isExpired(entry)) {
-      this.cache.delete(namespacedKey);
-      this.stats.misses++;
-      return void 0;
-    }
-    this.cache.delete(namespacedKey);
-    entry.timestamp = Date.now();
-    this.cache.set(namespacedKey, entry);
-    this.stats.hits++;
-    return entry.value;
-  }
-  /**
-   * Sets a value in the cache
-   */
-  set(key, value, ttl) {
-    const namespacedKey = this.getNamespacedKey(key);
-    if (this.cache.has(namespacedKey)) {
-      this.cache.delete(namespacedKey);
-    }
-    if (this.cache.size >= this.maxSize) {
-      this.evict();
-    }
-    const entry = {
-      value,
-      timestamp: Date.now(),
-      ttl: (ttl ?? this.defaultTtl) * 1e3,
-      size: this.estimateSize(value),
-      key: namespacedKey
-    };
-    this.cache.set(namespacedKey, entry);
-  }
-  /**
-   * Checks if a key exists in the cache
-   */
-  has(key) {
-    const namespacedKey = this.getNamespacedKey(key);
-    const entry = this.cache.get(namespacedKey);
-    if (!entry) return false;
-    if (this.isExpired(entry)) {
-      this.cache.delete(namespacedKey);
-      return false;
-    }
-    return true;
-  }
-  /**
-   * Deletes a key from the cache
-   */
-  delete(key) {
-    const namespacedKey = this.getNamespacedKey(key);
-    return this.cache.delete(namespacedKey);
-  }
-  /**
-   * Clears all entries from the cache
-   */
-  clear() {
-    this.cache.clear();
-    this.stats = { hits: 0, misses: 0 };
-  }
-  /**
-   * Gets cache statistics
-   */
-  getStats() {
-    let totalSize = 0;
-    for (const entry of this.cache.values()) {
-      totalSize += entry.size;
-    }
-    const totalRequests = this.stats.hits + this.stats.misses;
-    return {
-      entries: this.cache.size,
-      totalSize,
-      hits: this.stats.hits,
-      misses: this.stats.misses,
-      hitRate: totalRequests > 0 ? this.stats.hits / totalRequests : 0
-    };
-  }
-  /**
-   * Gets all keys in the cache
-   */
-  keys() {
-    return Array.from(this.cache.keys()).map(
-      (key) => key.startsWith(`${this.namespace}:`) ? key.slice(this.namespace.length + 1) : key
-    );
-  }
-};
-var LocalStorageCache = class {
-  constructor(options = {}) {
-    this.namespace = options.namespace ?? "rdf-cache";
-    this.maxSize = 5 * 1024 * 1024;
-    this.defaultTtl = (options.defaultTtl ?? DEFAULT_CACHE_TTL) * 1e3;
-    this.cleanup();
-  }
-  /**
-   * Gets the full key with namespace
-   */
-  getNamespacedKey(key) {
-    return `${this.namespace}:${key}`;
-  }
-  /**
-   * Estimates current storage size
-   */
-  getCurrentSize() {
-    let size = 0;
-    for (let i6 = 0; i6 < localStorage.length; i6++) {
-      const key = localStorage.key(i6);
-      if (key?.startsWith(this.namespace)) {
-        const value = localStorage.getItem(key);
-        if (value) {
-          size += key.length + value.length;
-        }
-      }
-    }
-    return size * 2;
-  }
-  /**
-   * Cleans up expired entries
-   */
-  cleanup() {
-    const keysToRemove = [];
-    for (let i6 = 0; i6 < localStorage.length; i6++) {
-      const key = localStorage.key(i6);
-      if (key?.startsWith(this.namespace)) {
-        try {
-          const raw = localStorage.getItem(key);
-          if (raw) {
-            const entry = JSON.parse(raw);
-            if (Date.now() - entry.timestamp > entry.ttl) {
-              keysToRemove.push(key);
-            }
-          }
-        } catch {
-          keysToRemove.push(key);
-        }
-      }
-    }
-    for (const key of keysToRemove) {
-      localStorage.removeItem(key);
-    }
-  }
-  /**
-   * Gets a value from localStorage
-   */
-  get(key) {
-    const namespacedKey = this.getNamespacedKey(key);
-    const raw = localStorage.getItem(namespacedKey);
-    if (!raw) return void 0;
-    try {
-      const entry = JSON.parse(raw);
-      if (Date.now() - entry.timestamp > entry.ttl) {
-        localStorage.removeItem(namespacedKey);
-        return void 0;
-      }
-      return entry.value;
-    } catch {
-      localStorage.removeItem(namespacedKey);
-      return void 0;
-    }
-  }
-  /**
-   * Sets a value in localStorage
-   */
-  set(key, value, ttl) {
-    const namespacedKey = this.getNamespacedKey(key);
-    const entry = {
-      value,
-      timestamp: Date.now(),
-      ttl: (ttl ?? this.defaultTtl) * 1e3,
-      size: 0,
-      key: namespacedKey
-    };
-    try {
-      const serialized = JSON.stringify(entry);
-      const currentSize = this.getCurrentSize();
-      const newSize = (namespacedKey.length + serialized.length) * 2;
-      if (currentSize + newSize > this.maxSize) {
-        this.cleanup();
-        if (this.getCurrentSize() + newSize > this.maxSize) {
-          console.warn("LocalStorage cache full, item not cached");
-          return false;
-        }
-      }
-      localStorage.setItem(namespacedKey, serialized);
-      return true;
-    } catch (error) {
-      console.warn("Failed to cache in localStorage:", error);
-      return false;
-    }
-  }
-  /**
-   * Checks if a key exists
-   */
-  has(key) {
-    return this.get(key) !== void 0;
-  }
-  /**
-   * Deletes a key
-   */
-  delete(key) {
-    localStorage.removeItem(this.getNamespacedKey(key));
-  }
-  /**
-   * Clears all cache entries for this namespace
-   */
-  clear() {
-    const keysToRemove = [];
-    for (let i6 = 0; i6 < localStorage.length; i6++) {
-      const key = localStorage.key(i6);
-      if (key?.startsWith(this.namespace)) {
-        keysToRemove.push(key);
-      }
-    }
-    for (const key of keysToRemove) {
-      localStorage.removeItem(key);
-    }
-  }
-};
-var IndexedDBCache = class {
-  constructor(options = {}) {
-    this.db = null;
-    this.initPromise = null;
-    this.dbName = "rdf-webcomponents-cache";
-    this.storeName = options.namespace ?? "default";
-    this.defaultTtl = (options.defaultTtl ?? DEFAULT_CACHE_TTL) * 1e3;
-  }
-  /**
-   * Initializes the database
-   */
-  async init() {
-    if (this.db) return;
-    if (this.initPromise) return this.initPromise;
-    this.initPromise = new Promise((resolve, reject) => {
-      const request = indexedDB.open(this.dbName, 1);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => {
-        this.db = request.result;
-        resolve();
-      };
-      request.onupgradeneeded = (event) => {
-        const db = event.target.result;
-        if (!db.objectStoreNames.contains(this.storeName)) {
-          const store = db.createObjectStore(this.storeName, { keyPath: "key" });
-          store.createIndex("timestamp", "timestamp", { unique: false });
-        }
-      };
-    });
-    return this.initPromise;
-  }
-  /**
-   * Gets a value from IndexedDB
-   */
-  async get(key) {
-    await this.init();
-    if (!this.db) return void 0;
-    return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([this.storeName], "readonly");
-      const store = transaction.objectStore(this.storeName);
-      const request = store.get(key);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => {
-        const entry = request.result;
-        if (!entry) {
-          resolve(void 0);
-          return;
-        }
-        if (Date.now() - entry.timestamp > entry.ttl) {
-          this.delete(key);
-          resolve(void 0);
-          return;
-        }
-        resolve(entry.value);
-      };
-    });
-  }
-  /**
-   * Sets a value in IndexedDB
-   */
-  async set(key, value, ttl) {
-    await this.init();
-    if (!this.db) return;
-    return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([this.storeName], "readwrite");
-      const store = transaction.objectStore(this.storeName);
-      const entry = {
-        value,
-        timestamp: Date.now(),
-        ttl: (ttl ?? this.defaultTtl) * 1e3,
-        size: 0,
-        key
-      };
-      const request = store.put(entry);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve();
-    });
-  }
-  /**
-   * Checks if a key exists
-   */
-  async has(key) {
-    const value = await this.get(key);
-    return value !== void 0;
-  }
-  /**
-   * Deletes a key
-   */
-  async delete(key) {
-    await this.init();
-    if (!this.db) return;
-    return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([this.storeName], "readwrite");
-      const store = transaction.objectStore(this.storeName);
-      const request = store.delete(key);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve();
-    });
-  }
-  /**
-   * Clears all entries in the store
-   */
-  async clear() {
-    await this.init();
-    if (!this.db) return;
-    return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([this.storeName], "readwrite");
-      const store = transaction.objectStore(this.storeName);
-      const request = store.clear();
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve();
-    });
-  }
-};
-var CacheManager = class _CacheManager {
-  constructor() {
-    this.memoryCache = new LRUCache({ namespace: "rdf-memory" });
-    this.localStorageCache = new LocalStorageCache({ namespace: "rdf-ls" });
-    this.indexedDBCache = new IndexedDBCache({ namespace: "rdf-idb" });
-    this.sharedCache = new LRUCache({ namespace: "rdf-shared", maxSize: MAX_CACHE_SIZE * 2 });
-  }
-  /**
-   * Gets the singleton instance
-   */
-  static getInstance() {
-    if (!_CacheManager.instance) {
-      _CacheManager.instance = new _CacheManager();
-    }
-    return _CacheManager.instance;
-  }
-  /**
-   * Gets a value from the specified cache
-   */
-  async get(key, type = "memory", shared = false) {
-    if (shared) {
-      const sharedValue = this.sharedCache.get(key);
-      if (sharedValue !== void 0) {
-        return sharedValue;
-      }
-    }
-    switch (type) {
-      case "memory":
-        return this.memoryCache.get(key);
-      case "localStorage":
-        return this.localStorageCache.get(key);
-      case "indexedDB":
-        return this.indexedDBCache.get(key);
-      default:
-        return this.memoryCache.get(key);
-    }
-  }
-  /**
-   * Sets a value in the specified cache
-   */
-  async set(key, value, ttl, type = "memory", shared = false) {
-    if (shared) {
-      this.sharedCache.set(key, value, ttl);
-    }
-    switch (type) {
-      case "memory":
-        this.memoryCache.set(key, value, ttl);
-        break;
-      case "localStorage":
-        this.localStorageCache.set(key, value, ttl);
-        break;
-      case "indexedDB":
-        await this.indexedDBCache.set(key, value, ttl);
-        break;
-    }
-  }
-  /**
-   * Checks if a key exists in the specified cache
-   */
-  async has(key, type = "memory", shared = false) {
-    if (shared && this.sharedCache.has(key)) {
-      return true;
-    }
-    switch (type) {
-      case "memory":
-        return this.memoryCache.has(key);
-      case "localStorage":
-        return this.localStorageCache.has(key);
-      case "indexedDB":
-        return this.indexedDBCache.has(key);
-      default:
-        return this.memoryCache.has(key);
-    }
-  }
-  /**
-   * Deletes a key from all caches
-   */
-  async delete(key) {
-    this.memoryCache.delete(key);
-    this.localStorageCache.delete(key);
-    await this.indexedDBCache.delete(key);
-    this.sharedCache.delete(key);
-  }
-  /**
-   * Clears all caches
-   */
-  async clearAll() {
-    this.memoryCache.clear();
-    this.localStorageCache.clear();
-    await this.indexedDBCache.clear();
-    this.sharedCache.clear();
-  }
-  /**
-   * Gets memory cache statistics
-   */
-  getStats() {
-    return this.memoryCache.getStats();
-  }
-  /**
-   * Gets the shared cache
-   */
-  getSharedCache() {
-    return this.sharedCache;
-  }
-};
-
-// src/rdf-webcomponents/core/protocol/index.ts
-function generateMessageId() {
-  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-}
-function createMessage(type, payload) {
-  return {
-    id: generateMessageId(),
-    type,
-    payload,
-    timestamp: Date.now()
-  };
-}
-var WorkerMessenger = class {
-  constructor(worker, defaultTimeout = 6e4) {
-    this.pendingRequests = /* @__PURE__ */ new Map();
-    this.messageHandlers = /* @__PURE__ */ new Map();
-    this.worker = worker;
-    this.defaultTimeout = defaultTimeout;
-    this.setupMessageHandler();
-  }
-  /**
-   * Sets up the message event handler
-   */
-  setupMessageHandler() {
-    this.worker.addEventListener("message", (event) => {
-      const message = event.data;
-      const pending = this.pendingRequests.get(message.id);
-      if (pending) {
-        clearTimeout(pending.timeout);
-        this.pendingRequests.delete(message.id);
-        if (message.type.endsWith("_ERROR") || message.type.endsWith("_RESPONSE")) {
-          if (message.type.endsWith("_ERROR")) {
-            pending.reject(message.payload);
-          } else {
-            pending.resolve(message.payload);
-          }
-        }
-        return;
-      }
-      const handler = this.messageHandlers.get(message.type);
-      if (handler) {
-        handler(message.payload);
-      }
-    });
-  }
-  /**
-   * Sends a message and waits for a response
-   */
-  async send(type, payload, timeout = this.defaultTimeout) {
-    const message = createMessage(type, payload);
-    return new Promise((resolve, reject) => {
-      const timeoutId = setTimeout(() => {
-        this.pendingRequests.delete(message.id);
-        reject(new Error(`Request timed out after ${timeout}ms`));
-      }, timeout);
-      this.pendingRequests.set(message.id, {
-        resolve,
-        reject,
-        timeout: timeoutId
-      });
-      this.worker.postMessage(message);
-    });
-  }
-  /**
-   * Sends a message without waiting for a response (fire and forget)
-   */
-  notify(type, payload) {
-    const message = createMessage(type, payload);
-    this.worker.postMessage(message);
-  }
-  /**
-   * Registers a handler for a specific message type
-   */
-  on(type, handler) {
-    this.messageHandlers.set(type, handler);
-  }
-  /**
-   * Removes a handler for a specific message type
-   */
-  off(type) {
-    this.messageHandlers.delete(type);
-  }
-  /**
-   * Terminates the worker
-   */
-  terminate() {
-    for (const [id, pending] of this.pendingRequests) {
-      clearTimeout(pending.timeout);
-      pending.reject(new Error("Worker terminated"));
-    }
-    this.pendingRequests.clear();
-    this.messageHandlers.clear();
-    this.worker.terminate();
-  }
-  /**
-   * Gets the underlying worker instance
-   */
-  getWorker() {
-    return this.worker;
-  }
-};
-var WorkerMessageHandler = class {
-  constructor() {
-    this.handlers = /* @__PURE__ */ new Map();
-  }
-  /**
-   * Registers a handler for a message type
-   */
-  handle(type, handler) {
-    this.handlers.set(type, handler);
-  }
-  /**
-   * Starts listening for messages
-   */
-  start() {
-    self.addEventListener("message", async (event) => {
-      const message = event.data;
-      const handler = this.handlers.get(message.type);
-      if (!handler) {
-        console.warn(`No handler for message type: ${message.type}`);
-        return;
-      }
-      try {
-        const result = await handler(message.payload, message);
-        const responseMessage = createMessage(
-          message.type + "_RESPONSE",
-          result
-        );
-        responseMessage.id = message.id;
-        self.postMessage(responseMessage);
-      } catch (error) {
-        const errorMessage = createMessage(
-          message.type + "_ERROR",
-          {
-            error: error instanceof Error ? error.message : String(error),
-            originalMessage: message
-          }
-        );
-        errorMessage.id = message.id;
-        self.postMessage(errorMessage);
-      }
-    });
-    self.postMessage(createMessage("WORKER_READY" /* WORKER_READY */, { timestamp: Date.now() }));
-  }
-};
-
-// src/rdf-webcomponents/core/worker/sparql/index.ts
-var import_rdf_data_factory3 = __toESM(require_rdf_data_factory());
-var factory2 = new import_rdf_data_factory3.DataFactory();
-var SparqlClient = class {
-  constructor(config) {
-    this.config = {
-      endpoint: config.endpoint,
-      defaultGraph: config.defaultGraph ?? "",
-      headers: config.headers ?? {},
-      timeout: config.timeout ?? 3e4,
-      limit: config.limit ?? 1e4,
-      namedGraphs: config.namedGraphs
-    };
-  }
-  /**
-   * Executes a SPARQL query
-   */
-  async executeQuery(query, accept = "application/sparql-results+json") {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
-    try {
-      const response = await fetch(this.config.endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Accept": accept,
-          ...this.config.headers
-        },
-        body: `query=${encodeURIComponent(query)}`,
-        signal: controller.signal
-      });
-      clearTimeout(timeoutId);
-      if (!response.ok) {
-        throw new Error(`SPARQL query failed: ${response.status} ${response.statusText}`);
-      }
-      return await response.json();
-    } catch (error) {
-      clearTimeout(timeoutId);
-      if (error instanceof Error && error.name === "AbortError") {
-        throw new Error(`SPARQL query timed out after ${this.config.timeout}ms`);
-      }
-      throw error;
-    }
-  }
-  /**
-   * Executes a CONSTRUCT query and returns quads
-   */
-  async executeConstruct(query) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
-    try {
-      const response = await fetch(this.config.endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Accept": "text/turtle,application/n-triples,application/rdf+xml",
-          ...this.config.headers
-        },
-        body: `query=${encodeURIComponent(query)}`,
-        signal: controller.signal
-      });
-      clearTimeout(timeoutId);
-      if (!response.ok) {
-        throw new Error(`SPARQL CONSTRUCT failed: ${response.status} ${response.statusText}`);
-      }
-      const content = await response.text();
-      const contentType = response.headers.get("Content-Type") || "text/turtle";
-      let format = "turtle";
-      if (contentType.includes("n-triples")) format = "n-triples";
-      if (contentType.includes("rdf+xml")) format = "rdf-xml";
-      const result = await parseRdf(content, format, this.config.endpoint);
-      return result.quads;
-    } catch (error) {
-      clearTimeout(timeoutId);
-      if (error instanceof Error && error.name === "AbortError") {
-        throw new Error(`SPARQL CONSTRUCT timed out after ${this.config.timeout}ms`);
-      }
-      throw error;
-    }
-  }
-  /**
-   * Executes a DESCRIBE query and returns quads
-   */
-  async executeDescribe(uri) {
-    const query = `DESCRIBE <${uri}>`;
-    return this.executeConstruct(query);
-  }
-  // ========================================================================
-  // Subject Resolution Strategies
-  // ========================================================================
-  /**
-   * Resolves subjects based on the specified strategy
-   */
-  async resolveSubjects(options) {
-    if (options.subject) {
-      return [options.subject];
-    }
-    if (options.subjectQuery) {
-      return this.resolveFromQuery(options.subjectQuery);
-    }
-    if (options.subjectClass) {
-      return this.resolveFromClass(options.subjectClass, options.limit);
-    }
-    return this.discoverAllSubjects(options.limit);
-  }
-  /**
-   * Resolves subjects from a custom query
-   */
-  async resolveFromQuery(query) {
-    const results = await this.executeQuery(query);
-    const subjects2 = [];
-    for (const binding of results.results.bindings) {
-      const subject2 = binding.s || binding.subject;
-      if (subject2 && subject2.type === "uri") {
-        subjects2.push(subject2.value);
-      }
-    }
-    return subjects2;
-  }
-  /**
-   * Resolves subjects from a class
-   */
-  async resolveFromClass(classUri, limit) {
-    const query = `
-      SELECT DISTINCT ?s WHERE {
-        ?s a <${classUri}> .
-      }
-      ${limit ? `LIMIT ${limit}` : ""}
-    `;
-    const results = await this.executeQuery(query);
-    return results.results.bindings.filter((b3) => b3.s?.type === "uri").map((b3) => b3.s.value);
-  }
-  /**
-   * Discovers all typed subjects
-   */
-  async discoverAllSubjects(limit) {
-    const query = `
-      SELECT DISTINCT ?s WHERE {
-        ?s a ?type .
-      }
-      ${limit ? `LIMIT ${limit}` : ""}
-    `;
-    const results = await this.executeQuery(query);
-    return results.results.bindings.filter((b3) => b3.s?.type === "uri").map((b3) => b3.s.value);
-  }
-  // ========================================================================
-  // Data Extraction Strategies
-  // ========================================================================
-  /**
-   * Extracts data using the specified strategy
-   */
-  async extractData(strategy, options = {}) {
-    switch (strategy) {
-      case "sparql":
-        return this.extractFromSubjects(options);
-      case "cbd":
-        if (!options.subject) {
-          throw new Error("CBD strategy requires a subject URI");
-        }
-        return this.extractCbd({
-          subject: options.subject,
-          depth: options.depth ?? 2
-        });
-      case "file":
-      default:
-        throw new Error(`Strategy '${strategy}' not supported for SPARQL endpoint`);
-    }
-  }
-  /**
-   * Extracts data for multiple subjects
-   */
-  async extractFromSubjects(options) {
-    const subjects2 = await this.resolveSubjects(options);
-    const allQuads = [];
-    const maxSubjects = Math.min(subjects2.length, this.config.limit);
-    for (let i6 = 0; i6 < maxSubjects; i6++) {
-      const subject2 = subjects2[i6];
-      const quads = await this.executeDescribe(subject2);
-      allQuads.push(...quads);
-    }
-    return allQuads;
-  }
-  /**
-   * Extracts Concise Bounded Description (CBD)
-   */
-  async extractCbd(options) {
-    const { subject: subject2, depth = 2, includeInverse = false } = options;
-    const query = this.buildCbdQuery(subject2, depth, includeInverse);
-    return this.executeConstruct(query);
-  }
-  /**
-   * Builds a CBD CONSTRUCT query
-   */
-  buildCbdQuery(subject2, depth, includeInverse) {
-    const lines = [];
-    lines.push(`CONSTRUCT {`);
-    lines.push(`  <${subject2}> ?p ?o .`);
-    for (let i6 = 1; i6 <= depth; i6++) {
-      const indent = "  ".repeat(i6 + 1);
-      lines.push(`${indent}?o${i6 - 1} ?p${i6} ?o${i6} .`);
-    }
-    lines.push(`} WHERE {`);
-    lines.push(`  <${subject2}> ?p ?o .`);
-    for (let i6 = 1; i6 <= depth; i6++) {
-      const indent = "  ".repeat(i6 + 1);
-      const prevVar = i6 === 1 ? "o" : `o${i6 - 1}`;
-      lines.push(`${indent}OPTIONAL {`);
-      lines.push(`${indent}  ?${prevVar} ?p${i6} ?o${i6} .`);
-      lines.push(`${indent}  FILTER(isBlank(?${prevVar}))`);
-      lines.push(`${indent}}`);
-    }
-    if (includeInverse) {
-      lines.push(`  OPTIONAL { ?inverseSubject ?inversePredicate <${subject2}> }`);
-    }
-    lines.push(`}`);
-    return lines.join("\n");
-  }
-  // ========================================================================
-  // Utility Methods
-  // ========================================================================
-  /**
-   * Gets the endpoint capabilities
-   */
-  async getCapabilities() {
-    try {
-      await this.executeQuery("SELECT * WHERE { ?s ?p ?o } LIMIT 1");
-      return {
-        supportsSelect: true,
-        supportsConstruct: true,
-        supportsDescribe: true,
-        supportsAsk: true,
-        supportsUpdate: false
-      };
-    } catch {
-      return {
-        supportsSelect: false,
-        supportsConstruct: false,
-        supportsDescribe: false,
-        supportsAsk: false,
-        supportsUpdate: false
-      };
-    }
-  }
-  /**
-   * Gets all classes in the endpoint
-   */
-  async getClasses() {
-    const query = `
-      SELECT DISTINCT ?class WHERE {
-        ?s a ?class .
-        FILTER(isIRI(?class))
-      }
-      ORDER BY ?class
-    `;
-    const results = await this.executeQuery(query);
-    return results.results.bindings.filter((b3) => b3.class?.type === "uri").map((b3) => b3.class.value);
-  }
-  /**
-   * Gets all predicates used in the endpoint
-   */
-  async getPredicates() {
-    const query = `
-      SELECT DISTINCT ?p WHERE {
-        ?s ?p ?o .
-        FILTER(isIRI(?p))
-      }
-      ORDER BY ?p
-      LIMIT 1000
-    `;
-    const results = await this.executeQuery(query);
-    return results.results.bindings.filter((b3) => b3.p?.type === "uri").map((b3) => b3.p.value);
-  }
-};
-
-// src/rdf-webcomponents/index.ts
-if (typeof window !== "undefined") {
-  console.log("[RDF WebComponents] Components registered:", {
-    "source-rdf": customElements.get("source-rdf") ? "\u2713" : "\u2717",
-    "rdf-lens": customElements.get("rdf-lens") ? "\u2713" : "\u2717",
-    "lens-display": customElements.get("lens-display") ? "\u2713" : "\u2717",
-    "link-orchestration": customElements.get("link-orchestration") ? "\u2713" : "\u2717"
-  });
-}
 export {
-  CacheManager,
-  IndexedDBCache,
-  LRUCache,
-  LensDisplay,
-  LinkOrchestration,
-  LocalStorageCache,
-  MessageType,
-  RdfLens,
-  SourceRdf,
-  SparqlClient,
-  WorkerMessageHandler,
-  WorkerMessenger,
-  detectFormat,
-  getAcceptHeader,
-  parseRdf
+  SourceRdf
 };
 /*! Bundled license information:
 
@@ -30314,8 +23793,6 @@ lit-element/lit-element.js:
 @lit/reactive-element/decorators/query-all.js:
 @lit/reactive-element/decorators/query-async.js:
 @lit/reactive-element/decorators/query-assigned-nodes.js:
-lit-html/directive.js:
-lit-html/directives/unsafe-html.js:
   (**
    * @license
    * Copyright 2017 Google LLC
@@ -30333,13 +23810,6 @@ lit-html/is-server.js:
   (**
    * @license
    * Copyright 2021 Google LLC
-   * SPDX-License-Identifier: BSD-3-Clause
-   *)
-
-lit-html/directives/class-map.js:
-  (**
-   * @license
-   * Copyright 2018 Google LLC
    * SPDX-License-Identifier: BSD-3-Clause
    *)
 */

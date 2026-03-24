@@ -10,13 +10,13 @@ import { ArrowLeft, Zap, Copy, Check, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 
 const attributes = [
-  { name: 'shape-file', type: 'string', description: 'URL to SHACL shapes file' },
-  { name: 'shape-class', type: 'string', description: 'Target class URI to extract' },
-  { name: 'shapes', type: 'string', description: 'Inline SHACL shapes (Turtle format)' },
-  { name: 'validate', type: 'boolean', default: 'false', description: 'Validate data against shapes' },
-  { name: 'strict', type: 'boolean', default: 'false', description: 'Throw on validation errors' },
-  { name: 'multiple', type: 'boolean', default: 'false', description: 'Extract all matching subjects' },
-  { name: 'subject', type: 'string', description: 'Specific subject URI to extract' },
+  { name: 'config', type: 'string', description: 'Inline RDF config using the rdf-lens vocabulary' },
+  { name: 'lrdf:shapeFile', type: 'IRI/string', description: 'URL to SHACL shapes file' },
+  { name: 'lrdf:shapeClass', type: 'IRI/string', description: 'Target class URI to extract' },
+  { name: 'lrdf:shapes', type: 'string', description: 'Inline SHACL shapes (Turtle format)' },
+  { name: 'lrdf:strict', type: 'boolean', default: 'false', description: 'Throw on extraction errors' },
+  { name: 'lrdf:multiple', type: 'boolean', default: 'false', description: 'Extract all matching subjects' },
+  { name: 'lrdf:subject', type: 'IRI/string', description: 'Specific subject URI to extract' },
 ];
 
 const events = [
@@ -40,48 +40,37 @@ const shaclProperties = [
 const examples = {
   basic: `<!-- Basic usage with external shape file -->
 <rdf-lens 
-  shape-file="shapes/person.ttl"
-  shape-class="http://example.org/Person"
+  config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes/person.ttl" ;
+  lrdf:shapeClass <http://example.org/Person> .'
 >
-  <rdf-adapter url="data.ttl"></rdf-adapter>
+  <source-rdf url="data.ttl"></source-rdf>
 </rdf-lens>`,
 
   multiple: `<!-- Extract all instances -->
 <rdf-lens 
-  shape-file="shapes/person.ttl"
-  shape-class="http://example.org/Person"
-  multiple
+  config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes/person.ttl" ;
+  lrdf:shapeClass <http://example.org/Person> ;
+  lrdf:multiple true .'
 >
-  <rdf-adapter 
+  <source-rdf 
     url="https://dbpedia.org/sparql"
-    strategy="sparql"
-    subject-class="dbo:Person"
-  ></rdf-adapter>
+    config='@prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+[] a srdf:SourceRdfConfig ;
+  srdf:strategy "sparql" ;
+  srdf:subjectClass <http://dbpedia.org/ontology/Person> .'
+  ></source-rdf>
 </rdf-lens>`,
 
   inline: `<!-- Inline SHACL shapes -->
-<rdf-lens shape-class="http://example.org/Person">
-  <script type="text/turtle">
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
-    @prefix ex: <http://example.org/> .
-    @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-    
-    ex:PersonShape a sh:NodeShape ;
-      sh:targetClass ex:Person ;
-      sh:property [
-        sh:name "name" ;
-        sh:path ex:name ;
-        sh:datatype xsd:string ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;
-      ] , [
-        sh:name "age" ;
-        sh:path ex:age ;
-        sh:datatype xsd:integer ;
-        sh:maxCount 1 ;
-      ] .
-  </script>
-  <rdf-adapter url="data.ttl"></rdf-adapter>
+<rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeClass <http://example.org/Person> ;
+  lrdf:shapes "@prefix sh: <http://www.w3.org/ns/shacl#> . @prefix ex: <http://example.org/> . @prefix xsd: <http://www.w3.org/2001/XMLSchema#> . ex:PersonShape a sh:NodeShape ; sh:targetClass ex:Person ; sh:property [ sh:name \\\"name\\\" ; sh:path ex:name ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] , [ sh:name \\\"age\\\" ; sh:path ex:age ; sh:datatype xsd:integer ; sh:maxCount 1 ] ." .'>
+  <source-rdf url="data.ttl"></source-rdf>
 </rdf-lens>`,
 
   nested: `<!-- Nested object extraction -->
@@ -112,14 +101,15 @@ const examples = {
     ] .
 </script>`,
 
-  validation: `<!-- With validation -->
+  validation: `<!-- Strict extraction mode -->
 <rdf-lens 
-  shape-file="shapes/person.ttl"
-  shape-class="http://example.org/Person"
-  validate
-  strict
+  config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
+[] a lrdf:RdfLensConfig ;
+  lrdf:shapeFile "shapes/person.ttl" ;
+  lrdf:shapeClass <http://example.org/Person> ;
+  lrdf:strict true .'
 >
-  <rdf-adapter url="data.ttl"></rdf-adapter>
+  <source-rdf url="data.ttl"></source-rdf>
 </rdf-lens>`,
 };
 
@@ -239,7 +229,7 @@ export default function RdfLensDocs() {
               <CardContent className="text-sm space-y-2">
                 <a href="#overview" className="block text-green-600 hover:underline">Overview</a>
                 <a href="#shacl" className="block text-slate-600 hover:text-slate-900">SHACL Shapes</a>
-                <a href="#attributes" className="block text-slate-600 hover:text-slate-900">Attributes</a>
+                <a href="#attributes" className="block text-slate-600 hover:text-slate-900">Config Vocabulary</a>
                 <a href="#events" className="block text-slate-600 hover:text-slate-900">Events</a>
                 <a href="#examples" className="block text-slate-600 hover:text-slate-900">Examples</a>
                 <a href="#workflow" className="block text-slate-600 hover:text-slate-900">Data Workflow</a>
@@ -267,10 +257,11 @@ export default function RdfLensDocs() {
                 <h3 className="text-lg font-semibold mt-6">Key Features</h3>
                 <ul className="list-disc list-inside space-y-1">
                   <li>SHACL-based shape definitions</li>
+                  <li>RDF config-driven setup via <code>lrdf:RdfLensConfig</code></li>
                   <li>Automatic type conversion (string, integer, boolean, date)</li>
                   <li>Nested object extraction</li>
                   <li>Array handling for multi-value properties</li>
-                  <li>Validation against shapes</li>
+                  <li>Strict extraction mode for per-subject errors</li>
                 </ul>
               </CardContent>
             </Card>
@@ -331,14 +322,14 @@ export default function RdfLensDocs() {
             {/* Attributes */}
             <Card id="attributes">
               <CardHeader>
-                <CardTitle>Attributes</CardTitle>
+                <CardTitle>Config Vocabulary</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b">
-                        <th className="text-left py-2 font-medium">Attribute</th>
+                        <th className="text-left py-2 font-medium">Property</th>
                         <th className="text-left py-2 font-medium">Type</th>
                         <th className="text-left py-2 font-medium">Default</th>
                         <th className="text-left py-2 font-medium">Description</th>
@@ -393,7 +384,7 @@ export default function RdfLensDocs() {
                     <TabsTrigger value="multiple">Multiple</TabsTrigger>
                     <TabsTrigger value="inline">Inline Shapes</TabsTrigger>
                     <TabsTrigger value="nested">Nested</TabsTrigger>
-                    <TabsTrigger value="validation">Validation</TabsTrigger>
+                    <TabsTrigger value="validation">Strict Mode</TabsTrigger>
                   </TabsList>
 
                   {Object.entries(examples).map(([key, code]) => (
@@ -511,10 +502,10 @@ lens.addEventListener('shape-error', (e) => {
 
             {/* Navigation */}
             <div className="flex justify-between">
-              <Link href="/adapter">
+              <Link href="/source-rdf">
                 <Button variant="outline">
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Previous: rdf-adapter
+                  Previous: source-rdf
                 </Button>
               </Link>
               <Link href="/display">
