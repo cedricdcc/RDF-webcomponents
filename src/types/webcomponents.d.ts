@@ -11,7 +11,6 @@ type RdfLensProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> 
 
 type LensDisplayProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
   template?: string;
-  mode?: string;
 };
 
 type LinkOrchestrationProps = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {

@@ -53,7 +53,6 @@ type LensConfig = {
 type DisplayConfig = {
   template?: string;
   templateInline?: string;
-  mode?: 'single' | 'list' | 'grid' | 'table';
   theme?: string;
   class?: string;
 };
@@ -738,9 +737,10 @@ export class LinkOrchestration extends LitElement {
       return undefined;
     }
 
-    if (config.mode) display.setAttribute('mode', config.mode);
-    if (config.theme) display.setAttribute('theme', config.theme);
-    if (config.class) display.setAttribute('class', config.class);
+    const rdfConfig = this._buildDisplayConfigRdf(config);
+    if (rdfConfig) {
+      (display as any).config = rdfConfig;
+    }
 
     if (config.templateInline && !config.template) {
       const blob = new Blob([config.templateInline], { type: 'text/html' });
@@ -754,6 +754,23 @@ export class LinkOrchestration extends LitElement {
     }
 
     return undefined;
+  }
+
+  private _buildDisplayConfigRdf(config: DisplayConfig): string {
+    const triples: string[] = [];
+
+    if (config.theme) triples.push(`drdf:theme ${this._ttlString(config.theme)}`);
+    if (config.class) triples.push(`drdf:class ${this._ttlString(config.class)}`);
+
+    if (triples.length === 0) {
+      return '';
+    }
+
+    return [
+      '@prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .',
+      '',
+      `[] a drdf:LensDisplayConfig ;\n  ${triples.join(' ;\n  ')} .`,
+    ].join('\n');
   }
 
   private _awaitPipeline(display: HTMLElement): Promise<void> {

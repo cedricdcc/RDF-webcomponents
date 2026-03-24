@@ -228,8 +228,7 @@ const ex6Html = iframeBase(
           "multiple": true
         },
         "display": {
-          "template": "${withBasePath('/demo/person-card.html')}",
-          "mode": "grid"
+          "template": "${withBasePath('/demo/person-card.html')}"
         },
         "decorators": { "enabled": true, "icons": { "loading": "⏳", "ready": "🔍", "error": "⚠" } }
       }
@@ -285,7 +284,7 @@ const ex8Html = iframeBase(
           "shapeClass": "http://example.org/Book",
           "multiple": true
         },
-        "display": { "template": "${withBasePath('/demo/book-card.html')}", "mode": "grid" },
+        "display": { "template": "${withBasePath('/demo/book-card.html')}" },
         "decorators": { "enabled": true, "icons": { "loading": "⏳", "ready": "📚", "error": "⚠" } }
       },
       {
@@ -300,7 +299,7 @@ const ex8Html = iframeBase(
           "shapeClass": "http://example.org/Organisation",
           "multiple": true
         },
-        "display": { "template": "${withBasePath('/demo/org-card.html')}", "mode": "grid" },
+        "display": { "template": "${withBasePath('/demo/org-card.html')}" },
         "decorators": { "enabled": true, "icons": { "loading": "⏳", "ready": "🏢", "error": "⚠" } }
       },
       {
@@ -309,7 +308,7 @@ const ex8Html = iframeBase(
         "match": { "css": "a[href$='.ttl']", "contentType": "text" },
         "adapter": { "strategy": "file" },
         "lens": { "shapeFile": "${withBasePath('/demo/shapes.ttl')}", "shapeClass": "http://example.org/Person", "multiple": true },
-        "display": { "template": "${withBasePath('/demo/person-card.html')}", "mode": "grid" }
+        "display": { "template": "${withBasePath('/demo/person-card.html')}" }
       }
     ]
   }
@@ -345,7 +344,7 @@ const ex9Html = iframeBase(
           "shapeClass": "http://example.org/Book",
           "multiple": true
         },
-        "display": { "template": "${withBasePath('/demo/book-card.html')}", "mode": "grid" },
+        "display": { "template": "${withBasePath('/demo/book-card.html')}" },
         "decorators": { "enabled": true, "icons": { "loading": "⏳", "ready": "📚", "error": "⚠" } }
       }
     ]
@@ -634,7 +633,7 @@ const examples: Example[] = [
         "shapeClass": "http://example.org/Book",
         "multiple": true
       },
-      "display": { "template": "/demo/book-card.html", "mode": "grid" }
+      "display": { "template": "/demo/book-card.html" }
     }
   ]
 }`,

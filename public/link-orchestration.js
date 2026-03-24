@@ -1086,9 +1086,10 @@ var LinkOrchestration = class extends i4 {
     if (!config) {
       return void 0;
     }
-    if (config.mode) display.setAttribute("mode", config.mode);
-    if (config.theme) display.setAttribute("theme", config.theme);
-    if (config.class) display.setAttribute("class", config.class);
+    const rdfConfig = this._buildDisplayConfigRdf(config);
+    if (rdfConfig) {
+      display.config = rdfConfig;
+    }
     if (config.templateInline && !config.template) {
       const blob = new Blob([config.templateInline], { type: "text/html" });
       const url = URL.createObjectURL(blob);
@@ -1099,6 +1100,20 @@ var LinkOrchestration = class extends i4 {
       display.setAttribute("template", config.template);
     }
     return void 0;
+  }
+  _buildDisplayConfigRdf(config) {
+    const triples = [];
+    if (config.theme) triples.push(`drdf:theme ${this._ttlString(config.theme)}`);
+    if (config.class) triples.push(`drdf:class ${this._ttlString(config.class)}`);
+    if (triples.length === 0) {
+      return "";
+    }
+    return [
+      "@prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .",
+      "",
+      `[] a drdf:LensDisplayConfig ;
+  ${triples.join(" ;\n  ")} .`
+    ].join("\n");
   }
   _awaitPipeline(display) {
     return new Promise((resolve, reject) => {

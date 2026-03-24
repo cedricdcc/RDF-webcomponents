@@ -135,7 +135,6 @@ export default function DemoPage() {
   const [multiple, setMultiple] = useState(true);
   const [shaclInput, setShaclInput] = useState(DEMO_SHAPES);
 
-  const [displayMode, setDisplayMode] = useState("grid");
   const [templateInput, setTemplateInput] = useState(DEMO_TEMPLATE);
 
   const adapterRef = useRef<HTMLElement | null>(null);
@@ -278,7 +277,6 @@ export default function DemoPage() {
     setShapeClass("http://example.org/Person");
     setMultiple(true);
     setShaclInput(DEMO_SHAPES);
-    setDisplayMode("grid");
     setTemplateInput(DEMO_TEMPLATE);
   };
 
@@ -643,19 +641,6 @@ export default function DemoPage() {
               <code>{"{{#each items}}"}</code> blocks.
             </p>
             <label className="block space-y-1 text-sm">
-              <span className="font-medium">mode</span>
-              <select
-                className="w-full rounded-md border px-2 py-1.5"
-                value={displayMode}
-                onChange={(e) => setDisplayMode(e.target.value)}
-              >
-                <option value="single">single</option>
-                <option value="list">list</option>
-                <option value="grid">grid</option>
-                <option value="table">table</option>
-              </select>
-            </label>
-            <label className="block space-y-1 text-sm">
               <span className="font-medium">Template content (HTML + mustache tags)</span>
               <textarea
                 className="h-72 w-full rounded-md border p-2 font-mono text-xs"
@@ -681,7 +666,6 @@ export default function DemoPage() {
                   }}
                   key={`display-${runtime.key}`}
                   template={runtime.templateUrl}
-                  mode={displayMode}
                 >
                   <rdf-lens
                     ref={(node) => {

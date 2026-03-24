@@ -151,14 +151,34 @@ ex:PersonShape a sh:NodeShape ;
   display: `
 # &lt;lens-display&gt;
 
-Renders data using HTML templates.
+Renders extracted RDF data using HTML templates with Mustache syntax.
+
+## Attributes
+
+- **template** - URL to HTML template file (required)
+
+## RDF Config Properties
+
+Configuration is provided via the \`config\` property with RDF/Turtle format:
+
+- **drdf:theme** - CSS class hook suffix (adds \`rdf-theme-{value}\` class to container)
+- **drdf:class** - Additional CSS class to apply to the container
+
+Note: theme and class are CSS styling hooks only—customize appearance via CSS selectors targeting \`.rdf-theme-*\` classes.
 
 ## Template Syntax
 
-- **\${data.field}** - Value interpolation
-- **{{field}}** - Mustache-style
-- **{{#field}}** - Conditional
-- **{{#each items}}** - Loop
+Supports Mustache-style template syntax:
+
+- **{{field}}** - Output field value
+- **\${data.field}** - Alternative interpolation syntax
+- **{{{field}}}** - Output unescaped HTML
+- **{{#field}}...{{/field}}** - Conditional block
+- **{{^field}}...{{/field}}** - Inverse conditional
+- **{{#each items}}...{{/each}}** - Loop over array
+- **{{@index}}** - Current loop index
+- **{{this}}** - Current item in loop
+- **{{nested.field}}** - Access nested properties
 
 ## Example Template
 
@@ -166,19 +186,33 @@ Renders data using HTML templates.
 <article class="card">
   <h2>{{name}}</h2>
   {{#email}}
-  <a href="mailto:{{email}}">{{email}}</a>
+  <p>Email: <a href="mailto:{{email}}">{{email}}</a></p>
   {{/email}}
   {{#each friends}}
-  <span>{{name}}</span>
+  <div class="friend">{{name}}</div>
   {{/each}}
 </article>
 \`\`\`
 
-## Attributes
+## Example with RDF Config
 
-- **template** - URL to template file
-- **mode** - Display mode (single, list, grid, table)
-- **theme** - Theme identifier
+\`\`\`html
+<lens-display 
+  template="person-card.html"
+  data-config='@prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .
+[] a drdf:LensDisplayConfig ;
+  drdf:theme "dark" ;
+  drdf:class "compact" .'
+>
+  <rdf-lens config="...">
+    <source-rdf url="data.ttl"></source-rdf>
+  </rdf-lens>
+</lens-display>
+\`\`\`
+
+## Built-in Fallback
+
+If no template is provided, lens-display renders a generic key-value table from the extracted RDF data.
 `,
 };
 
@@ -521,152 +555,6 @@ export default function RDFWebComponentsDemo() {
 
         <Separator className="my-8" />
 
-        {/* Main Content */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Documentation */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Documentation</CardTitle>
-                <CardDescription>
-                  Learn how to use RDF Web Components
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="mb-4">
-                    <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="adapter">source-rdf</TabsTrigger>
-                    <TabsTrigger value="lens">rdf-lens</TabsTrigger>
-                    <TabsTrigger value="display">lens-display</TabsTrigger>
-                  </TabsList>
-
-                  <ScrollArea className="h-[500px]">
-                    <div className="prose prose-sm dark:prose-invert max-w-none p-4">
-                      <ReactMarkdown
-                        components={{
-                          code({ className, children }) {
-                            const language = className?.replace('language-', '') ?? '';
-                            const isInline = !language;
-                            if (isInline) {
-                              return <code>{children}</code>;
-                            }
-                            return (
-                              <pre className="overflow-x-auto rounded-lg bg-slate-100 p-4 text-xs dark:bg-slate-800">
-                                <code className={className}>{children}</code>
-                              </pre>
-                            );
-                          },
-                        }}
-                      >
-                        {documentation[activeTab as keyof typeof documentation]}
-                      </ReactMarkdown>
-                    </div>
-                  </ScrollArea>
-                </Tabs>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Code Samples */}
-          <div className="space-y-6">
-            {/* Live Demo */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ChevronRight className="h-5 w-5 text-green-500" />
-                  Live Demo
-                </CardTitle>
-                <CardDescription>
-                  Data extraction in action
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[200px]">
-                  <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg overflow-x-auto">
-                    {demoOutput || 'Processing...'}
-                  </pre>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-
-            {/* SHACL Shapes */}
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">SHACL Shapes</CardTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => copyToClipboard(sampleShapes, 'shapes')}
-                >
-                  {copied === 'shapes' ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[150px]">
-                  <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg">
-                    {sampleShapes}
-                  </pre>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-
-            {/* Sample Data */}
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">RDF Data</CardTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => copyToClipboard(sampleData, 'data')}
-                >
-                  {copied === 'data' ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[150px]">
-                  <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg">
-                    {sampleData}
-                  </pre>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-
-            {/* Template */}
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Template</CardTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => copyToClipboard(sampleTemplate, 'template')}
-                >
-                  {copied === 'template' ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[100px]">
-                  <pre className="text-xs font-mono bg-slate-100 dark:bg-slate-800 p-3 rounded-lg">
-                    {sampleTemplate}
-                  </pre>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
         <Separator className="my-8" />
 
         {/* Usage Examples */}
@@ -711,12 +599,17 @@ export default function RDFWebComponentsDemo() {
   srdf:cache "indexedDB" .'
     />
   </rdf-lens>
+  <script type="text/turtle" data-lens-display-config="true">
+@prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .
+[] a drdf:LensDisplayConfig ;
+  drdf:class "card" .
+  </script>
 </lens-display>`}
                 </pre>
                 <p className="mb-2 mt-4 text-xs font-semibold text-slate-600 dark:text-slate-400">Live output</p>
                 <div className="rounded-lg border bg-white p-3">
                   {mounted && bundleLoaded ? (
-                    <lens-display template={templateUrl} mode="grid">
+                    <lens-display template={templateUrl}>
                       <rdf-lens config={buildLensConfigRdf({ shapeFile: shapeUrl, shapeClass: 'http://example.org/Person', multiple: true })}>
                         <source-rdf
                           url={dataUrl}
@@ -763,12 +656,18 @@ export default function RDFWebComponentsDemo() {
   srdf:shared true .'
     />
   </rdf-lens>
+  <script type="text/turtle" data-lens-display-config="true">
+@prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .
+[] a drdf:LensDisplayConfig ;
+  drdf:theme "modern" ;
+  drdf:class "compact" .
+  </script>
 </lens-display>`}
                 </pre>
                 <p className="mb-2 mt-4 text-xs font-semibold text-slate-600 dark:text-slate-400">Live output</p>
                 <div className="rounded-lg border bg-white p-3">
                   {mounted && bundleLoaded ? (
-                    <lens-display key="live-static" template={templateUrl} mode="grid">
+                    <lens-display key="live-static" template={templateUrl}>
                       <rdf-lens config={buildLensConfigRdf({ shapeFile: shapeUrl, shapeClass: 'http://example.org/Person', multiple: true })}>
                         <source-rdf
                           url={dataUrl}
@@ -813,12 +712,17 @@ export default function RDFWebComponentsDemo() {
   srdf:depth 3 .'
     />
   </rdf-lens>
+  <script type="text/turtle" data-lens-display-config="true">
+@prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .
+[] a drdf:LensDisplayConfig ;
+  drdf:theme "dark" .
+  </script>
 </lens-display>`}
                 </pre>
                 <p className="mb-2 mt-4 text-xs font-semibold text-slate-600 dark:text-slate-400">Live output</p>
                 <div className="rounded-lg border bg-white p-3">
                   {mounted && bundleLoaded ? (
-                    <lens-display key="live-cbd" template={templateUrl} mode="grid">
+                    <lens-display key="live-cbd" template={templateUrl}>
                       <rdf-lens config={buildLensConfigRdf({
                         shapeFile: shapeUrl,
                         shapeClass: 'http://example.org/Person',
@@ -867,7 +771,7 @@ export default function RDFWebComponentsDemo() {
                 <p className="mb-2 mt-4 text-xs font-semibold text-slate-600 dark:text-slate-400">Live output</p>
                 <div className="rounded-lg border bg-white p-3">
                   {mounted && bundleLoaded ? (
-                    <lens-display template={templateUrl} mode="grid">
+                    <lens-display template={templateUrl}>
                       <rdf-lens config={`@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
 
 [] a lrdf:RdfLensConfig ;

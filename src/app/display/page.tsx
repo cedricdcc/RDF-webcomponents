@@ -10,9 +10,11 @@ import { useState } from 'react';
 
 const attributes = [
   { name: 'template', type: 'string', description: 'URL to template file' },
-  { name: 'mode', type: 'string', default: 'single', description: 'Display mode (single, list, grid, table)' },
-  { name: 'theme', type: 'string', description: 'Theme identifier for styling' },
-  { name: 'class', type: 'string', description: 'CSS classes to apply' },
+];
+
+const configProperties = [
+  { name: 'drdf:theme', type: 'string', description: 'Theme class suffix added as rdf-theme-{value}' },
+  { name: 'drdf:class', type: 'string', description: 'Additional CSS class added to the container' },
 ];
 
 const events = [
@@ -129,7 +131,7 @@ const examples = {
   {{/company}}
 </article>`,
 
-  table: `<!-- Table mode template -->
+  table: `<!-- Table-style template -->
 <table class="data-table">
   <thead>
     <tr>
@@ -178,10 +180,14 @@ const examples = {
   complete: `<!-- Complete usage example -->
 <lens-display 
   template="templates/person-card.html"
-  mode="grid"
-  theme="modern"
-  class="my-4"
 >
+  <script data-lens-display-config="true" type="text/turtle">
+    @prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .
+
+    [] a drdf:LensDisplayConfig ;
+      drdf:theme "modern" ;
+      drdf:class "my-4" .
+  </script>
   <rdf-lens 
     config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
 [] a lrdf:RdfLensConfig ;
@@ -200,7 +206,7 @@ const examples = {
 </lens-display>
 
 <!-- person-card.html template file -->
-<article class="person-card {{theme}}">
+<article class="person-card">
   <header>
     <img src="{{avatar}}" alt="{{name}}" class="avatar" />
     <div class="info">
@@ -240,7 +246,6 @@ const examples = {
 
 const defaultTemplates = {
   card: `<article class="rdf-card">
-  <h3 class="rdf-card-title">{{name}}</h3>
   <dl class="rdf-card-content">
     {{#each _properties}}
     <div class="rdf-card-property">
@@ -250,27 +255,6 @@ const defaultTemplates = {
     {{/each}}
   </dl>
 </article>`,
-  list: `<ul class="rdf-list">
-  {{#each items}}
-  <li class="rdf-list-item">{{name}}</li>
-  {{/each}}
-</ul>`,
-  table: `<table class="rdf-table">
-  <thead>
-    <tr>
-      <th>Property</th>
-      <th>Value</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each _properties}}
-    <tr>
-      <td>{{@key}}</td>
-      <td>{{this}}</td>
-    </tr>
-    {{/each}}
-  </tbody>
-</table>`,
 };
 
 export default function LensDisplayDocs() {
@@ -322,9 +306,10 @@ export default function LensDisplayDocs() {
                 <a href="#overview" className="block text-purple-600 hover:underline">Overview</a>
                 <a href="#syntax" className="block text-slate-600 hover:text-slate-900">Template Syntax</a>
                 <a href="#attributes" className="block text-slate-600 hover:text-slate-900">Attributes</a>
+                <a href="#config" className="block text-slate-600 hover:text-slate-900">RDF Config</a>
                 <a href="#events" className="block text-slate-600 hover:text-slate-900">Events</a>
                 <a href="#examples" className="block text-slate-600 hover:text-slate-900">Examples</a>
-                <a href="#defaults" className="block text-slate-600 hover:text-slate-900">Default Templates</a>
+                <a href="#defaults" className="block text-slate-600 hover:text-slate-900">Built-in Template</a>
                 <a href="#api" className="block text-slate-600 hover:text-slate-900">JavaScript API</a>
               </CardContent>
             </Card>
@@ -352,8 +337,8 @@ export default function LensDisplayDocs() {
                   <li>Mustache-style syntax</li>
                   <li>Conditionals and loops</li>
                   <li>Nested property access</li>
-                  <li>Multiple display modes</li>
-                  <li>Theme support</li>
+                  <li>Built-in key/value fallback template</li>
+                  <li>Theme/class CSS hooks via RDF config</li>
                 </ul>
               </CardContent>
             </Card>
@@ -415,6 +400,48 @@ export default function LensDisplayDocs() {
                     </tbody>
                   </table>
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card id="config">
+              <CardHeader>
+                <CardTitle>RDF Config</CardTitle>
+                <CardDescription>
+                  Styling options are configured through RDF config (template remains the only direct attribute)
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto mb-6">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-2 font-medium">Property</th>
+                        <th className="text-left py-2 font-medium">Type</th>
+                        <th className="text-left py-2 font-medium">Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {configProperties.map(prop => (
+                        <tr key={prop.name} className="border-b">
+                          <td className="py-2"><code>{prop.name}</code></td>
+                          <td className="py-2 text-slate-600">{prop.type}</td>
+                          <td className="py-2 text-slate-600">{prop.description}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <pre className="text-sm bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto">{`@prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .
+
+[] a drdf:LensDisplayConfig ;
+  drdf:theme "dark" ;
+  drdf:class "compact" .`}</pre>
+
+                <p className="mt-4 text-sm text-slate-600">
+                  Note: theme and class only provide CSS hooks. They have visible effect when your page CSS styles
+                  <code className="mx-1">.rdf-theme-*</code> or your custom class name.
+                </p>
               </CardContent>
             </Card>
 
@@ -480,27 +507,15 @@ export default function LensDisplayDocs() {
             {/* Default Templates */}
             <Card id="defaults">
               <CardHeader>
-                <CardTitle>Default Templates</CardTitle>
+                <CardTitle>Built-in Template</CardTitle>
                 <CardDescription>
-                  Built-in templates used when no template URL is specified
+                  Used when no template URL is specified
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Tabs defaultValue="card">
-                  <TabsList className="mb-4">
-                    <TabsTrigger value="card">Card (single)</TabsTrigger>
-                    <TabsTrigger value="list">List</TabsTrigger>
-                    <TabsTrigger value="table">Table</TabsTrigger>
-                  </TabsList>
-
-                  {Object.entries(defaultTemplates).map(([key, code]) => (
-                    <TabsContent key={key} value={key}>
-                      <pre className="text-sm bg-slate-100 dark:bg-slate-800 p-4 rounded-lg overflow-x-auto">
-                        {code}
-                      </pre>
-                    </TabsContent>
-                  ))}
-                </Tabs>
+                <pre className="text-sm bg-slate-100 dark:bg-slate-800 p-4 rounded-lg overflow-x-auto">
+                  {defaultTemplates.card}
+                </pre>
               </CardContent>
             </Card>
 

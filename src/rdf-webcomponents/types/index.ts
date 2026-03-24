@@ -479,16 +479,11 @@ export interface LensDisplayProps {
   // Template
   /** URL to template file */
   template?: string;
+
+  /** Inline RDF config content in the lens-display vocabulary (property use). */
+  config?: string;
   
-  // Display options
-  /** Display mode */
-  mode?: 'single' | 'list' | 'grid' | 'table';
-  
-  // Styling
-  /** Theme identifier */
-  theme?: string;
-  /** CSS class to apply */
-  class?: string;
+  // Styling configured through config RDF
 }
 
 // ============================================================================
@@ -542,7 +537,7 @@ export interface ErrorEvent {
   /** Error message */
   message: string;
   /** Error phase */
-  phase: 'fetch' | 'parse' | 'shape' | 'extract' | 'render';
+  phase: 'fetch' | 'parse' | 'shape' | 'extract' | 'render' | 'config';
   /** Original error */
   error?: Error;
 }

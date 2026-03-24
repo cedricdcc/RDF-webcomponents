@@ -27969,6 +27969,81 @@ var e7 = e5(class extends i5 {
   }
 });
 
+// src/rdf-webcomponents/components/lens-display-config.ts
+var LENS_DISPLAY_NS = "https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#";
+var RDF_TYPE3 = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+var LENS_DISPLAY_CONFIG_TYPE = `${LENS_DISPLAY_NS}LensDisplayConfig`;
+var CONFIG_KEYS3 = /* @__PURE__ */ new Set(["theme", "class"]);
+async function parseLensDisplayConfigRdf(content, format, source) {
+  const parsedQuads = await parseTurtleConfig(content, source, format);
+  const warnings = [];
+  const providedKeys = /* @__PURE__ */ new Set();
+  const config = {};
+  const configSubjects = new Set(
+    parsedQuads.filter((quad3) => quad3.predicate.value === RDF_TYPE3 && quad3.object.value === LENS_DISPLAY_CONFIG_TYPE).map((quad3) => quad3.subject.value)
+  );
+  for (const quad3 of parsedQuads) {
+    if (configSubjects.size > 0 && !configSubjects.has(quad3.subject.value)) {
+      continue;
+    }
+    const predicate2 = quad3.predicate.value;
+    if (!predicate2.startsWith(LENS_DISPLAY_NS)) {
+      continue;
+    }
+    const localName = predicate2.slice(LENS_DISPLAY_NS.length);
+    if (!CONFIG_KEYS3.has(localName)) {
+      warnings.push(`Unknown lens-display property '${localName}' in config RDF`);
+      continue;
+    }
+    providedKeys.add(localName);
+    const value = quad3.object.value;
+    if (localName === "theme") {
+      config.theme = value;
+    }
+    if (localName === "class") {
+      config.class = value;
+    }
+  }
+  return { config, warnings, providedKeys };
+}
+function validateLensDisplayConfig(_config) {
+  return [];
+}
+async function parseTurtleConfig(content, source, format) {
+  if (format && format !== "turtle" && format !== "n-triples" && format !== "n-quads") {
+    throw new Error(`lens-display config supports Turtle-like serializations only. Received '${format}'.`);
+  }
+  const { Parser } = await Promise.resolve().then(() => (init_src(), src_exports));
+  const parser = new Parser({ baseIRI: source });
+  return new Promise((resolve, reject) => {
+    const quads = [];
+    parser.parse(content, (error, quad3) => {
+      if (error) {
+        reject(new Error(`Config parse failed: ${error.message}`));
+        return;
+      }
+      if (!quad3) {
+        resolve(quads);
+        return;
+      }
+      quads.push({
+        subject: serializeTerm2(quad3.subject),
+        predicate: serializeTerm2(quad3.predicate),
+        object: serializeTerm2(quad3.object),
+        graph: quad3.graph ? serializeTerm2(quad3.graph) : void 0
+      });
+    });
+  });
+}
+function serializeTerm2(term) {
+  return {
+    termType: term.termType,
+    value: term.value,
+    datatype: term.datatype?.value,
+    language: term.language
+  };
+}
+
 // src/rdf-webcomponents/components/lens-display.ts
 var TemplateEngine = class {
   constructor() {
@@ -28099,7 +28174,6 @@ var TemplateEngine = class {
 };
 var DEFAULT_CARD_TEMPLATE = `
 <article class="rdf-card">
-  <h3 class="rdf-card-title">{{name}}</h3>
   <dl class="rdf-card-content">
     {{#each _properties}}
     <div class="rdf-card-property">
@@ -28110,42 +28184,17 @@ var DEFAULT_CARD_TEMPLATE = `
   </dl>
 </article>
 `;
-var DEFAULT_LIST_TEMPLATE = `
-<ul class="rdf-list">
-  {{#each items}}
-  <li class="rdf-list-item">
-    {{name}}
-  </li>
-  {{/each}}
-</ul>
-`;
-var DEFAULT_TABLE_TEMPLATE = `
-<table class="rdf-table">
-  <thead>
-    <tr>
-      <th>Property</th>
-      <th>Value</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each _properties}}
-    <tr>
-      <td>{{@key}}</td>
-      <td>{{this}}</td>
-    </tr>
-    {{/each}}
-  </tbody>
-</table>
-`;
 var LensDisplay = class extends i4 {
   constructor() {
     super(...arguments);
-    this.mode = "single";
+    this.config = "";
     this._data = null;
     this._renderedHtml = "";
     this._templateContent = "";
     this._loading = false;
     this._error = null;
+    this._configError = null;
+    this._resolvedConfig = {};
     this._engine = new TemplateEngine();
     this._onShapeProcessed = (event) => {
       const detail = event.detail;
@@ -28197,6 +28246,7 @@ var LensDisplay = class extends i4 {
   // Lifecycle Methods
   // ===========================================================================
   async firstUpdated() {
+    await this._refreshConfiguration();
     await this._loadTemplate();
     if (this._data) {
       this._renderData();
@@ -28204,13 +28254,11 @@ var LensDisplay = class extends i4 {
   }
   async updated(changedProperties) {
     super.updated(changedProperties);
-    if (changedProperties.has("template")) {
-      await this._loadTemplate();
-      if (this._data) {
-        this._renderData();
-      }
+    if (changedProperties.has("config")) {
+      await this._refreshConfiguration();
+      this.requestUpdate();
     }
-    if (changedProperties.has("mode") && !this.template) {
+    if (changedProperties.has("template")) {
       await this._loadTemplate();
       if (this._data) {
         this._renderData();
@@ -28231,12 +28279,11 @@ var LensDisplay = class extends i4 {
   render() {
     const containerClasses = {
       "rdf-container": true,
-      "rdf-grid": this.mode === "grid",
-      [`rdf-theme-${this.theme}`]: !!this.theme,
+      [`rdf-theme-${this._resolvedConfig.theme}`]: !!this._resolvedConfig.theme,
       "rdf-animated": true
     };
-    if (this.class) {
-      containerClasses[this.class] = true;
+    if (this._resolvedConfig.class) {
+      containerClasses[this._resolvedConfig.class] = true;
     }
     return b2`
       <div class=${e7(containerClasses)}>
@@ -28248,11 +28295,11 @@ var LensDisplay = class extends i4 {
           ` : ""}
         </slot>
         
-        <slot name="error" ?hidden=${!this._error}>
-          ${this._error ? b2`
+        <slot name="error" ?hidden=${!(this._configError || this._error)}>
+          ${this._configError || this._error ? b2`
             <div class="rdf-error">
               <strong>Render Error</strong>
-              <p>${this._error}</p>
+              <p>${this._configError || this._error}</p>
             </div>
           ` : ""}
         </slot>
@@ -28267,7 +28314,7 @@ var LensDisplay = class extends i4 {
         
         ${this._renderedHtml ? o6(this._renderedHtml) : ""}
         
-        <slot ?hidden=${this._loading || this._error}></slot>
+        <slot ?hidden=${this._loading || !!(this._configError || this._error)}></slot>
       </div>
     `;
   }
@@ -28301,16 +28348,48 @@ var LensDisplay = class extends i4 {
     }
   }
   _getDefaultTemplate() {
-    switch (this.mode) {
-      case "list":
-        return DEFAULT_LIST_TEMPLATE;
-      case "table":
-        return DEFAULT_TABLE_TEMPLATE;
-      case "grid":
-      case "single":
-      default:
-        return DEFAULT_CARD_TEMPLATE;
+    return DEFAULT_CARD_TEMPLATE;
+  }
+  async _refreshConfiguration() {
+    try {
+      const resolved = await this._resolveConfig();
+      const warnings = [...resolved.warnings, ...validateLensDisplayConfig(resolved.config)];
+      for (const warning of warnings) {
+        console.warn(`[lens-display] ${warning}`);
+      }
+      this._resolvedConfig = resolved.config;
+      this._configError = null;
+    } catch (error) {
+      this._configError = error instanceof Error ? error.message : String(error);
+      this._renderedHtml = "";
+      this._emitEvent("render-error", {
+        message: this._configError,
+        phase: "config",
+        error: error instanceof Error ? error : void 0
+      });
     }
+  }
+  async _resolveConfig() {
+    if (this.config?.trim()) {
+      return parseLensDisplayConfigRdf(this.config, void 0, "inline-config-property");
+    }
+    const inline = this._readInlineConfigScript();
+    if (inline) {
+      return parseLensDisplayConfigRdf(inline.content, inline.format, "inline-config-script");
+    }
+    return { config: {}, warnings: [], providedKeys: /* @__PURE__ */ new Set() };
+  }
+  _readInlineConfigScript() {
+    const script = this.querySelector('script[data-lens-display-config="true"][type]');
+    if (!script || !script.textContent?.trim()) {
+      return null;
+    }
+    const type = script.getAttribute("type")?.toLowerCase() ?? "";
+    const content = script.textContent;
+    if (type.includes("n-triples")) return { content, format: "n-triples" };
+    if (type.includes("n-quads")) return { content, format: "n-quads" };
+    if (type.includes("turtle") || type.includes("ttl")) return { content, format: "turtle" };
+    throw new Error(`Unsupported lens-display config script type '${type}'. Use text/turtle, application/n-triples, or application/n-quads.`);
   }
   _renderData() {
     if (!this._data || !this._templateContent) {
@@ -28321,15 +28400,14 @@ var LensDisplay = class extends i4 {
       return;
     }
     console.group("[lens-display] rendering");
-    console.log("mode:", this.mode, "| data:", this._data);
+    console.log("data:", this._data);
     const startTime = Date.now();
     try {
       let dataToRender;
       if (Array.isArray(this._data)) {
         const preparedItems = this._data.map((item) => this._prepareItem(item));
-        if (this.mode === "grid" || this.mode === "list" || this.mode === "table") {
+        if (this._templateExpectsItemsArray()) {
           dataToRender = { items: preparedItems };
-          console.log(`[lens-display] wrapped array as { items: [${preparedItems.length}] } for mode=${this.mode}`);
         } else {
           dataToRender = preparedItems;
         }
@@ -28368,6 +28446,9 @@ var LensDisplay = class extends i4 {
       prepared._properties = Object.entries(item).filter(([key]) => !key.startsWith("_")).map(([key, value]) => ({ "@key": key, "this": value }));
     }
     return prepared;
+  }
+  _templateExpectsItemsArray() {
+    return /\{\{#each\s+items\}\}/.test(this._templateContent);
   }
   _emitEvent(eventName, detail) {
     const event = new CustomEvent(eventName, {
@@ -28512,14 +28593,8 @@ __decorateClass([
   n4({ type: String, reflect: true })
 ], LensDisplay.prototype, "template", 2);
 __decorateClass([
-  n4({ type: String, reflect: true })
-], LensDisplay.prototype, "mode", 2);
-__decorateClass([
-  n4({ type: String, reflect: true })
-], LensDisplay.prototype, "theme", 2);
-__decorateClass([
-  n4({ type: String, reflect: true })
-], LensDisplay.prototype, "class", 2);
+  n4({ type: String, attribute: false })
+], LensDisplay.prototype, "config", 2);
 __decorateClass([
   r5()
 ], LensDisplay.prototype, "_data", 2);
@@ -28535,6 +28610,9 @@ __decorateClass([
 __decorateClass([
   r5()
 ], LensDisplay.prototype, "_error", 2);
+__decorateClass([
+  r5()
+], LensDisplay.prototype, "_configError", 2);
 LensDisplay = __decorateClass([
   t3("lens-display")
 ], LensDisplay);
@@ -29058,9 +29136,10 @@ var LinkOrchestration = class extends i4 {
     if (!config) {
       return void 0;
     }
-    if (config.mode) display.setAttribute("mode", config.mode);
-    if (config.theme) display.setAttribute("theme", config.theme);
-    if (config.class) display.setAttribute("class", config.class);
+    const rdfConfig = this._buildDisplayConfigRdf(config);
+    if (rdfConfig) {
+      display.config = rdfConfig;
+    }
     if (config.templateInline && !config.template) {
       const blob = new Blob([config.templateInline], { type: "text/html" });
       const url = URL.createObjectURL(blob);
@@ -29071,6 +29150,20 @@ var LinkOrchestration = class extends i4 {
       display.setAttribute("template", config.template);
     }
     return void 0;
+  }
+  _buildDisplayConfigRdf(config) {
+    const triples = [];
+    if (config.theme) triples.push(`drdf:theme ${this._ttlString(config.theme)}`);
+    if (config.class) triples.push(`drdf:class ${this._ttlString(config.class)}`);
+    if (triples.length === 0) {
+      return "";
+    }
+    return [
+      "@prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .",
+      "",
+      `[] a drdf:LensDisplayConfig ;
+  ${triples.join(" ;\n  ")} .`
+    ].join("\n");
   }
   _awaitPipeline(display) {
     return new Promise((resolve, reject) => {

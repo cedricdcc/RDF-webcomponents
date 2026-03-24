@@ -242,9 +242,15 @@ Renders extracted data using HTML templates.
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `template` | string | - | URL to template file |
-| `mode` | string | `single` | Display mode (`single`, `list`, `grid`, `table`) |
-| `theme` | string | - | Theme identifier |
-| `class` | string | - | CSS classes to apply |
+
+#### RDF Config Properties
+
+Use inline RDF config script (`script[data-lens-display-config="true"]`) or set the `config` property from JavaScript.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `drdf:theme` | string | Adds `rdf-theme-{value}` CSS hook class |
+| `drdf:class` | string | Adds an extra CSS class to the container |
 
 #### Events
 
@@ -623,7 +629,14 @@ lens-display {
 ### Theme Support
 
 ```html
-<lens-display template="card.html" theme="dark">
+<lens-display template="card.html">
+  <script data-lens-display-config="true" type="text/turtle">
+    @prefix drdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/lens-display.ttl#> .
+
+    [] a drdf:LensDisplayConfig ;
+      drdf:theme "dark" ;
+      drdf:class "compact" .
+  </script>
   <rdf-lens config='@prefix lrdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/rdf-lens.ttl#> .
 [] a lrdf:RdfLensConfig ;
   lrdf:shapeFile "shapes.ttl" .'>

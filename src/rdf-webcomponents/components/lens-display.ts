@@ -30,7 +30,13 @@ import type {
   LensDisplayProps,
   RenderCompleteEvent,
   ErrorEvent as RdfErrorEvent,
+  RdfFormat,
 } from '../types';
+import {
+  type LensDisplayConfig,
+  parseLensDisplayConfigRdf,
+  validateLensDisplayConfig,
+} from './lens-display-config';
 
 // ============================================================================
 // Template Engine
@@ -218,7 +224,6 @@ class TemplateEngine {
  */
 const DEFAULT_CARD_TEMPLATE = `
 <article class="rdf-card">
-  <h3 class="rdf-card-title">{{name}}</h3>
   <dl class="rdf-card-content">
     {{#each _properties}}
     <div class="rdf-card-property">
@@ -228,41 +233,6 @@ const DEFAULT_CARD_TEMPLATE = `
     {{/each}}
   </dl>
 </article>
-`;
-
-/**
- * Default list template
- */
-const DEFAULT_LIST_TEMPLATE = `
-<ul class="rdf-list">
-  {{#each items}}
-  <li class="rdf-list-item">
-    {{name}}
-  </li>
-  {{/each}}
-</ul>
-`;
-
-/**
- * Default table template
- */
-const DEFAULT_TABLE_TEMPLATE = `
-<table class="rdf-table">
-  <thead>
-    <tr>
-      <th>Property</th>
-      <th>Value</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each _properties}}
-    <tr>
-      <td>{{@key}}</td>
-      <td>{{this}}</td>
-    </tr>
-    {{/each}}
-  </tbody>
-</table>
 `;
 
 // ============================================================================
@@ -416,17 +386,9 @@ export class LensDisplay extends LitElement implements LensDisplayProps {
   @property({ type: String, reflect: true })
   template?: string;
 
-  /** Display mode */
-  @property({ type: String, reflect: true })
-  mode?: 'single' | 'list' | 'grid' | 'table' = 'single';
-
-  /** Theme identifier */
-  @property({ type: String, reflect: true })
-  theme?: string;
-
-  /** CSS class to apply */
-  @property({ type: String, reflect: true })
-  override class?: string;
+  /** Inline RDF config content in the lens-display vocabulary (property-only, not attribute). */
+  @property({ type: String, attribute: false })
+  config = '';
 
   // ===========================================================================
   // Internal State
@@ -446,6 +408,11 @@ export class LensDisplay extends LitElement implements LensDisplayProps {
 
   @state()
   private _error: string | null = null;
+
+  @state()
+  private _configError: string | null = null;
+
+  private _resolvedConfig: LensDisplayConfig = {};
 
   private _engine = new TemplateEngine();
 
@@ -489,7 +456,9 @@ export class LensDisplay extends LitElement implements LensDisplayProps {
   // ===========================================================================
 
   protected override async firstUpdated(): Promise<void> {
-    // Always initialize template content (custom template or default by mode).
+    await this._refreshConfiguration();
+
+    // Always initialize template content (custom template or the default template).
     await this._loadTemplate();
 
     // If data arrived before firstUpdated (possible with fast child updates),
@@ -502,6 +471,11 @@ export class LensDisplay extends LitElement implements LensDisplayProps {
   protected override async updated(changedProperties: Map<string, any>): Promise<void> {
     super.updated(changedProperties);
 
+    if (changedProperties.has('config')) {
+      await this._refreshConfiguration();
+      this.requestUpdate();
+    }
+
     if (changedProperties.has('template')) {
       await this._loadTemplate();
       if (this._data) {
@@ -509,13 +483,6 @@ export class LensDisplay extends LitElement implements LensDisplayProps {
       }
     }
 
-    // Recompute default template when mode changes and no explicit template is set.
-    if (changedProperties.has('mode') && !this.template) {
-      await this._loadTemplate();
-      if (this._data) {
-        this._renderData();
-      }
-    }
   }
 
   override disconnectedCallback(): void {
@@ -536,13 +503,12 @@ export class LensDisplay extends LitElement implements LensDisplayProps {
   override render() {
     const containerClasses = {
       'rdf-container': true,
-      'rdf-grid': this.mode === 'grid',
-      [`rdf-theme-${this.theme}`]: !!this.theme,
+      [`rdf-theme-${this._resolvedConfig.theme}`]: !!this._resolvedConfig.theme,
       'rdf-animated': true,
     };
 
-    if (this.class) {
-      containerClasses[this.class] = true;
+    if (this._resolvedConfig.class) {
+      containerClasses[this._resolvedConfig.class] = true;
     }
 
     return html`
@@ -555,11 +521,11 @@ export class LensDisplay extends LitElement implements LensDisplayProps {
           ` : ''}
         </slot>
         
-        <slot name="error" ?hidden=${!this._error}>
-          ${this._error ? html`
+        <slot name="error" ?hidden=${!(this._configError || this._error)}>
+          ${(this._configError || this._error) ? html`
             <div class="rdf-error">
               <strong>Render Error</strong>
-              <p>${this._error}</p>
+              <p>${this._configError || this._error}</p>
             </div>
           ` : ''}
         </slot>
@@ -574,7 +540,7 @@ export class LensDisplay extends LitElement implements LensDisplayProps {
         
         ${this._renderedHtml ? unsafeHTML(this._renderedHtml) : ''}
         
-        <slot ?hidden=${this._loading || this._error}></slot>
+        <slot ?hidden=${this._loading || !!(this._configError || this._error)}></slot>
       </div>
     `;
   }
@@ -585,7 +551,7 @@ export class LensDisplay extends LitElement implements LensDisplayProps {
 
   private async _loadTemplate(): Promise<void> {
     if (!this.template) {
-      // Use default template based on mode
+      // Use the single default key/value template
       this._templateContent = this._getDefaultTemplate();
       return;
     }
@@ -616,16 +582,62 @@ export class LensDisplay extends LitElement implements LensDisplayProps {
   }
 
   private _getDefaultTemplate(): string {
-    switch (this.mode) {
-      case 'list':
-        return DEFAULT_LIST_TEMPLATE;
-      case 'table':
-        return DEFAULT_TABLE_TEMPLATE;
-      case 'grid':
-      case 'single':
-      default:
-        return DEFAULT_CARD_TEMPLATE;
+    return DEFAULT_CARD_TEMPLATE;
+  }
+
+  private async _refreshConfiguration(): Promise<void> {
+    try {
+      const resolved = await this._resolveConfig();
+      const warnings = [...resolved.warnings, ...validateLensDisplayConfig(resolved.config)];
+
+      for (const warning of warnings) {
+        console.warn(`[lens-display] ${warning}`);
+      }
+
+      this._resolvedConfig = resolved.config;
+      this._configError = null;
+    } catch (error) {
+      this._configError = error instanceof Error ? error.message : String(error);
+      this._renderedHtml = '';
+      this._emitEvent('render-error', {
+        message: this._configError,
+        phase: 'config',
+        error: error instanceof Error ? error : undefined,
+      });
     }
+  }
+
+  private async _resolveConfig(): Promise<{
+    config: LensDisplayConfig;
+    warnings: string[];
+    providedKeys: Set<string>;
+  }> {
+    if (this.config?.trim()) {
+      return parseLensDisplayConfigRdf(this.config, undefined, 'inline-config-property');
+    }
+
+    const inline = this._readInlineConfigScript();
+    if (inline) {
+      return parseLensDisplayConfigRdf(inline.content, inline.format, 'inline-config-script');
+    }
+
+    return { config: {}, warnings: [], providedKeys: new Set<string>() };
+  }
+
+  private _readInlineConfigScript(): { content: string; format?: RdfFormat } | null {
+    const script = this.querySelector('script[data-lens-display-config="true"][type]');
+    if (!script || !script.textContent?.trim()) {
+      return null;
+    }
+
+    const type = script.getAttribute('type')?.toLowerCase() ?? '';
+    const content = script.textContent;
+
+    if (type.includes('n-triples')) return { content, format: 'n-triples' };
+    if (type.includes('n-quads')) return { content, format: 'n-quads' };
+    if (type.includes('turtle') || type.includes('ttl')) return { content, format: 'turtle' };
+
+    throw new Error(`Unsupported lens-display config script type '${type}'. Use text/turtle, application/n-triples, or application/n-quads.`);
   }
 
   private _renderData(): void {
@@ -636,7 +648,7 @@ export class LensDisplay extends LitElement implements LensDisplayProps {
     }
 
     console.group('[lens-display] rendering');
-    console.log('mode:', this.mode, '| data:', this._data);
+    console.log('data:', this._data);
 
     const startTime = Date.now();
 
@@ -647,14 +659,11 @@ export class LensDisplay extends LitElement implements LensDisplayProps {
       if (Array.isArray(this._data)) {
         const preparedItems = this._data.map(item => this._prepareItem(item));
 
-        // For grid/list/table modes the template is expected to iterate over
-        // an `items` array (e.g. {{#each items}}). Wrap the array so the
-        // template engine receives a single object with an `items` key.
-        if (this.mode === 'grid' || this.mode === 'list' || this.mode === 'table') {
+        // Backward-compatible behavior for templates like person-card.html
+        // that iterate over {{#each items}}.
+        if (this._templateExpectsItemsArray()) {
           dataToRender = { items: preparedItems };
-          console.log(`[lens-display] wrapped array as { items: [${preparedItems.length}] } for mode=${this.mode}`);
         } else {
-          // 'single': render template once per item
           dataToRender = preparedItems;
         }
       } else {
@@ -708,6 +717,10 @@ export class LensDisplay extends LitElement implements LensDisplayProps {
     }
 
     return prepared;
+  }
+
+  private _templateExpectsItemsArray(): boolean {
+    return /\{\{#each\s+items\}\}/.test(this._templateContent);
   }
 
   private _onShapeProcessed = (event: CustomEvent): void => {
