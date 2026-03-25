@@ -550,6 +550,30 @@ export default function RDFWebComponentsDemo() {
                 </CardContent>
               </Card>
             </Link>
+
+            <Link href="/ai-playground" className="block group">
+              <Card className="hover:shadow-lg transition-all duration-300 hover:border-rose-400 dark:hover:border-rose-600 cursor-pointer h-full">
+                <CardHeader>
+                  <div className="h-12 w-12 rounded-lg bg-rose-100 dark:bg-rose-900 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Zap className="h-6 w-6 text-rose-600 dark:text-rose-400" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">AI RDF Playground</CardTitle>
+                    <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-rose-500 transition-colors" />
+                  </div>
+                  <CardDescription>
+                    OpenRouter-powered guided flow for source-rdf, rdf-lens, and lens-display
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="outline" className="text-xs">OpenRouter</Badge>
+                    <Badge variant="outline" className="text-xs">Top 5 Free Models</Badge>
+                    <Badge variant="outline" className="text-xs">Diff Review</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </section>
 
