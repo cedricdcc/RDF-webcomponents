@@ -3,7 +3,7 @@
 RDF Web Components is a framework-agnostic web component stack for loading RDF, extracting shape-based data, and rendering it in templates.
 
 It provides four components that can run independently or as a pipeline:
-- source-rdf: fetches and parses RDF data.
+- source-rdf: fetches and parses RDF data (including wrx-assisted URI discovery).
 - rdf-lens: applies SHACL-like extraction with rdf-lens.
 - lens-display: renders extracted data into HTML templates.
 - link-orchestration: auto-mounts the pipeline on matched links.

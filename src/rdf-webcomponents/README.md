@@ -45,6 +45,7 @@ bun add rdf-webcomponents
 ### `<source-rdf>`
 
 Fetches and parses RDF data from various sources.
+When `wrx` is available, URI retrieval first attempts wrx-based RDF discovery before direct fetch fallback.
 
 #### Supported Formats
 
