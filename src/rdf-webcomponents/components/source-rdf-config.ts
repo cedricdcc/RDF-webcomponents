@@ -84,17 +84,19 @@ function normalizeIriValue(value: string): string {
 
 function normalizeSparqlIri(value: string, fieldName: string): string {
   const normalized = normalizeIriValue(value);
+  const disallowedIriChars = new RegExp('[\\u0000-\\u0020<>"{}|\\\\^`]');
+  const iriSchemePattern = /^[A-Za-z](?:[A-Za-z0-9+.-]*[A-Za-z0-9])?:/;
 
   if (!normalized) {
     throw new Error(`${fieldName} must be a valid absolute IRI`);
   }
 
   // SPARQL IRIREF disallows control chars and these delimiter characters.
-  if (/[\u0000-\u0020<>"{}|\\^`]/.test(normalized)) {
+  if (disallowedIriChars.test(normalized)) {
     throw new Error(`${fieldName} must be a valid absolute IRI`);
   }
 
-  if (!/^[A-Za-z][A-Za-z0-9+.-]*:/.test(normalized)) {
+  if (!iriSchemePattern.test(normalized)) {
     throw new Error(`${fieldName} must be a valid absolute IRI`);
   }
 
