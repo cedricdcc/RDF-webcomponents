@@ -78,7 +78,7 @@ function parseHeadersLiteral(value: string): Record<string, string> {
 
 function normalizeIriValue(value: string): string {
   const trimmed = value.trim();
-  const wrappedIriMatch = trimmed.match(/^<([^<>]+)>$/);
+  const wrappedIriMatch = trimmed.match(/^<([^<>\s]+)>$/);
   return wrappedIriMatch ? wrappedIriMatch[1] : trimmed;
 }
 
@@ -233,7 +233,7 @@ export function validateSourceRdfConfig(config: SourceRdfConfig, providedKeys: S
 export function buildSparqlQuery(strategy: DataSourceStrategy, config: SourceRdfConfig): string {
   if (strategy === 'cbd') {
     if (!config.subject?.trim()) {
-      throw new Error('cbd strategy requires subject');
+      throw new Error('CBD strategy requires a non-empty subject field');
     }
     return buildCbdConstructQuery(config.subject, config.depth ?? 2);
   }
@@ -247,7 +247,7 @@ export function buildSparqlQuery(strategy: DataSourceStrategy, config: SourceRdf
   }
 
   if (!config.subject?.trim()) {
-    throw new Error('sparql strategy requires subject when subjectQuery and subjectClass are not provided');
+    throw new Error('SPARQL strategy requires either subject, subjectQuery, or subjectClass');
   }
 
   return `DESCRIBE <${normalizeIriValue(config.subject)}>`;
