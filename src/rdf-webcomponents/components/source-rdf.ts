@@ -13,6 +13,7 @@ import type {
   TriplestoreReadyEvent,
 } from '../types';
 import { serializeQuads, parseRdf, detectFormat } from '../core/worker/parsers';
+import { fetchRdfWithWrxFallback } from './source-rdf-fetch';
 import {
   buildSparqlQuery,
   type SourceRdfConfig,
@@ -191,17 +192,10 @@ export class SourceRdf extends LitElement implements SourceRdfProps {
       let format = merged.format;
 
       if (strategy === 'file') {
-        const response = await fetch(sourceUrl, {
-          headers: {
-            Accept: 'text/turtle,application/n-triples,application/n-quads,application/rdf+xml,application/ld+json,text/html',
-            ...headers,
-          },
-        });
-        if (!response.ok) {
-          throw new Error(`Failed to fetch ${sourceUrl}: ${response.status} ${response.statusText}`);
-        }
-        content = await response.text();
-        format = this._resolveResponseFormat(format, sourceUrl, content, response.headers.get('Content-Type'));
+        const result = await fetchRdfWithWrxFallback(sourceUrl, headers);
+        content = result.content;
+        sourceUrl = result.url;
+        format = this._resolveResponseFormat(format, sourceUrl, content, result.contentType);
       } else {
         const sparqlQuery = buildSparqlQuery(strategy, merged);
         content = await this._executeSparqlConstruct(sourceUrl, sparqlQuery, headers);
