@@ -79,7 +79,7 @@ function parseHeadersLiteral(value: string): Record<string, string> {
 function normalizeIriValue(value: string): string {
   const trimmed = value.trim();
   const wrappedIriMatch = trimmed.match(/^<([^<>]+)>$/);
-  return wrappedIriMatch ? wrappedIriMatch[1] : value;
+  return wrappedIriMatch ? wrappedIriMatch[1] : trimmed;
 }
 
 function readIriLikeValue(term: { termType: string; value: string }): string {
@@ -232,7 +232,10 @@ export function validateSourceRdfConfig(config: SourceRdfConfig, providedKeys: S
 
 export function buildSparqlQuery(strategy: DataSourceStrategy, config: SourceRdfConfig): string {
   if (strategy === 'cbd') {
-    return buildCbdConstructQuery(config.subject!, config.depth ?? 2);
+    if (!config.subject?.trim()) {
+      throw new Error('cbd strategy requires subject');
+    }
+    return buildCbdConstructQuery(config.subject, config.depth ?? 2);
   }
 
   if (config.subjectQuery) {
@@ -243,7 +246,11 @@ export function buildSparqlQuery(strategy: DataSourceStrategy, config: SourceRdf
     return `CONSTRUCT { ?s ?p ?o } WHERE { ?s a <${normalizeIriValue(config.subjectClass)}> . ?s ?p ?o . }`;
   }
 
-  return `DESCRIBE <${normalizeIriValue(config.subject!)}>`;
+  if (!config.subject?.trim()) {
+    throw new Error('sparql strategy requires subject when subjectQuery and subjectClass are not provided');
+  }
+
+  return `DESCRIBE <${normalizeIriValue(config.subject)}>`;
 }
 
 export function buildCbdConstructQuery(subject: string, depth: number): string {
