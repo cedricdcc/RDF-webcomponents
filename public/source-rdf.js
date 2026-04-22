@@ -23283,6 +23283,49 @@ function serializeQuads(quads) {
   return quads.map(serializeQuad);
 }
 
+// src/rdf-webcomponents/components/source-rdf-fetch.ts
+var RDF_ACCEPT = "text/turtle,application/n-triples,application/n-quads,application/rdf+xml,application/ld+json,text/html";
+var wrxExtractorPromise = null;
+async function getWrxExtractor() {
+  if (!wrxExtractorPromise) {
+    wrxExtractorPromise = import("wrx").then((module) => {
+      const extractRDF = module.extractRDF;
+      return typeof extractRDF === "function" ? extractRDF : null;
+    }).catch(() => null);
+  }
+  return wrxExtractorPromise;
+}
+async function fetchRdfWithWrxFallback(sourceUrl, headers) {
+  const extractor = await getWrxExtractor();
+  if (extractor) {
+    try {
+      const extracted = await extractor(sourceUrl);
+      if (extracted?.content) {
+        return {
+          content: extracted.content,
+          url: extracted.url ?? sourceUrl,
+          contentType: extracted.format ?? null
+        };
+      }
+    } catch {
+    }
+  }
+  const response = await fetch(sourceUrl, {
+    headers: {
+      Accept: RDF_ACCEPT,
+      ...headers
+    }
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${sourceUrl}: ${response.status} ${response.statusText}`);
+  }
+  return {
+    content: await response.text(),
+    url: response.url || sourceUrl,
+    contentType: response.headers.get("Content-Type")
+  };
+}
+
 // src/rdf-webcomponents/components/source-rdf-config.ts
 var SOURCE_RDF_NS = "https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#";
 var RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
@@ -23331,6 +23374,30 @@ function parseHeadersLiteral(value) {
     throw new Error(`Invalid headers in config RDF: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
+function normalizeIriValue(value) {
+  const trimmed = value.trim();
+  const wrappedIriMatch = trimmed.match(/^<([^<>\s]+)>$/);
+  return wrappedIriMatch ? wrappedIriMatch[1] : trimmed;
+}
+function normalizeSparqlIri(value, fieldName) {
+  const normalized = normalizeIriValue(value);
+  if (!normalized) {
+    throw new Error(`${fieldName} must be a valid absolute IRI`);
+  }
+  if (/[\u0000-\u0020<>"{}|\\^`]/.test(normalized)) {
+    throw new Error(`${fieldName} must be a valid absolute IRI`);
+  }
+  if (!/^[A-Za-z][A-Za-z0-9+.-]*:/.test(normalized)) {
+    throw new Error(`${fieldName} must be a valid absolute IRI`);
+  }
+  return normalized;
+}
+function readIriLikeValue(term) {
+  if (term.termType === "Literal") {
+    return normalizeIriValue(term.value);
+  }
+  return term.value;
+}
 async function parseSourceRdfConfigRdf(content, format, source) {
   const parsedFormat = format ?? detectFormat(source, content);
   const parsed = await parseRdf(content, parsedFormat, source);
@@ -23360,7 +23427,7 @@ async function parseSourceRdfConfigRdf(content, format, source) {
     const value = quad2.object.value;
     switch (localName) {
       case "url":
-        config.url = value;
+        config.url = readIriLikeValue(quad2.object);
         break;
       case "format":
         config.format = value;
@@ -23369,13 +23436,13 @@ async function parseSourceRdfConfigRdf(content, format, source) {
         config.strategy = value;
         break;
       case "subject":
-        config.subject = value;
+        config.subject = readIriLikeValue(quad2.object);
         break;
       case "subjectQuery":
         config.subjectQuery = value;
         break;
       case "subjectClass":
-        config.subjectClass = value;
+        config.subjectClass = readIriLikeValue(quad2.object);
         break;
       case "depth":
         config.depth = Number(value);
@@ -23438,20 +23505,27 @@ function validateSourceRdfConfig(config, providedKeys) {
 }
 function buildSparqlQuery(strategy, config) {
   if (strategy === "cbd") {
+    if (!config.subject?.trim()) {
+      throw new Error("CBD strategy requires a non-empty subject field");
+    }
     return buildCbdConstructQuery(config.subject, config.depth ?? 2);
   }
   if (config.subjectQuery) {
     return config.subjectQuery;
   }
   if (config.subjectClass) {
-    return `CONSTRUCT { ?s ?p ?o } WHERE { ?s a <${config.subjectClass}> . ?s ?p ?o . }`;
+    return `CONSTRUCT { ?s ?p ?o } WHERE { ?s a <${normalizeSparqlIri(config.subjectClass, "subjectClass")}> . ?s ?p ?o . }`;
   }
-  return `DESCRIBE <${config.subject}>`;
+  if (!config.subject?.trim()) {
+    throw new Error("SPARQL strategy requires either subject, subjectQuery, or subjectClass");
+  }
+  return `DESCRIBE <${normalizeSparqlIri(config.subject, "subject")}>`;
 }
 function buildCbdConstructQuery(subject, depth) {
+  const normalizedSubject = normalizeSparqlIri(subject, "subject");
   const safeDepth = Math.max(1, depth);
-  const constructLines = [`<${subject}> ?p ?o .`];
-  const whereLines = [`<${subject}> ?p ?o .`];
+  const constructLines = [`<${normalizedSubject}> ?p ?o .`];
+  const whereLines = [`<${normalizedSubject}> ?p ?o .`];
   for (let i5 = 1; i5 <= safeDepth; i5++) {
     const prevVar = i5 === 1 ? "o" : `o${i5 - 1}`;
     constructLines.push(`?o${i5 - 1} ?p${i5} ?o${i5} .`);
@@ -23539,17 +23613,10 @@ var SourceRdf = class extends i4 {
       let sourceUrl = merged.url;
       let format = merged.format;
       if (strategy === "file") {
-        const response = await fetch(sourceUrl, {
-          headers: {
-            Accept: "text/turtle,application/n-triples,application/n-quads,application/rdf+xml,application/ld+json,text/html",
-            ...headers
-          }
-        });
-        if (!response.ok) {
-          throw new Error(`Failed to fetch ${sourceUrl}: ${response.status} ${response.statusText}`);
-        }
-        content = await response.text();
-        format = this._resolveResponseFormat(format, sourceUrl, content, response.headers.get("Content-Type"));
+        const result = await fetchRdfWithWrxFallback(sourceUrl, headers);
+        content = result.content;
+        sourceUrl = result.url;
+        format = this._resolveResponseFormat(format, sourceUrl, content, result.contentType);
       } else {
         const sparqlQuery = buildSparqlQuery(strategy, merged);
         content = await this._executeSparqlConstruct(sourceUrl, sparqlQuery, headers);
