@@ -24487,7 +24487,11 @@ function subjects() {
 function match(subject2, predicate2, object2) {
   return new BasicLensM((quads) => {
     return quads.filter((x2) => (!subject2 || x2.subject.equals(subject2)) && (!predicate2 || x2.predicate.equals(predicate2)) && (!object2 || x2.object.equals(object2))).map((id) => ({ id, quads }));
-  }).named("match", { subject: subject2 && termToString(subject2), predicate: predicate2 && termToString(predicate2), object: object2 && termToString(object2) });
+  }).named("match", {
+    subject: subject2 && termToString(subject2),
+    predicate: predicate2 && termToString(predicate2),
+    object: object2 && termToString(object2)
+  });
 }
 function empty() {
   return new BasicLens((x2) => x2);
@@ -25635,8 +25639,11 @@ function fieldToLens(field2) {
 }
 function toLens(shape) {
   if (shape.fields.length === 0)
-    return empty().map(() => ({})).named("first", shape.ty.value).named("shape", { id: shape.id, type: termToString2(shape.ty), description: shape.description }).named("id", [], (cont) => termToString2(cont.id));
-  ;
+    return empty().map(() => ({})).named("first", shape.ty.value).named("shape", {
+      id: shape.id,
+      type: termToString2(shape.ty),
+      description: shape.description
+    }).named("id", [], (cont) => termToString2(cont.id));
   const fields = shape.fields.map((field2) => {
     const base = fieldToLens(field2);
     const asField = empty().named("processing field", {
@@ -25650,7 +25657,11 @@ function toLens(shape) {
     });
     return asField;
   });
-  return fields[0].and(...fields.slice(1)).map((xs) => Object.assign({}, ...xs)).named("shape", { id: shape.id, type: termToString2(shape.ty), description: shape.description }).named("id", [], (cont) => termToString2(cont.id));
+  return fields[0].and(...fields.slice(1)).map((xs) => Object.assign({}, ...xs)).named("shape", {
+    id: shape.id,
+    type: termToString2(shape.ty),
+    description: shape.description
+  }).named("id", [], (cont) => termToString2(cont.id));
 }
 function MultiPath(predicate2, min, max) {
   return pred(predicate2).one().then(new BasicLens((c4, ctx) => {
@@ -25796,7 +25807,7 @@ function extractProperty(cache, _subClasses, apply) {
   const pathLens = pred(SHACL.path).one().then(ShaclPath).map((path) => ({
     path
   }));
-  const nameLens = field(SHACL.name, "name");
+  const nameLens = field(SHACL.custom("codeIdentifier"), "name").or(field(SHACL.name, "name"));
   const minCount = optionalField(SHACL.minCount, "minCount", (x2) => +x2);
   const maxCount = optionalField(SHACL.maxCount, "maxCount", (x2) => +x2);
   const dataTypeLens = pred(SHACL.datatype).one().map(({ id }) => ({

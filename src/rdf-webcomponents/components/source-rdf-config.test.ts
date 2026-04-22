@@ -121,6 +121,21 @@ WHERE { ?s ?p ?o }""" .
     const parsed = await parseSourceRdfConfigRdf(rdf, 'turtle', 'test://config.ttl');
     expect(parsed.config.headers).toEqual({ Authorization: 'Bearer token123' });
   });
+
+  it('normalizes wrapped IRI literals for url and selectors', async () => {
+    const rdf = `
+      @prefix srdf: <https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#> .
+      [] a srdf:SourceRdfConfig ;
+        srdf:strategy "sparql" ;
+        srdf:url "<https://example.org/sparql>" ;
+        srdf:subject "<https://example.org/s1>" .
+    `;
+
+    const parsed = await parseSourceRdfConfigRdf(rdf, 'turtle', 'test://config.ttl');
+    expect(parsed.config.url).toBe('https://example.org/sparql');
+    expect(parsed.config.subject).toBe('https://example.org/s1');
+    expect(() => validateSourceRdfConfig(parsed.config, parsed.providedKeys)).not.toThrow();
+  });
 });
 
 describe('source-rdf query builders', () => {
@@ -131,6 +146,25 @@ describe('source-rdf query builders', () => {
     });
 
     expect(query).toContain('DESCRIBE <https://example.org/s1>');
+  });
+
+  it('avoids double-wrapping bracketed subject values', () => {
+    const query = buildSparqlQuery('sparql', {
+      url: 'https://example.org/sparql',
+      subject: '<https://example.org/s1>',
+    });
+
+    expect(query).toContain('DESCRIBE <https://example.org/s1>');
+    expect(query).not.toContain('<<https://example.org/s1>>');
+  });
+
+  it('rejects invalid IRI characters in subject values', () => {
+    expect(() =>
+      buildSparqlQuery('sparql', {
+        url: 'https://example.org/sparql',
+        subject: 'https://example.org/s1> . ?x ?y ?z',
+      }),
+    ).toThrow(/subject must be a valid absolute IRI/i);
   });
 
   it('builds CONSTRUCT query for class extraction', () => {

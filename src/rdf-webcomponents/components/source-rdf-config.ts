@@ -76,6 +76,40 @@ function parseHeadersLiteral(value: string): Record<string, string> {
   }
 }
 
+function normalizeIriValue(value: string): string {
+  const trimmed = value.trim();
+  const wrappedIriMatch = trimmed.match(/^<([^<>\s]+)>$/);
+  return wrappedIriMatch ? wrappedIriMatch[1] : trimmed;
+}
+
+function normalizeSparqlIri(value: string, fieldName: string): string {
+  const normalized = normalizeIriValue(value);
+  const disallowedIriChars = new RegExp('[\\u0000-\\u0020<>"{}|\\\\^`]');
+  const iriSchemePattern = /^[A-Za-z](?:[A-Za-z0-9+.-]*[A-Za-z0-9])?:/;
+
+  if (!normalized) {
+    throw new Error(`${fieldName} must be a valid absolute IRI`);
+  }
+
+  // SPARQL IRIREF disallows control chars and these delimiter characters.
+  if (disallowedIriChars.test(normalized)) {
+    throw new Error(`${fieldName} must be a valid absolute IRI`);
+  }
+
+  if (!iriSchemePattern.test(normalized)) {
+    throw new Error(`${fieldName} must be a valid absolute IRI`);
+  }
+
+  return normalized;
+}
+
+function readIriLikeValue(term: { termType: string; value: string }): string {
+  if (term.termType === 'Literal') {
+    return normalizeIriValue(term.value);
+  }
+  return term.value;
+}
+
 export async function parseSourceRdfConfigRdf(
   content: string,
   format: RdfFormat | undefined,
@@ -119,7 +153,7 @@ export async function parseSourceRdfConfigRdf(
 
     switch (localName) {
       case 'url':
-        config.url = value;
+        config.url = readIriLikeValue(quad.object);
         break;
       case 'format':
         config.format = value as RdfFormat;
@@ -128,13 +162,13 @@ export async function parseSourceRdfConfigRdf(
         config.strategy = value as DataSourceStrategy;
         break;
       case 'subject':
-        config.subject = value;
+        config.subject = readIriLikeValue(quad.object);
         break;
       case 'subjectQuery':
         config.subjectQuery = value;
         break;
       case 'subjectClass':
-        config.subjectClass = value;
+        config.subjectClass = readIriLikeValue(quad.object);
         break;
       case 'depth':
         config.depth = Number(value);
@@ -219,7 +253,10 @@ export function validateSourceRdfConfig(config: SourceRdfConfig, providedKeys: S
 
 export function buildSparqlQuery(strategy: DataSourceStrategy, config: SourceRdfConfig): string {
   if (strategy === 'cbd') {
-    return buildCbdConstructQuery(config.subject!, config.depth ?? 2);
+    if (!config.subject?.trim()) {
+      throw new Error('CBD strategy requires a non-empty subject field');
+    }
+    return buildCbdConstructQuery(config.subject, config.depth ?? 2);
   }
 
   if (config.subjectQuery) {
@@ -227,16 +264,21 @@ export function buildSparqlQuery(strategy: DataSourceStrategy, config: SourceRdf
   }
 
   if (config.subjectClass) {
-    return `CONSTRUCT { ?s ?p ?o } WHERE { ?s a <${config.subjectClass}> . ?s ?p ?o . }`;
+    return `CONSTRUCT { ?s ?p ?o } WHERE { ?s a <${normalizeSparqlIri(config.subjectClass, 'subjectClass')}> . ?s ?p ?o . }`;
   }
 
-  return `DESCRIBE <${config.subject}>`;
+  if (!config.subject?.trim()) {
+    throw new Error('SPARQL strategy requires either subject, subjectQuery, or subjectClass');
+  }
+
+  return `DESCRIBE <${normalizeSparqlIri(config.subject, 'subject')}>`;
 }
 
 export function buildCbdConstructQuery(subject: string, depth: number): string {
+  const normalizedSubject = normalizeSparqlIri(subject, 'subject');
   const safeDepth = Math.max(1, depth);
-  const constructLines = [`<${subject}> ?p ?o .`];
-  const whereLines = [`<${subject}> ?p ?o .`];
+  const constructLines = [`<${normalizedSubject}> ?p ?o .`];
+  const whereLines = [`<${normalizedSubject}> ?p ?o .`];
 
   for (let i = 1; i <= safeDepth; i++) {
     const prevVar = i === 1 ? 'o' : `o${i - 1}`;
