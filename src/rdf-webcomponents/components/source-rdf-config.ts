@@ -82,6 +82,25 @@ function normalizeIriValue(value: string): string {
   return wrappedIriMatch ? wrappedIriMatch[1] : trimmed;
 }
 
+function normalizeSparqlIri(value: string, fieldName: string): string {
+  const normalized = normalizeIriValue(value);
+
+  if (!normalized) {
+    throw new Error(`${fieldName} must be a valid absolute IRI`);
+  }
+
+  // SPARQL IRIREF disallows control chars and these delimiter characters.
+  if (/[\u0000-\u0020<>"{}|\\^`]/.test(normalized)) {
+    throw new Error(`${fieldName} must be a valid absolute IRI`);
+  }
+
+  if (!/^[A-Za-z][A-Za-z0-9+.-]*:/.test(normalized)) {
+    throw new Error(`${fieldName} must be a valid absolute IRI`);
+  }
+
+  return normalized;
+}
+
 function readIriLikeValue(term: { termType: string; value: string }): string {
   if (term.termType === 'Literal') {
     return normalizeIriValue(term.value);
@@ -243,18 +262,18 @@ export function buildSparqlQuery(strategy: DataSourceStrategy, config: SourceRdf
   }
 
   if (config.subjectClass) {
-    return `CONSTRUCT { ?s ?p ?o } WHERE { ?s a <${normalizeIriValue(config.subjectClass)}> . ?s ?p ?o . }`;
+    return `CONSTRUCT { ?s ?p ?o } WHERE { ?s a <${normalizeSparqlIri(config.subjectClass, 'subjectClass')}> . ?s ?p ?o . }`;
   }
 
   if (!config.subject?.trim()) {
     throw new Error('SPARQL strategy requires either subject, subjectQuery, or subjectClass');
   }
 
-  return `DESCRIBE <${normalizeIriValue(config.subject)}>`;
+  return `DESCRIBE <${normalizeSparqlIri(config.subject, 'subject')}>`;
 }
 
 export function buildCbdConstructQuery(subject: string, depth: number): string {
-  const normalizedSubject = normalizeIriValue(subject);
+  const normalizedSubject = normalizeSparqlIri(subject, 'subject');
   const safeDepth = Math.max(1, depth);
   const constructLines = [`<${normalizedSubject}> ?p ?o .`];
   const whereLines = [`<${normalizedSubject}> ?p ?o .`];

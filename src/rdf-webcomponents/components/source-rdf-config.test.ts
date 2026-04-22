@@ -158,6 +158,15 @@ describe('source-rdf query builders', () => {
     expect(query).not.toContain('<<https://example.org/s1>>');
   });
 
+  it('rejects invalid IRI characters in subject values', () => {
+    expect(() =>
+      buildSparqlQuery('sparql', {
+        url: 'https://example.org/sparql',
+        subject: 'https://example.org/s1> . ?x ?y ?z',
+      }),
+    ).toThrow(/subject must be a valid absolute IRI/i);
+  });
+
   it('builds CONSTRUCT query for class extraction', () => {
     const query = buildSparqlQuery('sparql', {
       url: 'https://example.org/sparql',
