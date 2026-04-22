@@ -35,7 +35,7 @@ export async function fetchRdfWithWrxFallback(
       if (extracted?.content) {
         return {
           content: extracted.content,
-          url: extracted.url || sourceUrl,
+          url: extracted.url ?? sourceUrl,
           contentType: extracted.format ?? null,
         };
       }
