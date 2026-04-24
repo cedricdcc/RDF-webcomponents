@@ -6,9 +6,28 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
+import Script from 'next/script';
 import Link from 'next/link';
 import { ArrowLeft, Database, Copy, Check, ExternalLink } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+const rawBasePath = process.env.NEXT_PUBLIC_BASE_PATH?.trim() ?? '';
+const basePath = rawBasePath
+  ? rawBasePath.startsWith('/')
+    ? rawBasePath
+    : `/${rawBasePath}`
+  : '';
+
+const withBasePath = (path: string) => `${basePath}${path}`;
+const WEB_COMPONENTS_VERSION = '20260311-1';
+
+type DemoSourceRdfElement = HTMLElement & {
+  url?: string;
+  quads?: unknown[];
+  quadCount?: number;
+  reload?: () => Promise<void>;
+};
 
 const formats = [
   { name: 'Turtle', ext: '.ttl', mime: 'text/turtle' },
@@ -102,6 +121,15 @@ const examples = {
 
 export default function SourceRdfDocs() {
   const [copied, setCopied] = useState<string | null>(null);
+  const [bundleLoaded, setBundleLoaded] = useState(false);
+  const [bundleError, setBundleError] = useState(false);
+  const [demoUri, setDemoUri] = useState(withBasePath('/demo/people.ttl'));
+  const [demoLoading, setDemoLoading] = useState(false);
+  const [demoError, setDemoError] = useState<string | null>(null);
+  const [demoQuadCount, setDemoQuadCount] = useState(0);
+  const [demoQuads, setDemoQuads] = useState<unknown[]>([]);
+  const [demoHasRun, setDemoHasRun] = useState(false);
+  const sourceDemoRef = useRef<DemoSourceRdfElement | null>(null);
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -109,8 +137,81 @@ export default function SourceRdfDocs() {
     setTimeout(() => setCopied(null), 2000);
   };
 
+  useEffect(() => {
+    if (!bundleLoaded || !sourceDemoRef.current) {
+      return;
+    }
+
+    const adapter = sourceDemoRef.current;
+
+    const onLoading = () => {
+      setDemoLoading(true);
+      setDemoError(null);
+    };
+
+    const onReady = (event: Event) => {
+      const detail = (event as CustomEvent<{ quadCount?: number }>).detail;
+      setDemoLoading(false);
+      setDemoError(null);
+      setDemoHasRun(true);
+      setDemoQuadCount(detail?.quadCount ?? adapter.quadCount ?? adapter.quads?.length ?? 0);
+      setDemoQuads(adapter.quads ?? []);
+    };
+
+    const onError = (event: Event) => {
+      const detail = (event as CustomEvent<{ message?: string }>).detail;
+      setDemoLoading(false);
+      setDemoError(detail.message ?? 'Unable to load RDF data from this URI.');
+      setDemoQuadCount(0);
+      setDemoQuads([]);
+      setDemoHasRun(true);
+    };
+
+    adapter.addEventListener('triplestore-loading', onLoading);
+    adapter.addEventListener('triplestore-ready', onReady);
+    adapter.addEventListener('triplestore-error', onError);
+
+    return () => {
+      adapter.removeEventListener('triplestore-loading', onLoading);
+      adapter.removeEventListener('triplestore-ready', onReady);
+      adapter.removeEventListener('triplestore-error', onError);
+    };
+  }, [bundleLoaded]);
+
+  const runDemo = async () => {
+    const trimmed = demoUri.trim();
+    if (!trimmed || !sourceDemoRef.current) {
+      return;
+    }
+
+    setDemoLoading(true);
+    setDemoError(null);
+    setDemoQuadCount(0);
+    setDemoQuads([]);
+    setDemoHasRun(false);
+
+    const adapter = sourceDemoRef.current;
+
+    if (adapter.url === trimmed) {
+      if (typeof adapter.reload === 'function') {
+        await adapter.reload();
+      }
+      return;
+    }
+
+    // Updating url triggers one fetch via source-rdf.updated().
+    adapter.setAttribute('url', trimmed);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
+      <Script
+        type="module"
+        src={withBasePath(`/rdf-webcomponents.js?v=${WEB_COMPONENTS_VERSION}`)}
+        strategy="afterInteractive"
+        onLoad={() => setBundleLoaded(true)}
+        onError={() => setBundleError(true)}
+      />
       <header className="border-b bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
@@ -151,6 +252,7 @@ export default function SourceRdfDocs() {
                 <a href="#strategies" className="block text-slate-600 hover:text-slate-900">Data Strategies</a>
                 <a href="#attributes" className="block text-slate-600 hover:text-slate-900">Attributes</a>
                 <a href="#events" className="block text-slate-600 hover:text-slate-900">Events</a>
+                <a href="#demo" className="block text-slate-600 hover:text-slate-900">URI Demo</a>
                 <a href="#examples" className="block text-slate-600 hover:text-slate-900">Examples</a>
                 <a href="#api" className="block text-slate-600 hover:text-slate-900">JavaScript API</a>
               </CardContent>
@@ -299,6 +401,65 @@ export default function SourceRdfDocs() {
                     </div>
                   ))}
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card id="demo">
+              <CardHeader>
+                <CardTitle>Try It With Your Own URI</CardTitle>
+                <CardDescription>
+                  Enter an RDF URI and inspect the returned quads from <code>&lt;source-rdf&gt;</code>.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <source-rdf ref={sourceDemoRef} hidden></source-rdf>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <Input
+                    value={demoUri}
+                    onChange={(event) => setDemoUri(event.target.value)}
+                    placeholder="https://example.org/data.ttl"
+                    aria-label="RDF URI"
+                  />
+                  <Button
+                    onClick={runDemo}
+                    disabled={!bundleLoaded || bundleError || demoLoading || !demoUri.trim()}
+                  >
+                    {demoLoading ? 'Loading...' : 'Load Quads'}
+                  </Button>
+                </div>
+
+                {bundleError ? (
+                  <p className="text-sm text-red-600">
+                    Failed to load <code>rdf-webcomponents.js</code>. Rebuild it and refresh this page.
+                  </p>
+                ) : !bundleLoaded ? (
+                  <p className="text-sm text-slate-500">Loading web component bundle...</p>
+                ) : null}
+
+                {demoError && (
+                  <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                    {demoError}
+                  </div>
+                )}
+
+                {!demoError && !demoLoading && demoHasRun && (
+                  <div className="space-y-2">
+                    <p className="text-sm text-slate-600">
+                      Loaded <span className="font-semibold text-slate-900">{demoQuadCount}</span> quads.
+                    </p>
+                    {demoQuads.length > 0 ? (
+                      <ScrollArea className="h-[280px] rounded-lg border bg-slate-950 p-4">
+                        <pre className="text-xs text-slate-100 whitespace-pre-wrap break-all">
+                          {JSON.stringify(demoQuads, null, 2)}
+                        </pre>
+                      </ScrollArea>
+                    ) : (
+                      <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+                        Request succeeded but no quads were returned.
+                      </div>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
 

@@ -32,6 +32,7 @@ export async function fetchRdfWithWrxFallback(
   if (extractor) {
     try {
       const extracted = await extractor(sourceUrl);
+      console.log(`[source-rdf] Attempted wrx extraction for ${sourceUrl}, success: ${!!extracted}`);
       if (extracted?.content) {
         return {
           content: extracted.content,
@@ -41,6 +42,7 @@ export async function fetchRdfWithWrxFallback(
       }
     } catch {
       // Fall back to direct fetch when wrx extraction fails.
+      console.warn(`wrx extraction failed for ${sourceUrl}, falling back to direct fetch.`);
     }
   }
 

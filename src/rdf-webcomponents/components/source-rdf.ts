@@ -193,6 +193,7 @@ export class SourceRdf extends LitElement implements SourceRdfProps {
 
       if (strategy === 'file') {
         const result = await fetchRdfWithWrxFallback(sourceUrl, headers);
+        console.log(`[source-rdf] Fetched RDF content from ${result.url} with format ${result.contentType}`);
         content = result.content;
         sourceUrl = result.url;
         format = this._resolveResponseFormat(format, sourceUrl, content, result.contentType);

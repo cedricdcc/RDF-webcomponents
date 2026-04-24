@@ -26971,6 +26971,51 @@ function serializeQuads(quads) {
   return quads.map(serializeQuad);
 }
 
+// src/rdf-webcomponents/components/source-rdf-fetch.ts
+var RDF_ACCEPT = "text/turtle,application/n-triples,application/n-quads,application/rdf+xml,application/ld+json,text/html";
+var wrxExtractorPromise = null;
+async function getWrxExtractor() {
+  if (!wrxExtractorPromise) {
+    wrxExtractorPromise = import("wrx").then((module) => {
+      const extractRDF = module.extractRDF;
+      return typeof extractRDF === "function" ? extractRDF : null;
+    }).catch(() => null);
+  }
+  return wrxExtractorPromise;
+}
+async function fetchRdfWithWrxFallback(sourceUrl, headers) {
+  const extractor = await getWrxExtractor();
+  if (extractor) {
+    try {
+      const extracted = await extractor(sourceUrl);
+      console.log(`[source-rdf] Attempted wrx extraction for ${sourceUrl}, success: ${!!extracted}`);
+      if (extracted?.content) {
+        return {
+          content: extracted.content,
+          url: extracted.url ?? sourceUrl,
+          contentType: extracted.format ?? null
+        };
+      }
+    } catch {
+      console.warn(`wrx extraction failed for ${sourceUrl}, falling back to direct fetch.`);
+    }
+  }
+  const response = await fetch(sourceUrl, {
+    headers: {
+      Accept: RDF_ACCEPT,
+      ...headers
+    }
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${sourceUrl}: ${response.status} ${response.statusText}`);
+  }
+  return {
+    content: await response.text(),
+    url: response.url || sourceUrl,
+    contentType: response.headers.get("Content-Type")
+  };
+}
+
 // src/rdf-webcomponents/components/source-rdf-config.ts
 var SOURCE_RDF_NS = "https://cedricdcc.github.io/RDF-webcomponents/ns/source-rdf.ttl#";
 var RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
@@ -27227,17 +27272,11 @@ var SourceRdf = class extends i4 {
       let sourceUrl = merged.url;
       let format = merged.format;
       if (strategy === "file") {
-        const response = await fetch(sourceUrl, {
-          headers: {
-            Accept: "text/turtle,application/n-triples,application/n-quads,application/rdf+xml,application/ld+json,text/html",
-            ...headers
-          }
-        });
-        if (!response.ok) {
-          throw new Error(`Failed to fetch ${sourceUrl}: ${response.status} ${response.statusText}`);
-        }
-        content = await response.text();
-        format = this._resolveResponseFormat(format, sourceUrl, content, response.headers.get("Content-Type"));
+        const result = await fetchRdfWithWrxFallback(sourceUrl, headers);
+        console.log(`[source-rdf] Fetched RDF content from ${result.url} with format ${result.contentType}`);
+        content = result.content;
+        sourceUrl = result.url;
+        format = this._resolveResponseFormat(format, sourceUrl, content, result.contentType);
       } else {
         const sparqlQuery = buildSparqlQuery(strategy, merged);
         content = await this._executeSparqlConstruct(sourceUrl, sparqlQuery, headers);
