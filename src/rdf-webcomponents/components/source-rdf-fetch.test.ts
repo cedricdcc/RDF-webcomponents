@@ -17,6 +17,8 @@ describe('fetchRdfWithWrxFallback', () => {
 
     const fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);
+    const consoleLogMock = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const consoleWarnMock = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const { fetchRdfWithWrxFallback } = await import('./source-rdf-fetch');
     const result = await fetchRdfWithWrxFallback('https://example.org/resource', {});
@@ -27,6 +29,10 @@ describe('fetchRdfWithWrxFallback', () => {
       url: 'https://example.org/metadata.ttl',
     });
     expect(fetchMock).not.toHaveBeenCalled();
+    expect(consoleLogMock).toHaveBeenCalledWith(
+      expect.stringContaining('wrx extracted RDF from https://example.org/resource'),
+    );
+    expect(consoleWarnMock).not.toHaveBeenCalled();
   });
 
   it('falls back to direct fetch when wrx returns null', async () => {
@@ -41,6 +47,7 @@ describe('fetchRdfWithWrxFallback', () => {
       }),
     );
     vi.stubGlobal('fetch', fetchMock);
+    const consoleWarnMock = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const { fetchRdfWithWrxFallback } = await import('./source-rdf-fetch');
     const result = await fetchRdfWithWrxFallback('https://example.org/resource', {
@@ -57,6 +64,9 @@ describe('fetchRdfWithWrxFallback', () => {
     });
     expect(result.contentType).toBe('application/n-triples');
     expect(result.url).toBe('https://example.org/resource');
+    expect(consoleWarnMock).toHaveBeenCalledWith(
+      expect.stringContaining('wrx returned no RDF content for https://example.org/resource'),
+    );
   });
 
   it('falls back to direct fetch when wrx throws', async () => {
@@ -71,11 +81,15 @@ describe('fetchRdfWithWrxFallback', () => {
       }),
     );
     vi.stubGlobal('fetch', fetchMock);
+    const consoleWarnMock = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     const { fetchRdfWithWrxFallback } = await import('./source-rdf-fetch');
     const result = await fetchRdfWithWrxFallback('https://example.org/resource', {});
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(result.contentType).toBe('text/turtle');
+    expect(consoleWarnMock).toHaveBeenCalledWith(
+      expect.stringContaining('wrx extraction threw for https://example.org/resource'),
+    );
   });
 });

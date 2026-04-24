@@ -11,6 +11,10 @@ const RDF_ACCEPT =
 
 let wrxExtractorPromise: Promise<WrxExtractRdf | null> | null = null;
 
+function getRuntimeLabel(): string {
+  return typeof window === 'undefined' ? 'server' : 'client';
+}
+
 async function getWrxExtractor(): Promise<WrxExtractRdf | null> {
   if (!wrxExtractorPromise) {
     wrxExtractorPromise = import('wrx')
@@ -18,7 +22,10 @@ async function getWrxExtractor(): Promise<WrxExtractRdf | null> {
         const extractRDF = (module as { extractRDF?: unknown }).extractRDF;
         return typeof extractRDF === 'function' ? (extractRDF as WrxExtractRdf) : null;
       })
-      .catch(() => null);
+      .catch((error) => {
+        console.warn(`[source-rdf][${getRuntimeLabel()}] wrx module could not be loaded; using direct fetch fallback.`, error);
+        return null;
+      });
   }
 
   return wrxExtractorPromise;
@@ -32,18 +39,29 @@ export async function fetchRdfWithWrxFallback(
   if (extractor) {
     try {
       const extracted = await extractor(sourceUrl);
-      console.log(`[source-rdf] Attempted wrx extraction for ${sourceUrl}, success: ${!!extracted}`);
       if (extracted?.content) {
+        console.log(
+          `[source-rdf][${getRuntimeLabel()}] wrx extracted RDF from ${sourceUrl} -> ${extracted.url ?? sourceUrl} (${extracted.format ?? 'unknown format'})`,
+        );
         return {
           content: extracted.content,
           url: extracted.url ?? sourceUrl,
           contentType: extracted.format ?? null,
         };
       }
+
+      console.warn(
+        `[source-rdf][${getRuntimeLabel()}] wrx returned no RDF content for ${sourceUrl}; falling back to direct fetch.`,
+      );
     } catch {
-      // Fall back to direct fetch when wrx extraction fails.
-      console.warn(`wrx extraction failed for ${sourceUrl}, falling back to direct fetch.`);
+      console.warn(
+        `[source-rdf][${getRuntimeLabel()}] wrx extraction threw for ${sourceUrl}; falling back to direct fetch.`,
+      );
     }
+  } else {
+    console.warn(
+      `[source-rdf][${getRuntimeLabel()}] wrx extractor is unavailable; using direct fetch for ${sourceUrl}.`,
+    );
   }
 
   const response = await fetch(sourceUrl, {

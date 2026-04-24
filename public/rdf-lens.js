@@ -4,7 +4,6 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __esm = (fn, res) => function __init() {
   return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
 };
@@ -39,7 +38,6 @@ var __decorateClass = (decorators, target, key, kind) => {
   if (kind && result) __defProp(target, key, result);
   return result;
 };
-var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // node_modules/base64-js/index.js
 var require_base64_js = __commonJS({
@@ -24497,17 +24495,17 @@ var init_lens = __esm({
   "node_modules/rdf-lens/dist/lens.js"() {
     "use strict";
     LensError = class extends Error {
+      lineage;
       constructor(message, lineage) {
         super(message);
-        __publicField(this, "lineage");
         this.message = message;
         this.lineage = lineage;
       }
     };
     BasicLens = class _BasicLens {
+      _exec;
+      index;
       constructor(execute) {
-        __publicField(this, "_exec");
-        __publicField(this, "index");
         this._exec = execute;
       }
       named(name, opts, cb) {
@@ -26142,10 +26140,10 @@ var u = { toAttribute(t4, s4) {
 } };
 var f = (t4, s4) => !i2(t4, s4);
 var b = { attribute: true, type: String, converter: u, reflect: false, useDefault: false, hasChanged: f };
-Symbol.metadata ?? (Symbol.metadata = /* @__PURE__ */ Symbol("metadata")), a.litPropertyMetadata ?? (a.litPropertyMetadata = /* @__PURE__ */ new WeakMap());
+Symbol.metadata ??= /* @__PURE__ */ Symbol("metadata"), a.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
 var y = class extends HTMLElement {
   static addInitializer(t4) {
-    this._$Ei(), (this.l ?? (this.l = [])).push(t4);
+    this._$Ei(), (this.l ??= []).push(t4);
   }
   static get observedAttributes() {
     return this.finalize(), this._$Eh && [...this._$Eh.keys()];
@@ -26212,7 +26210,7 @@ var y = class extends HTMLElement {
     this._$ES = new Promise((t4) => this.enableUpdating = t4), this._$AL = /* @__PURE__ */ new Map(), this._$E_(), this.requestUpdate(), this.constructor.l?.forEach((t4) => t4(this));
   }
   addController(t4) {
-    (this._$EO ?? (this._$EO = /* @__PURE__ */ new Set())).add(t4), void 0 !== this.renderRoot && this.isConnected && t4.hostConnected?.();
+    (this._$EO ??= /* @__PURE__ */ new Set()).add(t4), void 0 !== this.renderRoot && this.isConnected && t4.hostConnected?.();
   }
   removeController(t4) {
     this._$EO?.delete(t4);
@@ -26227,7 +26225,7 @@ var y = class extends HTMLElement {
     return S(t4, this.constructor.elementStyles), t4;
   }
   connectedCallback() {
-    this.renderRoot ?? (this.renderRoot = this.createRenderRoot()), this.enableUpdating(true), this._$EO?.forEach((t4) => t4.hostConnected?.());
+    this.renderRoot ??= this.createRenderRoot(), this.enableUpdating(true), this._$EO?.forEach((t4) => t4.hostConnected?.());
   }
   enableUpdating(t4) {
   }
@@ -26256,13 +26254,13 @@ var y = class extends HTMLElement {
   requestUpdate(t4, s4, i5, e5 = false, h3) {
     if (void 0 !== t4) {
       const r5 = this.constructor;
-      if (false === e5 && (h3 = this[t4]), i5 ?? (i5 = r5.getPropertyOptions(t4)), !((i5.hasChanged ?? f)(h3, s4) || i5.useDefault && i5.reflect && h3 === this._$Ej?.get(t4) && !this.hasAttribute(r5._$Eu(t4, i5)))) return;
+      if (false === e5 && (h3 = this[t4]), i5 ??= r5.getPropertyOptions(t4), !((i5.hasChanged ?? f)(h3, s4) || i5.useDefault && i5.reflect && h3 === this._$Ej?.get(t4) && !this.hasAttribute(r5._$Eu(t4, i5)))) return;
       this.C(t4, s4, i5);
     }
     false === this.isUpdatePending && (this._$ES = this._$EP());
   }
   C(t4, s4, { useDefault: i5, reflect: e5, wrapped: h3 }, r5) {
-    i5 && !(this._$Ej ?? (this._$Ej = /* @__PURE__ */ new Map())).has(t4) && (this._$Ej.set(t4, r5 ?? s4 ?? this[t4]), true !== h3 || void 0 !== r5) || (this._$AL.has(t4) || (this.hasUpdated || i5 || (s4 = void 0), this._$AL.set(t4, s4)), true === e5 && this._$Em !== t4 && (this._$Eq ?? (this._$Eq = /* @__PURE__ */ new Set())).add(t4));
+    i5 && !(this._$Ej ??= /* @__PURE__ */ new Map()).has(t4) && (this._$Ej.set(t4, r5 ?? s4 ?? this[t4]), true !== h3 || void 0 !== r5) || (this._$AL.has(t4) || (this.hasUpdated || i5 || (s4 = void 0), this._$AL.set(t4, s4)), true === e5 && this._$Em !== t4 && (this._$Eq ??= /* @__PURE__ */ new Set()).add(t4));
   }
   async _$EP() {
     this.isUpdatePending = true;
@@ -26280,7 +26278,7 @@ var y = class extends HTMLElement {
   performUpdate() {
     if (!this.isUpdatePending) return;
     if (!this.hasUpdated) {
-      if (this.renderRoot ?? (this.renderRoot = this.createRenderRoot()), this._$Ep) {
+      if (this.renderRoot ??= this.createRenderRoot(), this._$Ep) {
         for (const [t6, s5] of this._$Ep) this[t6] = s5;
         this._$Ep = void 0;
       }
@@ -26317,14 +26315,14 @@ var y = class extends HTMLElement {
     return true;
   }
   update(t4) {
-    this._$Eq && (this._$Eq = this._$Eq.forEach((t5) => this._$ET(t5, this[t5]))), this._$EM();
+    this._$Eq &&= this._$Eq.forEach((t5) => this._$ET(t5, this[t5])), this._$EM();
   }
   updated(t4) {
   }
   firstUpdated(t4) {
   }
 };
-y.elementStyles = [], y.shadowRootOptions = { mode: "open" }, y[d("elementProperties")] = /* @__PURE__ */ new Map(), y[d("finalized")] = /* @__PURE__ */ new Map(), p?.({ ReactiveElement: y }), (a.reactiveElementVersions ?? (a.reactiveElementVersions = [])).push("2.1.2");
+y.elementStyles = [], y.shadowRootOptions = { mode: "open" }, y[d("elementProperties")] = /* @__PURE__ */ new Map(), y[d("finalized")] = /* @__PURE__ */ new Map(), p?.({ ReactiveElement: y }), (a.reactiveElementVersions ??= []).push("2.1.2");
 
 // node_modules/lit-html/lit-html.js
 var t2 = globalThis;
@@ -26414,7 +26412,7 @@ function M(t4, i5, s4 = t4, e5) {
   if (i5 === E) return i5;
   let h3 = void 0 !== e5 ? s4._$Co?.[e5] : s4._$Cl;
   const o6 = a2(i5) ? void 0 : i5._$litDirective$;
-  return h3?.constructor !== o6 && (h3?._$AO?.(false), void 0 === o6 ? h3 = void 0 : (h3 = new o6(t4), h3._$AT(t4, s4, e5)), void 0 !== e5 ? (s4._$Co ?? (s4._$Co = []))[e5] = h3 : s4._$Cl = h3), void 0 !== h3 && (i5 = M(t4, h3._$AS(t4, i5.values), h3, e5)), i5;
+  return h3?.constructor !== o6 && (h3?._$AO?.(false), void 0 === o6 ? h3 = void 0 : (h3 = new o6(t4), h3._$AT(t4, s4, e5)), void 0 !== e5 ? (s4._$Co ??= [])[e5] = h3 : s4._$Cl = h3), void 0 !== h3 && (i5 = M(t4, h3._$AS(t4, i5.values), h3, e5)), i5;
 }
 var R = class {
   constructor(t4, i5) {
@@ -26520,7 +26518,7 @@ var H = class {
     else {
       const e6 = t4;
       let n5, r5;
-      for (t4 = h3[0], n5 = 0; n5 < h3.length - 1; n5++) r5 = M(this, e6[s4 + n5], i5, n5), r5 === E && (r5 = this._$AH[n5]), o6 || (o6 = !a2(r5) || r5 !== this._$AH[n5]), r5 === A ? t4 = A : t4 !== A && (t4 += (r5 ?? "") + h3[n5 + 1]), this._$AH[n5] = r5;
+      for (t4 = h3[0], n5 = 0; n5 < h3.length - 1; n5++) r5 = M(this, e6[s4 + n5], i5, n5), r5 === E && (r5 = this._$AH[n5]), o6 ||= !a2(r5) || r5 !== this._$AH[n5], r5 === A ? t4 = A : t4 !== A && (t4 += (r5 ?? "") + h3[n5 + 1]), this._$AH[n5] = r5;
     }
     o6 && !e5 && this.j(t4);
   }
@@ -26569,7 +26567,7 @@ var Z = class {
   }
 };
 var B = t2.litHtmlPolyfillSupport;
-B?.(S2, k), (t2.litHtmlVersions ?? (t2.litHtmlVersions = [])).push("3.3.2");
+B?.(S2, k), (t2.litHtmlVersions ??= []).push("3.3.2");
 var D = (t4, i5, s4) => {
   const e5 = s4?.renderBefore ?? i5;
   let h3 = e5._$litPart$;
@@ -26587,9 +26585,8 @@ var i4 = class extends y {
     super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
   }
   createRenderRoot() {
-    var _a;
     const t4 = super.createRenderRoot();
-    return (_a = this.renderOptions).renderBefore ?? (_a.renderBefore = t4.firstChild), t4;
+    return this.renderOptions.renderBefore ??= t4.firstChild, t4;
   }
   update(t4) {
     const r5 = this.render();
@@ -26608,7 +26605,7 @@ var i4 = class extends y {
 i4._$litElement$ = true, i4["finalized"] = true, s3.litElementHydrateSupport?.({ LitElement: i4 });
 var o4 = s3.litElementPolyfillSupport;
 o4?.({ LitElement: i4 });
-(s3.litElementVersions ?? (s3.litElementVersions = [])).push("4.2.2");
+(s3.litElementVersions ??= []).push("4.2.2");
 
 // node_modules/@lit/reactive-element/decorators/custom-element.js
 var t3 = (t4) => (e5, o6) => {

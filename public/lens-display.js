@@ -11949,10 +11949,10 @@ var u = { toAttribute(t5, s4) {
 } };
 var f = (t5, s4) => !i2(t5, s4);
 var b = { attribute: true, type: String, converter: u, reflect: false, useDefault: false, hasChanged: f };
-Symbol.metadata ?? (Symbol.metadata = /* @__PURE__ */ Symbol("metadata")), a.litPropertyMetadata ?? (a.litPropertyMetadata = /* @__PURE__ */ new WeakMap());
+Symbol.metadata ??= /* @__PURE__ */ Symbol("metadata"), a.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
 var y = class extends HTMLElement {
   static addInitializer(t5) {
-    this._$Ei(), (this.l ?? (this.l = [])).push(t5);
+    this._$Ei(), (this.l ??= []).push(t5);
   }
   static get observedAttributes() {
     return this.finalize(), this._$Eh && [...this._$Eh.keys()];
@@ -12019,7 +12019,7 @@ var y = class extends HTMLElement {
     this._$ES = new Promise((t5) => this.enableUpdating = t5), this._$AL = /* @__PURE__ */ new Map(), this._$E_(), this.requestUpdate(), this.constructor.l?.forEach((t5) => t5(this));
   }
   addController(t5) {
-    (this._$EO ?? (this._$EO = /* @__PURE__ */ new Set())).add(t5), void 0 !== this.renderRoot && this.isConnected && t5.hostConnected?.();
+    (this._$EO ??= /* @__PURE__ */ new Set()).add(t5), void 0 !== this.renderRoot && this.isConnected && t5.hostConnected?.();
   }
   removeController(t5) {
     this._$EO?.delete(t5);
@@ -12034,7 +12034,7 @@ var y = class extends HTMLElement {
     return S(t5, this.constructor.elementStyles), t5;
   }
   connectedCallback() {
-    this.renderRoot ?? (this.renderRoot = this.createRenderRoot()), this.enableUpdating(true), this._$EO?.forEach((t5) => t5.hostConnected?.());
+    this.renderRoot ??= this.createRenderRoot(), this.enableUpdating(true), this._$EO?.forEach((t5) => t5.hostConnected?.());
   }
   enableUpdating(t5) {
   }
@@ -12063,13 +12063,13 @@ var y = class extends HTMLElement {
   requestUpdate(t5, s4, i6, e8 = false, h3) {
     if (void 0 !== t5) {
       const r6 = this.constructor;
-      if (false === e8 && (h3 = this[t5]), i6 ?? (i6 = r6.getPropertyOptions(t5)), !((i6.hasChanged ?? f)(h3, s4) || i6.useDefault && i6.reflect && h3 === this._$Ej?.get(t5) && !this.hasAttribute(r6._$Eu(t5, i6)))) return;
+      if (false === e8 && (h3 = this[t5]), i6 ??= r6.getPropertyOptions(t5), !((i6.hasChanged ?? f)(h3, s4) || i6.useDefault && i6.reflect && h3 === this._$Ej?.get(t5) && !this.hasAttribute(r6._$Eu(t5, i6)))) return;
       this.C(t5, s4, i6);
     }
     false === this.isUpdatePending && (this._$ES = this._$EP());
   }
   C(t5, s4, { useDefault: i6, reflect: e8, wrapped: h3 }, r6) {
-    i6 && !(this._$Ej ?? (this._$Ej = /* @__PURE__ */ new Map())).has(t5) && (this._$Ej.set(t5, r6 ?? s4 ?? this[t5]), true !== h3 || void 0 !== r6) || (this._$AL.has(t5) || (this.hasUpdated || i6 || (s4 = void 0), this._$AL.set(t5, s4)), true === e8 && this._$Em !== t5 && (this._$Eq ?? (this._$Eq = /* @__PURE__ */ new Set())).add(t5));
+    i6 && !(this._$Ej ??= /* @__PURE__ */ new Map()).has(t5) && (this._$Ej.set(t5, r6 ?? s4 ?? this[t5]), true !== h3 || void 0 !== r6) || (this._$AL.has(t5) || (this.hasUpdated || i6 || (s4 = void 0), this._$AL.set(t5, s4)), true === e8 && this._$Em !== t5 && (this._$Eq ??= /* @__PURE__ */ new Set()).add(t5));
   }
   async _$EP() {
     this.isUpdatePending = true;
@@ -12087,7 +12087,7 @@ var y = class extends HTMLElement {
   performUpdate() {
     if (!this.isUpdatePending) return;
     if (!this.hasUpdated) {
-      if (this.renderRoot ?? (this.renderRoot = this.createRenderRoot()), this._$Ep) {
+      if (this.renderRoot ??= this.createRenderRoot(), this._$Ep) {
         for (const [t7, s5] of this._$Ep) this[t7] = s5;
         this._$Ep = void 0;
       }
@@ -12124,14 +12124,14 @@ var y = class extends HTMLElement {
     return true;
   }
   update(t5) {
-    this._$Eq && (this._$Eq = this._$Eq.forEach((t6) => this._$ET(t6, this[t6]))), this._$EM();
+    this._$Eq &&= this._$Eq.forEach((t6) => this._$ET(t6, this[t6])), this._$EM();
   }
   updated(t5) {
   }
   firstUpdated(t5) {
   }
 };
-y.elementStyles = [], y.shadowRootOptions = { mode: "open" }, y[d("elementProperties")] = /* @__PURE__ */ new Map(), y[d("finalized")] = /* @__PURE__ */ new Map(), p?.({ ReactiveElement: y }), (a.reactiveElementVersions ?? (a.reactiveElementVersions = [])).push("2.1.2");
+y.elementStyles = [], y.shadowRootOptions = { mode: "open" }, y[d("elementProperties")] = /* @__PURE__ */ new Map(), y[d("finalized")] = /* @__PURE__ */ new Map(), p?.({ ReactiveElement: y }), (a.reactiveElementVersions ??= []).push("2.1.2");
 
 // node_modules/lit-html/lit-html.js
 var t2 = globalThis;
@@ -12221,7 +12221,7 @@ function M(t5, i6, s4 = t5, e8) {
   if (i6 === E) return i6;
   let h3 = void 0 !== e8 ? s4._$Co?.[e8] : s4._$Cl;
   const o7 = a2(i6) ? void 0 : i6._$litDirective$;
-  return h3?.constructor !== o7 && (h3?._$AO?.(false), void 0 === o7 ? h3 = void 0 : (h3 = new o7(t5), h3._$AT(t5, s4, e8)), void 0 !== e8 ? (s4._$Co ?? (s4._$Co = []))[e8] = h3 : s4._$Cl = h3), void 0 !== h3 && (i6 = M(t5, h3._$AS(t5, i6.values), h3, e8)), i6;
+  return h3?.constructor !== o7 && (h3?._$AO?.(false), void 0 === o7 ? h3 = void 0 : (h3 = new o7(t5), h3._$AT(t5, s4, e8)), void 0 !== e8 ? (s4._$Co ??= [])[e8] = h3 : s4._$Cl = h3), void 0 !== h3 && (i6 = M(t5, h3._$AS(t5, i6.values), h3, e8)), i6;
 }
 var R = class {
   constructor(t5, i6) {
@@ -12327,7 +12327,7 @@ var H = class {
     else {
       const e9 = t5;
       let n5, r6;
-      for (t5 = h3[0], n5 = 0; n5 < h3.length - 1; n5++) r6 = M(this, e9[s4 + n5], i6, n5), r6 === E && (r6 = this._$AH[n5]), o7 || (o7 = !a2(r6) || r6 !== this._$AH[n5]), r6 === A ? t5 = A : t5 !== A && (t5 += (r6 ?? "") + h3[n5 + 1]), this._$AH[n5] = r6;
+      for (t5 = h3[0], n5 = 0; n5 < h3.length - 1; n5++) r6 = M(this, e9[s4 + n5], i6, n5), r6 === E && (r6 = this._$AH[n5]), o7 ||= !a2(r6) || r6 !== this._$AH[n5], r6 === A ? t5 = A : t5 !== A && (t5 += (r6 ?? "") + h3[n5 + 1]), this._$AH[n5] = r6;
     }
     o7 && !e8 && this.j(t5);
   }
@@ -12376,7 +12376,7 @@ var Z = class {
   }
 };
 var B = t2.litHtmlPolyfillSupport;
-B?.(S2, k), (t2.litHtmlVersions ?? (t2.litHtmlVersions = [])).push("3.3.2");
+B?.(S2, k), (t2.litHtmlVersions ??= []).push("3.3.2");
 var D = (t5, i6, s4) => {
   const e8 = s4?.renderBefore ?? i6;
   let h3 = e8._$litPart$;
@@ -12394,9 +12394,8 @@ var i4 = class extends y {
     super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
   }
   createRenderRoot() {
-    var _a;
     const t5 = super.createRenderRoot();
-    return (_a = this.renderOptions).renderBefore ?? (_a.renderBefore = t5.firstChild), t5;
+    return this.renderOptions.renderBefore ??= t5.firstChild, t5;
   }
   update(t5) {
     const r6 = this.render();
@@ -12415,7 +12414,7 @@ var i4 = class extends y {
 i4._$litElement$ = true, i4["finalized"] = true, s3.litElementHydrateSupport?.({ LitElement: i4 });
 var o4 = s3.litElementPolyfillSupport;
 o4?.({ LitElement: i4 });
-(s3.litElementVersions ?? (s3.litElementVersions = [])).push("4.2.2");
+(s3.litElementVersions ??= []).push("4.2.2");
 
 // node_modules/@lit/reactive-element/decorators/custom-element.js
 var t3 = (t5) => (e8, o7) => {

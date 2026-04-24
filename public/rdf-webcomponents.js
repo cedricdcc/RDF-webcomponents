@@ -4,7 +4,6 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __esm = (fn, res) => function __init() {
   return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
 };
@@ -39,7 +38,6 @@ var __decorateClass = (decorators, target, key, kind) => {
   if (kind && result) __defProp(target, key, result);
   return result;
 };
-var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // node_modules/base64-js/index.js
 var require_base64_js = __commonJS({
@@ -24407,6 +24405,962 @@ var require_rdfa_streaming_parser = __commonJS({
   }
 });
 
+// node_modules/wrx/wrx.ts
+function parseLinkHeader(header) {
+  if (!header?.trim()) return [];
+  return header.split(",").map((part) => {
+    part = part.trim();
+    const urlMatch = part.match(/<([^>]+)>/);
+    if (!urlMatch) return null;
+    const url = urlMatch[1] ?? "";
+    if (!url) return null;
+    const link = { url };
+    const paramsPart = part.substring(part.indexOf(">") + 1).trim();
+    if (paramsPart) {
+      const paramParts = paramsPart.split(";").map((p3) => p3.trim()).filter(Boolean);
+      for (const p3 of paramParts) {
+        const eqIndex = p3.indexOf("=");
+        if (eqIndex === -1) continue;
+        const key = p3.slice(0, eqIndex).trim().toLowerCase();
+        let val = p3.slice(eqIndex + 1).trim();
+        if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
+        link[key] = val;
+      }
+    }
+    return link;
+  }).filter((l3) => l3 !== null);
+}
+function isRDFMime(mime) {
+  return RDF_MIMES.has(mime.toLowerCase().trim());
+}
+function isLinksetMime(mime) {
+  const m2 = mime.toLowerCase().trim();
+  return m2 === "application/linkset+json" || m2 === "application/linkset";
+}
+function baseMime(contentType) {
+  if (!contentType) return "";
+  const semi = contentType.indexOf(";");
+  return (semi === -1 ? contentType : contentType.slice(0, semi)).trim().toLowerCase();
+}
+function relHasToken(rel, token) {
+  if (!rel) return false;
+  return rel.toLowerCase().split(/\s+/).some((r6) => r6.trim() === token);
+}
+function parseTagAttributes(tagText) {
+  const attrs = {};
+  const attrRegex = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+))/g;
+  let match2;
+  while ((match2 = attrRegex.exec(tagText)) !== null) {
+    const key = (match2[1] ?? "").toLowerCase();
+    const val = (match2[2] ?? match2[3] ?? match2[4] ?? "").trim();
+    if (key) attrs[key] = val;
+  }
+  return attrs;
+}
+function extractHtmlHints(bodyText) {
+  const describedByLinks = [];
+  const linksets = [];
+  const embeddedScripts = [];
+  const linkRegex = /<link\b[^>]*>/gi;
+  let linkMatch;
+  while ((linkMatch = linkRegex.exec(bodyText)) !== null) {
+    const tag = linkMatch[0] ?? "";
+    if (!tag) continue;
+    const attrs = parseTagAttributes(tag);
+    const rel = attrs["rel"] ?? null;
+    const href = attrs["href"] ?? null;
+    const type = attrs["type"] ?? null;
+    if (!href) continue;
+    if (relHasToken(rel, "describedby")) {
+      describedByLinks.push({ href, type });
+    }
+    if (relHasToken(rel, "linkset")) {
+      linksets.push(href);
+    }
+  }
+  const scriptRegex = /(<script\b[^>]*>)([\s\S]*?)<\/script>/gi;
+  let scriptMatch;
+  while ((scriptMatch = scriptRegex.exec(bodyText)) !== null) {
+    const openTag = scriptMatch[1] ?? "";
+    const content = (scriptMatch[2] ?? "").trim();
+    if (!openTag || !content) continue;
+    const attrs = parseTagAttributes(openTag);
+    const type = (attrs["type"] ?? "").toLowerCase();
+    if (type) embeddedScripts.push({ type, content });
+  }
+  return { describedByLinks, linksets, embeddedScripts };
+}
+async function fetchRDF(url) {
+  return fetch(url, {
+    headers: { Accept: RDF_ACCEPT },
+    redirect: "follow"
+  });
+}
+async function fetchDescribedBy(url, declaredType) {
+  if (!declaredType || !isRDFMime(declaredType)) return fetchRDF(url);
+  const others = [
+    "text/turtle",
+    "application/ld+json",
+    "application/rdf+xml",
+    "application/n-triples",
+    "text/n3",
+    "application/n-quads",
+    "application/trig"
+  ].filter((m2) => m2 !== declaredType).map((m2, i6) => `${m2};q=${Math.max(0.1, 0.9 - i6 * 0.1).toFixed(1)}`);
+  const accept = [`${declaredType};q=1.0`, ...others].join(", ");
+  return fetch(url, { headers: { Accept: accept }, redirect: "follow" });
+}
+function looksLikeJsonLd(text) {
+  try {
+    const obj = JSON.parse(text);
+    const records = Array.isArray(obj) ? obj : [obj];
+    return records.some(
+      (item) => typeof item === "object" && item !== null && ("@context" in item || "@type" in item || "@graph" in item)
+    );
+  } catch {
+    return false;
+  }
+}
+function resolveRdfFormat(responseCt, declaredType, body) {
+  if (isRDFMime(responseCt)) return responseCt;
+  if (declaredType && isRDFMime(declaredType) && responseCt === "application/json" && looksLikeJsonLd(body)) {
+    return declaredType;
+  }
+  return null;
+}
+function normUri(u3) {
+  return u3.toLowerCase().replace(/\/$/, "");
+}
+async function tryExtractFromLinkset(linksetUrl, baseUri) {
+  const acceptLinkset = "application/linkset+json;q=1.0, application/ld+json;q=0.9, application/linkset;q=0.8";
+  let res;
+  try {
+    res = await fetch(linksetUrl, { headers: { Accept: acceptLinkset }, redirect: "follow" });
+    if (!res.ok) return null;
+  } catch {
+    return null;
+  }
+  const ct = baseMime(res.headers.get("content-type"));
+  if (ct === "application/linkset+json" || ct === "application/json" || ct === "application/ld+json") {
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      return null;
+    }
+    const typedData = data;
+    if (!Array.isArray(typedData?.linkset)) return null;
+    const allCtxs = typedData.linkset;
+    const baseNorm = normUri(baseUri);
+    const matchedCtxs = allCtxs.filter((ctx) => {
+      const anchor = typeof ctx["anchor"] === "string" ? normUri(ctx["anchor"]) : null;
+      return anchor === baseNorm;
+    });
+    const contexts = matchedCtxs.length > 0 ? matchedCtxs : allCtxs;
+    for (const ctx of contexts) {
+      for (const rel of ["describedby", "profile"]) {
+        const targets = Array.isArray(ctx[rel]) ? ctx[rel] : [];
+        for (const target of targets) {
+          if (!target.href) continue;
+          if (target.type && !isRDFMime(target.type)) continue;
+          const metaUrl = new URL(target.href, linksetUrl).toString();
+          try {
+            const metaRes = await fetchDescribedBy(metaUrl, target.type);
+            if (!metaRes.ok) continue;
+            const metaCt = baseMime(metaRes.headers.get("content-type"));
+            const body = await metaRes.text();
+            const format = resolveRdfFormat(metaCt, target.type, body);
+            if (format) return { content: body, format, source: "linkset", url: metaUrl };
+          } catch {
+          }
+        }
+      }
+      const citeAsArr = Array.isArray(ctx["cite-as"]) ? ctx["cite-as"] : [];
+      for (const citeAs of citeAsArr) {
+        if (!citeAs.href) continue;
+        const doiUrl = new URL(citeAs.href, linksetUrl).toString();
+        try {
+          const doiRes = await fetchRDF(doiUrl);
+          if (!doiRes.ok) continue;
+          const doiCt = baseMime(doiRes.headers.get("content-type"));
+          if (isRDFMime(doiCt)) {
+            return { content: await doiRes.text(), format: doiCt, source: "linkset", url: doiUrl };
+          }
+        } catch {
+        }
+      }
+    }
+  } else if (ct === "application/linkset") {
+    let text = await res.text();
+    text = text.replace(/[\r\n\t]+/g, " ");
+    const links = parseLinkHeader(text);
+    const baseNorm = normUri(baseUri);
+    for (const link of links) {
+      if (link["anchor"] && normUri(link["anchor"]) !== baseNorm) continue;
+      if ((link["rel"] === "describedby" || link["rel"] === "profile") && link["url"]) {
+        const declaredType = link["type"];
+        if (declaredType && !isRDFMime(declaredType)) continue;
+        const metaUrl = new URL(link["url"], linksetUrl).toString();
+        try {
+          const metaRes = await fetchDescribedBy(metaUrl, declaredType);
+          if (!metaRes.ok) continue;
+          const metaCt = baseMime(metaRes.headers.get("content-type"));
+          const body = await metaRes.text();
+          const format = resolveRdfFormat(metaCt, declaredType, body);
+          if (format) return { content: body, format, source: "linkset", url: metaUrl };
+        } catch {
+        }
+      }
+    }
+  }
+  return null;
+}
+async function tryExtractFromSitemapAndDCAT(uri) {
+  let urlObj;
+  try {
+    urlObj = new URL(uri);
+  } catch {
+    return null;
+  }
+  const robotsUrl = `${urlObj.protocol}//${urlObj.host}/robots.txt`;
+  let robotsText;
+  try {
+    const res = await fetch(robotsUrl);
+    if (!res.ok) return null;
+    robotsText = await res.text();
+  } catch {
+    return null;
+  }
+  const sitemaps = [];
+  for (const line of robotsText.split("\n")) {
+    const trimmed = line.trim();
+    if (trimmed.toLowerCase().startsWith("sitemap:")) {
+      const sUrl = trimmed.slice(8).trim();
+      if (sUrl) sitemaps.push(sUrl);
+    }
+  }
+  for (const sitemapUrl of sitemaps) {
+    let sText;
+    try {
+      const res = await fetch(sitemapUrl);
+      if (!res.ok) continue;
+      sText = await res.text();
+    } catch {
+      continue;
+    }
+    let xmlDoc;
+    try {
+      xmlDoc = new DOMParser().parseFromString(sText, "text/xml");
+      if (xmlDoc.getElementsByTagName("parsererror").length > 0) continue;
+    } catch {
+      continue;
+    }
+    const urlElements = xmlDoc.getElementsByTagName("url");
+    for (const urlEl of urlElements) {
+      const locEl = urlEl.getElementsByTagName("loc")[0];
+      if (!locEl) continue;
+      const loc = locEl.textContent?.trim();
+      if (loc === uri || loc === uri + "/" || uri === loc + "/") {
+        const xhtmlNs = "http://www.w3.org/1999/xhtml";
+        const xLinks = urlEl.getElementsByTagNameNS(xhtmlNs, "link");
+        for (const xLink of xLinks) {
+          const rel = xLink.getAttribute("rel");
+          const type = xLink.getAttribute("type");
+          const href = xLink.getAttribute("href");
+          if (rel === "describedby" && href && (!type || isRDFMime(type))) {
+            const metaUrl = new URL(href, sitemapUrl).toString();
+            const metaRes = await fetchRDF(metaUrl);
+            const metaCt = baseMime(metaRes.headers.get("content-type"));
+            if (isRDFMime(metaCt) && metaRes.ok) {
+              return {
+                content: await metaRes.text(),
+                format: metaCt,
+                source: "sitemap-signposting",
+                url: metaUrl
+              };
+            }
+          }
+        }
+      }
+    }
+  }
+  return null;
+}
+async function tryExtractAllFromLinkset(linksetUrl, baseUri) {
+  const results = [];
+  const acceptLinkset = "application/linkset+json;q=1.0, application/ld+json;q=0.9, application/linkset;q=0.8";
+  let res;
+  try {
+    res = await fetch(linksetUrl, { headers: { Accept: acceptLinkset }, redirect: "follow" });
+    if (!res.ok) return results;
+  } catch {
+    return results;
+  }
+  const ct = baseMime(res.headers.get("content-type"));
+  if (ct === "application/linkset+json" || ct === "application/json" || ct === "application/ld+json") {
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      return results;
+    }
+    const typedData = data;
+    if (!Array.isArray(typedData?.linkset)) return results;
+    const allCtxs = typedData.linkset;
+    const baseNorm = normUri(baseUri);
+    const matchedCtxs = allCtxs.filter((ctx) => {
+      const anchor = typeof ctx["anchor"] === "string" ? normUri(ctx["anchor"]) : null;
+      return anchor === baseNorm;
+    });
+    const contexts = matchedCtxs.length > 0 ? matchedCtxs : allCtxs;
+    for (const ctx of contexts) {
+      for (const rel of ["describedby", "profile"]) {
+        const targets = Array.isArray(ctx[rel]) ? ctx[rel] : [];
+        for (const target of targets) {
+          if (!target.href) continue;
+          if (target.type && !isRDFMime(target.type)) continue;
+          const metaUrl = new URL(target.href, linksetUrl).toString();
+          try {
+            const metaRes = await fetchDescribedBy(metaUrl, target.type);
+            if (!metaRes.ok) continue;
+            const metaCt = baseMime(metaRes.headers.get("content-type"));
+            const body = await metaRes.text();
+            const format = resolveRdfFormat(metaCt, target.type, body);
+            if (format) results.push({ content: body, format, source: "linkset", url: metaUrl });
+          } catch {
+          }
+        }
+      }
+      const citeAsArr = Array.isArray(ctx["cite-as"]) ? ctx["cite-as"] : [];
+      for (const citeAs of citeAsArr) {
+        if (!citeAs.href) continue;
+        const doiUrl = new URL(citeAs.href, linksetUrl).toString();
+        try {
+          const doiRes = await fetchRDF(doiUrl);
+          if (!doiRes.ok) continue;
+          const doiCt = baseMime(doiRes.headers.get("content-type"));
+          if (isRDFMime(doiCt)) {
+            results.push({ content: await doiRes.text(), format: doiCt, source: "linkset", url: doiUrl });
+          }
+        } catch {
+        }
+      }
+    }
+  } else if (ct === "application/linkset") {
+    let text = await res.text();
+    text = text.replace(/[\r\n\t]+/g, " ");
+    const links = parseLinkHeader(text);
+    const baseNorm = normUri(baseUri);
+    for (const link of links) {
+      if (link["anchor"] && normUri(link["anchor"]) !== baseNorm) continue;
+      if ((link["rel"] === "describedby" || link["rel"] === "profile") && link["url"]) {
+        const declaredType = link["type"];
+        if (declaredType && !isRDFMime(declaredType)) continue;
+        const metaUrl = new URL(link["url"], linksetUrl).toString();
+        try {
+          const metaRes = await fetchDescribedBy(metaUrl, declaredType);
+          if (!metaRes.ok) continue;
+          const metaCt = baseMime(metaRes.headers.get("content-type"));
+          const body = await metaRes.text();
+          const format = resolveRdfFormat(metaCt, declaredType, body);
+          if (format) results.push({ content: body, format, source: "linkset", url: metaUrl });
+        } catch {
+        }
+      }
+    }
+  }
+  return results;
+}
+async function tryExtractAllFromSitemapAndDCAT(uri) {
+  const results = [];
+  let urlObj;
+  try {
+    urlObj = new URL(uri);
+  } catch {
+    return results;
+  }
+  const robotsUrl = `${urlObj.protocol}//${urlObj.host}/robots.txt`;
+  let robotsText;
+  try {
+    const res = await fetch(robotsUrl);
+    if (!res.ok) return results;
+    robotsText = await res.text();
+  } catch {
+    return results;
+  }
+  const sitemaps = [];
+  for (const line of robotsText.split("\n")) {
+    const trimmed = line.trim();
+    if (trimmed.toLowerCase().startsWith("sitemap:")) {
+      const sUrl = trimmed.slice(8).trim();
+      if (sUrl) sitemaps.push(sUrl);
+    }
+  }
+  for (const sitemapUrl of sitemaps) {
+    let sText;
+    try {
+      const res = await fetch(sitemapUrl);
+      if (!res.ok) continue;
+      sText = await res.text();
+    } catch {
+      continue;
+    }
+    let xmlDoc;
+    try {
+      xmlDoc = new DOMParser().parseFromString(sText, "text/xml");
+      if (xmlDoc.getElementsByTagName("parsererror").length > 0) continue;
+    } catch {
+      continue;
+    }
+    const urlElements = xmlDoc.getElementsByTagName("url");
+    for (const urlEl of urlElements) {
+      const locEl = urlEl.getElementsByTagName("loc")[0];
+      if (!locEl) continue;
+      const loc = locEl.textContent?.trim();
+      if (loc === uri || loc === uri + "/" || uri === loc + "/") {
+        const xhtmlNs = "http://www.w3.org/1999/xhtml";
+        const xLinks = urlEl.getElementsByTagNameNS(xhtmlNs, "link");
+        for (const xLink of xLinks) {
+          const rel = xLink.getAttribute("rel");
+          const type = xLink.getAttribute("type");
+          const href = xLink.getAttribute("href");
+          if (rel === "describedby" && href && (!type || isRDFMime(type))) {
+            const metaUrl = new URL(href, sitemapUrl).toString();
+            try {
+              const metaRes = await fetchRDF(metaUrl);
+              const metaCt = baseMime(metaRes.headers.get("content-type"));
+              if (isRDFMime(metaCt) && metaRes.ok) {
+                results.push({
+                  content: await metaRes.text(),
+                  format: metaCt,
+                  source: "sitemap-signposting",
+                  url: metaUrl
+                });
+              }
+            } catch {
+            }
+          }
+        }
+      }
+    }
+  }
+  return results;
+}
+async function extractAllRDF(uri) {
+  const found = [];
+  const notFound = [];
+  const contentNegotiations = [];
+  let bodyText = "";
+  let linkHeader = null;
+  try {
+    const discRes = await fetchRDF(uri);
+    linkHeader = discRes.headers.get("link");
+    const discCt = baseMime(discRes.headers.get("content-type"));
+    if (!isRDFMime(discCt) || !discRes.ok) {
+      try {
+        bodyText = await discRes.text();
+      } catch {
+        bodyText = "";
+      }
+    } else {
+      try {
+        await discRes.text();
+      } catch {
+      }
+    }
+  } catch {
+  }
+  const MIME_ORDER = [
+    "text/turtle",
+    "application/ld+json",
+    "application/rdf+xml",
+    "application/n-triples",
+    "text/n3",
+    "application/n-quads",
+    "application/trig"
+  ];
+  let cnFound = false;
+  for (const mime of MIME_ORDER) {
+    try {
+      const cnRes = await fetch(uri, { headers: { Accept: mime }, redirect: "follow" });
+      const cnCt = baseMime(cnRes.headers.get("content-type"));
+      const cnBody = await cnRes.text();
+      const isRdf = cnRes.ok && isRDFMime(cnCt);
+      contentNegotiations.push({
+        requestedMime: mime,
+        responseMime: cnCt || "(unknown)",
+        chars: cnBody.length,
+        isRdf,
+        url: cnRes.url || uri
+      });
+      if (isRdf) {
+        const isDup = found.some(
+          (f3) => f3.source === "content-negotiation" && f3.format === cnCt
+        );
+        if (!isDup) {
+          found.push({ content: cnBody, format: cnCt, source: "content-negotiation", url: uri });
+          cnFound = true;
+        }
+      }
+    } catch {
+    }
+  }
+  if (!cnFound) notFound.push("content-negotiation");
+  const htmlHints = bodyText ? extractHtmlHints(bodyText) : { describedByLinks: [], linksets: [], embeddedScripts: [] };
+  let htmlDoc = null;
+  if (bodyText) {
+    try {
+      if (typeof DOMParser !== "undefined") {
+        htmlDoc = new DOMParser().parseFromString(bodyText, "text/html");
+      }
+    } catch {
+    }
+  }
+  const links = parseLinkHeader(linkHeader);
+  const headerDescribedBy = links.filter(
+    (l3) => l3["rel"] === "describedby" && (!l3["type"] || isRDFMime(l3["type"]))
+  );
+  const profileLinks = links.filter((l3) => l3["rel"] === "profile");
+  const headerDescribedByAll = [
+    ...headerDescribedBy,
+    ...profileLinks.filter((pl) => !pl["type"] || isRDFMime(pl["type"]))
+  ];
+  let headerDescribedByFound = false;
+  for (const link of headerDescribedByAll) {
+    const metaUrl = new URL(link["url"], uri).toString();
+    try {
+      const metaRes = await fetchRDF(metaUrl);
+      const metaCt = baseMime(metaRes.headers.get("content-type"));
+      if (isRDFMime(metaCt) && metaRes.ok) {
+        found.push({ content: await metaRes.text(), format: metaCt, source: "signposting-link-header", url: metaUrl });
+        headerDescribedByFound = true;
+      }
+    } catch {
+    }
+  }
+  if (!headerDescribedByFound) notFound.push("signposting-link-header");
+  const headerLinksets = links.filter((l3) => l3["rel"] === "linkset");
+  const headerLinksetNorms = new Set(
+    headerLinksets.map((ls) => normUri(new URL(ls["url"], uri).toString()))
+  );
+  const profileLinksetLinks = profileLinks.filter(
+    (pl) => pl["type"] && isLinksetMime(pl["type"]) && !headerLinksetNorms.has(normUri(new URL(pl["url"], uri).toString()))
+  );
+  const allLinksetHeaderLinks = [...headerLinksets, ...profileLinksetLinks];
+  let headerLinksetFound = false;
+  for (const ls of allLinksetHeaderLinks) {
+    const lsUrl = new URL(ls["url"], uri).toString();
+    const hits = await tryExtractAllFromLinkset(lsUrl, uri);
+    if (hits.length > 0) {
+      found.push(...hits);
+      headerLinksetFound = true;
+    }
+  }
+  const headerLinksetUriNorms = new Set(
+    allLinksetHeaderLinks.map((ls) => normUri(new URL(ls["url"], uri).toString()))
+  );
+  if (!headerLinksetUriNorms.has(normUri(uri))) {
+    const connegHits = await tryExtractAllFromLinkset(uri, uri);
+    if (connegHits.length > 0) {
+      found.push(...connegHits);
+      headerLinksetFound = true;
+    }
+  }
+  if (!headerLinksetFound) notFound.push("linkset");
+  const htmlDescribedBy = /* @__PURE__ */ new Map();
+  const htmlLinksets = /* @__PURE__ */ new Set();
+  const htmlScripts = [];
+  if (htmlDoc) {
+    for (const el of htmlDoc.querySelectorAll("link")) {
+      const rel = el.getAttribute("rel");
+      const href = el.getAttribute("href");
+      const type = el.getAttribute("type");
+      if (!href) continue;
+      if (relHasToken(rel, "describedby")) htmlDescribedBy.set(href, type);
+      if (relHasToken(rel, "linkset")) htmlLinksets.add(href);
+    }
+    for (const script of htmlDoc.querySelectorAll("script[type]")) {
+      const type = script.getAttribute("type")?.toLowerCase() ?? "";
+      const content = script.textContent?.trim() ?? "";
+      if (type && content) htmlScripts.push({ type, content });
+    }
+  }
+  for (const link of htmlHints.describedByLinks) htmlDescribedBy.set(link.href, link.type);
+  for (const linkset of htmlHints.linksets) htmlLinksets.add(linkset);
+  htmlScripts.push(...htmlHints.embeddedScripts);
+  let htmlDescribedByFound = false;
+  for (const [href, type] of htmlDescribedBy) {
+    if (!type || isRDFMime(type)) {
+      const metaUrl = new URL(href, uri).toString();
+      try {
+        const metaRes = await fetchRDF(metaUrl);
+        const metaCt = baseMime(metaRes.headers.get("content-type"));
+        if (isRDFMime(metaCt) && metaRes.ok) {
+          found.push({ content: await metaRes.text(), format: metaCt, source: "signposting-html-link", url: metaUrl });
+          htmlDescribedByFound = true;
+        }
+      } catch {
+      }
+    }
+  }
+  if (!htmlDescribedByFound) notFound.push("signposting-html-link");
+  const headerLinksetUrls = new Set(
+    allLinksetHeaderLinks.map((ls) => new URL(ls["url"], uri).toString())
+  );
+  headerLinksetUrls.add(uri);
+  let htmlLinksetFound = false;
+  for (const href of htmlLinksets) {
+    const lsUrl = new URL(href, uri).toString();
+    if (headerLinksetUrls.has(lsUrl)) continue;
+    const hits = await tryExtractAllFromLinkset(lsUrl, uri);
+    if (hits.length > 0) {
+      found.push(...hits);
+      htmlLinksetFound = true;
+    }
+  }
+  if (!headerLinksetFound && !htmlLinksetFound && notFound.includes("linkset")) {
+  } else if (!headerLinksetFound && htmlLinksetFound) {
+    const idx = notFound.indexOf("linkset");
+    if (idx !== -1) notFound.splice(idx, 1);
+  }
+  let embeddedFound = false;
+  for (const script of htmlScripts) {
+    const type = script.type.toLowerCase();
+    if (isRDFMime(type)) {
+      found.push({ content: script.content, format: type, source: "embedded-script", url: uri });
+      embeddedFound = true;
+    }
+  }
+  if (!embeddedFound) notFound.push("embedded-script");
+  const sitemapHits = await tryExtractAllFromSitemapAndDCAT(uri);
+  if (sitemapHits.length > 0) {
+    found.push(...sitemapHits);
+  } else {
+    notFound.push("sitemap-signposting");
+  }
+  const trace = STRATEGY_ORDER.map((source, i6) => {
+    const hits = found.filter((item) => item.source === source);
+    return {
+      strategy: i6 + 1,
+      source,
+      label: STRATEGY_LABELS[source],
+      found: hits.length > 0,
+      hits: hits.map((hit) => ({
+        format: hit.format,
+        url: hit.url,
+        chars: hit.content.length
+      }))
+    };
+  });
+  return { found, notFound, contentNegotiations, trace };
+}
+async function extractRDF(uri) {
+  let res;
+  try {
+    res = await fetchRDF(uri);
+  } catch {
+    return null;
+  }
+  let ct = baseMime(res.headers.get("content-type"));
+  if (isRDFMime(ct) && res.ok) {
+    return {
+      content: await res.text(),
+      format: ct,
+      source: "content-negotiation",
+      url: uri
+    };
+  }
+  let bodyText;
+  try {
+    bodyText = await res.text();
+  } catch {
+    bodyText = "";
+  }
+  let htmlDoc = null;
+  if (bodyText) {
+    try {
+      if (typeof DOMParser !== "undefined") {
+        htmlDoc = new DOMParser().parseFromString(bodyText, "text/html");
+      }
+    } catch {
+    }
+  }
+  const htmlHints = bodyText ? extractHtmlHints(bodyText) : { describedByLinks: [], linksets: [], embeddedScripts: [] };
+  const linkHeader = res.headers.get("link");
+  const links = parseLinkHeader(linkHeader);
+  const describedByFromHeader = links.filter(
+    (l3) => l3["rel"] === "describedby" && (!l3["type"] || isRDFMime(l3["type"]))
+  );
+  for (const link of describedByFromHeader) {
+    const metaUrl = new URL(link["url"], uri).toString();
+    try {
+      const metaRes = await fetchRDF(metaUrl);
+      const metaCt = baseMime(metaRes.headers.get("content-type"));
+      if (isRDFMime(metaCt) && metaRes.ok) {
+        return {
+          content: await metaRes.text(),
+          format: metaCt,
+          source: "signposting-link-header",
+          url: metaUrl
+        };
+      }
+    } catch {
+    }
+  }
+  const linksetFromHeader = links.filter((l3) => l3["rel"] === "linkset");
+  const profileLinks = links.filter((l3) => l3["rel"] === "profile");
+  const profileLinksetLinks = profileLinks.filter((pl) => pl["type"] && isLinksetMime(pl["type"]));
+  const linksetFromHeaderNorms = new Set(
+    linksetFromHeader.map((ls) => normUri(new URL(ls["url"], uri).toString()))
+  );
+  const allLinksetLinks = [
+    ...linksetFromHeader,
+    ...profileLinksetLinks.filter(
+      (pl) => !linksetFromHeaderNorms.has(normUri(new URL(pl["url"], uri).toString()))
+    )
+  ];
+  for (const ls of allLinksetLinks) {
+    const lsUrl = new URL(ls["url"], uri).toString();
+    const rdf3 = await tryExtractFromLinkset(lsUrl, uri);
+    if (rdf3) return rdf3;
+  }
+  const profileDescribedBy = profileLinks.filter(
+    (pl) => !pl["type"] || isRDFMime(pl["type"])
+  );
+  for (const pl of profileDescribedBy) {
+    const profileUrl = new URL(pl["url"], uri).toString();
+    try {
+      const metaRes = await fetchRDF(profileUrl);
+      const metaCt = baseMime(metaRes.headers.get("content-type"));
+      if (isRDFMime(metaCt) && metaRes.ok) {
+        return {
+          content: await metaRes.text(),
+          format: metaCt,
+          source: "signposting-link-header",
+          url: profileUrl
+        };
+      }
+    } catch {
+    }
+  }
+  const triedLinksetNorms = new Set(
+    allLinksetLinks.map((ls) => normUri(new URL(ls["url"], uri).toString()))
+  );
+  if (!triedLinksetNorms.has(normUri(uri))) {
+    const connegLinkset = await tryExtractFromLinkset(uri, uri);
+    if (connegLinkset) return connegLinkset;
+  }
+  const htmlDescribedBy = /* @__PURE__ */ new Map();
+  const htmlLinksets = /* @__PURE__ */ new Set();
+  const htmlScripts = [];
+  if (htmlDoc) {
+    for (const el of htmlDoc.querySelectorAll("link")) {
+      const rel = el.getAttribute("rel");
+      const href = el.getAttribute("href");
+      const type = el.getAttribute("type");
+      if (!href) continue;
+      if (relHasToken(rel, "describedby")) {
+        htmlDescribedBy.set(href, type);
+      }
+      if (relHasToken(rel, "linkset")) {
+        htmlLinksets.add(href);
+      }
+    }
+    for (const script of htmlDoc.querySelectorAll("script[type]")) {
+      const type = script.getAttribute("type")?.toLowerCase() ?? "";
+      const content = script.textContent?.trim() ?? "";
+      if (type && content) {
+        htmlScripts.push({ type, content });
+      }
+    }
+  }
+  for (const link of htmlHints.describedByLinks) {
+    htmlDescribedBy.set(link.href, link.type);
+  }
+  for (const linkset of htmlHints.linksets) {
+    htmlLinksets.add(linkset);
+  }
+  htmlScripts.push(...htmlHints.embeddedScripts);
+  for (const [href, type] of htmlDescribedBy) {
+    if (!type || isRDFMime(type)) {
+      const metaUrl = new URL(href, uri).toString();
+      let metaRes;
+      try {
+        metaRes = await fetchRDF(metaUrl);
+      } catch {
+        continue;
+      }
+      const metaCt = baseMime(metaRes.headers.get("content-type"));
+      if (isRDFMime(metaCt) && metaRes.ok) {
+        return {
+          content: await metaRes.text(),
+          format: metaCt,
+          source: "signposting-html-link",
+          url: metaUrl
+        };
+      }
+    }
+  }
+  for (const href of htmlLinksets) {
+    const lsUrl = new URL(href, uri).toString();
+    const rdf3 = await tryExtractFromLinkset(lsUrl, uri);
+    if (rdf3) return rdf3;
+  }
+  for (const script of htmlScripts) {
+    const type = script.type.toLowerCase();
+    if (isRDFMime(type)) {
+      return {
+        content: script.content,
+        format: type,
+        source: "embedded-script",
+        url: uri
+      };
+    }
+  }
+  const sitemapRDF = await tryExtractFromSitemapAndDCAT(uri);
+  if (sitemapRDF) return sitemapRDF;
+  return null;
+}
+async function runWrxCli(args = process.argv.slice(2)) {
+  const allMode = args.includes("--all");
+  const url = args.find((a3) => a3 !== "--all");
+  if (!url) {
+    console.error("Usage: bun run wrx.js [--all] <URI>");
+    process.exit(1);
+  }
+  if (allMode) {
+    console.log(`\u{1F50D} Exploring all RDF paths for: ${url}
+`);
+    const overview = await extractAllRDF(url);
+    const bySource = /* @__PURE__ */ new Map();
+    for (const entry of overview.found) {
+      const key = entry.source;
+      if (!bySource.has(key)) bySource.set(key, []);
+      bySource.get(key).push(entry);
+    }
+    let stratNum = 0;
+    for (const source of STRATEGY_ORDER) {
+      stratNum++;
+      const label = STRATEGY_LABELS[source];
+      const hits = bySource.get(source) ?? [];
+      if (source === "content-negotiation") {
+        const rdfHits = overview.contentNegotiations.filter((r6) => r6.isRdf);
+        if (rdfHits.length > 0) {
+          console.log(`  \u2705 Strategy ${stratNum} \u2014 ${label} (${rdfHits.length} RDF format(s) found)`);
+        } else {
+          console.log(`  \u274C Strategy ${stratNum} \u2014 ${label}`);
+        }
+        const reqW = overview.contentNegotiations.length > 0 ? Math.max(...overview.contentNegotiations.map((r6) => r6.requestedMime.length), "Requested MIME".length) : "Requested MIME".length;
+        const resW = overview.contentNegotiations.length > 0 ? Math.max(...overview.contentNegotiations.map((r6) => r6.responseMime.length), "Response MIME".length) : "Response MIME".length;
+        console.log(
+          `       ${"Requested MIME".padEnd(reqW)}  \u2192  ${"Response MIME".padEnd(resW)}  Chars`
+        );
+        console.log(`       ${"\u2500".repeat(reqW)}     ${"\u2500".repeat(resW)}  \u2500\u2500\u2500\u2500\u2500`);
+        for (const cn of overview.contentNegotiations) {
+          const flag = cn.isRdf ? "\u2705" : "\u274C";
+          console.log(
+            `       ${cn.requestedMime.padEnd(reqW)}  \u2192  ${cn.responseMime.padEnd(resW)}  ${cn.chars.toLocaleString().padStart(7)}  ${flag}`
+          );
+        }
+      } else if (hits.length > 0) {
+        console.log(`  \u2705 Strategy ${stratNum} \u2014 ${label}`);
+        for (const hit of hits) {
+          console.log(`       ${hit.format}  ${hit.url}  (${hit.content.length} chars)`);
+        }
+      } else {
+        console.log(`  \u274C Strategy ${stratNum} \u2014 ${label}`);
+      }
+    }
+    console.log("");
+    if (overview.contentNegotiations.length > 0) {
+      console.log("\u{1F4CB} Content Negotiation Overview (all MIME types):");
+      for (const cn of overview.contentNegotiations) {
+        const flag = cn.isRdf ? "\u2705 RDF" : "\u274C not RDF";
+        console.log(`   ${cn.requestedMime.padEnd(26)} \u2192 ${cn.chars.toLocaleString().padStart(7)} chars  (${cn.responseMime})  ${flag}`);
+      }
+      console.log("");
+    }
+    if (overview.found.length > 0) {
+      console.log(`\u{1F4CA} ${overview.found.length} unique RDF source(s) found across ${STRATEGY_ORDER.length} strategies tried.`);
+    } else {
+      console.log("\u{1F4CA} No RDF found after exploring all strategies.");
+    }
+  } else {
+    console.log(`\u{1F50D} Extracting RDF from: ${url}`);
+    const result = await extractRDF(url);
+    if (result) {
+      console.log(`\u2705 Found RDF (${result.source}) from ${result.url}`);
+      console.log(`Format: ${result.format}`);
+      console.log(`Content length: ${result.content.length} chars`);
+      console.log("\n--- First 500 chars of RDF ---");
+      console.log(result.content.slice(0, 500) + (result.content.length > 500 ? "..." : ""));
+    } else {
+      console.log("\u274C No RDF found after trying all strategies.");
+    }
+  }
+}
+var STRATEGY_LABELS, STRATEGY_ORDER, RDF_MIMES, RDF_ACCEPT;
+var init_wrx = __esm({
+  async "node_modules/wrx/wrx.ts"() {
+    "use strict";
+    STRATEGY_LABELS = {
+      "content-negotiation": "Content Negotiation",
+      "signposting-link-header": "HTTP Link header (rel=describedby)",
+      "linkset": "Linkset (rel=linkset)",
+      "signposting-html-link": "HTML link[rel=describedby]",
+      "embedded-script": "Embedded RDF script",
+      "sitemap-signposting": "Sitemap signposting (robots.txt)"
+    };
+    STRATEGY_ORDER = [
+      "content-negotiation",
+      "signposting-link-header",
+      "linkset",
+      "signposting-html-link",
+      "embedded-script",
+      "sitemap-signposting"
+    ];
+    RDF_MIMES = /* @__PURE__ */ new Set([
+      "text/turtle",
+      "application/ld+json",
+      "application/rdf+xml",
+      "application/n-triples",
+      "text/n3",
+      "application/n-quads",
+      "application/trig"
+    ]);
+    RDF_ACCEPT = [
+      "text/turtle;q=1.0",
+      "application/ld+json;q=0.9",
+      "application/rdf+xml;q=0.8",
+      "application/n-triples;q=0.7",
+      "text/n3;q=0.6",
+      "application/n-quads;q=0.5",
+      "application/trig;q=0.4"
+    ].join(", ");
+    if (import.meta.main) {
+      await runWrxCli();
+    }
+  }
+});
+
+// node_modules/wrx/wrx.js
+var wrx_exports = {};
+__export(wrx_exports, {
+  extractAllRDF: () => extractAllRDF,
+  extractRDF: () => extractRDF,
+  runWrxCli: () => runWrxCli
+});
+var init_wrx2 = __esm({
+  async "node_modules/wrx/wrx.js"() {
+    "use strict";
+    await init_wrx();
+    init_wrx();
+    if (import.meta.main) {
+      await runWrxCli(process.argv.slice(2));
+    }
+  }
+});
+
 // node_modules/rdf-lens/dist/lens.js
 function termToString(term) {
   if (term.termType === "NamedNode") {
@@ -24497,17 +25451,17 @@ var init_lens = __esm({
   "node_modules/rdf-lens/dist/lens.js"() {
     "use strict";
     LensError = class extends Error {
+      lineage;
       constructor(message, lineage) {
         super(message);
-        __publicField(this, "lineage");
         this.message = message;
         this.lineage = lineage;
       }
     };
     BasicLens = class _BasicLens {
+      _exec;
+      index;
       constructor(execute) {
-        __publicField(this, "_exec");
-        __publicField(this, "index");
         this._exec = execute;
       }
       named(name, opts, cb) {
@@ -26142,10 +27096,10 @@ var u = { toAttribute(t5, s4) {
 } };
 var f = (t5, s4) => !i2(t5, s4);
 var b = { attribute: true, type: String, converter: u, reflect: false, useDefault: false, hasChanged: f };
-Symbol.metadata ?? (Symbol.metadata = /* @__PURE__ */ Symbol("metadata")), a.litPropertyMetadata ?? (a.litPropertyMetadata = /* @__PURE__ */ new WeakMap());
+Symbol.metadata ??= /* @__PURE__ */ Symbol("metadata"), a.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
 var y = class extends HTMLElement {
   static addInitializer(t5) {
-    this._$Ei(), (this.l ?? (this.l = [])).push(t5);
+    this._$Ei(), (this.l ??= []).push(t5);
   }
   static get observedAttributes() {
     return this.finalize(), this._$Eh && [...this._$Eh.keys()];
@@ -26212,7 +27166,7 @@ var y = class extends HTMLElement {
     this._$ES = new Promise((t5) => this.enableUpdating = t5), this._$AL = /* @__PURE__ */ new Map(), this._$E_(), this.requestUpdate(), this.constructor.l?.forEach((t5) => t5(this));
   }
   addController(t5) {
-    (this._$EO ?? (this._$EO = /* @__PURE__ */ new Set())).add(t5), void 0 !== this.renderRoot && this.isConnected && t5.hostConnected?.();
+    (this._$EO ??= /* @__PURE__ */ new Set()).add(t5), void 0 !== this.renderRoot && this.isConnected && t5.hostConnected?.();
   }
   removeController(t5) {
     this._$EO?.delete(t5);
@@ -26227,7 +27181,7 @@ var y = class extends HTMLElement {
     return S(t5, this.constructor.elementStyles), t5;
   }
   connectedCallback() {
-    this.renderRoot ?? (this.renderRoot = this.createRenderRoot()), this.enableUpdating(true), this._$EO?.forEach((t5) => t5.hostConnected?.());
+    this.renderRoot ??= this.createRenderRoot(), this.enableUpdating(true), this._$EO?.forEach((t5) => t5.hostConnected?.());
   }
   enableUpdating(t5) {
   }
@@ -26256,13 +27210,13 @@ var y = class extends HTMLElement {
   requestUpdate(t5, s4, i6, e8 = false, h3) {
     if (void 0 !== t5) {
       const r6 = this.constructor;
-      if (false === e8 && (h3 = this[t5]), i6 ?? (i6 = r6.getPropertyOptions(t5)), !((i6.hasChanged ?? f)(h3, s4) || i6.useDefault && i6.reflect && h3 === this._$Ej?.get(t5) && !this.hasAttribute(r6._$Eu(t5, i6)))) return;
+      if (false === e8 && (h3 = this[t5]), i6 ??= r6.getPropertyOptions(t5), !((i6.hasChanged ?? f)(h3, s4) || i6.useDefault && i6.reflect && h3 === this._$Ej?.get(t5) && !this.hasAttribute(r6._$Eu(t5, i6)))) return;
       this.C(t5, s4, i6);
     }
     false === this.isUpdatePending && (this._$ES = this._$EP());
   }
   C(t5, s4, { useDefault: i6, reflect: e8, wrapped: h3 }, r6) {
-    i6 && !(this._$Ej ?? (this._$Ej = /* @__PURE__ */ new Map())).has(t5) && (this._$Ej.set(t5, r6 ?? s4 ?? this[t5]), true !== h3 || void 0 !== r6) || (this._$AL.has(t5) || (this.hasUpdated || i6 || (s4 = void 0), this._$AL.set(t5, s4)), true === e8 && this._$Em !== t5 && (this._$Eq ?? (this._$Eq = /* @__PURE__ */ new Set())).add(t5));
+    i6 && !(this._$Ej ??= /* @__PURE__ */ new Map()).has(t5) && (this._$Ej.set(t5, r6 ?? s4 ?? this[t5]), true !== h3 || void 0 !== r6) || (this._$AL.has(t5) || (this.hasUpdated || i6 || (s4 = void 0), this._$AL.set(t5, s4)), true === e8 && this._$Em !== t5 && (this._$Eq ??= /* @__PURE__ */ new Set()).add(t5));
   }
   async _$EP() {
     this.isUpdatePending = true;
@@ -26280,7 +27234,7 @@ var y = class extends HTMLElement {
   performUpdate() {
     if (!this.isUpdatePending) return;
     if (!this.hasUpdated) {
-      if (this.renderRoot ?? (this.renderRoot = this.createRenderRoot()), this._$Ep) {
+      if (this.renderRoot ??= this.createRenderRoot(), this._$Ep) {
         for (const [t7, s5] of this._$Ep) this[t7] = s5;
         this._$Ep = void 0;
       }
@@ -26317,14 +27271,14 @@ var y = class extends HTMLElement {
     return true;
   }
   update(t5) {
-    this._$Eq && (this._$Eq = this._$Eq.forEach((t6) => this._$ET(t6, this[t6]))), this._$EM();
+    this._$Eq &&= this._$Eq.forEach((t6) => this._$ET(t6, this[t6])), this._$EM();
   }
   updated(t5) {
   }
   firstUpdated(t5) {
   }
 };
-y.elementStyles = [], y.shadowRootOptions = { mode: "open" }, y[d("elementProperties")] = /* @__PURE__ */ new Map(), y[d("finalized")] = /* @__PURE__ */ new Map(), p?.({ ReactiveElement: y }), (a.reactiveElementVersions ?? (a.reactiveElementVersions = [])).push("2.1.2");
+y.elementStyles = [], y.shadowRootOptions = { mode: "open" }, y[d("elementProperties")] = /* @__PURE__ */ new Map(), y[d("finalized")] = /* @__PURE__ */ new Map(), p?.({ ReactiveElement: y }), (a.reactiveElementVersions ??= []).push("2.1.2");
 
 // node_modules/lit-html/lit-html.js
 var t2 = globalThis;
@@ -26414,7 +27368,7 @@ function M(t5, i6, s4 = t5, e8) {
   if (i6 === E) return i6;
   let h3 = void 0 !== e8 ? s4._$Co?.[e8] : s4._$Cl;
   const o7 = a2(i6) ? void 0 : i6._$litDirective$;
-  return h3?.constructor !== o7 && (h3?._$AO?.(false), void 0 === o7 ? h3 = void 0 : (h3 = new o7(t5), h3._$AT(t5, s4, e8)), void 0 !== e8 ? (s4._$Co ?? (s4._$Co = []))[e8] = h3 : s4._$Cl = h3), void 0 !== h3 && (i6 = M(t5, h3._$AS(t5, i6.values), h3, e8)), i6;
+  return h3?.constructor !== o7 && (h3?._$AO?.(false), void 0 === o7 ? h3 = void 0 : (h3 = new o7(t5), h3._$AT(t5, s4, e8)), void 0 !== e8 ? (s4._$Co ??= [])[e8] = h3 : s4._$Cl = h3), void 0 !== h3 && (i6 = M(t5, h3._$AS(t5, i6.values), h3, e8)), i6;
 }
 var R = class {
   constructor(t5, i6) {
@@ -26520,7 +27474,7 @@ var H = class {
     else {
       const e9 = t5;
       let n5, r6;
-      for (t5 = h3[0], n5 = 0; n5 < h3.length - 1; n5++) r6 = M(this, e9[s4 + n5], i6, n5), r6 === E && (r6 = this._$AH[n5]), o7 || (o7 = !a2(r6) || r6 !== this._$AH[n5]), r6 === A ? t5 = A : t5 !== A && (t5 += (r6 ?? "") + h3[n5 + 1]), this._$AH[n5] = r6;
+      for (t5 = h3[0], n5 = 0; n5 < h3.length - 1; n5++) r6 = M(this, e9[s4 + n5], i6, n5), r6 === E && (r6 = this._$AH[n5]), o7 ||= !a2(r6) || r6 !== this._$AH[n5], r6 === A ? t5 = A : t5 !== A && (t5 += (r6 ?? "") + h3[n5 + 1]), this._$AH[n5] = r6;
     }
     o7 && !e8 && this.j(t5);
   }
@@ -26569,7 +27523,7 @@ var Z = class {
   }
 };
 var B = t2.litHtmlPolyfillSupport;
-B?.(S2, k), (t2.litHtmlVersions ?? (t2.litHtmlVersions = [])).push("3.3.2");
+B?.(S2, k), (t2.litHtmlVersions ??= []).push("3.3.2");
 var D = (t5, i6, s4) => {
   const e8 = s4?.renderBefore ?? i6;
   let h3 = e8._$litPart$;
@@ -26587,9 +27541,8 @@ var i4 = class extends y {
     super(...arguments), this.renderOptions = { host: this }, this._$Do = void 0;
   }
   createRenderRoot() {
-    var _a;
     const t5 = super.createRenderRoot();
-    return (_a = this.renderOptions).renderBefore ?? (_a.renderBefore = t5.firstChild), t5;
+    return this.renderOptions.renderBefore ??= t5.firstChild, t5;
   }
   update(t5) {
     const r6 = this.render();
@@ -26608,7 +27561,7 @@ var i4 = class extends y {
 i4._$litElement$ = true, i4["finalized"] = true, s3.litElementHydrateSupport?.({ LitElement: i4 });
 var o4 = s3.litElementPolyfillSupport;
 o4?.({ LitElement: i4 });
-(s3.litElementVersions ?? (s3.litElementVersions = [])).push("4.2.2");
+(s3.litElementVersions ??= []).push("4.2.2");
 
 // node_modules/@lit/reactive-element/decorators/custom-element.js
 var t3 = (t5) => (e8, o7) => {
@@ -26972,14 +27925,20 @@ function serializeQuads(quads) {
 }
 
 // src/rdf-webcomponents/components/source-rdf-fetch.ts
-var RDF_ACCEPT = "text/turtle,application/n-triples,application/n-quads,application/rdf+xml,application/ld+json,text/html";
+var RDF_ACCEPT2 = "text/turtle,application/n-triples,application/n-quads,application/rdf+xml,application/ld+json,text/html";
 var wrxExtractorPromise = null;
+function getRuntimeLabel() {
+  return typeof window === "undefined" ? "server" : "client";
+}
 async function getWrxExtractor() {
   if (!wrxExtractorPromise) {
-    wrxExtractorPromise = import("wrx").then((module) => {
-      const extractRDF = module.extractRDF;
-      return typeof extractRDF === "function" ? extractRDF : null;
-    }).catch(() => null);
+    wrxExtractorPromise = init_wrx2().then(() => wrx_exports).then((module) => {
+      const extractRDF2 = module.extractRDF;
+      return typeof extractRDF2 === "function" ? extractRDF2 : null;
+    }).catch((error) => {
+      console.warn(`[source-rdf][${getRuntimeLabel()}] wrx module could not be loaded; using direct fetch fallback.`, error);
+      return null;
+    });
   }
   return wrxExtractorPromise;
 }
@@ -26988,21 +27947,32 @@ async function fetchRdfWithWrxFallback(sourceUrl, headers) {
   if (extractor) {
     try {
       const extracted = await extractor(sourceUrl);
-      console.log(`[source-rdf] Attempted wrx extraction for ${sourceUrl}, success: ${!!extracted}`);
       if (extracted?.content) {
+        console.log(
+          `[source-rdf][${getRuntimeLabel()}] wrx extracted RDF from ${sourceUrl} -> ${extracted.url ?? sourceUrl} (${extracted.format ?? "unknown format"})`
+        );
         return {
           content: extracted.content,
           url: extracted.url ?? sourceUrl,
           contentType: extracted.format ?? null
         };
       }
+      console.warn(
+        `[source-rdf][${getRuntimeLabel()}] wrx returned no RDF content for ${sourceUrl}; falling back to direct fetch.`
+      );
     } catch {
-      console.warn(`wrx extraction failed for ${sourceUrl}, falling back to direct fetch.`);
+      console.warn(
+        `[source-rdf][${getRuntimeLabel()}] wrx extraction threw for ${sourceUrl}; falling back to direct fetch.`
+      );
     }
+  } else {
+    console.warn(
+      `[source-rdf][${getRuntimeLabel()}] wrx extractor is unavailable; using direct fetch for ${sourceUrl}.`
+    );
   }
   const response = await fetch(sourceUrl, {
     headers: {
-      Accept: RDF_ACCEPT,
+      Accept: RDF_ACCEPT2,
       ...headers
     }
   });
