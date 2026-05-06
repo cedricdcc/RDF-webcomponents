@@ -20,7 +20,7 @@ const basePath = rawBasePath
   : '';
 
 const withBasePath = (path: string) => `${basePath}${path}`;
-const WEB_COMPONENTS_VERSION = '20260311-1';
+const WEB_COMPONENTS_VERSION = '20260506-new';
 
 type DemoSourceRdfElement = HTMLElement & {
   url?: string;
