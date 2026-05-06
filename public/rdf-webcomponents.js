@@ -24490,10 +24490,12 @@ function extractHtmlHints(bodyText) {
   }
   return { describedByLinks, linksets, embeddedScripts };
 }
+async function fetchWithRedirect(url, init) {
+  return await fetch(url, { ...init, redirect: "follow" });
+}
 async function fetchRDF(url) {
-  return fetch(url, {
-    headers: { Accept: RDF_ACCEPT },
-    redirect: "follow"
+  return fetchWithRedirect(url, {
+    headers: { Accept: RDF_ACCEPT }
   });
 }
 async function fetchDescribedBy(url, declaredType) {
@@ -24508,7 +24510,7 @@ async function fetchDescribedBy(url, declaredType) {
     "application/trig"
   ].filter((m2) => m2 !== declaredType).map((m2, i6) => `${m2};q=${Math.max(0.1, 0.9 - i6 * 0.1).toFixed(1)}`);
   const accept = [`${declaredType};q=1.0`, ...others].join(", ");
-  return fetch(url, { headers: { Accept: accept }, redirect: "follow" });
+  return fetchWithRedirect(url, { headers: { Accept: accept } });
 }
 function looksLikeJsonLd(text) {
   try {
@@ -24535,7 +24537,7 @@ async function tryExtractFromLinkset(linksetUrl, baseUri) {
   const acceptLinkset = "application/linkset+json;q=1.0, application/ld+json;q=0.9, application/linkset;q=0.8";
   let res;
   try {
-    res = await fetch(linksetUrl, { headers: { Accept: acceptLinkset }, redirect: "follow" });
+    res = await fetchWithRedirect(linksetUrl, { headers: { Accept: acceptLinkset } });
     if (!res.ok) return null;
   } catch {
     return null;
@@ -24625,7 +24627,7 @@ async function tryExtractFromSitemapAndDCAT(uri) {
   const robotsUrl = `${urlObj.protocol}//${urlObj.host}/robots.txt`;
   let robotsText;
   try {
-    const res = await fetch(robotsUrl);
+    const res = await fetchWithRedirect(robotsUrl);
     if (!res.ok) return null;
     robotsText = await res.text();
   } catch {
@@ -24642,7 +24644,7 @@ async function tryExtractFromSitemapAndDCAT(uri) {
   for (const sitemapUrl of sitemaps) {
     let sText;
     try {
-      const res = await fetch(sitemapUrl);
+      const res = await fetchWithRedirect(sitemapUrl);
       if (!res.ok) continue;
       sText = await res.text();
     } catch {
@@ -24691,7 +24693,7 @@ async function tryExtractAllFromLinkset(linksetUrl, baseUri) {
   const acceptLinkset = "application/linkset+json;q=1.0, application/ld+json;q=0.9, application/linkset;q=0.8";
   let res;
   try {
-    res = await fetch(linksetUrl, { headers: { Accept: acceptLinkset }, redirect: "follow" });
+    res = await fetchWithRedirect(linksetUrl, { headers: { Accept: acceptLinkset } });
     if (!res.ok) return results;
   } catch {
     return results;
@@ -24782,7 +24784,7 @@ async function tryExtractAllFromSitemapAndDCAT(uri) {
   const robotsUrl = `${urlObj.protocol}//${urlObj.host}/robots.txt`;
   let robotsText;
   try {
-    const res = await fetch(robotsUrl);
+    const res = await fetchWithRedirect(robotsUrl);
     if (!res.ok) return results;
     robotsText = await res.text();
   } catch {
@@ -24799,7 +24801,7 @@ async function tryExtractAllFromSitemapAndDCAT(uri) {
   for (const sitemapUrl of sitemaps) {
     let sText;
     try {
-      const res = await fetch(sitemapUrl);
+      const res = await fetchWithRedirect(sitemapUrl);
       if (!res.ok) continue;
       sText = await res.text();
     } catch {
@@ -24882,7 +24884,7 @@ async function extractAllRDF(uri) {
   let cnFound = false;
   for (const mime of MIME_ORDER) {
     try {
-      const cnRes = await fetch(uri, { headers: { Accept: mime }, redirect: "follow" });
+      const cnRes = await fetchWithRedirect(uri, { headers: { Accept: mime } });
       const cnCt = baseMime(cnRes.headers.get("content-type"));
       const cnBody = await cnRes.text();
       const isRdf = cnRes.ok && isRDFMime(cnCt);
@@ -25059,22 +25061,30 @@ async function extractRDF(uri) {
   try {
     res = await fetchRDF(uri);
   } catch {
-    return null;
+    console.error(`Error fetching URI ${uri}`);
   }
-  let ct = baseMime(res.headers.get("content-type"));
-  if (isRDFMime(ct) && res.ok) {
-    return {
-      content: await res.text(),
-      format: ct,
-      source: "content-negotiation",
-      url: uri
-    };
+  if (res) {
+    try {
+      let ct = baseMime(res.headers.get("content-type"));
+      if (isRDFMime(ct) && res.ok) {
+        return {
+          content: await res.text(),
+          format: ct,
+          source: "content-negotiation",
+          url: uri
+        };
+      }
+    } catch {
+      console.error(`Error reading body for URI ${uri}`);
+    }
   }
-  let bodyText;
-  try {
-    bodyText = await res.text();
-  } catch {
-    bodyText = "";
+  let bodyText = "";
+  if (res) {
+    try {
+      bodyText = await res.text();
+    } catch {
+      bodyText = "";
+    }
   }
   let htmlDoc = null;
   if (bodyText) {
@@ -25086,7 +25096,7 @@ async function extractRDF(uri) {
     }
   }
   const htmlHints = bodyText ? extractHtmlHints(bodyText) : { describedByLinks: [], linksets: [], embeddedScripts: [] };
-  const linkHeader = res.headers.get("link");
+  const linkHeader = res ? res.headers.get("link") : null;
   const links = parseLinkHeader(linkHeader);
   const describedByFromHeader = links.filter(
     (l3) => l3["rel"] === "describedby" && (!l3["type"] || isRDFMime(l3["type"]))
@@ -25188,6 +25198,17 @@ async function extractRDF(uri) {
       try {
         metaRes = await fetchRDF(metaUrl);
       } catch {
+        for (const script of htmlScripts) {
+          const scriptType = script.type.toLowerCase();
+          if (isRDFMime(scriptType)) {
+            return {
+              content: script.content,
+              format: scriptType,
+              source: "embedded-script",
+              url: uri
+            };
+          }
+        }
         continue;
       }
       const metaCt = baseMime(metaRes.headers.get("content-type"));
@@ -25441,7 +25462,11 @@ function subjects() {
 function match(subject2, predicate2, object2) {
   return new BasicLensM((quads) => {
     return quads.filter((x2) => (!subject2 || x2.subject.equals(subject2)) && (!predicate2 || x2.predicate.equals(predicate2)) && (!object2 || x2.object.equals(object2))).map((id) => ({ id, quads }));
-  }).named("match", { subject: subject2 && termToString(subject2), predicate: predicate2 && termToString(predicate2), object: object2 && termToString(object2) });
+  }).named("match", {
+    subject: subject2 && termToString(subject2),
+    predicate: predicate2 && termToString(predicate2),
+    object: object2 && termToString(object2)
+  });
 }
 function empty() {
   return new BasicLens((x2) => x2);
@@ -26589,8 +26614,11 @@ function fieldToLens(field2) {
 }
 function toLens(shape) {
   if (shape.fields.length === 0)
-    return empty().map(() => ({})).named("first", shape.ty.value).named("shape", { id: shape.id, type: termToString2(shape.ty), description: shape.description }).named("id", [], (cont) => termToString2(cont.id));
-  ;
+    return empty().map(() => ({})).named("first", shape.ty.value).named("shape", {
+      id: shape.id,
+      type: termToString2(shape.ty),
+      description: shape.description
+    }).named("id", [], (cont) => termToString2(cont.id));
   const fields = shape.fields.map((field2) => {
     const base = fieldToLens(field2);
     const asField = empty().named("processing field", {
@@ -26604,7 +26632,11 @@ function toLens(shape) {
     });
     return asField;
   });
-  return fields[0].and(...fields.slice(1)).map((xs) => Object.assign({}, ...xs)).named("shape", { id: shape.id, type: termToString2(shape.ty), description: shape.description }).named("id", [], (cont) => termToString2(cont.id));
+  return fields[0].and(...fields.slice(1)).map((xs) => Object.assign({}, ...xs)).named("shape", {
+    id: shape.id,
+    type: termToString2(shape.ty),
+    description: shape.description
+  }).named("id", [], (cont) => termToString2(cont.id));
 }
 function MultiPath(predicate2, min, max) {
   return pred(predicate2).one().then(new BasicLens((c4, ctx) => {
@@ -26750,7 +26782,7 @@ function extractProperty(cache, _subClasses, apply) {
   const pathLens = pred(SHACL.path).one().then(ShaclPath).map((path) => ({
     path
   }));
-  const nameLens = field(SHACL.name, "name");
+  const nameLens = field(SHACL.custom("codeIdentifier"), "name").or(field(SHACL.name, "name"));
   const minCount = optionalField(SHACL.minCount, "minCount", (x2) => +x2);
   const maxCount = optionalField(SHACL.maxCount, "maxCount", (x2) => +x2);
   const dataTypeLens = pred(SHACL.datatype).one().map(({ id }) => ({
