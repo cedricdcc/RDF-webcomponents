@@ -2136,7 +2136,7 @@
 
     "wrap-ansi-cjs": ["wrap-ansi@7.0.0", "", { "dependencies": { "ansi-styles": "^4.0.0", "string-width": "^4.1.0", "strip-ansi": "^6.0.0" } }, "sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q=="],
 
-    "wrx": ["wrx@github:cedricdcc/wrx#6db4df8", { "peerDependencies": { "typescript": "^5" } }, "cedricdcc-wrx-6db4df8", "sha512-ZZbcLZTPmnk9hxOuV0DxxCZx2z/Z0XsPQ/IWSAs8XiOaTr6gRiR0qpKlTiqXMA4wnDXng7u40H1zCRlVWBlbeg=="],
+    "wrx": ["wrx@github:cedricdcc/wrx#6dd15df", { "peerDependencies": { "typescript": "^5" } }, "cedricdcc-wrx-6dd15df", "sha512-w33x8QUw0AtVjJRQg7LybCYWiRvcwFzMbfceAPQ6zaDSFPHUosfsD4Rgcw7PbX1JrnGiv+gaT9MBB711BXnVvQ=="],
 
     "xmlchars": ["xmlchars@2.2.0", "", {}, "sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw=="],
 

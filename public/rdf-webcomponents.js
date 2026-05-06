@@ -25350,14 +25350,14 @@ var init_wrx = __esm({
       "application/trig"
     ]);
     RDF_ACCEPT = [
-      "text/turtle;q=1.0",
-      "application/ld+json;q=0.9",
-      "application/rdf+xml;q=0.8",
-      "application/n-triples;q=0.7",
-      "text/n3;q=0.6",
-      "application/n-quads;q=0.5",
-      "application/trig;q=0.4"
-    ].join(", ");
+      "text/turtle",
+      "application/ld+json",
+      "application/rdf+xml",
+      "application/n-triples",
+      "text/n3",
+      "application/n-quads",
+      "application/trig"
+    ].join(",");
     if (import.meta.main) {
       await runWrxCli();
     }
