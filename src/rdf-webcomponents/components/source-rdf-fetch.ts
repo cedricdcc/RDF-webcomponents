@@ -4,7 +4,7 @@ type WrxExtractedRdf = {
   url: string;
 };
 
-type WrxExtractRdf = (url: string) => Promise<WrxExtractedRdf | null>;
+type WrxExtractRdf = (url: string) => Promise<any>;
 
 const RDF_ACCEPT =
   'text/turtle,application/n-triples,application/n-quads,application/rdf+xml,application/ld+json,text/html';
@@ -39,23 +39,36 @@ export async function fetchRdfWithWrxFallback(
   if (extractor) {
     try {
       const extracted = await extractor(sourceUrl);
-      if (extracted?.content) {
+
+      let content = null;
+      let url = sourceUrl;
+      let contentType = null;
+
+      if (typeof extracted === 'string') {
+        content = extracted;
+      } else if (extracted && typeof extracted === 'object' && typeof extracted.content === 'string') {
+        content = extracted.content;
+        url = extracted.url ?? sourceUrl;
+        contentType = extracted.format ?? null;
+      }
+
+      if (content) {
         console.log(
-          `[source-rdf][${getRuntimeLabel()}] wrx extracted RDF from ${sourceUrl} -> ${extracted.url ?? sourceUrl} (${extracted.format ?? 'unknown format'})`,
+          `[source-rdf][${getRuntimeLabel()}] wrx extracted RDF from ${sourceUrl} -> ${url} (${contentType ?? 'unknown format'})`,
         );
         return {
-          content: extracted.content,
-          url: extracted.url ?? sourceUrl,
-          contentType: extracted.format ?? null,
+          content,
+          url,
+          contentType,
         };
       }
 
       console.warn(
-        `[source-rdf][${getRuntimeLabel()}] wrx returned no RDF content for ${sourceUrl}; falling back to direct fetch.`,
+        `[source-rdf][${getRuntimeLabel()}] wrx returned invalid or no RDF content for ${sourceUrl}; falling back to direct fetch.`,
       );
-    } catch {
+    } catch (error) {
       console.warn(
-        `[source-rdf][${getRuntimeLabel()}] wrx extraction threw for ${sourceUrl}; falling back to direct fetch.`,
+        `[source-rdf][${getRuntimeLabel()}] wrx extraction threw for ${sourceUrl}; falling back to direct fetch.`, error
       );
     }
   } else {
