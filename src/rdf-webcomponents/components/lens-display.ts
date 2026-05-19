@@ -37,6 +37,7 @@ import {
   parseLensDisplayConfigRdf,
   validateLensDisplayConfig,
 } from './lens-display-config';
+import DOMPurify from 'isomorphic-dompurify';
 
 // ============================================================================
 // Template Engine
@@ -138,10 +139,10 @@ class TemplateEngine {
       return this.escapeHtml(this.formatTemplateValue(value));
     });
 
-    // Handle {{{field}}} (unescaped)
+    // Handle {{{field}}} (unescaped, sanitized to prevent XSS)
     result = result.replace(/\{\{\{([^}]+)\}\}\}/g, (_, path) => {
       const value = this.getNestedValue(data, path.trim());
-      return String(value ?? '');
+      return DOMPurify.sanitize(String(value ?? ''));
     });
 
     // Handle {{field}} interpolation (mustache-style)
