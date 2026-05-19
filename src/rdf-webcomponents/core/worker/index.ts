@@ -440,9 +440,9 @@ function deserializeTerm(term: any): any {
   }
 }
 
-function getNestedValue(obj: any, path: string): any {
+function getNestedValue(obj: unknown, path: string): unknown {
   const parts = path.split('.');
-  let current = obj;
+  let current: any = obj;
   
   for (const part of parts) {
     if (current === null || current === undefined) return undefined;
