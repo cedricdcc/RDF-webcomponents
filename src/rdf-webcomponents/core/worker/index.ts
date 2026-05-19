@@ -11,6 +11,7 @@
  * - Caching
  */
 
+import type { Quad } from '@rdfjs/types';
 import { WorkerMessageHandler, reportProgress } from '../protocol';
 import { MessageType, type WorkerMessage, type SerializedQuad } from '../../types';
 import { serializeQuad } from '../../types';
@@ -75,7 +76,7 @@ handler.handle(MessageType.FETCH_REQUEST, async (payload: any, message) => {
   
   reportProgress(message.id, 'fetching', 0, 'Starting fetch...');
   
-  let quads: any[] = [];
+  let quads: Quad[] = [];
   let detectedFormat = format;
   
   // Handle different strategies
@@ -187,7 +188,7 @@ handler.handle(MessageType.EXTRACT_SHAPES_REQUEST, async (payload: any, message)
   reportProgress(message.id, 'parsing', 0, 'Converting quads...');
   
   // Convert serialized quads back to N3 quads
-  const quads: any[] = serializedQuads.map((sq: SerializedQuad) => {
+  const quads: Quad[] = serializedQuads.map((sq: SerializedQuad) => {
     return DataFactory.quad(
       deserializeTerm(sq.subject),
       deserializeTerm(sq.predicate),
@@ -244,7 +245,7 @@ handler.handle(MessageType.EXECUTE_LENS_REQUEST, async (payload: any, message) =
   reportProgress(message.id, 'parsing', 0, 'Converting quads...');
   
   // Convert serialized quads back to N3 quads
-  const dataQuads: any[] = serializedQuads.map((sq: SerializedQuad) => {
+  const dataQuads: Quad[] = serializedQuads.map((sq: SerializedQuad) => {
     return DataFactory.quad(
       deserializeTerm(sq.subject),
       deserializeTerm(sq.predicate),
@@ -261,7 +262,7 @@ handler.handle(MessageType.EXECUTE_LENS_REQUEST, async (payload: any, message) =
   } else if (serializedShapeQuads) {
     reportProgress(message.id, 'parsing', 20, 'Parsing shape definitions...');
     
-    const shapeQuadsParsed: any[] = serializedShapeQuads.map((sq: SerializedQuad) => {
+    const shapeQuadsParsed: Quad[] = serializedShapeQuads.map((sq: SerializedQuad) => {
       return DataFactory.quad(
         deserializeTerm(sq.subject),
         deserializeTerm(sq.predicate),
