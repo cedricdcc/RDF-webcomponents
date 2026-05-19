@@ -16,7 +16,7 @@ import { MessageType, type WorkerMessage, type SerializedQuad } from '../../type
 import { serializeQuad } from '../../types';
 import { parseRdf, detectFormat, getAcceptHeader, serializeQuads } from './parsers';
 import { SparqlClient, sparqlResultsToQuads } from './sparql';
-import { extractShapes, toLens, type Shapes, type Shape } from 'rdf-lens';
+import { extractShapes, toLens, type Shapes, type Shape, type ShapeField } from 'rdf-lens';
 import { DataFactory } from 'n3';
 import { CacheManager, generateRdfCacheKey, generateShapeCacheKey } from '../cache';
 
@@ -210,7 +210,7 @@ handler.handle(MessageType.EXTRACT_SHAPES_REQUEST, async (payload: any, message)
     id: shape.id,
     ty: shape.ty.value,
     description: shape.description,
-    fields: shape.fields.map((f: any) => ({
+    fields: shape.fields.map((f: ShapeField) => ({
       name: f.name,
       path: typeof f.path === 'string' ? f.path : 'complex-path',
       minCount: f.minCount,
