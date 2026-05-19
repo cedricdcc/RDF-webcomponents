@@ -169,9 +169,9 @@ class TemplateEngine {
   /**
    * Gets a nested value from an object
    */
-  private getNestedValue(obj: any, path: string): any {
-    const parts = path.split('.');
-    let current = obj;
+  private getNestedValue(obj: unknown, path: string): unknown {
+    const parts = splitPath(path);
+    let current: any = obj;
 
     for (const part of parts) {
       if (current === null || current === undefined) {
