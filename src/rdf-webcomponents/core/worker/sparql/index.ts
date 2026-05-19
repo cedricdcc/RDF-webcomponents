@@ -176,6 +176,17 @@ export class SparqlClient {
     return this.executeConstruct(query);
   }
 
+  /**
+   * Executes a DESCRIBE query for multiple URIs and returns quads
+   */
+  async executeDescribeMultiple(uris: string[]): Promise<Quad[]> {
+    if (uris.length === 0) return [];
+
+    const urisString = uris.map(uri => `<${uri}>`).join(' ');
+    const query = `DESCRIBE ${urisString}`;
+    return this.executeConstruct(query);
+  }
+
   // ========================================================================
   // Subject Resolution Strategies
   // ========================================================================
@@ -300,10 +311,14 @@ export class SparqlClient {
     
     // Extract data for each subject (with reasonable limit)
     const maxSubjects = Math.min(subjects.length, this.config.limit);
+    const subjectsToFetch = subjects.slice(0, maxSubjects);
+
+    // Batch subjects into chunks to avoid too large query strings while preventing N+1
+    const batchSize = 100;
     
-    for (let i = 0; i < maxSubjects; i++) {
-      const subject = subjects[i];
-      const quads = await this.executeDescribe(subject);
+    for (let i = 0; i < subjectsToFetch.length; i += batchSize) {
+      const batch = subjectsToFetch.slice(i, i + batchSize);
+      const quads = await this.executeDescribeMultiple(batch);
       allQuads.push(...quads);
     }
     
