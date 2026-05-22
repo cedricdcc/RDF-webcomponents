@@ -13724,6 +13724,10 @@ var version = purify.version;
 var removed = purify.removed;
 
 // src/rdf-webcomponents/components/lens-display.ts
+function splitPath(path) {
+  if (!path) return [];
+  return path.split(".").map((p3) => p3.trim()).filter(Boolean);
+}
 var TemplateEngine = class {
   constructor() {
     this.templateCache = /* @__PURE__ */ new Map();
@@ -13812,7 +13816,7 @@ var TemplateEngine = class {
    * Gets a nested value from an object
    */
   getNestedValue(obj, path) {
-    const parts = path.split(".");
+    const parts = splitPath(path);
     let current = obj;
     for (const part of parts) {
       if (current === null || current === void 0) {
@@ -14363,7 +14367,8 @@ LensDisplay = __decorateClass([
   t3("lens-display")
 ], LensDisplay);
 export {
-  LensDisplay
+  LensDisplay,
+  TemplateEngine
 };
 /*! Bundled license information:
 

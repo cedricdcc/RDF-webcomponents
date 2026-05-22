@@ -39,9 +39,18 @@ import {
 } from './lens-display-config';
 import DOMPurify from 'isomorphic-dompurify';
 
+/**
+ * Helper to split dot-notated paths into segments.
+ */
+function splitPath(path: string): string[] {
+  if (!path) return [];
+  return path.split('.').map(p => p.trim()).filter(Boolean);
+}
+
 // ============================================================================
 // Template Engine
 // ============================================================================
+
 
 /**
  * Simple template engine that supports:
@@ -50,7 +59,7 @@ import DOMPurify from 'isomorphic-dompurify';
  * - Conditional rendering with data- attributes
  * - Loop rendering with template repetition
  */
-class TemplateEngine {
+export class TemplateEngine {
   private templateCache = new Map<string, string>();
 
   /**
