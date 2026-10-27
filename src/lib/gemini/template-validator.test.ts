@@ -175,3 +175,37 @@ describe('gemini-client fallback logic', () => {
     expect(GeminiClient.getStoredApiKey()).toBe('');
   });
 });
+
+describe('block-converter', () => {
+  it('parses template with block annotations into VisualBlock array', async () => {
+    const { parseTemplateToBlocks, blocksToTemplate } = await import('./block-converter');
+    const annotatedHtml = `
+      <div class="rdf-card-grid">
+        {{#each items}}
+        <article class="rdf-card-item">
+          <!-- Block: name -->
+          <h3 class="item-title">{{name}}</h3>
+
+          <!-- Block: ? role -->
+          {{#role}}<p><strong>Role:</strong> {{role}}</p>{{/role}}
+        </article>
+        {{/each}}
+      </div>
+    `;
+
+    const blocks = parseTemplateToBlocks(annotatedHtml);
+    expect(blocks.length).toBe(2);
+    expect(blocks[0].name).toBe('name');
+    expect(blocks[0].type).toBe('property');
+    expect(blocks[1].name).toBe('role');
+    expect(blocks[1].type).toBe('conditional');
+
+    // Round-trip into template
+    const compiled = blocksToTemplate(blocks, 'card');
+    expect(compiled).toContain('<!-- Block: name -->');
+    expect(compiled).toContain('<!-- Block: ? role -->');
+    expect(compiled).toContain('{{#each items}}');
+    expect(compiled).toContain('.rdf-card-grid');
+  });
+});
+
