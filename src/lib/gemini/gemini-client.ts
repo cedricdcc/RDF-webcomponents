@@ -227,11 +227,13 @@ export class GeminiClient {
         lastError = err instanceof Error ? err : new Error(String(err));
         const statusOrMessage = lastError.message;
         
-        // Check if error is recoverable via fallback (404, 429, 503, model not found, quota)
+        // Check if error is recoverable via fallback (404, 429, 503, timeout, model not found, quota)
         const isQuotaOrNotFound =
           statusOrMessage.includes('404') ||
           statusOrMessage.includes('429') ||
           statusOrMessage.includes('503') ||
+          statusOrMessage.toLowerCase().includes('timeout') ||
+          statusOrMessage.toLowerCase().includes('abort') ||
           statusOrMessage.toLowerCase().includes('quota') ||
           statusOrMessage.toLowerCase().includes('not found') ||
           statusOrMessage.toLowerCase().includes('unavailable');
@@ -288,46 +290,61 @@ export class GeminiClient {
       requestBody.generationConfig.responseMimeType = 'application/json';
     }
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, 25000);
 
-    if (!response.ok) {
-      const errText = await response.text();
-      let parsedMessage = '';
-      try {
-        const errJson = JSON.parse(errText);
-        parsedMessage = errJson.error?.message || errText;
-      } catch {
-        parsedMessage = errText;
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        let parsedMessage = '';
+        try {
+          const errJson = JSON.parse(errText);
+          parsedMessage = errJson.error?.message || errText;
+        } catch {
+          parsedMessage = errText;
+        }
+        throw new Error(`Gemini API Error (HTTP ${response.status}): ${parsedMessage}`);
       }
-      throw new Error(`Gemini API Error (HTTP ${response.status}): ${parsedMessage}`);
+
+      const data = await response.json();
+      const candidate = data.candidates?.[0];
+
+      if (!candidate) {
+        throw new Error('Gemini API returned no response candidates.');
+      }
+
+      if (candidate.finishReason === 'SAFETY') {
+        throw new Error('Gemini response was blocked by safety filters.');
+      }
+
+      const textPart = candidate.content?.parts?.[0]?.text;
+      if (typeof textPart !== 'string') {
+        throw new Error('Gemini API returned response without text content.');
+      }
+
+      if (options.onToken) {
+        options.onToken(textPart);
+      }
+
+      return textPart;
+    } catch (err: any) {
+      if (err.name === 'AbortError' || err?.message?.includes('aborted')) {
+        throw new Error(`Request to model ${model} timed out after 25 seconds.`);
+      }
+      throw err;
+    } finally {
+      clearTimeout(timeoutId);
     }
-
-    const data = await response.json();
-    const candidate = data.candidates?.[0];
-
-    if (!candidate) {
-      throw new Error('Gemini API returned no response candidates.');
-    }
-
-    if (candidate.finishReason === 'SAFETY') {
-      throw new Error('Gemini response was blocked by safety filters.');
-    }
-
-    const textPart = candidate.content?.parts?.[0]?.text;
-    if (typeof textPart !== 'string') {
-      throw new Error('Gemini API returned response without text content.');
-    }
-
-    if (options.onToken) {
-      options.onToken(textPart);
-    }
-
-    return textPart;
   }
 }

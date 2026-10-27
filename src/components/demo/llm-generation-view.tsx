@@ -10,16 +10,18 @@ import {
   Loader2,
   Terminal,
   Cpu,
+  X,
 } from 'lucide-react';
 import { GeminiStatusUpdate } from '@/lib/gemini/gemini-client';
 
 interface LlmGenerationViewProps {
   status: GeminiStatusUpdate | null;
-  activeStepIndex: number; // 0..3
+  activeStepIndex: number; // 0..4 (4 = all complete)
   streamingText?: string;
   isGenerating: boolean;
   fallbacksTriggered: string[];
   error?: string | null;
+  onDismiss?: () => void;
 }
 
 const GENERATION_STEPS = [
@@ -36,6 +38,7 @@ export const LlmGenerationView: React.FC<LlmGenerationViewProps> = ({
   isGenerating,
   fallbacksTriggered,
   error,
+  onDismiss,
 }) => {
   return (
     <div className="rounded-xl border border-indigo-100 bg-gradient-to-b from-indigo-50/40 via-white to-white p-4 shadow-sm space-y-4">
@@ -43,23 +46,28 @@ export const LlmGenerationView: React.FC<LlmGenerationViewProps> = ({
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-indigo-100/70 pb-3">
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-indigo-600 text-white shadow-sm">
-            <Sparkles className="h-4 w-4 animate-spin-slow" />
+            <Sparkles className="h-4 w-4" />
           </div>
           <div>
             <h4 className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
               <span>Gemini AI Engine</span>
-              {isGenerating && (
+              {isGenerating ? (
                 <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-indigo-100 text-indigo-700 animate-pulse">
                   <Loader2 className="h-2.5 w-2.5 animate-spin" />
                   Generating...
                 </span>
-              )}
+              ) : activeStepIndex >= 4 && !error ? (
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-emerald-100 text-emerald-700">
+                  <CheckCircle2 className="h-2.5 w-2.5" />
+                  Ready
+                </span>
+              ) : null}
             </h4>
             <p className="text-[10px] text-slate-500">Autonomous design & validation pipeline</p>
           </div>
         </div>
 
-        {/* Model & Fallback Pill */}
+        {/* Model & Fallback Pill + Dismiss button */}
         <div className="flex items-center gap-1.5">
           {status?.model && (
             <div className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-white border border-slate-200 text-slate-700 text-[11px] font-mono shadow-2xs">
@@ -74,21 +82,35 @@ export const LlmGenerationView: React.FC<LlmGenerationViewProps> = ({
               <span>Fallback active: {fallbacksTriggered[fallbacksTriggered.length - 1]}</span>
             </div>
           )}
+
+          {onDismiss && !isGenerating && (
+            <button
+              type="button"
+              onClick={onDismiss}
+              className="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors ml-1 cursor-pointer"
+              title="Close status panel"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
       </div>
 
       {/* Stepper Progression */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {GENERATION_STEPS.map((step, idx) => {
-          const isDone = activeStepIndex > idx;
-          const isCurrent = activeStepIndex === idx;
-          const isPending = activeStepIndex < idx;
+          // Completed if beyond this step, or if generation is completed without error
+          const isDone = activeStepIndex > idx || (!isGenerating && !error && activeStepIndex >= 3);
+          const isFailed = Boolean(error && activeStepIndex === idx);
+          const isCurrent = isGenerating && activeStepIndex === idx;
 
           return (
             <div
               key={step.id}
               className={`p-2.5 rounded-lg border text-left transition-all ${
-                isCurrent
+                isFailed
+                  ? 'border-red-300 bg-red-50/50'
+                  : isCurrent
                   ? 'border-indigo-400 bg-white ring-2 ring-indigo-100 shadow-xs'
                   : isDone
                   ? 'border-emerald-200 bg-emerald-50/30'
@@ -96,7 +118,9 @@ export const LlmGenerationView: React.FC<LlmGenerationViewProps> = ({
               }`}
             >
               <div className="flex items-center gap-1.5 mb-1">
-                {isDone ? (
+                {isFailed ? (
+                  <AlertTriangle className="h-3.5 w-3.5 text-red-600" />
+                ) : isDone ? (
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
                 ) : isCurrent ? (
                   <Loader2 className="h-3.5 w-3.5 text-indigo-600 animate-spin" />
@@ -105,7 +129,9 @@ export const LlmGenerationView: React.FC<LlmGenerationViewProps> = ({
                 )}
                 <span
                   className={`text-[11px] font-bold truncate ${
-                    isCurrent
+                    isFailed
+                      ? 'text-red-800'
+                      : isCurrent
                       ? 'text-indigo-900'
                       : isDone
                       ? 'text-emerald-800'
@@ -120,6 +146,27 @@ export const LlmGenerationView: React.FC<LlmGenerationViewProps> = ({
           );
         })}
       </div>
+
+      {/* Success Notification Banner when finished */}
+      {!isGenerating && !error && activeStepIndex >= 3 && (
+        <div className="p-2.5 rounded-lg bg-emerald-50/80 border border-emerald-200 text-emerald-900 text-xs flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+            <span>
+              <strong>Generation & Verification Complete!</strong> Template syntax, loop tags, and JSON properties validated.
+            </span>
+          </div>
+          {onDismiss && (
+            <button
+              type="button"
+              onClick={onDismiss}
+              className="text-[11px] text-emerald-700 hover:text-emerald-900 underline font-medium cursor-pointer ml-2 shrink-0"
+            >
+              Dismiss
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Fallback Notice Banner */}
       {status?.status === 'fallback' && (

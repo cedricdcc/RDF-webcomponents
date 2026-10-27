@@ -105,6 +105,7 @@ export const LlmDesignerDialog: React.FC<LlmDesignerDialogProps> = ({
   const [streamingText, setStreamingText] = useState<string>('');
   const [fallbacksTriggered, setFallbacksTriggered] = useState<string[]>([]);
   const [generationError, setGenerationError] = useState<string | null>(null);
+  const [showStatusView, setShowStatusView] = useState<boolean>(true);
 
   // Generated outputs
   const [generatedHtml, setGeneratedHtml] = useState<string>('');
@@ -175,6 +176,7 @@ export const LlmDesignerDialog: React.FC<LlmDesignerDialogProps> = ({
       return;
     }
 
+    setShowStatusView(true);
     setIsGenerating(true);
     setGenerationError(null);
     setStreamingText('');
@@ -234,7 +236,20 @@ Generate the complete Mustache HTML template with <style> according to the rules
         cleanCode = cleanCode.replace(/^```\s*/, '').replace(/\s*```$/, '');
       }
 
+      // Synchronously execute validation and parse blocks
+      try {
+        const report = validateTemplateAgainstJson(cleanCode, jsonData);
+        setValidationReport(report);
+        const parsed = parseTemplateToBlocks(cleanCode);
+        if (parsed.length > 0) {
+          setGeneratedBlocks(parsed);
+        }
+      } catch (valErr) {
+        console.warn('Template validation notice:', valErr);
+      }
+
       setGeneratedHtml(cleanCode);
+      setGenerationStep(4); // All 4 steps complete!
 
       // Add to conversation
       const newAgentMsg: ChatMessage = {
@@ -391,7 +406,7 @@ Generate the complete Mustache HTML template with <style> according to the rules
         </div>
 
         {/* Generation Status View (visible during and after generation) */}
-        {(isGenerating || statusUpdate || generationError) && (
+        {showStatusView && (isGenerating || statusUpdate || generationError) && (
           <LlmGenerationView
             status={statusUpdate}
             activeStepIndex={generationStep}
@@ -399,6 +414,7 @@ Generate the complete Mustache HTML template with <style> according to the rules
             isGenerating={isGenerating}
             fallbacksTriggered={fallbacksTriggered}
             error={generationError}
+            onDismiss={() => setShowStatusView(false)}
           />
         )}
 
