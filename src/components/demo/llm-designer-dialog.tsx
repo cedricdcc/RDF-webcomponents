@@ -281,7 +281,7 @@ Generate the complete Mustache HTML template with <style> according to the rules
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
-      <DialogContent className="w-[98vw] max-w-[98vw] sm:max-w-[98vw] md:max-w-[98vw] lg:max-w-[98vw] xl:max-w-[98vw] 2xl:max-w-[98vw] h-[95vh] max-h-[96vh] flex flex-col p-6 overflow-hidden bg-white shadow-2xl">
+      <DialogContent className="w-[calc(100vw-1.5rem)] sm:w-[calc(100vw-2rem)] max-w-[calc(100vw-1.5rem)] sm:max-w-[calc(100vw-2rem)] md:max-w-[calc(100vw-2rem)] lg:max-w-[calc(100vw-2rem)] xl:max-w-[calc(100vw-2rem)] 2xl:max-w-[calc(100vw-2rem)] h-[96vh] max-h-[96vh] flex flex-col p-6 overflow-hidden bg-white shadow-2xl">
         {/* Header */}
         <DialogHeader className="border-b pb-3">
           <div className="flex items-center justify-between">
@@ -442,9 +442,9 @@ Generate the complete Mustache HTML template with <style> according to the rules
               <span className="font-medium">
                 Extracted Data from <code className="bg-slate-100 px-1 py-0.5 rounded font-mono">rdf-lens</code>:
               </span>
-              <div className="flex items-center gap-1.5">
-                <span className="text-slate-400">Available keys:</span>
-                <div className="flex flex-wrap gap-1 max-w-sm">
+              <div className="flex items-center gap-1.5 flex-1 justify-end">
+                <span className="text-slate-400 shrink-0">Available keys:</span>
+                <div className="flex flex-wrap gap-1 max-w-2xl justify-end">
                   {availableProps.map(p => (
                     <span
                       key={p}
@@ -577,93 +577,169 @@ Generate the complete Mustache HTML template with <style> according to the rules
           </TabsContent>
 
           {/* TAB 3: Interactive Chat Refinement */}
-          <TabsContent value="chat" className="flex-1 flex flex-col min-h-0 pt-2 space-y-2">
-            <ScrollArea className="flex-1 rounded-xl border border-slate-200 bg-slate-50 p-4">
-              <div className="space-y-3">
-                {messages.length === 0 ? (
-                  <div className="text-center py-12 text-slate-400 space-y-2">
-                    <Bot className="h-8 w-8 mx-auto text-slate-300" />
-                    <p className="text-xs font-medium">No conversation history yet.</p>
-                    <p className="text-[11px]">
-                      Choose an archetype from tab 2, or type a request below to begin designing.
-                    </p>
-                  </div>
-                ) : (
-                  messages.map(msg => (
-                    <div
-                      key={msg.id}
-                      className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
-                    >
-                      <div
-                        className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-xs shadow-xs ${
-                          msg.sender === 'user'
-                            ? 'bg-indigo-600 text-white rounded-br-none'
-                            : 'bg-white border border-slate-200 text-slate-800 rounded-bl-none'
-                        }`}
-                      >
-                        <p className="leading-relaxed">{msg.content}</p>
-                        {msg.templateSnippet && (
-                          <div className="mt-2 pt-2 border-t border-slate-200/50 flex items-center justify-between">
-                            <span className="text-[10px] text-indigo-600 font-mono font-medium">
-                              Template generated
-                            </span>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => setActiveTab('review')}
-                              className="h-6 text-[10px] text-indigo-600 hover:text-indigo-800 p-0 cursor-pointer"
-                            >
-                              Inspect in Review →
-                            </Button>
-                          </div>
-                        )}
+          <TabsContent value="chat" className="flex-1 flex flex-col min-h-0 pt-2">
+            <div className="grid lg:grid-cols-12 gap-4 flex-1 min-h-0">
+              {/* Left Column: Chat conversation & prompt input */}
+              <div className="lg:col-span-7 flex flex-col min-h-0 space-y-2">
+                <ScrollArea className="flex-1 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                  <div className="space-y-3">
+                    {messages.length === 0 ? (
+                      <div className="text-center py-12 text-slate-400 space-y-2">
+                        <Bot className="h-8 w-8 mx-auto text-slate-300" />
+                        <p className="text-xs font-medium">No conversation history yet.</p>
+                        <p className="text-[11px]">
+                          Choose an archetype from tab 2, or type a request below to begin designing.
+                        </p>
                       </div>
-                      <span className="text-[9px] text-slate-400 mt-0.5 px-1">{msg.timestamp}</span>
-                    </div>
-                  ))
+                    ) : (
+                      messages.map(msg => (
+                        <div
+                          key={msg.id}
+                          className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
+                        >
+                          <div
+                            className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-xs shadow-xs ${
+                              msg.sender === 'user'
+                                ? 'bg-indigo-600 text-white rounded-br-none'
+                                : 'bg-white border border-slate-200 text-slate-800 rounded-bl-none'
+                            }`}
+                          >
+                            <p className="leading-relaxed">{msg.content}</p>
+                            {msg.templateSnippet && (
+                              <div className="mt-2 pt-2 border-t border-slate-200/50 flex items-center justify-between">
+                                <span className="text-[10px] text-indigo-600 font-mono font-medium">
+                                  Template generated
+                                </span>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => setActiveTab('review')}
+                                  className="h-6 text-[10px] text-indigo-600 hover:text-indigo-800 p-0 cursor-pointer"
+                                >
+                                  Inspect in Review →
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-[9px] text-slate-400 mt-0.5 px-1">{msg.timestamp}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </ScrollArea>
+
+                {/* Quick Feedback Chips */}
+                <div className="flex flex-wrap gap-1.5 py-1">
+                  {[
+                    'Make it horizontal',
+                    'Add email mailto link',
+                    'Add soft background gradient',
+                    'Only show city if provided',
+                    'Compact badge format',
+                  ].map(chip => (
+                    <button
+                      key={chip}
+                      type="button"
+                      onClick={() => handleGenerateTemplate(chip)}
+                      disabled={isGenerating}
+                      className="px-2.5 py-1 rounded-full text-[10px] font-medium bg-white border border-slate-200 text-slate-600 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 transition-all cursor-pointer shadow-2xs"
+                    >
+                      + {chip}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Chat Input */}
+                <div className="flex items-center gap-2 pt-1 border-t">
+                  <Input
+                    placeholder="Give feedback or ask for changes (e.g., 'Make headers larger', 'Add avatar placeholder')..."
+                    value={chatInput}
+                    onChange={e => setChatInput(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleSendChatMessage()}
+                    disabled={isGenerating}
+                    className="text-xs"
+                  />
+                  <Button
+                    size="sm"
+                    onClick={handleSendChatMessage}
+                    disabled={isGenerating || !chatInput.trim()}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white shrink-0 cursor-pointer"
+                  >
+                    <Send className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </div>
+
+              {/* Right Column: Live Design Draft & Blocks Preview on Wide Screens */}
+              <div className="hidden lg:flex lg:col-span-5 flex-col min-h-0 space-y-2 border-l lg:pl-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                    <span>Live Design Draft</span>
+                    <span className="px-1.5 py-0.2 rounded-full text-[9px] bg-indigo-50 border border-indigo-200 text-indigo-700 font-mono">
+                      {selectedArchetype}
+                    </span>
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setActiveTab('review')}
+                    className="h-6 text-[10px] text-indigo-600 hover:text-indigo-800 p-0 cursor-pointer"
+                  >
+                    Full Review →
+                  </Button>
+                </div>
+
+                {/* Blocks Mini-List */}
+                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-2.5">
+                  <span className="text-[10px] font-semibold text-slate-500 block mb-1.5">
+                    Visual Blocks ({generatedBlocks.length}):
+                  </span>
+                  <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto">
+                    {generatedBlocks.length === 0 ? (
+                      <span className="text-slate-400 text-[11px] italic">No blocks generated yet.</span>
+                    ) : (
+                      generatedBlocks.map(block => (
+                        <span
+                          key={block.id}
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono border ${
+                            block.type === 'property'
+                              ? 'bg-blue-50 border-blue-200 text-blue-700'
+                              : block.type === 'conditional'
+                              ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                              : 'bg-purple-50 border-purple-200 text-purple-700'
+                          }`}
+                        >
+                          {block.name}
+                        </span>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                {/* HTML Template Preview */}
+                <div className="flex-1 flex flex-col min-h-0">
+                  <span className="text-[10px] font-semibold text-slate-500 block mb-1">
+                    Mustache Template HTML:
+                  </span>
+                  <ScrollArea className="flex-1 rounded-xl border border-slate-200 bg-slate-900 text-slate-100 p-3 font-mono text-[10.5px] shadow-inner">
+                    <pre className="whitespace-pre-wrap">
+                      {generatedHtml || '<!-- Start a conversation or select an archetype to draft template -->'}
+                    </pre>
+                  </ScrollArea>
+                </div>
+
+                {/* Quick Apply Button */}
+                {generatedBlocks.length > 0 && (
+                  <Button
+                    size="sm"
+                    onClick={handleApply}
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5 shadow-sm cursor-pointer"
+                  >
+                    <CheckCheck className="h-3.5 w-3.5" />
+                    Apply Current Template to Canvas
+                  </Button>
                 )}
               </div>
-            </ScrollArea>
-
-            {/* Quick Feedback Chips */}
-            <div className="flex flex-wrap gap-1.5 py-1">
-              {[
-                'Make it horizontal',
-                'Add email mailto link',
-                'Add soft background gradient',
-                'Only show city if provided',
-                'Compact badge format',
-              ].map(chip => (
-                <button
-                  key={chip}
-                  type="button"
-                  onClick={() => handleGenerateTemplate(chip)}
-                  disabled={isGenerating}
-                  className="px-2.5 py-1 rounded-full text-[10px] font-medium bg-white border border-slate-200 text-slate-600 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 transition-all cursor-pointer shadow-2xs"
-                >
-                  + {chip}
-                </button>
-              ))}
-            </div>
-
-            {/* Chat Input */}
-            <div className="flex items-center gap-2 pt-1 border-t">
-              <Input
-                placeholder="Give feedback or ask for changes (e.g., 'Make headers larger', 'Add avatar placeholder')..."
-                value={chatInput}
-                onChange={e => setChatInput(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleSendChatMessage()}
-                disabled={isGenerating}
-                className="text-xs"
-              />
-              <Button
-                size="sm"
-                onClick={handleSendChatMessage}
-                disabled={isGenerating || !chatInput.trim()}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white shrink-0 cursor-pointer"
-              >
-                <Send className="h-3.5 w-3.5" />
-              </Button>
             </div>
           </TabsContent>
 
