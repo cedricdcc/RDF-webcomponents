@@ -281,7 +281,7 @@ Generate the complete Mustache HTML template with <style> according to the rules
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
-      <DialogContent className="max-w-6xl w-[96vw] h-[92vh] max-h-[94vh] flex flex-col p-6 overflow-hidden bg-white shadow-2xl">
+      <DialogContent className="w-[98vw] max-w-[98vw] sm:max-w-[98vw] md:max-w-[98vw] lg:max-w-[98vw] xl:max-w-[98vw] 2xl:max-w-[98vw] h-[95vh] max-h-[96vh] flex flex-col p-6 overflow-hidden bg-white shadow-2xl">
         {/* Header */}
         <DialogHeader className="border-b pb-3">
           <div className="flex items-center justify-between">
@@ -481,7 +481,7 @@ Generate the complete Mustache HTML template with <style> according to the rules
               Select how you would like the RDF data to be visually presented:
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
               {[
                 {
                   id: 'card',
@@ -705,44 +705,64 @@ Generate the complete Mustache HTML template with <style> according to the rules
               </div>
             )}
 
-            {/* Generated Blocks Preview chips */}
-            <div className="space-y-1.5">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-                Generated Visual Designer Blocks:
-              </span>
-              <div className="flex flex-wrap gap-1.5 p-2 bg-slate-50 rounded-lg border border-slate-200/80 max-h-20 overflow-auto">
-                {generatedBlocks.length === 0 ? (
-                  <span className="text-slate-400 text-xs italic">No blocks generated yet.</span>
-                ) : (
-                  generatedBlocks.map(block => (
-                    <span
-                      key={block.id}
-                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-mono font-medium border shadow-2xs ${
-                        block.type === 'property'
-                          ? 'bg-blue-50 border-blue-200 text-blue-700'
-                          : block.type === 'conditional'
-                          ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                          : 'bg-purple-50 border-purple-200 text-purple-700'
-                      }`}
-                    >
-                      <span className="font-bold opacity-60">
-                        {block.type === 'property' ? '🗲' : block.type === 'conditional' ? '?' : '<>'}
-                      </span>
-                      <span>{block.name}</span>
-                    </span>
-                  ))
-                )}
+            {/* Side-by-side 2-column layout on wide screens */}
+            <div className="grid lg:grid-cols-12 gap-4 flex-1 min-h-0">
+              {/* Left Column: Visual Blocks List */}
+              <div className="lg:col-span-5 flex flex-col min-h-0 space-y-2">
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+                  Generated Visual Designer Blocks ({generatedBlocks.length}):
+                </span>
+                <ScrollArea className="flex-1 rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+                  {generatedBlocks.length === 0 ? (
+                    <span className="text-slate-400 text-xs italic">No blocks generated yet.</span>
+                  ) : (
+                    <div className="space-y-2">
+                      {generatedBlocks.map((block, idx) => (
+                        <div
+                          key={block.id}
+                          className={`flex items-center justify-between p-2.5 rounded-lg border bg-white shadow-2xs ${
+                            block.type === 'property'
+                              ? 'border-blue-200 bg-gradient-to-r from-blue-50/20 to-white'
+                              : block.type === 'conditional'
+                              ? 'border-emerald-200 bg-gradient-to-r from-emerald-50/20 to-white'
+                              : 'border-purple-200 bg-gradient-to-r from-purple-50/20 to-white'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold font-mono bg-slate-100 text-slate-600">
+                              #{idx + 1}
+                            </span>
+                            <span className="text-xs font-mono font-semibold text-slate-800">
+                              {block.name}
+                            </span>
+                          </div>
+                          <span
+                            className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
+                              block.type === 'property'
+                                ? 'bg-blue-100 text-blue-700'
+                                : block.type === 'conditional'
+                                ? 'bg-emerald-100 text-emerald-700'
+                                : 'bg-purple-100 text-purple-700'
+                            }`}
+                          >
+                            {block.type === 'property' ? '🗲 Property' : block.type === 'conditional' ? '? Conditional' : '<> HTML'}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </ScrollArea>
               </div>
-            </div>
 
-            {/* Template HTML Code View */}
-            <div className="flex-1 flex flex-col min-h-0 space-y-1">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-                Mustache HTML Template Output:
-              </span>
-              <ScrollArea className="flex-1 rounded-xl border border-slate-200 bg-slate-900 text-slate-100 p-3 font-mono text-[11px] shadow-inner">
-                <pre className="whitespace-pre-wrap">{generatedHtml || '<!-- Click generate to draft template -->'}</pre>
-              </ScrollArea>
+              {/* Right Column: HTML Template Output */}
+              <div className="lg:col-span-7 flex flex-col min-h-0 space-y-2">
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+                  Mustache HTML Template Output:
+                </span>
+                <ScrollArea className="flex-1 rounded-xl border border-slate-200 bg-slate-900 text-slate-100 p-4 font-mono text-[11px] shadow-inner">
+                  <pre className="whitespace-pre-wrap">{generatedHtml || '<!-- Click generate to draft template -->'}</pre>
+                </ScrollArea>
+              </div>
             </div>
 
             {/* Action Buttons */}
