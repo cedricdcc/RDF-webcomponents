@@ -17,7 +17,9 @@ import {
   Code,
   Eye,
   FileText,
+  Bot,
 } from "lucide-react";
+import { LlmDesignerDialog } from "@/components/demo/llm-designer-dialog";
 
 type RuntimeConfig = {
   dataUrl: string;
@@ -204,6 +206,44 @@ export default function DemoPage() {
 
   const [templateInput, setTemplateInput] = useState(DEMO_TEMPLATE);
   const [step3Mode, setStep3Mode] = useState<"visual" | "code">("visual");
+  const [isAiDesignerOpen, setIsAiDesignerOpen] = useState(false);
+  const [lensExtractedJson, setLensExtractedJson] = useState<any>(null);
+
+  const getActiveLensJson = () => {
+    if (lensExtractedJson) {
+      return lensExtractedJson;
+    }
+    // Synthesize preview JSON from analyzed class properties if available
+    if (selectedClass && analyzedClasses[selectedClass]) {
+      const classInfo = analyzedClasses[selectedClass];
+      const sampleObj: Record<string, any> = {};
+      Object.entries(classInfo.properties).forEach(([pred, propData]) => {
+        const key = pred.split(/[#/]/).pop() || pred;
+        sampleObj[key] = (propData.exampleValues && propData.exampleValues.length > 0)
+          ? propData.exampleValues[0]
+          : `Sample ${key}`;
+      });
+      return [sampleObj];
+    }
+    // Fallback default sample records
+    return [
+      {
+        name: "Alice Smith",
+        role: "Data Engineer",
+        email: "alice@example.org",
+        age: 31,
+        city: "Brussels",
+      },
+      {
+        name: "Bob Johnson",
+        role: "Knowledge Graph Architect",
+        email: "bob@example.org",
+        age: 36,
+        city: "Ghent",
+      },
+    ];
+  };
+
   const [visualBlocks, setVisualBlocks] = useState<VisualBlock[]>([
     { id: "default-name", type: "property", name: "name", label: "Name" },
     { id: "default-role", type: "conditional", name: "role", label: "Role" },
@@ -1269,6 +1309,9 @@ ${fieldsHtml}  </article>
     const onShapeProcessed = (event: Event) => {
       const detail = (event as CustomEvent).detail;
       setLensStatus("ready");
+      if (detail && detail.data) {
+        setLensExtractedJson(detail.data);
+      }
       pushEvent("rdf-lens: shape-processed", detail);
     };
     const onShapeError = (event: Event) => {
@@ -2109,21 +2152,34 @@ ${fieldsHtml}  </article>
                       </div>
                     </div>
 
-                    {/* Visual/Code Toggle tabs */}
-                    <div className="flex border rounded-lg p-1 bg-slate-50 gap-1 mb-2">
+                    {/* Visual/Code Toggle tabs & AI Designer Trigger */}
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <div className="flex border rounded-lg p-1 bg-slate-50 gap-1 flex-1">
+                        <button
+                          type="button"
+                          onClick={() => setStep3Mode("visual")}
+                          className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${step3Mode === "visual" ? "bg-white text-slate-800 shadow-sm border border-slate-200/50" : "text-slate-600 hover:text-slate-800"}`}
+                        >
+                          Visual Designer
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setStep3Mode("code")}
+                          className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${step3Mode === "code" ? "bg-white text-slate-800 shadow-sm border border-slate-200/50" : "text-slate-600 hover:text-slate-800"}`}
+                        >
+                          HTML Code Editor
+                        </button>
+                      </div>
+
+                      {/* AI Designer Button */}
                       <button
                         type="button"
-                        onClick={() => setStep3Mode("visual")}
-                        className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${step3Mode === "visual" ? "bg-white text-slate-800 shadow-sm border border-slate-200/50" : "text-slate-600 hover:text-slate-800"}`}
+                        onClick={() => setIsAiDesignerOpen(true)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border border-indigo-200 bg-gradient-to-r from-indigo-50 to-violet-50 text-indigo-700 hover:from-indigo-100 hover:to-violet-100 transition-all cursor-pointer shadow-xs shrink-0"
+                        title="Open AI conversational template assistant"
                       >
-                        Visual Designer
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setStep3Mode("code")}
-                        className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${step3Mode === "code" ? "bg-white text-slate-800 shadow-sm border border-slate-200/50" : "text-slate-600 hover:text-slate-800"}`}
-                      >
-                        HTML Code Editor
+                        <Sparkles className="h-3.5 w-3.5 text-indigo-600 animate-spin-slow" />
+                        <span>AI Designer</span>
                       </button>
                     </div>
 
@@ -2132,10 +2188,21 @@ ${fieldsHtml}  </article>
                         {/* Drag and Drop Canvas */}
                         <div className="border-2 border-dashed border-amber-300 bg-amber-50/20 rounded-xl p-4 flex-1 flex flex-col space-y-3 min-h-[300px]">
                           <div className="flex items-center justify-between pb-2 border-b border-amber-200">
-                            <span className="text-xs font-bold text-amber-800 flex items-center gap-1.5">
-                              <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse"></span>
-                              Loop: <code className="bg-amber-100/80 px-1 py-0.5 rounded text-[10px] font-mono">{"{{#each items}}"}</code>
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-bold text-amber-800 flex items-center gap-1.5">
+                                <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse"></span>
+                                Loop: <code className="bg-amber-100/80 px-1 py-0.5 rounded text-[10px] font-mono">{"{{#each items}}"}</code>
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => setIsAiDesignerOpen(true)}
+                                className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100/80 hover:bg-amber-200 text-amber-900 border border-amber-300 transition-all cursor-pointer shadow-2xs"
+                                title="Let AI design these Mustache blocks"
+                              >
+                                <Sparkles className="h-2.5 w-2.5 text-amber-700" />
+                                <span>Design with AI...</span>
+                              </button>
+                            </div>
                             <span className="text-[10px] text-amber-600 font-mono">{"{{/each}}"}</span>
                           </div>
 
@@ -2553,6 +2620,24 @@ ${fieldsHtml}  </article>
           </div>
         )}
       </div>
+
+      {/* AI Template Designer Modal */}
+      <LlmDesignerDialog
+        isOpen={isAiDesignerOpen}
+        onClose={() => setIsAiDesignerOpen(false)}
+        jsonData={getActiveLensJson()}
+        currentBlocks={visualBlocks}
+        selectedClass={selectedClass}
+        onApplyTemplate={({ blocks, templateHtml }) => {
+          setVisualBlocks(blocks);
+          setTemplateInput(templateHtml);
+          runPipelineWithValues({ template: templateHtml });
+          pushEvent("lens-display: ai-template-applied", {
+            blocksCount: blocks.length,
+            templateLength: templateHtml.length,
+          });
+        }}
+      />
     </main>
   );
 }
