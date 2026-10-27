@@ -168,13 +168,8 @@ export const LlmDesignerDialog: React.FC<LlmDesignerDialogProps> = ({
     }
   }, [generatedHtml, jsonData]);
 
-  // Execute generation with Gemini
+  // Execute generation with Gemini (or Local Synthesizer fallback)
   const handleGenerateTemplate = async (userPrompt?: string) => {
-    if (!apiKey.trim()) {
-      setActiveTab('json');
-      alert('Please enter and save your Google Gemini API key first.');
-      return;
-    }
 
     setShowStatusView(true);
     setIsGenerating(true);
@@ -216,6 +211,11 @@ Generate the complete Mustache HTML template with <style> according to the rules
         model: selectedModel,
         systemInstruction,
         temperature: 0.3,
+        localFallback: {
+          jsonData,
+          archetype: selectedArchetype,
+          prompt: promptText,
+        },
         onStatusChange: update => {
           setStatusUpdate(update);
           if (update.status === 'fallback' && update.model) {

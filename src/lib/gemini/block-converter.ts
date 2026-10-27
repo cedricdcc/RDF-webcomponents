@@ -1,7 +1,4 @@
-/**
- * Converter between Mustache HTML templates and VisualBlock structures.
- * Integrates with Step 3 Visual Designer in the RDF Webcomponents demo.
- */
+import { extractAvailableJsonProperties } from './template-validator';
 
 export type VisualBlockType = 'property' | 'conditional' | 'html';
 
@@ -342,4 +339,97 @@ export function getArchetypeStyles(archetype: DisplayArchetype): string {
     line-height: 1.5;
   }`;
   }
+}
+
+/**
+ * Synthesizes a verified, rich Mustache HTML template directly from JSON schema and presentation archetype.
+ * Serves as an intelligent local fallback when remote LLM models are unavailable or quota-limited.
+ */
+export function synthesizeLocalTemplate(
+  jsonData: any,
+  archetype: DisplayArchetype = 'card',
+  userPrompt?: string
+): string {
+  const propertiesSet = extractAvailableJsonProperties(jsonData);
+  const properties = Array.from(propertiesSet).filter(
+    p => p !== 'items' && p !== 'this' && !p.includes('.')
+  );
+
+  // If no properties found, provide default fallback fields
+  const fields = properties.length > 0 ? properties : ['name', 'role', 'email'];
+
+  // Determine title/headline property
+  const titleField =
+    fields.find(f => ['name', 'title', 'label', 'preflabel', 'id', 'identifier'].includes(f.toLowerCase())) ||
+    fields[0];
+
+  // Secondary/remaining fields
+  const detailFields = fields.filter(f => f !== titleField);
+
+  // Check user instructions for hints
+  const promptLower = (userPrompt || '').toLowerCase();
+  const wantsMailto = promptLower.includes('mailto') || promptLower.includes('email');
+
+  let fieldsMarkup = '';
+
+  // Title Block
+  fieldsMarkup += `    <!-- Block: ${titleField} -->\n`;
+  fieldsMarkup += `    <h3 class="item-title">{{${titleField}}}</h3>\n\n`;
+
+  // Detail Blocks
+  detailFields.forEach(field => {
+    const isEmail = field.toLowerCase().includes('email') || field.toLowerCase().includes('mail');
+    const isImage = field.toLowerCase().includes('img') || field.toLowerCase().includes('avatar') || field.toLowerCase().includes('photo') || field.toLowerCase().includes('image');
+    const isUrl = field.toLowerCase().includes('url') || field.toLowerCase().includes('link') || field.toLowerCase().includes('website');
+    const label = field.charAt(0).toUpperCase() + field.slice(1);
+
+    fieldsMarkup += `    <!-- Block: ? ${field} -->\n`;
+    fieldsMarkup += `    {{#${field}}}\n`;
+
+    if (isImage) {
+      fieldsMarkup += `      <div class="item-avatar-slot">\n        <img src="{{${field}}}" alt="{{${titleField}}}" class="item-avatar-img" />\n      </div>\n`;
+    } else if (isEmail || wantsMailto) {
+      fieldsMarkup += `      <p class="item-field item-email"><strong>${label}:</strong> <a href="mailto:{{${field}}}" class="item-link">{{${field}}}</a></p>\n`;
+    } else if (isUrl) {
+      fieldsMarkup += `      <p class="item-field item-url"><strong>${label}:</strong> <a href="{{${field}}}" target="_blank" rel="noopener" class="item-link">{{${field}}}</a></p>\n`;
+    } else {
+      fieldsMarkup += `      <p class="item-field"><strong>${label}:</strong> {{${field}}}</p>\n`;
+    }
+
+    fieldsMarkup += `    {{/${field}}}\n\n`;
+  });
+
+  const baseStyles = getArchetypeStyles(archetype);
+  const commonStyles = `
+  .rdf-${archetype}-item .item-link {
+    color: #4f46e5;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .rdf-${archetype}-item .item-link:hover {
+    color: #3730a3;
+  }
+  .rdf-${archetype}-item .item-avatar-slot {
+    margin-bottom: 0.75rem;
+  }
+  .rdf-${archetype}-item .item-avatar-img {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 9999px;
+    object-fit: cover;
+    border: 2px solid #e0e7ff;
+  }`;
+
+  return `<div class="rdf-${archetype}-grid">
+  <!-- Block: # each items -->
+  {{#each items}}
+  <article class="rdf-${archetype}-item">
+${fieldsMarkup}  </article>
+  {{/each}}
+</div>
+
+<style>
+${baseStyles}
+${commonStyles}
+</style>`;
 }

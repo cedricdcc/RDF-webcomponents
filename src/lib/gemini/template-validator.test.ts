@@ -122,18 +122,23 @@ describe('gemini-client fallback logic', () => {
     const statusEvents: any[] = [];
     const mockApiKey = 'test-api-key-12345';
 
-    // Mock fetch: first call (gemini-2.5-flash) returns 404, second call (gemini-2.0-flash) returns 200
-    let callCount = 0;
+    // Mock fetch: models list returns empty (to use defaults), gemini-2.0-flash returns 404, gemini-1.5-flash returns 200
     global.fetch = vi.fn().mockImplementation((url: string) => {
-      callCount++;
-      if (url.includes('gemini-2.5-flash')) {
+      if (url.includes('/models?')) {
         return Promise.resolve({
           ok: false,
           status: 404,
-          text: async () => JSON.stringify({ error: { message: 'models/gemini-2.5-flash not found' } }),
+          text: async () => 'Not found',
         });
       }
       if (url.includes('gemini-2.0-flash')) {
+        return Promise.resolve({
+          ok: false,
+          status: 404,
+          text: async () => JSON.stringify({ error: { message: 'models/gemini-2.0-flash not found' } }),
+        });
+      }
+      if (url.includes('gemini-1.5-flash')) {
         return Promise.resolve({
           ok: true,
           status: 200,
@@ -153,19 +158,55 @@ describe('gemini-client fallback logic', () => {
 
     const result = await GeminiClient.generateWithFallback('Design a card', {
       apiKey: mockApiKey,
+      model: 'gemini-2.0-flash',
       onStatusChange: update => statusEvents.push(update),
     });
 
-    expect(callCount).toBe(2);
-    expect(result.modelUsed).toBe('gemini-2.0-flash');
-    expect(result.fallbacksTriggered).toContain('gemini-2.0-flash');
+    expect(result.modelUsed).toBe('gemini-1.5-flash');
+    expect(result.fallbacksTriggered).toContain('gemini-1.5-flash');
     expect(result.text).toContain('<article><h3>{{name}}</h3></article>');
 
     // Check status events for fallback notification
     const fallbackUpdate = statusEvents.find(e => e.status === 'fallback');
     expect(fallbackUpdate).toBeDefined();
-    expect(fallbackUpdate.model).toBe('gemini-2.0-flash');
-    expect(fallbackUpdate.previousModel).toBe('gemini-2.5-flash');
+    expect(fallbackUpdate.model).toBe('gemini-1.5-flash');
+    expect(fallbackUpdate.previousModel).toBe('gemini-2.0-flash');
+  });
+
+  it('seamlessly falls back to local synthesizer when all remote models return 404', async () => {
+    const statusEvents: any[] = [];
+    const mockApiKey = 'test-api-key-12345';
+    const sampleData = [{ name: 'Alice Smith', email: 'alice@example.org', role: 'Staff Researcher' }];
+
+    // Mock fetch: all remote calls return 404
+    global.fetch = vi.fn().mockImplementation(() => {
+      return Promise.resolve({
+        ok: false,
+        status: 404,
+        text: async () => JSON.stringify({ error: { message: 'Model not found for API version v1beta' } }),
+      });
+    });
+
+    const result = await GeminiClient.generateWithFallback('Design a profile card', {
+      apiKey: mockApiKey,
+      localFallback: {
+        jsonData: sampleData,
+        archetype: 'card',
+        prompt: 'Include email and role',
+      },
+      onStatusChange: update => statusEvents.push(update),
+    });
+
+    // Should succeed with the local template synthesizer
+    expect(result.modelUsed).toContain('Local');
+    expect(result.text).toContain('{{#each items}}');
+    expect(result.text).toContain('{{name}}');
+    expect(result.text).toContain('{{email}}');
+
+    // Template must validate successfully against the data
+    const validation = validateTemplateAgainstJson(result.text, sampleData);
+    expect(validation.valid).toBe(true);
+    expect(validation.matchedProperties).toContain('name');
   });
 
   it('handles local storage operations safely', () => {
