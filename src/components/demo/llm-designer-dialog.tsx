@@ -37,6 +37,7 @@ import {
   CheckCheck,
   Bot,
   ExternalLink,
+  Copy,
 } from 'lucide-react';
 import {
   GeminiClient,
@@ -56,6 +57,7 @@ import {
   getArchetypeStyles,
 } from '@/lib/gemini/block-converter';
 import { LlmGenerationView } from './llm-generation-view';
+import { TemplateLivePreview } from './template-live-preview';
 
 interface ChatMessage {
   id: string;
@@ -111,6 +113,20 @@ export const LlmDesignerDialog: React.FC<LlmDesignerDialogProps> = ({
   const [generatedHtml, setGeneratedHtml] = useState<string>('');
   const [generatedBlocks, setGeneratedBlocks] = useState<VisualBlock[]>(currentBlocks);
   const [validationReport, setValidationReport] = useState<ValidationReport | null>(null);
+
+  // View mode toggles for live preview vs code
+  const [reviewViewMode, setReviewViewMode] = useState<'live' | 'code'>('live');
+  const [chatRightViewMode, setChatRightViewMode] = useState<'live' | 'code'>('live');
+  const [copiedHtml, setCopiedHtml] = useState<boolean>(false);
+
+  const handleCopyGeneratedHtml = async () => {
+    if (!generatedHtml) return;
+    try {
+      await navigator.clipboard.writeText(generatedHtml);
+      setCopiedHtml(true);
+      setTimeout(() => setCopiedHtml(false), 2200);
+    } catch {}
+  };
 
   // Load API key from local storage on mount
   useEffect(() => {
@@ -250,6 +266,8 @@ Generate the complete Mustache HTML template with <style> according to the rules
 
       setGeneratedHtml(cleanCode);
       setGenerationStep(4); // All 4 steps complete!
+      setReviewViewMode('live');
+      setChatRightViewMode('live');
 
       // Add to conversation
       const newAgentMsg: ChatMessage = {
@@ -296,7 +314,10 @@ Generate the complete Mustache HTML template with <style> according to the rules
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
-      <DialogContent className="w-[calc(100vw-1.5rem)] sm:w-[calc(100vw-2rem)] max-w-[calc(100vw-1.5rem)] sm:max-w-[calc(100vw-2rem)] md:max-w-[calc(100vw-2rem)] lg:max-w-[calc(100vw-2rem)] xl:max-w-[calc(100vw-2rem)] 2xl:max-w-[calc(100vw-2rem)] h-[96vh] max-h-[96vh] flex flex-col p-6 overflow-hidden bg-white shadow-2xl">
+      <DialogContent
+        style={{ width: 'calc(100vw - 2rem)', maxWidth: 'calc(100vw - 2rem)', height: '94vh', maxHeight: '94vh' }}
+        className="w-[calc(100vw-2rem)] max-w-none sm:max-w-none flex flex-col p-6 overflow-hidden bg-white shadow-2xl"
+      >
         {/* Header */}
         <DialogHeader className="border-b pb-3">
           <div className="flex items-center justify-between">
@@ -594,9 +615,9 @@ Generate the complete Mustache HTML template with <style> according to the rules
 
           {/* TAB 3: Interactive Chat Refinement */}
           <TabsContent value="chat" className="flex-1 flex flex-col min-h-0 pt-2">
-            <div className="grid lg:grid-cols-12 gap-4 flex-1 min-h-0">
+            <div className="grid md:grid-cols-12 gap-4 flex-1 min-h-0">
               {/* Left Column: Chat conversation & prompt input */}
-              <div className="lg:col-span-7 flex flex-col min-h-0 space-y-2">
+              <div className="md:col-span-7 flex flex-col min-h-0 space-y-2">
                 <ScrollArea className="flex-1 rounded-xl border border-slate-200 bg-slate-50 p-4">
                   <div className="space-y-3">
                     {messages.length === 0 ? (
@@ -687,7 +708,7 @@ Generate the complete Mustache HTML template with <style> according to the rules
               </div>
 
               {/* Right Column: Live Design Draft & Blocks Preview on Wide Screens */}
-              <div className="hidden lg:flex lg:col-span-5 flex-col min-h-0 space-y-2 border-l lg:pl-4">
+              <div className="hidden md:flex md:col-span-5 flex-col min-h-0 space-y-2 border-l md:pl-4">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                     <span>Live Design Draft</span>
@@ -695,14 +716,53 @@ Generate the complete Mustache HTML template with <style> according to the rules
                       {selectedArchetype}
                     </span>
                   </span>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setActiveTab('review')}
-                    className="h-6 text-[10px] text-indigo-600 hover:text-indigo-800 p-0 cursor-pointer"
-                  >
-                    Full Review →
-                  </Button>
+                  <div className="flex items-center gap-1.5">
+                    <div className="flex items-center bg-slate-100 p-0.5 rounded-md border border-slate-200">
+                      <button
+                        type="button"
+                        onClick={() => setChatRightViewMode('live')}
+                        className={`px-2 py-0.5 text-[10px] font-semibold rounded transition-all cursor-pointer ${
+                          chatRightViewMode === 'live'
+                            ? 'bg-white text-indigo-700 shadow-2xs font-bold'
+                            : 'text-slate-500 hover:text-slate-800'
+                        }`}
+                      >
+                        👁 Live Output
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setChatRightViewMode('code')}
+                        className={`px-2 py-0.5 text-[10px] font-semibold rounded transition-all cursor-pointer ${
+                          chatRightViewMode === 'code'
+                            ? 'bg-white text-indigo-700 shadow-2xs font-bold'
+                            : 'text-slate-500 hover:text-slate-800'
+                        }`}
+                      >
+                        &lt;/&gt; Code
+                      </button>
+                    </div>
+
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleCopyGeneratedHtml}
+                      disabled={!generatedHtml}
+                      className="h-6 px-1.5 text-[10px] text-slate-600 hover:text-indigo-700 gap-1 cursor-pointer"
+                      title="Copy template HTML"
+                    >
+                      {copiedHtml ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}
+                      <span>{copiedHtml ? 'Copied' : 'Copy'}</span>
+                    </Button>
+
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setActiveTab('review')}
+                      className="h-6 text-[10px] text-indigo-600 hover:text-indigo-800 p-0 cursor-pointer"
+                    >
+                      Full Review →
+                    </Button>
+                  </div>
                 </div>
 
                 {/* Blocks Mini-List */}
@@ -732,16 +792,26 @@ Generate the complete Mustache HTML template with <style> according to the rules
                   </div>
                 </div>
 
-                {/* HTML Template Preview */}
+                {/* Live Output or HTML Template Preview */}
                 <div className="flex-1 flex flex-col min-h-0">
-                  <span className="text-[10px] font-semibold text-slate-500 block mb-1">
-                    Mustache Template HTML:
-                  </span>
-                  <ScrollArea className="flex-1 rounded-xl border border-slate-200 bg-slate-900 text-slate-100 p-3 font-mono text-[10.5px] shadow-inner">
-                    <pre className="whitespace-pre-wrap">
-                      {generatedHtml || '<!-- Start a conversation or select an archetype to draft template -->'}
-                    </pre>
-                  </ScrollArea>
+                  {chatRightViewMode === 'live' ? (
+                    <TemplateLivePreview
+                      templateHtml={generatedHtml}
+                      jsonData={jsonData}
+                      className="flex-1 min-h-0"
+                      showToolbar={false}
+                      onCopySuccess={() => {
+                        setCopiedHtml(true);
+                        setTimeout(() => setCopiedHtml(false), 2200);
+                      }}
+                    />
+                  ) : (
+                    <ScrollArea className="flex-1 rounded-xl border border-slate-200 bg-slate-900 text-slate-100 p-3 font-mono text-[10.5px] shadow-inner">
+                      <pre className="whitespace-pre-wrap">
+                        {generatedHtml || '<!-- Start a conversation or select an archetype to draft template -->'}
+                      </pre>
+                    </ScrollArea>
+                  )}
                 </div>
 
                 {/* Quick Apply Button */}
@@ -752,7 +822,7 @@ Generate the complete Mustache HTML template with <style> according to the rules
                     className="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5 shadow-sm cursor-pointer"
                   >
                     <CheckCheck className="h-3.5 w-3.5" />
-                    Apply Current Template to Canvas
+                    Apply Template to Demo Pipeline
                   </Button>
                 )}
               </div>
@@ -797,10 +867,10 @@ Generate the complete Mustache HTML template with <style> according to the rules
               </div>
             )}
 
-            {/* Side-by-side 2-column layout on wide screens */}
-            <div className="grid lg:grid-cols-12 gap-4 flex-1 min-h-0">
+            {/* Side-by-side 2-column layout */}
+            <div className="grid md:grid-cols-12 gap-4 flex-1 min-h-0">
               {/* Left Column: Visual Blocks List */}
-              <div className="lg:col-span-5 flex flex-col min-h-0 space-y-2">
+              <div className="md:col-span-5 flex flex-col min-h-0 space-y-2">
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
                   Generated Visual Designer Blocks ({generatedBlocks.length}):
                 </span>
@@ -846,14 +916,74 @@ Generate the complete Mustache HTML template with <style> according to the rules
                 </ScrollArea>
               </div>
 
-              {/* Right Column: HTML Template Output */}
-              <div className="lg:col-span-7 flex flex-col min-h-0 space-y-2">
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-                  Mustache HTML Template Output:
-                </span>
-                <ScrollArea className="flex-1 rounded-xl border border-slate-200 bg-slate-900 text-slate-100 p-4 font-mono text-[11px] shadow-inner">
-                  <pre className="whitespace-pre-wrap">{generatedHtml || '<!-- Click generate to draft template -->'}</pre>
-                </ScrollArea>
+              {/* Right Column: Live Output Preview or HTML Template Output */}
+              <div className="md:col-span-7 flex flex-col min-h-0 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+                      Template View:
+                    </span>
+                    {/* View Switcher: Live Preview vs Code */}
+                    <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+                      <button
+                        type="button"
+                        onClick={() => setReviewViewMode('live')}
+                        className={`flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                          reviewViewMode === 'live'
+                            ? 'bg-white text-indigo-700 shadow-2xs font-bold'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>👁 Live Preview (In Action)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setReviewViewMode('code')}
+                        className={`flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                          reviewViewMode === 'code'
+                            ? 'bg-white text-indigo-700 shadow-2xs font-bold'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <span>&lt;/&gt; Mustache Code</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Copy HTML Button */}
+                  <Button
+                    size="sm"
+                    variant={copiedHtml ? 'default' : 'outline'}
+                    onClick={handleCopyGeneratedHtml}
+                    disabled={!generatedHtml}
+                    className={`h-7 px-2.5 text-xs gap-1.5 cursor-pointer transition-all ${
+                      copiedHtml
+                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white font-bold'
+                        : 'text-slate-700 hover:text-indigo-700 border-slate-200'
+                    }`}
+                    title="Copy full template HTML to clipboard"
+                  >
+                    {copiedHtml ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                    <span>{copiedHtml ? 'Copied HTML!' : 'Copy Template HTML'}</span>
+                  </Button>
+                </div>
+
+                {reviewViewMode === 'live' ? (
+                  <TemplateLivePreview
+                    templateHtml={generatedHtml}
+                    jsonData={jsonData}
+                    className="flex-1 min-h-0"
+                    onCopySuccess={() => {
+                      setCopiedHtml(true);
+                      setTimeout(() => setCopiedHtml(false), 2200);
+                    }}
+                  />
+                ) : (
+                  <ScrollArea className="flex-1 rounded-xl border border-slate-200 bg-slate-900 text-slate-100 p-4 font-mono text-[11px] shadow-inner">
+                    <pre className="whitespace-pre-wrap">{generatedHtml || '<!-- Click generate to draft template -->'}</pre>
+                  </ScrollArea>
+                )}
               </div>
             </div>
 
@@ -863,6 +993,17 @@ Generate the complete Mustache HTML template with <style> according to the rules
                 ← Refine with Chat
               </Button>
               <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleCopyGeneratedHtml}
+                  disabled={!generatedHtml}
+                  className="gap-1.5 cursor-pointer text-xs text-slate-700 hover:text-indigo-700"
+                  title="Copy Mustache template HTML to clipboard"
+                >
+                  {copiedHtml ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                  <span>{copiedHtml ? 'Copied to Clipboard!' : 'Copy Template HTML'}</span>
+                </Button>
                 <Button
                   size="sm"
                   variant="outline"
@@ -878,9 +1019,10 @@ Generate the complete Mustache HTML template with <style> according to the rules
                   onClick={handleApply}
                   disabled={!generatedHtml}
                   className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2 cursor-pointer font-bold shadow-sm"
+                  title="Applies blocks and Mustache template to Step 3, and runs live render pipeline in Step 4"
                 >
                   <Check className="h-4 w-4" />
-                  Apply to Visual Designer Canvas
+                  Apply Template to Demo Pipeline
                 </Button>
               </div>
             </div>

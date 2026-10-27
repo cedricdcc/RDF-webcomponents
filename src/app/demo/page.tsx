@@ -187,6 +187,7 @@ export default function DemoPage() {
   const [triplesSearch, setTriplesSearch] = useState<string>("");
   const [triplesPage, setTriplesPage] = useState(1);
   const [copiedShacl, setCopiedShacl] = useState(false);
+  const [copiedTemplate, setCopiedTemplate] = useState(false);
 
   const [useRemoteData, setUseRemoteData] = useState(false);
   const [remoteDataUrl, setRemoteDataUrl] = useState(withBasePath("/demo/people.ttl"));
@@ -2409,15 +2410,45 @@ ${fieldsHtml}  </article>
                           </div>
                         </div>
 
-                        <label className="block space-y-1.5 text-xs flex-1 flex flex-col border-t pt-3">
-                          <span className="font-semibold text-slate-600">HTML Code Template (HTML + mustache blocks)</span>
+                        <div className="space-y-1.5 text-xs flex-1 flex flex-col border-t pt-3">
+                          <div className="flex items-center justify-between">
+                            <span className="font-semibold text-slate-700">HTML Code Template (Mustache tags + CSS)</span>
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(templateInput);
+                                  setCopiedTemplate(true);
+                                  setTimeout(() => setCopiedTemplate(false), 2000);
+                                  pushEvent("Copied Mustache template HTML to clipboard");
+                                }}
+                                className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800 transition-all cursor-pointer shadow-2xs"
+                                title="Copy Mustache template HTML to clipboard"
+                              >
+                                {copiedTemplate ? <Check className="h-3 w-3 text-emerald-600" /> : <Copy className="h-3 w-3" />}
+                                <span>{copiedTemplate ? "Copied!" : "Copy Template HTML"}</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  runPipelineWithValues({ template: templateInput });
+                                  pushEvent("Re-ran live render pipeline with updated template");
+                                }}
+                                className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 transition-all cursor-pointer shadow-2xs"
+                                title="Update live pipeline with this template"
+                              >
+                                <Zap className="h-2.5 w-2.5 text-indigo-600" />
+                                <span>Update Live Output</span>
+                              </button>
+                            </div>
+                          </div>
                           <textarea
                             ref={templateTextareaRef}
                             className="w-full flex-1 min-h-[220px] rounded-lg border border-slate-200 p-3 font-mono text-[11px] focus:outline-none focus:ring-1 focus:ring-slate-900 leading-relaxed font-semibold leading-relaxed"
                             value={templateInput}
                             onChange={(e) => setTemplateInput(e.target.value)}
                           />
-                        </label>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -2474,15 +2505,15 @@ ${fieldsHtml}  </article>
                           <div className="min-h-[220px] rounded-xl border border-slate-200 bg-slate-50 p-4 shadow-inner">
                             {mounted && bundleLoaded && runtime ? (
                               <lens-display
-                                key="playground-display"
+                                key={`playground-display-${runtime.key}`}
                                 template={runtime.templateUrl}
                               >
                                 <rdf-lens
-                                  key="playground-lens"
+                                  key={`playground-lens-${runtime.key}`}
                                   config={buildLensConfigRdf(runtime.shapeUrl, runtime.shapeClass, runtime.multiple)}
                                 >
                                   <source-rdf
-                                    key="playground-source"
+                                    key={`playground-source-${runtime.key}`}
                                     config={buildSourceConfigRdf(runtime.dataUrl)}
                                   ></source-rdf>
                                 </rdf-lens>
@@ -2632,10 +2663,12 @@ ${fieldsHtml}  </article>
           setVisualBlocks(blocks);
           setTemplateInput(templateHtml);
           runPipelineWithValues({ template: templateHtml });
+          setStep3Tab("render");
           pushEvent("lens-display: ai-template-applied", {
             blocksCount: blocks.length,
             templateLength: templateHtml.length,
           });
+          pushEvent("✓ Applied AI generated Mustache template to live pipeline!");
         }}
       />
     </main>

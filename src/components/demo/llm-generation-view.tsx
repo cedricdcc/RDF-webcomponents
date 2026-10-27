@@ -40,6 +40,40 @@ export const LlmGenerationView: React.FC<LlmGenerationViewProps> = ({
   error,
   onDismiss,
 }) => {
+  // When completed without error, render a slim compact ribbon so Tab 3 and Tab 4 have maximum room for live preview!
+  if (!isGenerating && !error && activeStepIndex >= 3) {
+    return (
+      <div className="rounded-lg bg-emerald-50/90 border border-emerald-200 px-3 py-2 text-emerald-900 text-xs flex items-center justify-between shadow-2xs">
+        <div className="flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+          <span className="text-[11.5px]">
+            <strong>Template Synthesized & Validated!</strong> Generated with{' '}
+            <code className="font-mono text-emerald-800 bg-emerald-100/70 px-1 py-0.5 rounded text-[10.5px]">
+              {status?.model || 'Gemini Local Synthesizer'}
+            </code>
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          {fallbacksTriggered.length > 0 && (
+            <span className="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-mono">
+              Fallback: {fallbacksTriggered[fallbacksTriggered.length - 1]}
+            </span>
+          )}
+          {onDismiss && (
+            <button
+              type="button"
+              onClick={onDismiss}
+              className="text-[11px] text-emerald-700 hover:text-emerald-900 font-semibold cursor-pointer ml-1 p-0.5 rounded hover:bg-emerald-100"
+              title="Dismiss status banner"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-xl border border-indigo-100 bg-gradient-to-b from-indigo-50/40 via-white to-white p-4 shadow-sm space-y-4">
       {/* Header bar: Model status and badges */}
