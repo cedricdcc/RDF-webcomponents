@@ -36,6 +36,7 @@ import {
   BarChart3,
   CheckCheck,
   Bot,
+  ExternalLink,
 } from 'lucide-react';
 import {
   GeminiClient,
@@ -280,7 +281,7 @@ Generate the complete Mustache HTML template with <style> according to the rules
 
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
-      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-6 overflow-hidden bg-white">
+      <DialogContent className="max-w-6xl w-[96vw] h-[92vh] max-h-[94vh] flex flex-col p-6 overflow-hidden bg-white shadow-2xl">
         {/* Header */}
         <DialogHeader className="border-b pb-3">
           <div className="flex items-center justify-between">
@@ -303,6 +304,16 @@ Generate the complete Mustache HTML template with <style> according to the rules
 
             {/* Model & Key Pill */}
             <div className="flex items-center gap-2">
+              <a
+                href="https://aistudio.google.com/app/apikey"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:inline-flex items-center gap-1 text-[11px] font-medium text-indigo-600 hover:text-indigo-800 underline decoration-indigo-300 underline-offset-2 transition-colors mr-1"
+                title="Get your free Gemini API key from Google AI Studio (opens in new tab)"
+              >
+                <span>Get Google API Key</span>
+                <ExternalLink className="h-3 w-3" />
+              </a>
               <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg border bg-slate-50 text-xs">
                 <Key className="h-3.5 w-3.5 text-slate-400" />
                 <span className={isKeySaved ? 'text-emerald-700 font-medium' : 'text-amber-700 font-medium'}>
@@ -315,7 +326,7 @@ Generate the complete Mustache HTML template with <style> according to the rules
 
         {/* API Key Configuration Accordion / Bar */}
         <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex-1 min-w-[280px] flex items-center gap-2">
+          <div className="flex-1 min-w-[320px] flex items-center gap-2">
             <span className="font-semibold text-slate-700 shrink-0">Gemini Key:</span>
             <div className="relative flex-1">
               <Input
@@ -351,6 +362,16 @@ Generate the complete Mustache HTML template with <style> according to the rules
                 Clear
               </Button>
             )}
+            <a
+              href="https://aistudio.google.com/app/apikey"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] font-semibold text-indigo-700 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100/90 border border-indigo-200 transition-all shrink-0 cursor-pointer shadow-2xs"
+              title="Get a free Gemini API key from Google AI Studio (opens in new tab)"
+            >
+              <span>Get API Key</span>
+              <ExternalLink className="h-3 w-3" />
+            </a>
           </div>
 
           <div className="flex items-center gap-2">
