@@ -35,6 +35,7 @@ import {
   List,
   BarChart3,
   CheckCheck,
+  Bot,
 } from 'lucide-react';
 import {
   GeminiClient,

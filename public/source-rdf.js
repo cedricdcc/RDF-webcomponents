@@ -4,15 +4,8 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __esm = (fn, res) => function __init() {
-  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-};
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
-};
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
 };
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
@@ -3096,7 +3089,7 @@ var require_validators = __commonJS({
 var require_browser2 = __commonJS({
   "node_modules/process/browser.js"(exports, module) {
     "use strict";
-    var process2 = module.exports = {};
+    var process = module.exports = {};
     var cachedSetTimeout;
     var cachedClearTimeout;
     function defaultSetTimout() {
@@ -3201,7 +3194,7 @@ var require_browser2 = __commonJS({
       draining = false;
       runClearTimeout(timeout);
     }
-    process2.nextTick = function(fun) {
+    process.nextTick = function(fun) {
       var args = new Array(arguments.length - 1);
       if (arguments.length > 1) {
         for (var i5 = 1; i5 < arguments.length; i5++) {
@@ -3220,36 +3213,36 @@ var require_browser2 = __commonJS({
     Item.prototype.run = function() {
       this.fun.apply(null, this.array);
     };
-    process2.title = "browser";
-    process2.browser = true;
-    process2.env = {};
-    process2.argv = [];
-    process2.version = "";
-    process2.versions = {};
+    process.title = "browser";
+    process.browser = true;
+    process.env = {};
+    process.argv = [];
+    process.version = "";
+    process.versions = {};
     function noop2() {
     }
-    process2.on = noop2;
-    process2.addListener = noop2;
-    process2.once = noop2;
-    process2.off = noop2;
-    process2.removeListener = noop2;
-    process2.removeAllListeners = noop2;
-    process2.emit = noop2;
-    process2.prependListener = noop2;
-    process2.prependOnceListener = noop2;
-    process2.listeners = function(name) {
+    process.on = noop2;
+    process.addListener = noop2;
+    process.once = noop2;
+    process.off = noop2;
+    process.removeListener = noop2;
+    process.removeAllListeners = noop2;
+    process.emit = noop2;
+    process.prependListener = noop2;
+    process.prependOnceListener = noop2;
+    process.listeners = function(name) {
       return [];
     };
-    process2.binding = function(name) {
+    process.binding = function(name) {
       throw new Error("process.binding is not supported");
     };
-    process2.cwd = function() {
+    process.cwd = function() {
       return "/";
     };
-    process2.chdir = function(dir) {
+    process.chdir = function(dir) {
       throw new Error("process.chdir is not supported");
     };
-    process2.umask = function() {
+    process.umask = function() {
       return 0;
     };
   }
@@ -3468,7 +3461,7 @@ var require_utils = __commonJS({
 var require_end_of_stream = __commonJS({
   "node_modules/readable-stream/lib/internal/streams/end-of-stream.js"(exports, module) {
     "use strict";
-    var process2 = require_browser2();
+    var process = require_browser2();
     var { AbortError, codes } = require_errors();
     var { ERR_INVALID_ARG_TYPE, ERR_STREAM_PREMATURE_CLOSE } = codes;
     var { kEmptyObject, once } = require_util();
@@ -3604,17 +3597,17 @@ var require_end_of_stream = __commonJS({
       }
       stream.on("close", onclose);
       if (closed) {
-        process2.nextTick(onclose);
+        process.nextTick(onclose);
       } else if (wState !== null && wState !== void 0 && wState.errorEmitted || rState !== null && rState !== void 0 && rState.errorEmitted) {
         if (!willEmitClose) {
-          process2.nextTick(onclosed);
+          process.nextTick(onclosed);
         }
       } else if (!readable && (!willEmitClose || isReadable(stream)) && (writableFinished || isWritable(stream) === false)) {
-        process2.nextTick(onclosed);
+        process.nextTick(onclosed);
       } else if (!writable && (!willEmitClose || isWritable(stream)) && (readableFinished || isReadable(stream) === false)) {
-        process2.nextTick(onclosed);
+        process.nextTick(onclosed);
       } else if (rState && stream.req && stream.aborted) {
-        process2.nextTick(onclosed);
+        process.nextTick(onclosed);
       }
       const cleanup = () => {
         callback = nop;
@@ -3642,7 +3635,7 @@ var require_end_of_stream = __commonJS({
           );
         };
         if (options.signal.aborted) {
-          process2.nextTick(abort);
+          process.nextTick(abort);
         } else {
           addAbortListener = addAbortListener || require_util().addAbortListener;
           const disposable = addAbortListener(options.signal, abort);
@@ -3669,7 +3662,7 @@ var require_end_of_stream = __commonJS({
           );
         };
         if (options.signal.aborted) {
-          process2.nextTick(abort);
+          process.nextTick(abort);
         } else {
           addAbortListener = addAbortListener || require_util().addAbortListener;
           const disposable = addAbortListener(options.signal, abort);
@@ -3682,7 +3675,7 @@ var require_end_of_stream = __commonJS({
       }
       const resolverFn = (...args) => {
         if (!isAborted) {
-          process2.nextTick(() => callback.apply(stream, args));
+          process.nextTick(() => callback.apply(stream, args));
         }
       };
       PromisePrototypeThen(stream[kIsClosedPromise].promise, resolverFn, resolverFn);
@@ -3720,7 +3713,7 @@ var require_end_of_stream = __commonJS({
 var require_destroy = __commonJS({
   "node_modules/readable-stream/lib/internal/streams/destroy.js"(exports, module) {
     "use strict";
-    var process2 = require_browser2();
+    var process = require_browser2();
     var {
       aggregateTwoErrors,
       codes: { ERR_MULTIPLE_CALLBACK },
@@ -3787,9 +3780,9 @@ var require_destroy = __commonJS({
           cb(err2);
         }
         if (err2) {
-          process2.nextTick(emitErrorCloseNT, self2, err2);
+          process.nextTick(emitErrorCloseNT, self2, err2);
         } else {
-          process2.nextTick(emitCloseNT, self2);
+          process.nextTick(emitCloseNT, self2);
         }
       }
       try {
@@ -3874,7 +3867,7 @@ var require_destroy = __commonJS({
           r5.errored = err;
         }
         if (sync) {
-          process2.nextTick(emitErrorNT, stream, err);
+          process.nextTick(emitErrorNT, stream, err);
         } else {
           emitErrorNT(stream, err);
         }
@@ -3896,7 +3889,7 @@ var require_destroy = __commonJS({
       if (stream.listenerCount(kConstruct) > 1) {
         return;
       }
-      process2.nextTick(constructNT, stream);
+      process.nextTick(constructNT, stream);
     }
     function constructNT(stream) {
       let called = false;
@@ -3920,15 +3913,15 @@ var require_destroy = __commonJS({
         } else if (err) {
           errorOrDestroy(stream, err, true);
         } else {
-          process2.nextTick(emitConstructNT, stream);
+          process.nextTick(emitConstructNT, stream);
         }
       }
       try {
         stream._construct((err) => {
-          process2.nextTick(onConstruct, err);
+          process.nextTick(onConstruct, err);
         });
       } catch (err) {
-        process2.nextTick(onConstruct, err);
+        process.nextTick(onConstruct, err);
       }
     }
     function emitConstructNT(stream) {
@@ -3942,7 +3935,7 @@ var require_destroy = __commonJS({
     }
     function emitErrorCloseLegacy(stream, err) {
       stream.emit("error", err);
-      process2.nextTick(emitCloseLegacy, stream);
+      process.nextTick(emitCloseLegacy, stream);
     }
     function destroyer(stream, err) {
       if (!stream || isDestroyed(stream)) {
@@ -3963,9 +3956,9 @@ var require_destroy = __commonJS({
       } else if (typeof stream.close === "function") {
         stream.close();
       } else if (err) {
-        process2.nextTick(emitErrorCloseLegacy, stream, err);
+        process.nextTick(emitErrorCloseLegacy, stream, err);
       } else {
-        process2.nextTick(emitCloseLegacy, stream);
+        process.nextTick(emitCloseLegacy, stream);
       }
       if (!stream.destroyed) {
         stream[kIsDestroyed] = true;
@@ -4608,7 +4601,7 @@ var require_string_decoder = __commonJS({
 var require_from = __commonJS({
   "node_modules/readable-stream/lib/internal/streams/from.js"(exports, module) {
     "use strict";
-    var process2 = require_browser2();
+    var process = require_browser2();
     var { PromisePrototypeThen, SymbolAsyncIterator, SymbolIterator } = require_primordials();
     var { Buffer: Buffer3 } = require_buffer();
     var { ERR_INVALID_ARG_TYPE, ERR_STREAM_NULL_VALUES } = require_errors().codes;
@@ -4650,9 +4643,9 @@ var require_from = __commonJS({
       readable._destroy = function(error, cb) {
         PromisePrototypeThen(
           close(error),
-          () => process2.nextTick(cb, error),
+          () => process.nextTick(cb, error),
           // nextTick is here in case cb throws
-          (e5) => process2.nextTick(cb, e5 || error)
+          (e5) => process.nextTick(cb, e5 || error)
         );
       };
       async function close(error) {
@@ -4703,7 +4696,7 @@ var require_from = __commonJS({
 var require_readable = __commonJS({
   "node_modules/readable-stream/lib/internal/streams/readable.js"(exports, module) {
     "use strict";
-    var process2 = require_browser2();
+    var process = require_browser2();
     var {
       ArrayPrototypeIndexOf,
       NumberIsInteger,
@@ -5088,7 +5081,7 @@ var require_readable = __commonJS({
       if (!state.emittedReadable) {
         debug("emitReadable", state.flowing);
         state.emittedReadable = true;
-        process2.nextTick(emitReadable_, stream);
+        process.nextTick(emitReadable_, stream);
       }
     }
     function emitReadable_(stream) {
@@ -5104,7 +5097,7 @@ var require_readable = __commonJS({
     function maybeReadMore(stream, state) {
       if (!state.readingMore && state.constructed) {
         state.readingMore = true;
-        process2.nextTick(maybeReadMore_, stream, state);
+        process.nextTick(maybeReadMore_, stream, state);
       }
     }
     function maybeReadMore_(stream, state) {
@@ -5131,9 +5124,9 @@ var require_readable = __commonJS({
       }
       state.pipes.push(dest);
       debug("pipe count=%d opts=%j", state.pipes.length, pipeOpts);
-      const doEnd = (!pipeOpts || pipeOpts.end !== false) && dest !== process2.stdout && dest !== process2.stderr;
+      const doEnd = (!pipeOpts || pipeOpts.end !== false) && dest !== process.stdout && dest !== process.stderr;
       const endFn = doEnd ? onend : unpipe;
-      if (state.endEmitted) process2.nextTick(endFn);
+      if (state.endEmitted) process.nextTick(endFn);
       else src.once("end", endFn);
       dest.on("unpipe", onunpipe);
       function onunpipe(readable, unpipeInfo) {
@@ -5283,7 +5276,7 @@ var require_readable = __commonJS({
           if (state.length) {
             emitReadable(this);
           } else if (!state.reading) {
-            process2.nextTick(nReadingNextTick, this);
+            process.nextTick(nReadingNextTick, this);
           }
         }
       }
@@ -5293,7 +5286,7 @@ var require_readable = __commonJS({
     Readable.prototype.removeListener = function(ev, fn) {
       const res = Stream.prototype.removeListener.call(this, ev, fn);
       if (ev === "readable") {
-        process2.nextTick(updateReadableListening, this);
+        process.nextTick(updateReadableListening, this);
       }
       return res;
     };
@@ -5301,7 +5294,7 @@ var require_readable = __commonJS({
     Readable.prototype.removeAllListeners = function(ev) {
       const res = Stream.prototype.removeAllListeners.apply(this, arguments);
       if (ev === "readable" || ev === void 0) {
-        process2.nextTick(updateReadableListening, this);
+        process.nextTick(updateReadableListening, this);
       }
       return res;
     };
@@ -5333,7 +5326,7 @@ var require_readable = __commonJS({
     function resume(stream, state) {
       if (!state.resumeScheduled) {
         state.resumeScheduled = true;
-        process2.nextTick(resume_, stream, state);
+        process.nextTick(resume_, stream, state);
       }
     }
     function resume_(stream, state) {
@@ -5610,7 +5603,7 @@ var require_readable = __commonJS({
       debug("endReadable", state.endEmitted);
       if (!state.endEmitted) {
         state.ended = true;
-        process2.nextTick(endReadableNT, state, stream);
+        process.nextTick(endReadableNT, state, stream);
       }
     }
     function endReadableNT(state, stream) {
@@ -5619,7 +5612,7 @@ var require_readable = __commonJS({
         state.endEmitted = true;
         stream.emit("end");
         if (stream.writable && stream.allowHalfOpen === false) {
-          process2.nextTick(endWritableNT, stream);
+          process.nextTick(endWritableNT, stream);
         } else if (state.autoDestroy) {
           const wState = stream._writableState;
           const autoDestroy = !wState || wState.autoDestroy && // We don't expect the writable to ever 'finish'
@@ -5669,7 +5662,7 @@ var require_readable = __commonJS({
 var require_writable = __commonJS({
   "node_modules/readable-stream/lib/internal/streams/writable.js"(exports, module) {
     "use strict";
-    var process2 = require_browser2();
+    var process = require_browser2();
     var {
       ArrayPrototypeSlice,
       Error: Error2,
@@ -5822,7 +5815,7 @@ var require_writable = __commonJS({
         err = new ERR_STREAM_DESTROYED("write");
       }
       if (err) {
-        process2.nextTick(cb, err);
+        process.nextTick(cb, err);
         errorOrDestroy(stream, err, true);
         return err;
       }
@@ -5912,7 +5905,7 @@ var require_writable = __commonJS({
           stream._readableState.errored = er;
         }
         if (sync) {
-          process2.nextTick(onwriteError, stream, state, er, cb);
+          process.nextTick(onwriteError, stream, state, er, cb);
         } else {
           onwriteError(stream, state, er, cb);
         }
@@ -5930,7 +5923,7 @@ var require_writable = __commonJS({
               stream,
               state
             };
-            process2.nextTick(afterWriteTick, state.afterWriteTickInfo);
+            process.nextTick(afterWriteTick, state.afterWriteTickInfo);
           }
         } else {
           afterWrite(stream, state, 1, cb);
@@ -6067,7 +6060,7 @@ var require_writable = __commonJS({
       }
       if (typeof cb === "function") {
         if (err || state.finished) {
-          process2.nextTick(cb, err);
+          process.nextTick(cb, err);
         } else {
           state[kOnFinished].push(cb);
         }
@@ -6096,7 +6089,7 @@ var require_writable = __commonJS({
           state.prefinished = true;
           stream.emit("prefinish");
           state.pendingcb++;
-          process2.nextTick(finish, stream, state);
+          process.nextTick(finish, stream, state);
         }
       }
       state.sync = true;
@@ -6125,7 +6118,7 @@ var require_writable = __commonJS({
         if (state.pendingcb === 0) {
           if (sync) {
             state.pendingcb++;
-            process2.nextTick(
+            process.nextTick(
               (stream2, state2) => {
                 if (needFinish(state2)) {
                   finish(stream2, state2);
@@ -6260,7 +6253,7 @@ var require_writable = __commonJS({
     Writable.prototype.destroy = function(err, cb) {
       const state = this._writableState;
       if (!state.destroyed && (state.bufferedIndex < state.buffered.length || state[kOnFinished].length)) {
-        process2.nextTick(errorBuffer, state);
+        process.nextTick(errorBuffer, state);
       }
       destroy.call(this, err, cb);
       return this;
@@ -6290,7 +6283,7 @@ var require_writable = __commonJS({
 var require_duplexify = __commonJS({
   "node_modules/readable-stream/lib/internal/streams/duplexify.js"(exports, module) {
     "use strict";
-    var process2 = require_browser2();
+    var process = require_browser2();
     var bufferModule = require_buffer();
     var {
       isReadable,
@@ -6403,9 +6396,9 @@ var require_duplexify = __commonJS({
               final(async () => {
                 try {
                   await promise;
-                  process2.nextTick(cb, null);
+                  process.nextTick(cb, null);
                 } catch (err) {
-                  process2.nextTick(cb, err);
+                  process.nextTick(cb, err);
                 }
               });
             },
@@ -6484,7 +6477,7 @@ var require_duplexify = __commonJS({
             const _promise = promise;
             promise = null;
             const { chunk, done, cb } = await _promise;
-            process2.nextTick(cb);
+            process.nextTick(cb);
             if (done) return;
             if (signal.aborted)
               throw new AbortError(void 0, {
@@ -6876,7 +6869,7 @@ var require_passthrough = __commonJS({
 var require_pipeline = __commonJS({
   "node_modules/readable-stream/lib/internal/streams/pipeline.js"(exports, module) {
     "use strict";
-    var process2 = require_browser2();
+    var process = require_browser2();
     var { ArrayIsArray, Promise: Promise2, SymbolAsyncIterator, SymbolDispose } = require_primordials();
     var eos = require_end_of_stream();
     var { once } = require_util();
@@ -7078,7 +7071,7 @@ var require_pipeline = __commonJS({
           if (!error) {
             lastStreamCleanup.forEach((fn) => fn());
           }
-          process2.nextTick(callback, error, value);
+          process.nextTick(callback, error, value);
         }
       }
       let ret;
@@ -7157,11 +7150,11 @@ var require_pipeline = __commonJS({
                   if (end) {
                     pt.end();
                   }
-                  process2.nextTick(finish);
+                  process.nextTick(finish);
                 },
                 (err) => {
                   pt.destroy(err);
-                  process2.nextTick(finish, err);
+                  process.nextTick(finish, err);
                 }
               );
             } else if (isIterable(ret, true)) {
@@ -7242,7 +7235,7 @@ var require_pipeline = __commonJS({
         }
       }
       if (signal !== null && signal !== void 0 && signal.aborted || outerSignal !== null && outerSignal !== void 0 && outerSignal.aborted) {
-        process2.nextTick(abort);
+        process.nextTick(abort);
       }
       return ret;
     }
@@ -7263,7 +7256,7 @@ var require_pipeline = __commonJS({
         };
         var endFn = endFn2;
         if (isReadableFinished(src)) {
-          process2.nextTick(endFn2);
+          process.nextTick(endFn2);
         } else {
           src.once("end", endFn2);
         }
@@ -20635,983 +20628,6 @@ var require_rdfa_streaming_parser = __commonJS({
   }
 });
 
-// node_modules/wrx/wrx.ts
-function parseLinkHeader(header) {
-  if (!header?.trim()) return [];
-  return header.split(",").map((part) => {
-    part = part.trim();
-    const urlMatch = part.match(/<([^>]+)>/);
-    if (!urlMatch) return null;
-    const url = urlMatch[1] ?? "";
-    if (!url) return null;
-    const link = { url };
-    const paramsPart = part.substring(part.indexOf(">") + 1).trim();
-    if (paramsPart) {
-      const paramParts = paramsPart.split(";").map((p3) => p3.trim()).filter(Boolean);
-      for (const p3 of paramParts) {
-        const eqIndex = p3.indexOf("=");
-        if (eqIndex === -1) continue;
-        const key = p3.slice(0, eqIndex).trim().toLowerCase();
-        let val = p3.slice(eqIndex + 1).trim();
-        if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
-        link[key] = val;
-      }
-    }
-    return link;
-  }).filter((l3) => l3 !== null);
-}
-function isRDFMime(mime) {
-  return RDF_MIMES.has(mime.toLowerCase().trim());
-}
-function isLinksetMime(mime) {
-  const m2 = mime.toLowerCase().trim();
-  return m2 === "application/linkset+json" || m2 === "application/linkset";
-}
-function baseMime(contentType) {
-  if (!contentType) return "";
-  const semi = contentType.indexOf(";");
-  return (semi === -1 ? contentType : contentType.slice(0, semi)).trim().toLowerCase();
-}
-function relHasToken(rel, token) {
-  if (!rel) return false;
-  return rel.toLowerCase().split(/\s+/).some((r5) => r5.trim() === token);
-}
-function parseTagAttributes(tagText) {
-  const attrs = {};
-  const attrRegex = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+))/g;
-  let match;
-  while ((match = attrRegex.exec(tagText)) !== null) {
-    const key = (match[1] ?? "").toLowerCase();
-    const val = (match[2] ?? match[3] ?? match[4] ?? "").trim();
-    if (key) attrs[key] = val;
-  }
-  return attrs;
-}
-function extractHtmlHints(bodyText) {
-  const describedByLinks = [];
-  const linksets = [];
-  const embeddedScripts = [];
-  const linkRegex = /<link\b[^>]*>/gi;
-  let linkMatch;
-  while ((linkMatch = linkRegex.exec(bodyText)) !== null) {
-    const tag = linkMatch[0] ?? "";
-    if (!tag) continue;
-    const attrs = parseTagAttributes(tag);
-    const rel = attrs["rel"] ?? null;
-    const href = attrs["href"] ?? null;
-    const type = attrs["type"] ?? null;
-    if (!href) continue;
-    if (relHasToken(rel, "describedby")) {
-      describedByLinks.push({ href, type });
-    }
-    if (relHasToken(rel, "linkset")) {
-      linksets.push(href);
-    }
-  }
-  const scriptRegex = /(<script\b[^>]*>)([\s\S]*?)<\/script>/gi;
-  let scriptMatch;
-  while ((scriptMatch = scriptRegex.exec(bodyText)) !== null) {
-    const openTag = scriptMatch[1] ?? "";
-    const content = (scriptMatch[2] ?? "").trim();
-    if (!openTag || !content) continue;
-    const attrs = parseTagAttributes(openTag);
-    const type = (attrs["type"] ?? "").toLowerCase();
-    if (type) embeddedScripts.push({ type, content });
-  }
-  return { describedByLinks, linksets, embeddedScripts };
-}
-async function fetchWithRedirect(url, init) {
-  return await fetch(url, { ...init, redirect: "follow" });
-}
-async function fetchRDF(url) {
-  return fetchWithRedirect(url, {
-    headers: { Accept: RDF_ACCEPT }
-  });
-}
-async function fetchDescribedBy(url, declaredType) {
-  if (!declaredType || !isRDFMime(declaredType)) return fetchRDF(url);
-  const others = [
-    "text/turtle",
-    "application/ld+json",
-    "application/rdf+xml",
-    "application/n-triples",
-    "text/n3",
-    "application/n-quads",
-    "application/trig"
-  ].filter((m2) => m2 !== declaredType).map((m2, i5) => `${m2};q=${Math.max(0.1, 0.9 - i5 * 0.1).toFixed(1)}`);
-  const accept = [`${declaredType};q=1.0`, ...others].join(", ");
-  return fetchWithRedirect(url, { headers: { Accept: accept } });
-}
-function looksLikeJsonLd(text) {
-  try {
-    const obj = JSON.parse(text);
-    const records = Array.isArray(obj) ? obj : [obj];
-    return records.some(
-      (item) => typeof item === "object" && item !== null && ("@context" in item || "@type" in item || "@graph" in item)
-    );
-  } catch {
-    return false;
-  }
-}
-function resolveRdfFormat(responseCt, declaredType, body) {
-  if (isRDFMime(responseCt)) return responseCt;
-  if (declaredType && isRDFMime(declaredType) && responseCt === "application/json" && looksLikeJsonLd(body)) {
-    return declaredType;
-  }
-  return null;
-}
-function normUri(u3) {
-  return u3.toLowerCase().replace(/\/$/, "");
-}
-async function tryExtractFromLinkset(linksetUrl, baseUri) {
-  const acceptLinkset = "application/linkset+json;q=1.0, application/ld+json;q=0.9, application/linkset;q=0.8";
-  let res;
-  try {
-    res = await fetchWithRedirect(linksetUrl, { headers: { Accept: acceptLinkset } });
-    if (!res.ok) return null;
-  } catch {
-    return null;
-  }
-  const ct = baseMime(res.headers.get("content-type"));
-  if (ct === "application/linkset+json" || ct === "application/json" || ct === "application/ld+json") {
-    let data;
-    try {
-      data = await res.json();
-    } catch {
-      return null;
-    }
-    const typedData = data;
-    if (!Array.isArray(typedData?.linkset)) return null;
-    const allCtxs = typedData.linkset;
-    const baseNorm = normUri(baseUri);
-    const matchedCtxs = allCtxs.filter((ctx) => {
-      const anchor = typeof ctx["anchor"] === "string" ? normUri(ctx["anchor"]) : null;
-      return anchor === baseNorm;
-    });
-    const contexts = matchedCtxs.length > 0 ? matchedCtxs : allCtxs;
-    for (const ctx of contexts) {
-      for (const rel of ["describedby", "profile"]) {
-        const targets = Array.isArray(ctx[rel]) ? ctx[rel] : [];
-        for (const target of targets) {
-          if (!target.href) continue;
-          if (target.type && !isRDFMime(target.type)) continue;
-          const metaUrl = new URL(target.href, linksetUrl).toString();
-          try {
-            const metaRes = await fetchDescribedBy(metaUrl, target.type);
-            if (!metaRes.ok) continue;
-            const metaCt = baseMime(metaRes.headers.get("content-type"));
-            const body = await metaRes.text();
-            const format = resolveRdfFormat(metaCt, target.type, body);
-            if (format) return { content: body, format, source: "linkset", url: metaUrl };
-          } catch {
-          }
-        }
-      }
-      const citeAsArr = Array.isArray(ctx["cite-as"]) ? ctx["cite-as"] : [];
-      for (const citeAs of citeAsArr) {
-        if (!citeAs.href) continue;
-        const doiUrl = new URL(citeAs.href, linksetUrl).toString();
-        try {
-          const doiRes = await fetchRDF(doiUrl);
-          if (!doiRes.ok) continue;
-          const doiCt = baseMime(doiRes.headers.get("content-type"));
-          if (isRDFMime(doiCt)) {
-            return { content: await doiRes.text(), format: doiCt, source: "linkset", url: doiUrl };
-          }
-        } catch {
-        }
-      }
-    }
-  } else if (ct === "application/linkset") {
-    let text = await res.text();
-    text = text.replace(/[\r\n\t]+/g, " ");
-    const links = parseLinkHeader(text);
-    const baseNorm = normUri(baseUri);
-    for (const link of links) {
-      if (link["anchor"] && normUri(link["anchor"]) !== baseNorm) continue;
-      if ((link["rel"] === "describedby" || link["rel"] === "profile") && link["url"]) {
-        const declaredType = link["type"];
-        if (declaredType && !isRDFMime(declaredType)) continue;
-        const metaUrl = new URL(link["url"], linksetUrl).toString();
-        try {
-          const metaRes = await fetchDescribedBy(metaUrl, declaredType);
-          if (!metaRes.ok) continue;
-          const metaCt = baseMime(metaRes.headers.get("content-type"));
-          const body = await metaRes.text();
-          const format = resolveRdfFormat(metaCt, declaredType, body);
-          if (format) return { content: body, format, source: "linkset", url: metaUrl };
-        } catch {
-        }
-      }
-    }
-  }
-  return null;
-}
-async function tryExtractFromSitemapAndDCAT(uri) {
-  let urlObj;
-  try {
-    urlObj = new URL(uri);
-  } catch {
-    return null;
-  }
-  const robotsUrl = `${urlObj.protocol}//${urlObj.host}/robots.txt`;
-  let robotsText;
-  try {
-    const res = await fetchWithRedirect(robotsUrl);
-    if (!res.ok) return null;
-    robotsText = await res.text();
-  } catch {
-    return null;
-  }
-  const sitemaps = [];
-  for (const line of robotsText.split("\n")) {
-    const trimmed = line.trim();
-    if (trimmed.toLowerCase().startsWith("sitemap:")) {
-      const sUrl = trimmed.slice(8).trim();
-      if (sUrl) sitemaps.push(sUrl);
-    }
-  }
-  for (const sitemapUrl of sitemaps) {
-    let sText;
-    try {
-      const res = await fetchWithRedirect(sitemapUrl);
-      if (!res.ok) continue;
-      sText = await res.text();
-    } catch {
-      continue;
-    }
-    let xmlDoc;
-    try {
-      xmlDoc = new DOMParser().parseFromString(sText, "text/xml");
-      if (xmlDoc.getElementsByTagName("parsererror").length > 0) continue;
-    } catch {
-      continue;
-    }
-    const urlElements = xmlDoc.getElementsByTagName("url");
-    for (const urlEl of urlElements) {
-      const locEl = urlEl.getElementsByTagName("loc")[0];
-      if (!locEl) continue;
-      const loc = locEl.textContent?.trim();
-      if (loc === uri || loc === uri + "/" || uri === loc + "/") {
-        const xhtmlNs = "http://www.w3.org/1999/xhtml";
-        const xLinks = urlEl.getElementsByTagNameNS(xhtmlNs, "link");
-        for (const xLink of xLinks) {
-          const rel = xLink.getAttribute("rel");
-          const type = xLink.getAttribute("type");
-          const href = xLink.getAttribute("href");
-          if (rel === "describedby" && href && (!type || isRDFMime(type))) {
-            const metaUrl = new URL(href, sitemapUrl).toString();
-            const metaRes = await fetchRDF(metaUrl);
-            const metaCt = baseMime(metaRes.headers.get("content-type"));
-            if (isRDFMime(metaCt) && metaRes.ok) {
-              return {
-                content: await metaRes.text(),
-                format: metaCt,
-                source: "sitemap-signposting",
-                url: metaUrl
-              };
-            }
-          }
-        }
-      }
-    }
-  }
-  return null;
-}
-async function tryExtractAllFromLinkset(linksetUrl, baseUri) {
-  const results = [];
-  const acceptLinkset = "application/linkset+json;q=1.0, application/ld+json;q=0.9, application/linkset;q=0.8";
-  let res;
-  try {
-    res = await fetchWithRedirect(linksetUrl, { headers: { Accept: acceptLinkset } });
-    if (!res.ok) return results;
-  } catch {
-    return results;
-  }
-  const ct = baseMime(res.headers.get("content-type"));
-  if (ct === "application/linkset+json" || ct === "application/json" || ct === "application/ld+json") {
-    let data;
-    try {
-      data = await res.json();
-    } catch {
-      return results;
-    }
-    const typedData = data;
-    if (!Array.isArray(typedData?.linkset)) return results;
-    const allCtxs = typedData.linkset;
-    const baseNorm = normUri(baseUri);
-    const matchedCtxs = allCtxs.filter((ctx) => {
-      const anchor = typeof ctx["anchor"] === "string" ? normUri(ctx["anchor"]) : null;
-      return anchor === baseNorm;
-    });
-    const contexts = matchedCtxs.length > 0 ? matchedCtxs : allCtxs;
-    for (const ctx of contexts) {
-      for (const rel of ["describedby", "profile"]) {
-        const targets = Array.isArray(ctx[rel]) ? ctx[rel] : [];
-        for (const target of targets) {
-          if (!target.href) continue;
-          if (target.type && !isRDFMime(target.type)) continue;
-          const metaUrl = new URL(target.href, linksetUrl).toString();
-          try {
-            const metaRes = await fetchDescribedBy(metaUrl, target.type);
-            if (!metaRes.ok) continue;
-            const metaCt = baseMime(metaRes.headers.get("content-type"));
-            const body = await metaRes.text();
-            const format = resolveRdfFormat(metaCt, target.type, body);
-            if (format) results.push({ content: body, format, source: "linkset", url: metaUrl });
-          } catch {
-          }
-        }
-      }
-      const citeAsArr = Array.isArray(ctx["cite-as"]) ? ctx["cite-as"] : [];
-      for (const citeAs of citeAsArr) {
-        if (!citeAs.href) continue;
-        const doiUrl = new URL(citeAs.href, linksetUrl).toString();
-        try {
-          const doiRes = await fetchRDF(doiUrl);
-          if (!doiRes.ok) continue;
-          const doiCt = baseMime(doiRes.headers.get("content-type"));
-          if (isRDFMime(doiCt)) {
-            results.push({ content: await doiRes.text(), format: doiCt, source: "linkset", url: doiUrl });
-          }
-        } catch {
-        }
-      }
-    }
-  } else if (ct === "application/linkset") {
-    let text = await res.text();
-    text = text.replace(/[\r\n\t]+/g, " ");
-    const links = parseLinkHeader(text);
-    const baseNorm = normUri(baseUri);
-    for (const link of links) {
-      if (link["anchor"] && normUri(link["anchor"]) !== baseNorm) continue;
-      if ((link["rel"] === "describedby" || link["rel"] === "profile") && link["url"]) {
-        const declaredType = link["type"];
-        if (declaredType && !isRDFMime(declaredType)) continue;
-        const metaUrl = new URL(link["url"], linksetUrl).toString();
-        try {
-          const metaRes = await fetchDescribedBy(metaUrl, declaredType);
-          if (!metaRes.ok) continue;
-          const metaCt = baseMime(metaRes.headers.get("content-type"));
-          const body = await metaRes.text();
-          const format = resolveRdfFormat(metaCt, declaredType, body);
-          if (format) results.push({ content: body, format, source: "linkset", url: metaUrl });
-        } catch {
-        }
-      }
-    }
-  }
-  return results;
-}
-async function tryExtractAllFromSitemapAndDCAT(uri) {
-  const results = [];
-  let urlObj;
-  try {
-    urlObj = new URL(uri);
-  } catch {
-    return results;
-  }
-  const robotsUrl = `${urlObj.protocol}//${urlObj.host}/robots.txt`;
-  let robotsText;
-  try {
-    const res = await fetchWithRedirect(robotsUrl);
-    if (!res.ok) return results;
-    robotsText = await res.text();
-  } catch {
-    return results;
-  }
-  const sitemaps = [];
-  for (const line of robotsText.split("\n")) {
-    const trimmed = line.trim();
-    if (trimmed.toLowerCase().startsWith("sitemap:")) {
-      const sUrl = trimmed.slice(8).trim();
-      if (sUrl) sitemaps.push(sUrl);
-    }
-  }
-  for (const sitemapUrl of sitemaps) {
-    let sText;
-    try {
-      const res = await fetchWithRedirect(sitemapUrl);
-      if (!res.ok) continue;
-      sText = await res.text();
-    } catch {
-      continue;
-    }
-    let xmlDoc;
-    try {
-      xmlDoc = new DOMParser().parseFromString(sText, "text/xml");
-      if (xmlDoc.getElementsByTagName("parsererror").length > 0) continue;
-    } catch {
-      continue;
-    }
-    const urlElements = xmlDoc.getElementsByTagName("url");
-    for (const urlEl of urlElements) {
-      const locEl = urlEl.getElementsByTagName("loc")[0];
-      if (!locEl) continue;
-      const loc = locEl.textContent?.trim();
-      if (loc === uri || loc === uri + "/" || uri === loc + "/") {
-        const xhtmlNs = "http://www.w3.org/1999/xhtml";
-        const xLinks = urlEl.getElementsByTagNameNS(xhtmlNs, "link");
-        for (const xLink of xLinks) {
-          const rel = xLink.getAttribute("rel");
-          const type = xLink.getAttribute("type");
-          const href = xLink.getAttribute("href");
-          if (rel === "describedby" && href && (!type || isRDFMime(type))) {
-            const metaUrl = new URL(href, sitemapUrl).toString();
-            try {
-              const metaRes = await fetchRDF(metaUrl);
-              const metaCt = baseMime(metaRes.headers.get("content-type"));
-              if (isRDFMime(metaCt) && metaRes.ok) {
-                results.push({
-                  content: await metaRes.text(),
-                  format: metaCt,
-                  source: "sitemap-signposting",
-                  url: metaUrl
-                });
-              }
-            } catch {
-            }
-          }
-        }
-      }
-    }
-  }
-  return results;
-}
-async function extractAllRDF(uri) {
-  const found = [];
-  const notFound = [];
-  const contentNegotiations = [];
-  let bodyText = "";
-  let linkHeader = null;
-  try {
-    const discRes = await fetchRDF(uri);
-    linkHeader = discRes.headers.get("link");
-    const discCt = baseMime(discRes.headers.get("content-type"));
-    if (!isRDFMime(discCt) || !discRes.ok) {
-      try {
-        bodyText = await discRes.text();
-      } catch {
-        bodyText = "";
-      }
-    } else {
-      try {
-        await discRes.text();
-      } catch {
-      }
-    }
-  } catch {
-  }
-  const MIME_ORDER = [
-    "text/turtle",
-    "application/ld+json",
-    "application/rdf+xml",
-    "application/n-triples",
-    "text/n3",
-    "application/n-quads",
-    "application/trig"
-  ];
-  let cnFound = false;
-  for (const mime of MIME_ORDER) {
-    try {
-      const cnRes = await fetchWithRedirect(uri, { headers: { Accept: mime } });
-      const cnCt = baseMime(cnRes.headers.get("content-type"));
-      const cnBody = await cnRes.text();
-      const isRdf = cnRes.ok && isRDFMime(cnCt);
-      contentNegotiations.push({
-        requestedMime: mime,
-        responseMime: cnCt || "(unknown)",
-        chars: cnBody.length,
-        isRdf,
-        url: cnRes.url || uri
-      });
-      if (isRdf) {
-        const isDup = found.some(
-          (f3) => f3.source === "content-negotiation" && f3.format === cnCt
-        );
-        if (!isDup) {
-          found.push({ content: cnBody, format: cnCt, source: "content-negotiation", url: uri });
-          cnFound = true;
-        }
-      }
-    } catch {
-    }
-  }
-  if (!cnFound) notFound.push("content-negotiation");
-  const htmlHints = bodyText ? extractHtmlHints(bodyText) : { describedByLinks: [], linksets: [], embeddedScripts: [] };
-  let htmlDoc = null;
-  if (bodyText) {
-    try {
-      if (typeof DOMParser !== "undefined") {
-        htmlDoc = new DOMParser().parseFromString(bodyText, "text/html");
-      }
-    } catch {
-    }
-  }
-  const links = parseLinkHeader(linkHeader);
-  const headerDescribedBy = links.filter(
-    (l3) => l3["rel"] === "describedby" && (!l3["type"] || isRDFMime(l3["type"]))
-  );
-  const profileLinks = links.filter((l3) => l3["rel"] === "profile");
-  const headerDescribedByAll = [
-    ...headerDescribedBy,
-    ...profileLinks.filter((pl) => !pl["type"] || isRDFMime(pl["type"]))
-  ];
-  let headerDescribedByFound = false;
-  for (const link of headerDescribedByAll) {
-    const metaUrl = new URL(link["url"], uri).toString();
-    try {
-      const metaRes = await fetchRDF(metaUrl);
-      const metaCt = baseMime(metaRes.headers.get("content-type"));
-      if (isRDFMime(metaCt) && metaRes.ok) {
-        found.push({ content: await metaRes.text(), format: metaCt, source: "signposting-link-header", url: metaUrl });
-        headerDescribedByFound = true;
-      }
-    } catch {
-    }
-  }
-  if (!headerDescribedByFound) notFound.push("signposting-link-header");
-  const headerLinksets = links.filter((l3) => l3["rel"] === "linkset");
-  const headerLinksetNorms = new Set(
-    headerLinksets.map((ls) => normUri(new URL(ls["url"], uri).toString()))
-  );
-  const profileLinksetLinks = profileLinks.filter(
-    (pl) => pl["type"] && isLinksetMime(pl["type"]) && !headerLinksetNorms.has(normUri(new URL(pl["url"], uri).toString()))
-  );
-  const allLinksetHeaderLinks = [...headerLinksets, ...profileLinksetLinks];
-  let headerLinksetFound = false;
-  for (const ls of allLinksetHeaderLinks) {
-    const lsUrl = new URL(ls["url"], uri).toString();
-    const hits = await tryExtractAllFromLinkset(lsUrl, uri);
-    if (hits.length > 0) {
-      found.push(...hits);
-      headerLinksetFound = true;
-    }
-  }
-  const headerLinksetUriNorms = new Set(
-    allLinksetHeaderLinks.map((ls) => normUri(new URL(ls["url"], uri).toString()))
-  );
-  if (!headerLinksetUriNorms.has(normUri(uri))) {
-    const connegHits = await tryExtractAllFromLinkset(uri, uri);
-    if (connegHits.length > 0) {
-      found.push(...connegHits);
-      headerLinksetFound = true;
-    }
-  }
-  if (!headerLinksetFound) notFound.push("linkset");
-  const htmlDescribedBy = /* @__PURE__ */ new Map();
-  const htmlLinksets = /* @__PURE__ */ new Set();
-  const htmlScripts = [];
-  if (htmlDoc) {
-    for (const el of htmlDoc.querySelectorAll("link")) {
-      const rel = el.getAttribute("rel");
-      const href = el.getAttribute("href");
-      const type = el.getAttribute("type");
-      if (!href) continue;
-      if (relHasToken(rel, "describedby")) htmlDescribedBy.set(href, type);
-      if (relHasToken(rel, "linkset")) htmlLinksets.add(href);
-    }
-    for (const script of htmlDoc.querySelectorAll("script[type]")) {
-      const type = script.getAttribute("type")?.toLowerCase() ?? "";
-      const content = script.textContent?.trim() ?? "";
-      if (type && content) htmlScripts.push({ type, content });
-    }
-  }
-  for (const link of htmlHints.describedByLinks) htmlDescribedBy.set(link.href, link.type);
-  for (const linkset of htmlHints.linksets) htmlLinksets.add(linkset);
-  htmlScripts.push(...htmlHints.embeddedScripts);
-  let htmlDescribedByFound = false;
-  for (const [href, type] of htmlDescribedBy) {
-    if (!type || isRDFMime(type)) {
-      const metaUrl = new URL(href, uri).toString();
-      try {
-        const metaRes = await fetchRDF(metaUrl);
-        const metaCt = baseMime(metaRes.headers.get("content-type"));
-        if (isRDFMime(metaCt) && metaRes.ok) {
-          found.push({ content: await metaRes.text(), format: metaCt, source: "signposting-html-link", url: metaUrl });
-          htmlDescribedByFound = true;
-        }
-      } catch {
-      }
-    }
-  }
-  if (!htmlDescribedByFound) notFound.push("signposting-html-link");
-  const headerLinksetUrls = new Set(
-    allLinksetHeaderLinks.map((ls) => new URL(ls["url"], uri).toString())
-  );
-  headerLinksetUrls.add(uri);
-  let htmlLinksetFound = false;
-  for (const href of htmlLinksets) {
-    const lsUrl = new URL(href, uri).toString();
-    if (headerLinksetUrls.has(lsUrl)) continue;
-    const hits = await tryExtractAllFromLinkset(lsUrl, uri);
-    if (hits.length > 0) {
-      found.push(...hits);
-      htmlLinksetFound = true;
-    }
-  }
-  if (!headerLinksetFound && !htmlLinksetFound && notFound.includes("linkset")) {
-  } else if (!headerLinksetFound && htmlLinksetFound) {
-    const idx = notFound.indexOf("linkset");
-    if (idx !== -1) notFound.splice(idx, 1);
-  }
-  let embeddedFound = false;
-  for (const script of htmlScripts) {
-    const type = script.type.toLowerCase();
-    if (isRDFMime(type)) {
-      found.push({ content: script.content, format: type, source: "embedded-script", url: uri });
-      embeddedFound = true;
-    }
-  }
-  if (!embeddedFound) notFound.push("embedded-script");
-  const sitemapHits = await tryExtractAllFromSitemapAndDCAT(uri);
-  if (sitemapHits.length > 0) {
-    found.push(...sitemapHits);
-  } else {
-    notFound.push("sitemap-signposting");
-  }
-  const trace = STRATEGY_ORDER.map((source, i5) => {
-    const hits = found.filter((item) => item.source === source);
-    return {
-      strategy: i5 + 1,
-      source,
-      label: STRATEGY_LABELS[source],
-      found: hits.length > 0,
-      hits: hits.map((hit) => ({
-        format: hit.format,
-        url: hit.url,
-        chars: hit.content.length
-      }))
-    };
-  });
-  return { found, notFound, contentNegotiations, trace };
-}
-async function extractRDF(uri) {
-  let res;
-  try {
-    res = await fetchRDF(uri);
-  } catch {
-    console.error(`Error fetching URI ${uri}`);
-  }
-  if (res) {
-    try {
-      let ct = baseMime(res.headers.get("content-type"));
-      if (isRDFMime(ct) && res.ok) {
-        return {
-          content: await res.text(),
-          format: ct,
-          source: "content-negotiation",
-          url: uri
-        };
-      }
-    } catch {
-      console.error(`Error reading body for URI ${uri}`);
-    }
-  }
-  let bodyText = "";
-  if (res) {
-    try {
-      bodyText = await res.text();
-    } catch {
-      bodyText = "";
-    }
-  }
-  let htmlDoc = null;
-  if (bodyText) {
-    try {
-      if (typeof DOMParser !== "undefined") {
-        htmlDoc = new DOMParser().parseFromString(bodyText, "text/html");
-      }
-    } catch {
-    }
-  }
-  const htmlHints = bodyText ? extractHtmlHints(bodyText) : { describedByLinks: [], linksets: [], embeddedScripts: [] };
-  const linkHeader = res ? res.headers.get("link") : null;
-  const links = parseLinkHeader(linkHeader);
-  const describedByFromHeader = links.filter(
-    (l3) => l3["rel"] === "describedby" && (!l3["type"] || isRDFMime(l3["type"]))
-  );
-  for (const link of describedByFromHeader) {
-    const metaUrl = new URL(link["url"], uri).toString();
-    try {
-      const metaRes = await fetchRDF(metaUrl);
-      const metaCt = baseMime(metaRes.headers.get("content-type"));
-      if (isRDFMime(metaCt) && metaRes.ok) {
-        return {
-          content: await metaRes.text(),
-          format: metaCt,
-          source: "signposting-link-header",
-          url: metaUrl
-        };
-      }
-    } catch {
-    }
-  }
-  const linksetFromHeader = links.filter((l3) => l3["rel"] === "linkset");
-  const profileLinks = links.filter((l3) => l3["rel"] === "profile");
-  const profileLinksetLinks = profileLinks.filter((pl) => pl["type"] && isLinksetMime(pl["type"]));
-  const linksetFromHeaderNorms = new Set(
-    linksetFromHeader.map((ls) => normUri(new URL(ls["url"], uri).toString()))
-  );
-  const allLinksetLinks = [
-    ...linksetFromHeader,
-    ...profileLinksetLinks.filter(
-      (pl) => !linksetFromHeaderNorms.has(normUri(new URL(pl["url"], uri).toString()))
-    )
-  ];
-  for (const ls of allLinksetLinks) {
-    const lsUrl = new URL(ls["url"], uri).toString();
-    const rdf2 = await tryExtractFromLinkset(lsUrl, uri);
-    if (rdf2) return rdf2;
-  }
-  const profileDescribedBy = profileLinks.filter(
-    (pl) => !pl["type"] || isRDFMime(pl["type"])
-  );
-  for (const pl of profileDescribedBy) {
-    const profileUrl = new URL(pl["url"], uri).toString();
-    try {
-      const metaRes = await fetchRDF(profileUrl);
-      const metaCt = baseMime(metaRes.headers.get("content-type"));
-      if (isRDFMime(metaCt) && metaRes.ok) {
-        return {
-          content: await metaRes.text(),
-          format: metaCt,
-          source: "signposting-link-header",
-          url: profileUrl
-        };
-      }
-    } catch {
-    }
-  }
-  const triedLinksetNorms = new Set(
-    allLinksetLinks.map((ls) => normUri(new URL(ls["url"], uri).toString()))
-  );
-  if (!triedLinksetNorms.has(normUri(uri))) {
-    const connegLinkset = await tryExtractFromLinkset(uri, uri);
-    if (connegLinkset) return connegLinkset;
-  }
-  const htmlDescribedBy = /* @__PURE__ */ new Map();
-  const htmlLinksets = /* @__PURE__ */ new Set();
-  const htmlScripts = [];
-  if (htmlDoc) {
-    for (const el of htmlDoc.querySelectorAll("link")) {
-      const rel = el.getAttribute("rel");
-      const href = el.getAttribute("href");
-      const type = el.getAttribute("type");
-      if (!href) continue;
-      if (relHasToken(rel, "describedby")) {
-        htmlDescribedBy.set(href, type);
-      }
-      if (relHasToken(rel, "linkset")) {
-        htmlLinksets.add(href);
-      }
-    }
-    for (const script of htmlDoc.querySelectorAll("script[type]")) {
-      const type = script.getAttribute("type")?.toLowerCase() ?? "";
-      const content = script.textContent?.trim() ?? "";
-      if (type && content) {
-        htmlScripts.push({ type, content });
-      }
-    }
-  }
-  for (const link of htmlHints.describedByLinks) {
-    htmlDescribedBy.set(link.href, link.type);
-  }
-  for (const linkset of htmlHints.linksets) {
-    htmlLinksets.add(linkset);
-  }
-  htmlScripts.push(...htmlHints.embeddedScripts);
-  for (const [href, type] of htmlDescribedBy) {
-    if (!type || isRDFMime(type)) {
-      const metaUrl = new URL(href, uri).toString();
-      let metaRes;
-      try {
-        metaRes = await fetchRDF(metaUrl);
-      } catch {
-        for (const script of htmlScripts) {
-          const scriptType = script.type.toLowerCase();
-          if (isRDFMime(scriptType)) {
-            return {
-              content: script.content,
-              format: scriptType,
-              source: "embedded-script",
-              url: uri
-            };
-          }
-        }
-        continue;
-      }
-      const metaCt = baseMime(metaRes.headers.get("content-type"));
-      if (isRDFMime(metaCt) && metaRes.ok) {
-        return {
-          content: await metaRes.text(),
-          format: metaCt,
-          source: "signposting-html-link",
-          url: metaUrl
-        };
-      }
-    }
-  }
-  for (const href of htmlLinksets) {
-    const lsUrl = new URL(href, uri).toString();
-    const rdf2 = await tryExtractFromLinkset(lsUrl, uri);
-    if (rdf2) return rdf2;
-  }
-  for (const script of htmlScripts) {
-    const type = script.type.toLowerCase();
-    if (isRDFMime(type)) {
-      return {
-        content: script.content,
-        format: type,
-        source: "embedded-script",
-        url: uri
-      };
-    }
-  }
-  const sitemapRDF = await tryExtractFromSitemapAndDCAT(uri);
-  if (sitemapRDF) return sitemapRDF;
-  return null;
-}
-async function runWrxCli(args = process.argv.slice(2)) {
-  const allMode = args.includes("--all");
-  const url = args.find((a3) => a3 !== "--all");
-  if (!url) {
-    console.error("Usage: bun run wrx.js [--all] <URI>");
-    process.exit(1);
-  }
-  if (allMode) {
-    console.log(`\u{1F50D} Exploring all RDF paths for: ${url}
-`);
-    const overview = await extractAllRDF(url);
-    const bySource = /* @__PURE__ */ new Map();
-    for (const entry of overview.found) {
-      const key = entry.source;
-      if (!bySource.has(key)) bySource.set(key, []);
-      bySource.get(key).push(entry);
-    }
-    let stratNum = 0;
-    for (const source of STRATEGY_ORDER) {
-      stratNum++;
-      const label = STRATEGY_LABELS[source];
-      const hits = bySource.get(source) ?? [];
-      if (source === "content-negotiation") {
-        const rdfHits = overview.contentNegotiations.filter((r5) => r5.isRdf);
-        if (rdfHits.length > 0) {
-          console.log(`  \u2705 Strategy ${stratNum} \u2014 ${label} (${rdfHits.length} RDF format(s) found)`);
-        } else {
-          console.log(`  \u274C Strategy ${stratNum} \u2014 ${label}`);
-        }
-        const reqW = overview.contentNegotiations.length > 0 ? Math.max(...overview.contentNegotiations.map((r5) => r5.requestedMime.length), "Requested MIME".length) : "Requested MIME".length;
-        const resW = overview.contentNegotiations.length > 0 ? Math.max(...overview.contentNegotiations.map((r5) => r5.responseMime.length), "Response MIME".length) : "Response MIME".length;
-        console.log(
-          `       ${"Requested MIME".padEnd(reqW)}  \u2192  ${"Response MIME".padEnd(resW)}  Chars`
-        );
-        console.log(`       ${"\u2500".repeat(reqW)}     ${"\u2500".repeat(resW)}  \u2500\u2500\u2500\u2500\u2500`);
-        for (const cn of overview.contentNegotiations) {
-          const flag = cn.isRdf ? "\u2705" : "\u274C";
-          console.log(
-            `       ${cn.requestedMime.padEnd(reqW)}  \u2192  ${cn.responseMime.padEnd(resW)}  ${cn.chars.toLocaleString().padStart(7)}  ${flag}`
-          );
-        }
-      } else if (hits.length > 0) {
-        console.log(`  \u2705 Strategy ${stratNum} \u2014 ${label}`);
-        for (const hit of hits) {
-          console.log(`       ${hit.format}  ${hit.url}  (${hit.content.length} chars)`);
-        }
-      } else {
-        console.log(`  \u274C Strategy ${stratNum} \u2014 ${label}`);
-      }
-    }
-    console.log("");
-    if (overview.contentNegotiations.length > 0) {
-      console.log("\u{1F4CB} Content Negotiation Overview (all MIME types):");
-      for (const cn of overview.contentNegotiations) {
-        const flag = cn.isRdf ? "\u2705 RDF" : "\u274C not RDF";
-        console.log(`   ${cn.requestedMime.padEnd(26)} \u2192 ${cn.chars.toLocaleString().padStart(7)} chars  (${cn.responseMime})  ${flag}`);
-      }
-      console.log("");
-    }
-    if (overview.found.length > 0) {
-      console.log(`\u{1F4CA} ${overview.found.length} unique RDF source(s) found across ${STRATEGY_ORDER.length} strategies tried.`);
-    } else {
-      console.log("\u{1F4CA} No RDF found after exploring all strategies.");
-    }
-  } else {
-    console.log(`\u{1F50D} Extracting RDF from: ${url}`);
-    const result = await extractRDF(url);
-    if (result) {
-      console.log(`\u2705 Found RDF (${result.source}) from ${result.url}`);
-      console.log(`Format: ${result.format}`);
-      console.log(`Content length: ${result.content.length} chars`);
-      console.log("\n--- First 500 chars of RDF ---");
-      console.log(result.content.slice(0, 500) + (result.content.length > 500 ? "..." : ""));
-    } else {
-      console.log("\u274C No RDF found after trying all strategies.");
-    }
-  }
-}
-var STRATEGY_LABELS, STRATEGY_ORDER, RDF_MIMES, RDF_ACCEPT;
-var init_wrx = __esm({
-  async "node_modules/wrx/wrx.ts"() {
-    "use strict";
-    STRATEGY_LABELS = {
-      "content-negotiation": "Content Negotiation",
-      "signposting-link-header": "HTTP Link header (rel=describedby)",
-      "linkset": "Linkset (rel=linkset)",
-      "signposting-html-link": "HTML link[rel=describedby]",
-      "embedded-script": "Embedded RDF script",
-      "sitemap-signposting": "Sitemap signposting (robots.txt)"
-    };
-    STRATEGY_ORDER = [
-      "content-negotiation",
-      "signposting-link-header",
-      "linkset",
-      "signposting-html-link",
-      "embedded-script",
-      "sitemap-signposting"
-    ];
-    RDF_MIMES = /* @__PURE__ */ new Set([
-      "text/turtle",
-      "application/ld+json",
-      "application/rdf+xml",
-      "application/n-triples",
-      "text/n3",
-      "application/n-quads",
-      "application/trig"
-    ]);
-    RDF_ACCEPT = [
-      "text/turtle",
-      "application/ld+json",
-      "application/rdf+xml",
-      "application/n-triples",
-      "text/n3",
-      "application/n-quads",
-      "application/trig"
-    ].join(",");
-    if (import.meta.main) {
-      await runWrxCli();
-    }
-  }
-});
-
-// node_modules/wrx/wrx.js
-var wrx_exports = {};
-__export(wrx_exports, {
-  extractAllRDF: () => extractAllRDF,
-  extractRDF: () => extractRDF,
-  runWrxCli: () => runWrxCli
-});
-var init_wrx2 = __esm({
-  async "node_modules/wrx/wrx.js"() {
-    "use strict";
-    await init_wrx();
-    init_wrx();
-    if (import.meta.main) {
-      await runWrxCli(process.argv.slice(2));
-    }
-  }
-});
-
 // node_modules/@lit/reactive-element/css-tag.js
 var t = globalThis;
 var e = t.ShadowRoot && (void 0 === t.ShadyCSS || t.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype;
@@ -24267,16 +23283,16 @@ function serializeQuads(quads) {
 }
 
 // src/rdf-webcomponents/components/source-rdf-fetch.ts
-var RDF_ACCEPT2 = "text/turtle,application/n-triples,application/n-quads,application/rdf+xml,application/ld+json,text/html";
+var RDF_ACCEPT = "text/turtle,application/n-triples,application/n-quads,application/rdf+xml,application/ld+json,text/html";
 var wrxExtractorPromise = null;
 function getRuntimeLabel() {
   return typeof window === "undefined" ? "server" : "client";
 }
 async function getWrxExtractor() {
   if (!wrxExtractorPromise) {
-    wrxExtractorPromise = init_wrx2().then(() => wrx_exports).then((module) => {
-      const extractRDF2 = module.extractRDF;
-      return typeof extractRDF2 === "function" ? extractRDF2 : null;
+    wrxExtractorPromise = import("wrx").then((module) => {
+      const extractRDF = module.extractRDF;
+      return typeof extractRDF === "function" ? extractRDF : null;
     }).catch((error) => {
       console.warn(`[source-rdf][${getRuntimeLabel()}] wrx module could not be loaded; using direct fetch fallback.`, error);
       return null;
@@ -24325,7 +23341,7 @@ async function fetchRdfWithWrxFallback(sourceUrl, headers) {
   }
   const response = await fetch(sourceUrl, {
     headers: {
-      Accept: RDF_ACCEPT2,
+      Accept: RDF_ACCEPT,
       ...headers
     }
   });
